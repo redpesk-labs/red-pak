@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g -lpython3.7m -L/opt/lib64 -ldnf -lrepo -lglib-2.0 -lrpm -lrpmio -lsqlite3 -lyaml -L/opt/lib -lcyaml -shared  -o _reddnf.so CMakeFiles/reddnf-py.dir/reddnf-py.cpp.o  -Wl,-rpath,/opt/lib64/python3.7/site-packages/hawkey: /opt/lib64/python3.7/site-packages/hawkey/_hawkey.so 

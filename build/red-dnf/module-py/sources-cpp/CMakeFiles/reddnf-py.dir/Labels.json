@@ -1,0 +1,16 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/fulup/Workspace/DNF/red-pak/red-dnf/module-py/sources-cpp/reddnf-py.cpp"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"LIBRARY"
+		],
+		"name" : "reddnf-py"
+	}
+}

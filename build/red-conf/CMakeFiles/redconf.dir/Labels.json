@@ -1,0 +1,25 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/fulup/Workspace/DNF/red-pak/red-conf/redconf-default.c"
+		},
+		{
+			"file" : "/home/fulup/Workspace/DNF/red-pak/red-conf/redconf-schema.c"
+		},
+		{
+			"file" : "/home/fulup/Workspace/DNF/red-pak/red-conf/redconf-utils.c"
+		},
+		{
+			"file" : "/home/fulup/Workspace/DNF/red-pak/red-conf/redconf.h"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"LIBRARY"
+		],
+		"name" : "redconf"
+	}
+}

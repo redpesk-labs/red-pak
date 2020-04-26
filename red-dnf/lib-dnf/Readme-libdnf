@@ -1,0 +1,3 @@
+LibDNF should be pached to add 
+
+dnf_sack_add_rpmdb_repo(DnfSack *sack, const char* reponame, GError **error)

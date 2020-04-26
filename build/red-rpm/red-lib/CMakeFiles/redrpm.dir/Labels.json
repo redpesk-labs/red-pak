@@ -1,0 +1,19 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/fulup/Workspace/DNF/red-pak/red-rpm/red-lib/redlib-glue.c"
+		},
+		{
+			"file" : "/home/fulup/Workspace/DNF/red-pak/red-rpm/red-lib/redrpm.h"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"LIBRARY"
+		],
+		"name" : "redrpm"
+	}
+}
