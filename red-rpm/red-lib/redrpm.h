@@ -34,11 +34,11 @@
 #endif
 
 #ifndef REDNODE_CONF
-#define REDNODE_CONF "etc/redpak.conf"
+#define REDNODE_CONF "etc/redpack.yaml"
 #endif
 
 #ifndef REDNODE_STATUS
-#define REDNODE_STATUS ".rednode.status"
+#define REDNODE_STATUS ".rednode.yaml"
 #endif
 
 #ifndef REDNODE_VARDIR

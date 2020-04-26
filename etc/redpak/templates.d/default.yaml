@@ -70,4 +70,9 @@ exports:
     path: $NODE_PATH/var
     mode: Public
 
+  # provide compatibility with redpesk rpm dir  
+  - mount: /var/redpesk/$REDPESK_VERSION
+    path: $NODE_PATH/usr
+    mode: Private
+
 

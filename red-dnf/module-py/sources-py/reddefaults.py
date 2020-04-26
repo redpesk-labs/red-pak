@@ -21,10 +21,10 @@
 import os
 
 RedDefaults = {
-    'redpak_MAIN'    : '/opt/etc/redpak/main.conf',
+    'redpak_MAIN'    : '/opt/etc/redpak/main.yaml',
     'redpak_TMPL'    : '/opt/etc/redpak/templates.d',
-    'REDNODE_CONF'    : '$NODE_PATH/etc/redpak.conf',
-    'REDNODE_STATUS'  : '$NODE_PATH/.rednode.status',
+    'REDNODE_CONF'    : '$NODE_PATH/etc/redpack.yaml',
+    'REDNODE_STATUS'  : '$NODE_PATH/.rednode.yaml',
     'REDNODE_VARDIR'  : '$NODE_PATH/var/lib/rpm',
     'REDNODE_LOCK'    : '$NODE_PATH/.rpm.lock',  
     'LOGNAME'         : 'Unknown',

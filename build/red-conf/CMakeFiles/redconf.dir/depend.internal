@@ -15,8 +15,6 @@ red-conf/CMakeFiles/redconf.dir/redconf-schema.c.o
  /home/fulup/Workspace/DNF/red-pak/red-conf/redconf-utils.h
  /home/fulup/Workspace/DNF/red-pak/red-conf/redconf.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmutil.h
 red-conf/CMakeFiles/redconf.dir/redconf-utils.c.o
  /home/fulup/Workspace/DNF/red-pak/red-conf/redconf-defaults.h
  /home/fulup/Workspace/DNF/red-pak/red-conf/redconf-schema.h

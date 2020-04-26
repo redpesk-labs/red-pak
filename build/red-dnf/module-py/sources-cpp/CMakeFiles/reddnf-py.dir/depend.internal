@@ -22,22 +22,6 @@ red-dnf/module-py/sources-cpp/CMakeFiles/reddnf-py.dir/reddnf-py.cpp.o
  /opt/include/libdnf/hy-repo.h
  /opt/include/libdnf/hy-types.h
  /opt/include/libdnf/plugin/plugin.h
- /opt/include/solv/bitmap.h
- /opt/include/solv/dataiterator.h
- /opt/include/solv/dirpool.h
- /opt/include/solv/hash.h
- /opt/include/solv/knownid.h
- /opt/include/solv/pool.h
- /opt/include/solv/poolarch.h
- /opt/include/solv/poolid.h
- /opt/include/solv/pooltypes.h
- /opt/include/solv/queue.h
- /opt/include/solv/repo.h
- /opt/include/solv/repodata.h
- /opt/include/solv/solvable.h
- /opt/include/solv/solvversion.h
- /opt/include/solv/strpool.h
- /opt/include/solv/util.h
  /usr/include/glib-2.0/gio/gaction.h
  /usr/include/glib-2.0/gio/gactiongroup.h
  /usr/include/glib-2.0/gio/gactiongroupexporter.h

@@ -49,11 +49,11 @@ Check Module load
 
 Debug dnf plugin
 -----------------
-    gdb --args python3 /opt/bin/dnf-3 -c /opt/etc/dnf/redpak.conf redpak install    
+    gdb --args python3 /opt/bin/dnf-3 -c /opt/etc/dnf/redpack.yaml redpak install    
 
-redpak.conf perleaf config
+redpack.yaml perleaf config
 ----------------------------
-  cat /var/redpak/myplateform/etc/redpak.conf
+  cat /var/redpak/myplateform/etc/redpack.yaml
   [reddnf]   # see dnf config doc at: https://dnf.readthedocs.io/en/latest/conf_ref.html
     gpgcheck=false
 

@@ -112,7 +112,7 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[]) {
 	return config;
 
 OnErrorExit:
-	fprintf (stderr, "usage: red-wrap --rpath=... [--verbose] [--force] [--rmain=.../main.conf] [--] program arg-1... arg-n\n");
+	fprintf (stderr, "usage: red-wrap --rpath=... [--verbose] [--force] [--rmain=.../main.yaml] [--] program arg-1... arg-n\n");
 	return NULL;
 }
 

@@ -80,15 +80,3 @@ stdint.h
 stddef.h
 -
 
-/opt/include/rpm/rpmlog.h
-stdarg.h
--
-stdio.h
--
-rpm/rpmutil.h
--
-
-/opt/include/rpm/rpmutil.h
-unistd.h
--
-

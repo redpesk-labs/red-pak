@@ -96,7 +96,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
         CYAML_VALUE_MAPPING(CYFLAG_PTR|CYFLAG_CASE, redConfigT, StatusEntry),
     };
 
-    // ---- Red config Schema parse ${redpath}/etc/redpak.conf ----
+    // ---- Red config Schema parse ${redpath}/etc/redpack.yaml ----
     const cyaml_strval_t exportFlagStrings[] = {
         { "Restricted", RED_EXPORT_RESTRICTED},
         { "Public",     RED_EXPORT_PUBLIC},
@@ -200,7 +200,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
     static const cyaml_schema_value_t ConfTopSchema = {
         CYAML_VALUE_MAPPING(CYFLAG_PTR|CYFLAG_CASE, redConfigT, RedConfigSchema),
     };
-// ---- end ${redpath}/etc/redpak.conf schema ----
+// ---- end ${redpath}/etc/redpack.yaml schema ----
 
 
 static int SchemaSave (const char* filepath, const cyaml_schema_value_t *topschema, void *config, int wlevel) {

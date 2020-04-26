@@ -231,10 +231,10 @@ pkgcfg_lib_libdnf_glib-2.0:FILEPATH=/usr/lib64/libglib-2.0.so
 pkgcfg_lib_libdnf_repo:FILEPATH=/usr/lib64/librepo.so
 
 //Path to a library.
-pkgcfg_lib_libdnf_rpm:FILEPATH=/opt/lib64/librpm.so
+pkgcfg_lib_libdnf_rpm:FILEPATH=/usr/lib64/librpm.so
 
 //Path to a library.
-pkgcfg_lib_libdnf_rpmio:FILEPATH=/opt/lib64/librpmio.so
+pkgcfg_lib_libdnf_rpmio:FILEPATH=/usr/lib64/librpmio.so
 
 //Path to a library.
 pkgcfg_lib_libdnf_sqlite3:FILEPATH=/usr/lib64/libsqlite3.so
@@ -243,10 +243,10 @@ pkgcfg_lib_libdnf_sqlite3:FILEPATH=/usr/lib64/libsqlite3.so
 pkgcfg_lib_python3_python3.7m:FILEPATH=/usr/lib64/libpython3.7m.so
 
 //Path to a library.
-pkgcfg_lib_rpm_rpm:FILEPATH=/opt/lib64/librpm.so
+pkgcfg_lib_rpm_rpm:FILEPATH=/usr/lib64/librpm.so
 
 //Path to a library.
-pkgcfg_lib_rpm_rpmio:FILEPATH=/opt/lib64/librpmio.so
+pkgcfg_lib_rpm_rpmio:FILEPATH=/usr/lib64/librpmio.so
 
 //Path to a library.
 pkgcfg_lib_yaml-0.1_yaml:FILEPATH=/usr/lib64/libyaml.so
@@ -344,7 +344,7 @@ CMAKE_GENERATOR_PLATFORM:INTERNAL=
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/home/fulup/Workspace/red-pak
+CMAKE_HOME_DIRECTORY:INTERNAL=/home/fulup/Workspace/DNF/red-pak
 //Install .so files without execute permission.
 CMAKE_INSTALL_SO_NO_EXE:INTERNAL=0
 //ADVANCED property for variable: CMAKE_LINKER
@@ -425,32 +425,32 @@ __pkg_config_checked_libdnf:INTERNAL=1
 __pkg_config_checked_python3:INTERNAL=1
 __pkg_config_checked_rpm:INTERNAL=1
 __pkg_config_checked_yaml-0.1:INTERNAL=1
-libcyaml_CFLAGS:INTERNAL=-I/opt/include
+libcyaml_CFLAGS:INTERNAL=-I/usr/local/include
 libcyaml_CFLAGS_I:INTERNAL=
 libcyaml_CFLAGS_OTHER:INTERNAL=
 libcyaml_FOUND:INTERNAL=1
-libcyaml_INCLUDEDIR:INTERNAL=/opt/include
-libcyaml_INCLUDE_DIRS:INTERNAL=/opt/include
-libcyaml_LDFLAGS:INTERNAL=-L/opt/lib;-lcyaml;-lyaml
+libcyaml_INCLUDEDIR:INTERNAL=/usr/local/include
+libcyaml_INCLUDE_DIRS:INTERNAL=/usr/local/include
+libcyaml_LDFLAGS:INTERNAL=-L/usr/local/lib;-lcyaml;-lyaml
 libcyaml_LDFLAGS_OTHER:INTERNAL=
-libcyaml_LIBDIR:INTERNAL=/opt/lib
+libcyaml_LIBDIR:INTERNAL=/usr/local/lib
 libcyaml_LIBRARIES:INTERNAL=cyaml;yaml
-libcyaml_LIBRARY_DIRS:INTERNAL=/opt/lib
+libcyaml_LIBRARY_DIRS:INTERNAL=/usr/local/lib
 libcyaml_LIBS:INTERNAL=
 libcyaml_LIBS_L:INTERNAL=
 libcyaml_LIBS_OTHER:INTERNAL=
 libcyaml_LIBS_PATHS:INTERNAL=
 libcyaml_MODULE_NAME:INTERNAL=libcyaml
-libcyaml_PREFIX:INTERNAL=/opt
-libcyaml_STATIC_CFLAGS:INTERNAL=-I/opt/include
+libcyaml_PREFIX:INTERNAL=/usr/local
+libcyaml_STATIC_CFLAGS:INTERNAL=-I/usr/local/include
 libcyaml_STATIC_CFLAGS_I:INTERNAL=
 libcyaml_STATIC_CFLAGS_OTHER:INTERNAL=
-libcyaml_STATIC_INCLUDE_DIRS:INTERNAL=/opt/include
-libcyaml_STATIC_LDFLAGS:INTERNAL=-L/opt/lib;-lcyaml;-lyaml
+libcyaml_STATIC_INCLUDE_DIRS:INTERNAL=/usr/local/include
+libcyaml_STATIC_LDFLAGS:INTERNAL=-L/usr/local/lib;-lcyaml;-lyaml
 libcyaml_STATIC_LDFLAGS_OTHER:INTERNAL=
 libcyaml_STATIC_LIBDIR:INTERNAL=
 libcyaml_STATIC_LIBRARIES:INTERNAL=cyaml;yaml
-libcyaml_STATIC_LIBRARY_DIRS:INTERNAL=/opt/lib
+libcyaml_STATIC_LIBRARY_DIRS:INTERNAL=/usr/local/lib
 libcyaml_STATIC_LIBS:INTERNAL=
 libcyaml_STATIC_LIBS_L:INTERNAL=
 libcyaml_STATIC_LIBS_OTHER:INTERNAL=
@@ -481,11 +481,11 @@ libdnf_STATIC_CFLAGS:INTERNAL=-I/opt/include;-I/usr/include/glib-2.0;-I/usr/lib6
 libdnf_STATIC_CFLAGS_I:INTERNAL=
 libdnf_STATIC_CFLAGS_OTHER:INTERNAL=-D_FILE_OFFSET_BITS=64
 libdnf_STATIC_INCLUDE_DIRS:INTERNAL=/opt/include;/usr/include/glib-2.0;/usr/lib64/glib-2.0/include;/usr/include/libxml2
-libdnf_STATIC_LDFLAGS:INTERNAL=-L/opt/lib64;-ldnf;-pthread;-lpcre;-pthread;-lrepo;-lgpgme;-lgpg-error;-lglib-2.0;-pthread;-lpcre;-pthread;-lcurl;-lnghttp2;-lidn2;-lssh;-lssh;-lpsl;-lssl;-lcrypto;-lcrypto;-Wl,--as-needed;-lgssapi_krb5;-lkrb5;-lk5crypto;-lcom_err;-lldap;-llber;-lbrotlidec;-lbrotlidec;-lz;-lssl;-lz;-ldl;-pthread;-lcrypto;-lz;-ldl;-pthread;-lxml2;-lz;-llzma;-lm;-lrpm;-lrpmio;-lpopt;-lrt;-lpthread;-llzma;-ldb;-lz;-lnss3;-L/usr/lib;-lzstd;-lsqlite3;-lm;-ldl;-lz;-lpthread;-L/opt/lib64;-lsolvext;-lsolv
+libdnf_STATIC_LDFLAGS:INTERNAL=-L/opt/lib64;-ldnf;-pthread;-lpcre;-pthread;-lrepo;-lgpgme;-lgpg-error;-lglib-2.0;-pthread;-lpcre;-pthread;-lcurl;-lnghttp2;-lidn2;-lssh;-lssh;-lpsl;-lssl;-lcrypto;-lcrypto;-Wl,--as-needed;-lgssapi_krb5;-lkrb5;-lk5crypto;-lcom_err;-lldap;-llber;-lbrotlidec;-lbrotlidec;-lz;-lssl;-lz;-ldl;-pthread;-lcrypto;-lz;-ldl;-pthread;-lxml2;-lz;-llzma;-lm;-lrpm;-lrpmio;-lpopt;-lrt;-lpthread;-llzma;-ldb;-lbz2;-lz;-llua;-lm;-ldl;-L/usr/lib;-lzstd;-lsqlite3;-lm;-ldl;-lz;-lpthread;-lsolvext;-lsolv
 libdnf_STATIC_LDFLAGS_OTHER:INTERNAL=-pthread;-pthread;-pthread;-pthread;-Wl,--as-needed;-pthread;-pthread
 libdnf_STATIC_LIBDIR:INTERNAL=
-libdnf_STATIC_LIBRARIES:INTERNAL=dnf;pcre;repo;gpgme;gpg-error;glib-2.0;pcre;curl;nghttp2;idn2;ssh;ssh;psl;ssl;crypto;crypto;gssapi_krb5;krb5;k5crypto;com_err;ldap;lber;brotlidec;brotlidec;z;ssl;z;dl;crypto;z;dl;xml2;z;lzma;m;rpm;rpmio;popt;rt;pthread;lzma;db;z;nss3;zstd;sqlite3;m;dl;z;pthread;solvext;solv
-libdnf_STATIC_LIBRARY_DIRS:INTERNAL=/opt/lib64;/usr/lib;/opt/lib64
+libdnf_STATIC_LIBRARIES:INTERNAL=dnf;pcre;repo;gpgme;gpg-error;glib-2.0;pcre;curl;nghttp2;idn2;ssh;ssh;psl;ssl;crypto;crypto;gssapi_krb5;krb5;k5crypto;com_err;ldap;lber;brotlidec;brotlidec;z;ssl;z;dl;crypto;z;dl;xml2;z;lzma;m;rpm;rpmio;popt;rt;pthread;lzma;db;bz2;z;lua;m;dl;zstd;sqlite3;m;dl;z;pthread;solvext;solv
+libdnf_STATIC_LIBRARY_DIRS:INTERNAL=/opt/lib64;/usr/lib
 libdnf_STATIC_LIBS:INTERNAL=
 libdnf_STATIC_LIBS_L:INTERNAL=
 libdnf_STATIC_LIBS_OTHER:INTERNAL=
@@ -519,7 +519,7 @@ pkgcfg_lib_rpm_rpm-ADVANCED:INTERNAL=1
 pkgcfg_lib_rpm_rpmio-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib_yaml-0.1_yaml
 pkgcfg_lib_yaml-0.1_yaml-ADVANCED:INTERNAL=1
-prefix_result:INTERNAL=/opt/lib
+prefix_result:INTERNAL=/usr/local/lib
 python3_CFLAGS:INTERNAL=-I/usr/include/python3.7m
 python3_CFLAGS_I:INTERNAL=
 python3_CFLAGS_OTHER:INTERNAL=
@@ -555,37 +555,37 @@ python3_python3_INCLUDEDIR:INTERNAL=
 python3_python3_LIBDIR:INTERNAL=
 python3_python3_PREFIX:INTERNAL=
 python3_python3_VERSION:INTERNAL=
-rpm_CFLAGS:INTERNAL=-I/opt/include
+rpm_CFLAGS:INTERNAL=
 rpm_CFLAGS_I:INTERNAL=
 rpm_CFLAGS_OTHER:INTERNAL=
 rpm_FOUND:INTERNAL=1
-rpm_INCLUDEDIR:INTERNAL=/opt/include
-rpm_INCLUDE_DIRS:INTERNAL=/opt/include
-rpm_LDFLAGS:INTERNAL=-L/opt/lib64;-lrpm;-lrpmio
+rpm_INCLUDEDIR:INTERNAL=/usr/include
+rpm_INCLUDE_DIRS:INTERNAL=
+rpm_LDFLAGS:INTERNAL=-lrpm;-lrpmio
 rpm_LDFLAGS_OTHER:INTERNAL=
-rpm_LIBDIR:INTERNAL=/opt/lib64
+rpm_LIBDIR:INTERNAL=/usr/lib64
 rpm_LIBRARIES:INTERNAL=rpm;rpmio
-rpm_LIBRARY_DIRS:INTERNAL=/opt/lib64
+rpm_LIBRARY_DIRS:INTERNAL=
 rpm_LIBS:INTERNAL=
 rpm_LIBS_L:INTERNAL=
 rpm_LIBS_OTHER:INTERNAL=
 rpm_LIBS_PATHS:INTERNAL=
 rpm_MODULE_NAME:INTERNAL=rpm
-rpm_PREFIX:INTERNAL=/opt
-rpm_STATIC_CFLAGS:INTERNAL=-I/opt/include
+rpm_PREFIX:INTERNAL=/usr
+rpm_STATIC_CFLAGS:INTERNAL=
 rpm_STATIC_CFLAGS_I:INTERNAL=
 rpm_STATIC_CFLAGS_OTHER:INTERNAL=
-rpm_STATIC_INCLUDE_DIRS:INTERNAL=/opt/include
-rpm_STATIC_LDFLAGS:INTERNAL=-L/opt/lib64;-lrpm;-lrpmio;-lpopt;-lrt;-lpthread;-llzma;-ldb;-lz;-lnss3;-L/usr/lib;-lzstd
+rpm_STATIC_INCLUDE_DIRS:INTERNAL=
+rpm_STATIC_LDFLAGS:INTERNAL=-lrpm;-lrpmio;-lpopt;-lrt;-lpthread;-llzma;-ldb;-lbz2;-lz;-llua;-lm;-ldl;-L/usr/lib;-lzstd
 rpm_STATIC_LDFLAGS_OTHER:INTERNAL=
 rpm_STATIC_LIBDIR:INTERNAL=
-rpm_STATIC_LIBRARIES:INTERNAL=rpm;rpmio;popt;rt;pthread;lzma;db;z;nss3;zstd
-rpm_STATIC_LIBRARY_DIRS:INTERNAL=/opt/lib64;/usr/lib
+rpm_STATIC_LIBRARIES:INTERNAL=rpm;rpmio;popt;rt;pthread;lzma;db;bz2;z;lua;m;dl;zstd
+rpm_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib
 rpm_STATIC_LIBS:INTERNAL=
 rpm_STATIC_LIBS_L:INTERNAL=
 rpm_STATIC_LIBS_OTHER:INTERNAL=
 rpm_STATIC_LIBS_PATHS:INTERNAL=
-rpm_VERSION:INTERNAL=4.15.1
+rpm_VERSION:INTERNAL=4.14.2.1
 rpm_rpm_INCLUDEDIR:INTERNAL=
 rpm_rpm_LIBDIR:INTERNAL=
 rpm_rpm_PREFIX:INTERNAL=

@@ -9,27 +9,4 @@ red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: ../red-rpm/red-lib/redlib
 red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: ../red-rpm/red-lib/redlib-glue.h
 red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: ../red-rpm/red-lib/redrpm.h
 red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/cyaml/cyaml.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/argv.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/header.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmarchive.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmcallback.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmds.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmfi.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmfiles.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmfileutil.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmio.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmlib.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmlog.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmmacro.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmpgp.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmprob.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmps.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmstring.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmsw.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmtag.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmtd.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmte.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmts.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmtypes.h
-red-rpm/red-lib/CMakeFiles/redrpm.dir/redlib-glue.c.o: /opt/include/rpm/rpmutil.h
 

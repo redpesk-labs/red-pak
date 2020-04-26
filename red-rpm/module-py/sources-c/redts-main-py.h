@@ -41,7 +41,7 @@ typedef enum {
 typedef struct {
     const char *redpath;  // redpath terminal leaf path
     redNodeT *redtree;    // redpath full family node tree
-    redConfigT *redconf;   // main config from /etc/redpak/main.conf
+    redConfigT *redconf;   // main config from /etc/redpak/main.yaml
     redpakCheckE shouldcheck; // status passed from install/update/remove to transaction run
 } redpakTsT;
 

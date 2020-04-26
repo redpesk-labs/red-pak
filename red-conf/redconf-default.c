@@ -145,5 +145,7 @@ RedConfDefaultsT nodeConfigDefaults[]= {
     {"NODE_PATH"      , GetNodeInfo, (void*) REDNODE_INFO_PATH},
     {"NODE_INFO"      , GetNodeInfo, (void*) REDNODE_INFO_INFO},
 
+    {"REDPESK_VERSION", GetEnviron, REDPESK_DFLT_VERSION},
+
     {NULL} /* sentinel */
 };

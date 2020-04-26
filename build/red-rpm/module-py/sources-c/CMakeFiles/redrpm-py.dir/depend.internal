@@ -25,35 +25,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/redts-glue-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmstrpool-py.h
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmte-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmbuild.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmcli.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmfileutil.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmmacro.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmsign.h
- /opt/include/rpm/rpmspec.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmurl.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -152,35 +123,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/redts-import-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmstrpool-py.h
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmte-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmbuild.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmcli.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmfileutil.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmmacro.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmsign.h
- /opt/include/rpm/rpmspec.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmurl.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -281,34 +223,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/redts-main-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmstrpool-py.h
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmte-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmbuild.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmcli.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmfileutil.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmmacro.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmspec.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmurl.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -399,28 +313,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/header-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmfi-py.h
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmtd-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -513,28 +405,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmarchive-py.c.
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmfiles-py.h
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmstrpool-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -624,28 +494,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmds-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmds-py.h
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmstrpool-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -734,28 +582,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmfd-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmfd-py.c
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmfd-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -845,28 +671,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmfi-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmfi-py.h
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmstrpool-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -959,28 +763,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmfiles-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmfiles-py.h
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmstrpool-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -1070,28 +852,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmii-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmii-py.h
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmtd-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -1179,29 +939,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmkeyring-py.c.
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmkeyring-py.c
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmkeyring-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmkeyring.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -1290,30 +1027,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmmacro-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmmacro-py.c
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmmacro-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmfileutil.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmmacro.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -1402,28 +1115,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmmi-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmmi-py.c
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmmi-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -1511,28 +1202,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmps-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmps-py.c
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmps-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -1620,29 +1289,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmstrpool-py.c.
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmstrpool-py.c
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmstrpool-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmstrpool.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -1731,28 +1377,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmtd-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmtd-py.c
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmtd-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h
@@ -1845,28 +1469,6 @@ red-rpm/module-py/sources-c/CMakeFiles/redrpm-py.dir/rpmlib-ori/rpmte-py.c.o
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmte-py.c
  /home/fulup/Workspace/DNF/red-pak/red-rpm/module-py/sources-c/rpmlib-ori/rpmte-py.h
  /opt/include/cyaml/cyaml.h
- /opt/include/rpm/argv.h
- /opt/include/rpm/header.h
- /opt/include/rpm/rpmarchive.h
- /opt/include/rpm/rpmcallback.h
- /opt/include/rpm/rpmdb.h
- /opt/include/rpm/rpmds.h
- /opt/include/rpm/rpmfi.h
- /opt/include/rpm/rpmfiles.h
- /opt/include/rpm/rpmio.h
- /opt/include/rpm/rpmlib.h
- /opt/include/rpm/rpmlog.h
- /opt/include/rpm/rpmpgp.h
- /opt/include/rpm/rpmprob.h
- /opt/include/rpm/rpmps.h
- /opt/include/rpm/rpmstring.h
- /opt/include/rpm/rpmsw.h
- /opt/include/rpm/rpmtag.h
- /opt/include/rpm/rpmtd.h
- /opt/include/rpm/rpmte.h
- /opt/include/rpm/rpmts.h
- /opt/include/rpm/rpmtypes.h
- /opt/include/rpm/rpmutil.h
  /usr/include/python3.7m/Python.h
  /usr/include/python3.7m/abstract.h
  /usr/include/python3.7m/bltinmodule.h

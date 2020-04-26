@@ -15,7 +15,7 @@ static char rpmts_doc[] =
   "\n"
   "The TransactionSet function takes only one arguments (redpath).\n"
   "Redpath should point on the last children of a redpak container node family.\n"
-  "Every other argement including signature verification are taken from ${nodepath]/etc/redpak.conf}:\n"
+  "Every other argement including signature verification are taken from ${nodepath]/etc/redpack.yaml}:\n"
   "\n"
   ;
   

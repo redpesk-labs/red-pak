@@ -30,16 +30,16 @@
 #endif
 
 #ifndef redpak_MAIN
-#define redpak_MAIN "/etc/redpak/main.conf"
+#define redpak_MAIN "/etc/redpak/main.yaml"
 #endif
 
 // Following file/dir are automatically prefixed by $REDPATH at runtime
 #ifndef REDNODE_CONF
-#define REDNODE_CONF "etc/redpak.conf"
+#define REDNODE_CONF "etc/redpack.yaml"
 #endif
 
 #ifndef REDNODE_STATUS
-#define REDNODE_STATUS ".rednode.status"
+#define REDNODE_STATUS ".rednode.yaml"
 #endif
 
 #ifndef REDNODE_VARDIR
@@ -54,6 +54,9 @@
 #define REDSTATUS_INFO "Last update by $LOGNAME($HOSTNAME) the $TODAY"
 #endif
 
+#ifndef REDPESK_DFLT_VERSION
+#define REDPESK_DFLT_VERSION "agl-redpesk9"
+#endif
 
 typedef enum  {
     REDLOG_EMERGENCY = 0,

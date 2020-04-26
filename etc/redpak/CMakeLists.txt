@@ -16,9 +16,9 @@
 # limitations under the License.
 ##########################################################################
 
-file(GLOB redpak_CONF [a-z]*.conf)
+file(GLOB redpak_CONF [a-z]*.yaml)
 
 INSTALL (FILES ${redpak_CONF} DESTINATION ${CMAKE_INSTALL_PREFIX}/etc/redpak/)
 
-file(GLOB TEMPLATES_CONF templates.d/[a-z]*.conf)
+file(GLOB TEMPLATES_CONF templates.d/[a-z]*.yaml)
 INSTALL (FILES ${TEMPLATES_CONF} DESTINATION ${CMAKE_INSTALL_PREFIX}/etc/redpak/templates.d)

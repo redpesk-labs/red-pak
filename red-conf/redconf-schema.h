@@ -24,7 +24,7 @@
 #include <sys/types.h>
 #include <cyaml/cyaml.h>
 
-// ---- RedConfig Schema for ${redpath}/etc/redpak.conf ----
+// ---- RedConfig Schema for ${redpath}/etc/redpack.yaml ----
     typedef struct {
         const char *alias;
         const char *name;

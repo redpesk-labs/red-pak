@@ -16,7 +16,7 @@
 # limitations under the License.
 ##########################################################################
 
-# /opt/bin/dnf-3 -c /opt/etc/dnf/redpak.conf red-node --redpath=/var/redpak/agl-master --create --alias=xxx
+# /opt/bin/dnf-3 -c /opt/etc/dnf/redpack.yaml red-node --redpath=/var/redpak/agl-master --create --alias=xxx
 
 import os
 import dnf
@@ -41,7 +41,7 @@ class RedManagerCommand(dnf.cli.Command):
         parser.add_argument("--alias", help="rednode alias name [mandatory when creating")
         parser.add_argument("--update", default=False, action='store_true', help="force creation even when node exist")
         parser.add_argument("--create", default=False, action='store_true', help="Create an empry node [require --alias]")
-        parser.add_argument("--template", help="create node config from temmplate [default= /etc/redpak/template.d/default.conf]")
+        parser.add_argument("--template", help="create node config from temmplate [default= /etc/redpak/template.d/default.yaml]")
         RedManagerCommand._dnfcmd.set_argparser(parser)
 
     def configure(self):

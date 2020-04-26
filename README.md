@@ -127,9 +127,12 @@ Concept:
     2) Add a repository of rpm packages to your node
 
         +  red-dnf --redpath=/var/redpesk/agl-redpesk9 red-manager --add-repo http://kojihub.lorient.iot/kojifiles/repos/II--RedPesk-9-build/latest/x86_64   
+
         Note: you may have multiple repository per node. (should be fixed) My sample URL is not public 
 
     3) Install a package in your node
+
+        + red-dnf --redpath=/var/redpesk/agl-redpesk9 red-search binder
         + red-dnf --redpath=/var/redpesk/agl-redpesk9 red-install agl-app-framework-binder
 
     4) Start an application in your node.
@@ -139,7 +142,7 @@ Concept:
 
     5) Enter with 'bash' in your container
 
-        +  red-wrap --redpath=/var/redpesk/agl-redpesk9 bash 
+        +  red-wrap --redpath=/var/redpesk/agl-redpesk9 --force bash 
         ```
             > ls /
             > ls /nodes/agl-core/usr/bin/
@@ -159,15 +162,26 @@ Concept:
     8) Install helloworld demo
 
         +  red-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo red-search agl
+        +  red-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo red-install agl-service-helloworld.x86_64
 
     9) Enter your new node
+
+        + ls /nodes
+        + ls ls /nodes/agl-core/usr/bin/afb-daemon
     
-        +  red-wrap --redpath=/var/redpesk/agl-redpesk9/agl-demo bash 
+        +  red-wrap --redpath=/var/redpesk/agl-redpesk9/agl-demo --force bash 
+        +  afb-daemon --ldpaths=/nodes/agl-demo --workdir=. --roothttp=/nodes/agl-demo/usr/agl-service-helloworld/htdocs --verbose
+
+        + browser http://10.20.101.105/1234
+
+    10) delete a node (they are atomic, a simple 'rm' is enough)
+
+        + rm -rf /var/redpesk/agl-redpesk9/agl-demo
 
 ---
     Config:
 
-+ main config is at /xxx/etc/redpak/main.conf
-+ node config is at $NODE_PATH/etc/redpak.conf
++ main config is at /xxx/etc/redpak/main.yaml
++ node config is at $NODE_PATH/etc/redpack.yaml
 
-Note on config: All sections but 'config/tags' cumulate. Every exports path, mounting point or environment variables defined within each nodes of a given redpath are visible at runtime from the application namespace. Config/tags are unique and fusion at run time. Tags defined within redmain.conf are used as default values. Then within redpath, the oldest ancestor has the priority. As the result if a parent enforce a constrain children cannot overload the selection (i.e rpm signature require, unshare network, ...)
+Note on config: All sections but 'config/tags' cumulate. Every exports path, mounting point or environment variables defined within each nodes of a given redpath are visible at runtime from the application namespace. Config/tags are unique and fusion at run time. Tags defined within redmain.yaml are used as default values. Then within redpath, the oldest ancestor has the priority. As the result if a parent enforce a constrain children cannot overload the selection (i.e rpm signature require, unshare network, ...)

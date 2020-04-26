@@ -50,6 +50,9 @@ PyObject * redts_AddInstall(rpmtsObject * s, PyObject * args) {
     int how = 0;
     int rc;
 
+    // at this point we should have valid config
+    if (!s->redpak->redtree) return NULL;
+
     s->redpak->shouldcheck= RED_CHECK_PARENT;
 
     if (!PyArg_ParseTuple(args, "O&Oi:AddInstall", hdrFromPyObject, &h, &key, &how))
@@ -71,6 +74,9 @@ PyObject *redts_AddReinstall(rpmtsObject * s, PyObject * args){
     PyObject * key;
     int rc;
 
+    // at this point we should have valid config
+    if (!s->redpak->redtree) return NULL;
+
     if (!PyArg_ParseTuple(args, "O&O:AddReinstall", 
 			  hdrFromPyObject, &h, &key))
 	return NULL;
@@ -89,6 +95,9 @@ PyObject *redts_AddReinstall(rpmtsObject * s, PyObject * args){
 PyObject *redts_AddErase(rpmtsObject *s, PyObject * args) {
     Header h;
     int rc;
+
+    // at this point we should have valid config
+    if (!s->redpak->redtree) return NULL;
 
     if (!PyArg_ParseTuple(args, "O&:AddErase", hdrFromPyObject, &h))
         return NULL;
@@ -135,11 +144,17 @@ PyObject *redts_Run(rpmtsObject *s, PyObject *args, PyObject *kwds) {
 
     // if package need to install/update or check package we need to include ancessor rpmDBs
     if (s->redpak->shouldcheck == RED_CHECK_PARENT) {
+        // at this point we should have valid config
+        if (!s->redpak->redtree) {
+            RedLog(REDLOG_ERROR, "redts_Run: Fail to config RedFamily from '%s'", s->redpak->redpath);
+            return NULL;
+        }
+
         //printf ("------- redts_Run tsid=%d running RedRegisterFamilyDb -----------\n", s->tsid);
         // load redpath cotresponding RpmDb 
         rc = RedRegisterFamilyDb (s->ts, s->redpak->redconf, s->redpak->redtree);
         if (rc != 0) {
-            RedLog(REDLOG_ERROR, "redts_init: Fail to RpmDb Family from '%s'", s->redpak->redpath);
+            RedLog(REDLOG_ERROR, "redts_Run: Fail to RpmDb RedFamily from '%s'", s->redpak->redpath);
             goto OnErrorExit;
         }
     }

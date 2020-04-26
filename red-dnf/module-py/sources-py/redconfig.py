@@ -55,9 +55,9 @@ class ParseNode(Environment):
         if not self.defaults:
             self.defaults={}
 
-        # If we have no redpath or when redpath=/ than we seach for coreos redpak.conf otherwise search for a rednode
+        # If we have no redpath or when redpath=/ than we seach for coreos redpack.yaml otherwise search for a rednode
         if redpath and redpath != '/':
-            self.confpath= '{}/etc/redpak.conf'.format(redpath)
+            self.confpath= '{}/etc/redpack.yaml'.format(redpath)
             self.defaults['redpath']=redpath
             self.GetConf()
         else:
@@ -73,7 +73,7 @@ class ParseNode(Environment):
                 raise dnf.exceptions.Error("No file at path={}".format(self.confpath))     
             else:
                 self.isnode=False
-                print ("Info: Node ignored [no redpak.conf] path={} ()".format(self.confpath))
+                print ("Info: Node ignored [no redpack.yaml] path={} ()".format(self.confpath))
                 return
         else:
             self.isnode=True
@@ -93,7 +93,7 @@ class ParseNode(Environment):
         self.headers = config['headers']
         self.config = config['config']
 
-    # get main /etc/repack/main.conf and set umask default value
+    # get main /etc/repack/main.yaml and set umask default value
     def GetMain(self):
 
         if 'redpak_MAIN' in os.environ:
@@ -101,7 +101,7 @@ class ParseNode(Environment):
         elif 'redpak_MAIN' in self.defaults:
             self.confpath=self.defaults['redpak_MAIN']
         else:
-            self.confpath='/etc/redpak/main.conf'
+            self.confpath='/etc/redpak/main.yaml'
 
         self.GetConf()       
         if not 'umask' in self.config:
@@ -208,7 +208,7 @@ class ParseTemplate(Environment):
             defaults['redpak_TMPL']= "/etc/redpak/templates.d"
             
         self.defaults=defaults
-        self.tmplpath='{}/{}.conf'.format(defaults['redpak_TMPL'], tmplname)
+        self.tmplpath='{}/{}.yaml'.format(defaults['redpak_TMPL'], tmplname)
 
         if not os.access(self.tmplpath, os.R_OK):
             raise dnf.exceptions.Error("Template not readable path={}".format(self.tmplpath))

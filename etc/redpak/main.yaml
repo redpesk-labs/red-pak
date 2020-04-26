@@ -6,8 +6,8 @@
 # - Define default exec time values for every rednode nspace
 # - Syntax is identical for all rednode (root, platform, terminal, ...)
 #
-# - CodeOS main.conf should be edited manually
-# - RedNode main.conf is typically generated at creation time from template:
+# - CodeOS main.yaml should be edited manually
+# - RedNode main.yaml is typically generated at creation time from template:
 #   + red-dnf --redpath=/xxxx/xxxx --create --alias=xxxx [--template=Default]
 #-----------------------------------------------------------------------------
 
@@ -162,7 +162,7 @@ exports:
 # private is here only for documentation
 # ----------------------------------------------------
 #  - private are only mounted when configpath==redpath
-#  - this never happen with coreos/main.conf
+#  - this never happen with coreos/main.yaml
 #  - mount: /etc
 #     path: /etc
 #     mode:  Private

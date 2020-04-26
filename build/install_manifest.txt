@@ -1,5 +1,5 @@
-/opt/etc/redpak/main.conf
-/opt/etc/redpak/templates.d/default.conf
+/opt/etc/redpak/main.yaml
+/opt/etc/redpak/templates.d/default.yaml
 /opt/etc/redpak/reddnf.conf
 /opt/etc/bash_completion.d/reddnf
 /opt/etc/bash_completion.d/redwrap

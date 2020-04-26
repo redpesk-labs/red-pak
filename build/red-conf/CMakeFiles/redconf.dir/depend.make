@@ -14,8 +14,6 @@ red-conf/CMakeFiles/redconf.dir/redconf-schema.c.o: ../red-conf/redconf-schema.h
 red-conf/CMakeFiles/redconf.dir/redconf-schema.c.o: ../red-conf/redconf-utils.h
 red-conf/CMakeFiles/redconf.dir/redconf-schema.c.o: ../red-conf/redconf.h
 red-conf/CMakeFiles/redconf.dir/redconf-schema.c.o: /opt/include/cyaml/cyaml.h
-red-conf/CMakeFiles/redconf.dir/redconf-schema.c.o: /opt/include/rpm/rpmlog.h
-red-conf/CMakeFiles/redconf.dir/redconf-schema.c.o: /opt/include/rpm/rpmutil.h
 
 red-conf/CMakeFiles/redconf.dir/redconf-utils.c.o: ../red-conf/redconf-defaults.h
 red-conf/CMakeFiles/redconf.dir/redconf-utils.c.o: ../red-conf/redconf-schema.h
