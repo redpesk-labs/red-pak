@@ -4,6 +4,10 @@
 
 Work In progress: binary packages should come soon. In the mean time early adopter should start from source code.
 
+ - Videos:
+    + Introduction to concepts and architecture https://vimeo.com/412131602
+    + Quick demo on how to install AGL framework and helloworld demo https://vimeo.com/412135018
+
 - redpak target embedded and critical infrastructures
     + it maximizes resource sharing (no rootfs/sharedlib duplication)
     + it is designed to be auditable. While each individual nodes are independent, the global coherency is provided by dnf/rpm and libsolv at the coreos level). redpak coherency can be statically proven at CI level before pushing the image to the target.
