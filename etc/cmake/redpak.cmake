@@ -25,11 +25,17 @@ include (CMakeCXXInformation)
 # ------------------------------------------
 find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
 EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "
-from sys import stdout
 from distutils import sysconfig
-path=sysconfig.get_python_lib(True, prefix='${CMAKE_INSTALL_PREFIX}')
-stdout.write(path)"
-OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
+print(sysconfig.get_python_lib(True, prefix=\"${CMAKE_INSTALL_PREFIX}\"))"
+OUTPUT_VARIABLE PYTHON_INSTALL_DIR
+OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "
+from distutils import sysconfig
+print(sysconfig.get_python_lib(True))"
+OUTPUT_VARIABLE PYTHON_SITELIB_DIR
+OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 MESSAGE(STATUS "Python=${PYTHON_EXECUTABLE} install dir is ${PYTHON_INSTALL_DIR}")
 
 # few usefull macro from AGL cmake template

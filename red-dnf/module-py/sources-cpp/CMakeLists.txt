@@ -28,8 +28,14 @@ PROJECT_TARGET_ADD(reddnf-py)
 		LABELS "LIBRARY"
 		OUTPUT_NAME reddnf
         LINKER_LANGUAGE CXX
-        LINK_LIBRARIES ${PYTHON_INSTALL_DIR}/hawkey/_hawkey.so
-	)
+    )
+
+    target_link_directories(${TARGET_NAME}
+     PUBLIC ${PYTHON_SITELIB_DIR}/hawkey
+     PUBLIC ${PYTHON_INSTALL_DIR}/hawkey
+    )
+
+    target_link_libraries(${TARGET_NAME} :_hawkey.so)
 
     target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
     install(TARGETS ${TARGET_NAME} DESTINATION ${PYTHON_MODULE_DIR})

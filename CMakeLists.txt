@@ -41,6 +41,7 @@ set (PKG_REQUIRED_LIST
 	rpm
 	yaml-0.1
 	libcyaml
+  uuid
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake/redpak.cmake)
