@@ -80,7 +80,7 @@ int RedDumpStatusPath (const char *filepath, int warning) {
     return 0;
 
 OnErrorExit:
-    return 1;    
+    return 1;
 }
 
 void RedDumpConfigHandle(redConfigT *config) {
@@ -95,7 +95,7 @@ void RedDumpConfigHandle(redConfigT *config) {
         const char* mount= config->exports[idx].mount;
         const char* path=config->exports[idx].path;
 
-        printf ("- [%d] mode:%s mount=%s path=%s\n", idx, exportFlagStrings[mode].str, mount, path);       
+        printf ("- [%d] mode:%s mount=%s path=%s\n", idx, exportFlagStrings[mode].str, mount, path);
     }
     printf ("---\n\n");
 }
@@ -113,7 +113,7 @@ int RedDumpConfigPath (const char *filepath, int warning) {
     return 0;
 
 OnErrorExit:
-    return 1;    
+    return 1;
 }
 
 static int PopDownRedpath (char *redpath) {
@@ -146,7 +146,7 @@ redNodeYamlE RedNodesLoad(const char* redpath, redNodeT *node, int verbose) {
 
     error= stat(nodepath, &statinfo);
     if (error || !S_ISREG(statinfo.st_mode)) {
-        rc=RED_NODE_CONFIG_MISSING;    
+        rc=RED_NODE_CONFIG_MISSING;
         goto OnExit;
     }
 
@@ -172,7 +172,7 @@ OnExit:
     return rc;
 
 OnErrorExit:
-    return RED_NODE_CONFIG_FX;    
+    return RED_NODE_CONFIG_FX;
 }
 
 // return 0 on success, 1 when for none redpak node and -1 when paring fail
@@ -205,7 +205,7 @@ static int RedNodesDigToRoot(char* nodepath, redNodeT *childrenNode, int verbose
     int index;
     redNodeT *parentNode;
 
-    while (1) { 
+    while (1) {
 
         // if we are not at root level dig down for ancestor node
         index = PopDownRedpath (nodepath);
@@ -217,21 +217,21 @@ static int RedNodesDigToRoot(char* nodepath, redNodeT *childrenNode, int verbose
         // We have parent directories let's check if they are rednode compatible
         redNodeT *parentNode = calloc (1, sizeof(redNodeT));
         redNodeYamlE result= RedNodesLoad(nodepath, parentNode, verbose);
-        
+
         switch (result) {
             case RED_NODE_CONFIG_OK:
-                childrenNode->ancestor = parentNode;  
+                childrenNode->ancestor = parentNode;
                 childrenNode=parentNode;
                 break;
             case  RED_NODE_CONFIG_MISSING:
-                if (verbose) 
+                if (verbose)
                     RedLog(REDLOG_WARNING, "redpak ignoring empty node [path=%s]", nodepath);
                 free (parentNode);
                 break;
             default:
-                goto OnErrorExit;       
+                goto OnErrorExit;
         }
-    } 
+    }
 
 OnSuccessExit:
     return 0;
@@ -267,7 +267,7 @@ redNodeT *RedNodesScan(const char* redpath, int verbose) {
     return redleaf;
 
 OnErrorExit:
-    return NULL;   
+    return NULL;
 }
 
 // Debug tool dump a redpak node family tree
@@ -298,7 +298,7 @@ int RedDumpFamilyNodePath (const char* redpath, int verbose) {
     return 0;
 
 OnErrorExit:
-    return 1;    
+    return 1;
 }
 
 // Return current UTC time in ms
@@ -308,7 +308,7 @@ unsigned long RedUtcGetTimeMs () {
 
     // get UTC time
     gettimeofday(&tp, NULL);
-    epocms = tp.tv_sec * 1000 + tp.tv_usec / 1000; 
+    epocms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
 
     return (epocms);
 }
@@ -317,7 +317,7 @@ unsigned long RedUtcGetTimeMs () {
 
 // Extract $KeyName and replace with $Key Env or default Value
 static void RedConfGetEnvKey (redNodeT *node, RedConfDefaultsT *defaults, int *idxIn, const char *inputS, int *idxOut, char *outputS) {
-    char envkey[64]; 
+    char envkey[64];
     char *envval;
 
     // get envkey from $ to any 1st non alphanum character
@@ -348,12 +348,12 @@ static void RedConfGetEnvKey (redNodeT *node, RedConfDefaultsT *defaults, int *i
                         for (int jdx=0; envval[jdx]; jdx++) outputS[(*idxOut)++]= envval[jdx];
                         break;
                     case REDDEFLT_CB:
-                        envval = (*(RedGetDefaultCbT)defaults[idx].value) (node, defaults[idx].label); 
+                        envval = (*(RedGetDefaultCbT)defaults[idx].value) (node, defaults[idx].label);
                         for (int jdx=0; envval[jdx]; jdx++) outputS[(*idxOut)++]= envval[jdx];
                         free (envval);
                         break;
                     default:
-                        envval = "#UNSUPPORTED_ENVCB";       
+                        envval = "#UNSUPPORTED_ENVCB";
                         for (int jdx=0; envval[jdx]; jdx++) outputS[(*idxOut)++]= envval[jdx];
                 }
                 break;
@@ -366,7 +366,7 @@ static void RedConfGetEnvKey (redNodeT *node, RedConfDefaultsT *defaults, int *i
 OnErrorExit:
     envval="#INVALID_ENVKEY";
     for (int jdx=0; envval[jdx]; jdx++) outputS[(*idxOut)++]= envval[jdx];
-    return;    
+    return;
 }
 
 // Expand string with environnement variable
@@ -383,14 +383,14 @@ const char * RedNodeStringExpand (redNodeT *node, RedConfDefaultsT *defaults, co
         }
     }
 
-    // search for a $within string input format 
+    // search for a $within string input format
     for (idxIn=0; inputS[idxIn] != '\0'; idxIn++) {
 
         if (inputS[idxIn] != '$') {
             if (idxOut == MAX_CYAML_FORMAT_STR)  goto OnErrorExit;
             outputS[idxOut++] = inputS[idxIn];
 
-        } else {    
+        } else {
             if (count == MAX_CYAML_FORMAT_ENV) goto OnErrorExit;
             RedConfGetEnvKey (node, defaults, &idxIn, inputS, &idxOut, outputS);
             count ++;
@@ -404,7 +404,7 @@ const char * RedNodeStringExpand (redNodeT *node, RedConfDefaultsT *defaults, co
             idxOut++;
         }
     }
-    
+
     // close the string
     outputS[idxOut]='\0';
 

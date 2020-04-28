@@ -60,7 +60,7 @@ class RedManagerCommand(dnf.cli.Command):
             if not self.opts.alias:
                raise dnf.exceptions.Error("--create require --alias=xxxx [no default]")
             if not self.opts.template:
-               self.opts.template='default' 
+               self.opts.template='default'
 
         # check we redpath is defined and exist
         if not self.opts.redpath:
@@ -73,7 +73,7 @@ class RedManagerCommand(dnf.cli.Command):
             self.opts.set_disabled or
             self.opts.set_enabled) ):
                     self.cli.optparser.error("one of the following arguments is required: {}".format(' '.join([
-                    "--save", "--add-repo", "--dump", "--dump-variables", "--enable", "--disable"])))   
+                    "--save", "--add-repo", "--dump", "--dump-variables", "--enable", "--disable"])))
 
     def checkdir(self, label, dirpath, create=False):
 
@@ -86,13 +86,13 @@ class RedManagerCommand(dnf.cli.Command):
                 raise dnf.exceptions.Error("Directory {} fail to create path={}".format(label, dirpath))
 
         if not os.access(dirpath, os.W_OK):
-            raise dnf.exceptions.Error("Directory {} not writable (check user permission) path={}".format(label, dirpath))        
+            raise dnf.exceptions.Error("Directory {} not writable (check user permission) path={}".format(label, dirpath))
 
     def CreateRednode(self):
 
         # if redpath does not exist create it now
         self.checkdir("redpath", self.opts.redpath, create=True)
-   
+
         reddnf.config.rednode_template (self.opts, None)
         reddnf.config.rednode_status (self.opts, None)
 
@@ -100,7 +100,7 @@ class RedManagerCommand(dnf.cli.Command):
 
         if self.opts.create:
             self.CreateRednode ()
-        
+
         # if node config stop here
         if (self.nodeconfig):
             print("-----------------------------------------------------------")
@@ -110,7 +110,7 @@ class RedManagerCommand(dnf.cli.Command):
 
         # at this point redpath should exist
         self.checkdir("redpath", self.opts.redpath)
-    
+
         # check redpath is writable
         if not os.access(self.opts.redpath, os.W_OK):
             raise dnf.exceptions.Error("Redpath not writable redpath=/xx/../xyz (check user permission)")

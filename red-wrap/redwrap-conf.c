@@ -73,19 +73,19 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[]) {
 				break;
 
 			case 'c':
-				config->cnfpath=optarg;		
+				config->cnfpath=optarg;
 				break;
 
 			case 'b':
-				config->bwrap=optarg;		
+				config->bwrap=optarg;
 				break;
 
 			case 'f':
-				config->forcemod=1;		
+				config->forcemod=1;
 				break;
 
 			case 'u':
-				config->unsafe=1;		
+				config->unsafe=1;
 				break;
 
 			case '-':
@@ -93,7 +93,7 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[]) {
 				break;
 
 			default:
-				goto OnErrorExit;		
+				goto OnErrorExit;
 		}
 	}
 

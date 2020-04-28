@@ -73,7 +73,7 @@ static int rpmfd_init(rpmfdObject *s, PyObject *args, PyObject *kwds)
     FD_t fd = NULL;
     int fdno;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|ss", kwlist, 
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "O|ss", kwlist,
 				     &fo, &mode, &flags))
 	return -1;
 
@@ -204,8 +204,8 @@ static PyObject *rpmfd_seek(rpmfdObject *s, PyObject *args, PyObject *kwds)
     int whence = SEEK_SET;
     int rc = 0;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "L|i", kwlist, 
-				     &offset, &whence)) 
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "L|i", kwlist,
+				     &offset, &whence))
 	return NULL;
 
     if (s->fd == NULL) return err_closed();
@@ -227,7 +227,7 @@ static PyObject *rpmfd_tell(rpmfdObject *s)
     offset = Ftell(s->fd);
     Py_END_ALLOW_THREADS
     return Py_BuildValue("L", offset);
-    
+
 }
 
 static PyObject *rpmfd_read(rpmfdObject *s, PyObject *args, PyObject *kwds)
@@ -238,7 +238,7 @@ static PyObject *rpmfd_read(rpmfdObject *s, PyObject *args, PyObject *kwds)
     ssize_t left = -1;
     ssize_t nb = 0;
     PyObject *res = NULL;
-    
+
     if (!PyArg_ParseTupleAndKeywords(args, kwds, "|l", kwlist, &left))
 	return NULL;
 
@@ -250,9 +250,9 @@ static PyObject *rpmfd_read(rpmfdObject *s, PyObject *args, PyObject *kwds)
 	if (left >= 0 && left < chunksize)
 	    chunksize = left;
 
-	Py_BEGIN_ALLOW_THREADS 
+	Py_BEGIN_ALLOW_THREADS
 	nb = Fread(buf, 1, chunksize, s->fd);
-	Py_END_ALLOW_THREADS 
+	Py_END_ALLOW_THREADS
 
 	if (nb > 0) {
 	    PyObject *tmp = PyBytes_FromStringAndSize(buf, nb);
@@ -284,9 +284,9 @@ static PyObject *rpmfd_write(rpmfdObject *s, PyObject *args, PyObject *kwds)
 
     if (s->fd == NULL) return err_closed();
 
-    Py_BEGIN_ALLOW_THREADS 
+    Py_BEGIN_ALLOW_THREADS
     rc = Fwrite(buf, 1, size, s->fd);
-    Py_END_ALLOW_THREADS 
+    Py_END_ALLOW_THREADS
 
     if (Ferror(s->fd)) {
 	PyErr_SetString(PyExc_IOError, Fstrerror(s->fd));

@@ -95,7 +95,7 @@
         const char *realpath;
         unsigned long timestamp;
         const char *info;
-    } redStatusT; 
+    } redStatusT;
 
 // ---- Family tree structure ----
 typedef enum {

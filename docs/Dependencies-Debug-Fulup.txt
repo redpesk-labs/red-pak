@@ -5,21 +5,21 @@ Note: pour éviter les erreurs, en mode debug
  - sudo mkdir /opt
  - sudo chown fulup /opt
 
-Source pour les lib reférences 
+Source pour les lib reférences
  - libdnf-0.47.0
  - rpm-4.15.1
- - libsolv-0.7.11 
+ - libsolv-0.7.11
 
 
 # install dependencies
 # ----------------------
     sudo dnf install gcc cmake gdb gcc-c++ make check-devel libsolv-devel
     sudo dnf install cppunit-devel glib2-devel gpgme-devel json-c-devel libmodulemd-devel librepo-devel libsmartcols-devel sqlite-devel zchunk-devel swig  python3-devel
-   
+
 # install de libdnf from git
     git clone https://github.com/rpm-software-management/libdnf
 
- 
+
     # editer le spec file pour virer les dependances sur Sphink
     # editer le CMaketemplate et suprimer la génération de la doc et des tests
         # deplacer hawkey pour qu'il passe sans les test !!!
@@ -33,9 +33,9 @@ Source pour les lib reférences
         # forcer le path de recherche de cmake/Module (ajouter après le check de la version CMAKE)
             set(CMAKE_MODULE_PATH /opt/share/cmake/Modules;${CMAKE_MODULE_PATH})
             set(CFLAGS -I/opt/include)
-        # commenter la section documentation   
+        # commenter la section documentation
 
-    WARNING: Patch source to add   dnf_sack_add_rpmdb_repo(DnfSack *sack, const char* reponame, GError **error)  
+    WARNING: Patch source to add   dnf_sack_add_rpmdb_repo(DnfSack *sack, const char* reponame, GError **error)
 
     mkdir build && cd build
     cmake  -DCMAKE_BUILD_TYPE=Debug -DPYTHON_DESIRED=3 -DENABLE_TESTS=false -DWITH_GTKDOC=false -DWITH_MAN=false -DWITH_HTML=false -DCMAKE_INSTALL_PREFIX='/opt' ..
@@ -49,13 +49,13 @@ Source pour les lib reférences
         SET( SYSCONFDIR /opt/etc)
         SET( SYSTEMD_DIR /opt/usr/lib/systemd/system)
 
-    cmake -DPYTHON_DESIRED="3" -DWITH_MAN=0  -DCMAKE_INSTALL_PREFIX='/opt' .. 
+    cmake -DPYTHON_DESIRED="3" -DWITH_MAN=0  -DCMAKE_INSTALL_PREFIX='/opt' ..
     make && make install
 
 # install dnf-plugin
     git clone https://github.com/rpm-software-management/dnf-plugins-core
-    cd dnf-plugins-core  
-    
+    cd dnf-plugins-core
+
     Edit du CMaketemplate
         virer le directory 'docs' du CMaketemplate
         SET (PYTHON_INSTALL_DIR /opt/lib64/python3.7/site-packages)
@@ -71,13 +71,13 @@ Source pour les lib reférences
     replace EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} par SET (PYTHON_INSTALL_DIR /opt/lib64/python3.7/site-packages)
 
   mkdir build
-  cd build  
+  cd build
   cmake  -DENABLE_RPMDB=true -DCMAKE_BUILD_TYPE=Debug -DENABLE_ZCHUNK_COMPRESSION=true -DENABLE_COMPLEX_DEPS=true -DENABLE_RPMDB=true -DENABLE_RPMMD=true -DENABLE_PUBKEY=true -DWITH_LIBXML2=true -DENABLE_PYTHON=true -DCMAKE_INSTALL_PREFIX='/opt' ..
 
 # install librpm (Warning: impose de cleaner le rep build de libsolv et refaire le CMAKE from scratch)
   git clone http://github.com/rpm-software-management/rpm.git
   sudo dnf install libgcrypt-devel file-devel libarchive-devel libtool libdb-devel nss-devel
-  
+
   bug !!!!
   aclocal
   automake
@@ -102,12 +102,12 @@ Source pour les lib reférences
 
     bwrap --ro-bind / /  --proc /proc --dev /dev --unshare-pid bash
     bwrap --ro-bind / /  --bind /var/tmp /tmp --bind /home/fulup /home  --proc /proc --dev /dev --unshare-pid bash
-  
+
 
 
 # valide la config au niveau site
 cat <<EOT > /etc/profile.d/opt_build.sh
-#export DESTDIR=/opt    
+#export DESTDIR=/opt
 export PKG_CONFIG_PATH=/opt/lib64/pkgconfig
 export LD_LIBRARY_PATH=/opt/lib64
 export PYTHONPATH=/opt/usr/lib64/python3.7/site-packages
@@ -120,7 +120,7 @@ EOT
   pluginpath='/opt/lib64/python3.7/site-packages/dnf-plugins'
 
 
-# check 
+# check
   source  /etc/profile.d/opt_build.sh
   dnf-3 --version
 

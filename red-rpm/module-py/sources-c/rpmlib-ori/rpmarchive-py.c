@@ -68,7 +68,7 @@ static PyObject *rpmarchive_read(rpmarchiveObject *s,
     ssize_t left = -1;
     ssize_t nb = 0;
     PyObject *res = NULL;
-    
+
     if (!PyArg_ParseTupleAndKeywords(args, kwds, "|l", kwlist, &left))
 	return NULL;
 
@@ -81,9 +81,9 @@ static PyObject *rpmarchive_read(rpmarchiveObject *s,
 	if (left >= 0 && left < chunksize)
 	    chunksize = left;
 
-	Py_BEGIN_ALLOW_THREADS 
+	Py_BEGIN_ALLOW_THREADS
 	nb = rpmfiArchiveRead(s->archive, buf, chunksize);
-	Py_END_ALLOW_THREADS 
+	Py_END_ALLOW_THREADS
 
 	if (nb > 0) {
 	    PyObject *tmp = PyBytes_FromStringAndSize(buf, nb);
@@ -115,9 +115,9 @@ static PyObject *rpmarchive_write(rpmarchiveObject *s,
     if (s->archive == NULL)
 	return rpmarchive_closed();
 
-    Py_BEGIN_ALLOW_THREADS 
+    Py_BEGIN_ALLOW_THREADS
     rc = rpmfiArchiveWrite(s->archive, buf, size);
-    Py_END_ALLOW_THREADS 
+    Py_END_ALLOW_THREADS
 
     if (rc < 0)
 	return rpmarchive_error(rc);
@@ -147,7 +147,7 @@ static PyObject *rpmarchive_readto(rpmarchiveObject *s,
 
     if (rc)
 	return rpmarchive_error(rc);
-    
+
     Py_RETURN_NONE;
 }
 
@@ -214,7 +214,7 @@ static PyObject *rpmarchive_iternext(rpmarchiveObject *s)
     } else {
 	/* end of iteration, nothing to do */
     }
-    
+
     return next;
 }
 

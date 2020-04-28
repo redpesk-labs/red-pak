@@ -4,7 +4,7 @@ _redwrap()
 {
     local cur prev words cword
     _init_completion -n = || return
-    	
+
     case $cur in
 		--bwrap=*|--redpath=*)
             cur=${cur#*=}
@@ -16,9 +16,9 @@ _redwrap()
 			return
 			;;
     esac
-    
+
     _expand || return
-        
+
     COMPREPLY=( $( compgen -W '--redpath --bwrap' -S '=' -- "$cur" ) \
                 $( compgen -W '--config --help --force'  -- "$cur" ))
 }&&

@@ -11,7 +11,7 @@
  */
 
 /*
-    This file containes almost unmodified functions from original rpmLib 
+    This file containes almost unmodified functions from original rpmLib
     mostly rpmts.c and rpmodule.c. Only routines needed for DNF where imported
 */
 
@@ -36,10 +36,10 @@ static void die(PyObject *cb) {
     if (PyErr_Occurred()) {
 	PyErr_Print();
     }
-    if ((r = PyObject_Repr(cb)) != NULL) { 
+    if ((r = PyObject_Repr(cb)) != NULL) {
 	pyfn = PyBytes_AsString(r);
     }
-    fprintf(stderr, "FATAL ERROR: python callback %s failed, aborting!\n", 
+    fprintf(stderr, "FATAL ERROR: python callback %s failed, aborting!\n",
 	    	      pyfn ? pyfn : "???");
     exit(EXIT_FAILURE);
 }
@@ -72,19 +72,19 @@ PyObject * rpmts_Match(rpmtsObject *s, PyObject *args, PyObject *kwds) {
 	    PyErr_SetString(PyExc_TypeError, "unknown key type");
 	    return NULL;
 	}
-	//One of the conversions above failed, exception is set already 
+	//One of the conversions above failed, exception is set already
 	if (PyErr_Occurred()) goto exit;
     }
 
-    // XXX If not already opened, open the database O_RDONLY now. 
-    // XXX FIXME: lazy default rdonly open also done by rpmtsInitIterator(). 
+    // XXX If not already opened, open the database O_RDONLY now.
+    // XXX FIXME: lazy default rdonly open also done by rpmtsInitIterator().
     if (rpmtsGetRdb(s->ts) == NULL) {
         int rc = rpmtsOpenDB(s->ts, O_RDONLY);
         if (rc || rpmtsGetRdb(s->ts) == NULL) {
             PyErr_SetString(pyrpmError, "rpmdb open failed");
             goto exit;
         }
-    } 
+    }
     rpmdbMatchIterator mi= rpmtsInitIterator(s->ts, tag, key, len);
     mio = rpmmi_Wrap(&rpmmi_Type, mi, (PyObject*)s);
 
@@ -261,14 +261,14 @@ void *rpmtsCallback(const void * hd, const rpmCallbackType what,
         }
     } else
     	Py_INCREF(pkgObj);
-  
+
     args = Py_BuildValue("(iLLOO)", what, amount, total, pkgObj, cbInfo->data);
     result= PyEval_CallObject(cbInfo->cb, args);
 
     Py_DECREF(args);
     Py_DECREF(pkgObj);
 
-    if (!result) 
+    if (!result)
         die(cbInfo->cb);
 
     if (what == RPMCALLBACK_INST_OPEN_FILE) {

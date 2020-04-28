@@ -1,4 +1,4 @@
-// 
+//
 // add missing dep & reference for standard rpm python code to be happy
 //
 

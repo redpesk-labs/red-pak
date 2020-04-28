@@ -8,7 +8,7 @@ and ship rpmlib Python/C glue as a shared library and not a close module, that m
 code could be made obsolete.
 
 - rpmlib-ori: contains 100% unmodified code from RPMlib/Python
-- redts-import: unmodified functions extracted from original rpmts and rpmmodule LibRpm 
+- redts-import: unmodified functions extracted from original rpmts and rpmmodule LibRpm
 - redtd-main: contains every Python module and object initialisation
   outside of some changes in name/class, most of the code remains unchanged from LibRpm
 - redts-glue: contains methods where logic was change to support redpak module

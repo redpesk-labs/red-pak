@@ -44,7 +44,7 @@ class RedSearchCommand(dnf.cli.Command):
         self.opts = None
         self.parser = None
         RedSearchCommand._dnfcmd =  dnf.cli.commands.search.SearchCommand(cli)
-        
+
     @staticmethod
     def set_argparser(parser):
         parser.add_argument("--redpath", help="container hierarchical rootfs path ex: /var/reddnf/platform/profile/project")
@@ -64,7 +64,7 @@ class RedSearchCommand(dnf.cli.Command):
         if not os.path.isdir(self.opts.redpath):
             raise dnf.exceptions.Error("Error: Directory redpak should exist [{}]".format(self.opts.redpath))
 
-   
+
     def run(self):
 
         # Create an empty libsolv dependencies sack

@@ -98,13 +98,13 @@ int rpmmain(int argc, char *argv[])
 	    argerror(_("one type of query/verify may be performed at a "
 			"time"));
     }
-    if (qva->qva_flags && (bigMode & ~MODES_QV)) 
+    if (qva->qva_flags && (bigMode & ~MODES_QV))
 	argerror(_("unexpected query flags"));
 
-    if (qva->qva_queryFormat && (bigMode & ~MODES_QV)) 
+    if (qva->qva_queryFormat && (bigMode & ~MODES_QV))
 	argerror(_("unexpected query format"));
 
-    if (qva->qva_source != RPMQV_PACKAGE && (bigMode & ~MODES_QV)) 
+    if (qva->qva_source != RPMQV_PACKAGE && (bigMode & ~MODES_QV))
 	argerror(_("unexpected query source"));
   }
 
@@ -137,7 +137,7 @@ int rpmmain(int argc, char *argv[])
     if (bigMode != MODE_INSTALL && ia->prefix)
 	argerror(_("--prefix may only be used when installing new packages"));
 
-    if (ia->prefix && ia->prefix[0] != '/') 
+    if (ia->prefix && ia->prefix[0] != '/')
 	argerror(_("arguments to --prefix must begin with a /"));
 
     if (!(bigMode & MODES_IE) && (ia->installInterfaceFlags & INSTALL_HASH))
@@ -163,7 +163,7 @@ int rpmmain(int argc, char *argv[])
     if (ia->incldocs && (ia->transFlags & RPMTRANS_FLAG_NODOCS))
 	argerror(_("only one of --excludedocs and --includedocs may be "
 		 "specified"));
-  
+
     if (bigMode != MODE_INSTALL && (ia->probFilter & RPMPROB_FILTER_IGNOREARCH))
 	argerror(_("--ignorearch may only be specified during package "
 		   "installation"));
@@ -217,7 +217,7 @@ int rpmmain(int argc, char *argv[])
 
     if (rpmcliPipeOutput && initPipe())
 	exit(EXIT_FAILURE);
-	
+
     ts = rpmtsCreate();
     (void) rpmtsSetRootDir(ts, rpmcliRootDir);
     switch (bigMode) {
@@ -252,7 +252,7 @@ int rpmmain(int argc, char *argv[])
 	    ia->relocations[1].oldPath = NULL;
 	    ia->relocations[1].newPath = NULL;
 	} else if (ia->relocations) {
-	    ia->relocations = xrealloc(ia->relocations, 
+	    ia->relocations = xrealloc(ia->relocations,
 			sizeof(*ia->relocations) * (ia->numRelocations + 1));
 	    ia->relocations[ia->numRelocations].oldPath = NULL;
 	    ia->relocations[ia->numRelocations].newPath = NULL;

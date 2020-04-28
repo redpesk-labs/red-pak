@@ -4,7 +4,7 @@
 
   brctl addbr br0
   brctl show br0
-  
+
   ip link set br0 up
   net ip addr add 10.20.105.1 dev br0
   ip addr show
@@ -17,12 +17,6 @@
 
 vi /etc/lxc/lxc_fedora.conf
     lxc.uts.name = fedora
-
-    # need to run red-wrap inside your container
-    lxc.apparmor.profile = generated
-    lxc.apparmor.allow_nesting = 1
-    
-    # I use routed network, but this is your call
     lxc.net.0.type = veth
     lxc.net.0.flags = up
     lxc.net.0.link = br0
@@ -30,15 +24,13 @@ vi /etc/lxc/lxc_fedora.conf
     lxc.net.0.ipv4.address = 10.20.105.100/24
     lxc.net.0.ipv4.gateway = 10.20.105.1
     lxc.net.0.name = eth0
-
-    # you probably have some workspace to mount
-    # WARNING: no '/' in front of home !!!!
     lxc.mount.entry = /home/fulup/Workspace/DNF home/fulup/Workspace none bind,rw,create=dir 0 0
-    
+
     # uid/gid mapping
     lxc.idmap = u 0 100000 10000
     lxc.idmap = g 0 100000 10000
-    
+
+    # WARNING: no '/' in front of home !!!!
 
 
 lxc-create -n fedora -t download  --config=/etc/lxc/lxc_fedora.conf
@@ -46,7 +38,7 @@ lxc-create -n fedora -t download  --config=/etc/lxc/lxc_fedora.conf
   - Select fedora
   - release 30
   - amd64
-  
+
 # add resolv.conf (manually default template is DHCP)
 
   mv /var/lib/lxc/fedora/rootfs/etc/resolv.conf  /var/lib/lxc/fedora/rootfs/etc/resolv.conf.ori
@@ -59,11 +51,11 @@ lxc-create -n fedora -t download  --config=/etc/lxc/lxc_fedora.conf
 # Warning: allow non local service to request DNSMASQ
 
   virer --local-service de /etc/init.d/dnsmasq
-  systemctl restart dnsmasq  
-  
+  systemctl restart dnsmasq
+
 # Start container
 
-  lxc-start -n fedora  
+  lxc-start -n fedora
   lxc-attach -n fedora
 
 
@@ -73,13 +65,13 @@ lxc-create -n fedora -t download  --config=/etc/lxc/lxc_fedora.conf
 
    - Onboot ?   sysctl net.ipv4.ip_forward > /etc/sysctl.d/1_ip_forward.conf
                 firewall-cmd --zone=trusted --change-interface=br0  --permanent
-   
+
   sur gateway:  route add -net 10.20.105.0 netmask 255.255.255.0 gw 10.20.101.100
-  
+
 # Fix Network route within container
   ip route
   ip route del default
-  ip route add xxxxx/yy dev eth0  
+  ip route add xxxxx/yy dev eth0
   ip route add default via 10.20.105.1
   ip route add default via MyGatewayIpAddr
 
@@ -90,12 +82,12 @@ lxc-create -n fedora -t download  --config=/etc/lxc/lxc_fedora.conf
   systemctl enable sshd
   systemctl start sshd
 
-  
+
 # Creating a user
   useradd xxxx
   verif quand le user est dans le group "wheel" pour "sudo"
   # WARNING: if your bing mount within user did, check privilege and potentially restart container
-  
+
 
 # Debug
 
@@ -103,11 +95,11 @@ lxc-create -n fedora -t download  --config=/etc/lxc/lxc_fedora.conf
   cat /var/lib/lxc/fedora/config
 
 
-  # checker le PID du process init 
+  # checker le PID du process init
   CID=`lxc-ls  -f -FPID,NAME | grep fedora | awk '{print $1}'`
 
   # verif qu'on est dans le bon namespace
   nsenter -t $CID --net  ip addr show
 
-  
-  
+
+

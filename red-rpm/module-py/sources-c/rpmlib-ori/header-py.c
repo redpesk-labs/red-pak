@@ -346,7 +346,7 @@ static struct PyMethodDef hdr_methods[] = {
      "hdr.format(format) -- Expand a query string with the header data.\n\nSee rpm -q for syntax." },
     {"sprintf",		(PyCFunction) hdrFormat,	METH_VARARGS|METH_KEYWORDS,
      "Alias for .format()." },
-    {"isSource",	(PyCFunction)hdrIsSource,	METH_NOARGS, 
+    {"isSource",	(PyCFunction)hdrIsSource,	METH_NOARGS,
      "hdr.isSource() -- Return if header describes a source package." },
     {"write",		(PyCFunction)hdrWrite,		METH_VARARGS|METH_KEYWORDS,
      "hdr.write(file, magic=True) -- Write header to file." },
@@ -394,7 +394,7 @@ static PyObject *hdr_new(PyTypeObject *subtype, PyObject *args, PyObject *kwds)
 	PyErr_SetString(pyrpmError, "bad header");
 	return NULL;
     }
-    
+
     return hdr_Wrap(subtype, h);
 }
 
@@ -512,7 +512,7 @@ static int validData(rpmTagVal tag, rpmTagType type, rpmTagReturnType retype, Py
 {
     rpmTagClass tclass = rpmTagGetClass(tag);
     int valid = 1;
-    
+
     if (retype == RPM_SCALAR_RETURN_TYPE) {
 	valid = validItem(tclass, value);
     } else if (retype == RPM_ARRAY_RETURN_TYPE && PyList_Check(value)) {
@@ -542,7 +542,7 @@ static int hdrAppendItem(Header h, rpmTagVal tag, rpmTagType type, PyObject *ite
     case RPM_STRING_TYPE:
     case RPM_STRING_ARRAY_TYPE: {
 	PyObject *str = NULL;
-	if (utf8FromPyObject(item, &str)) 
+	if (utf8FromPyObject(item, &str))
 	    rc = headerPutString(h, tag, PyBytes_AsString(str));
 	Py_XDECREF(str);
 	} break;
@@ -587,7 +587,7 @@ static int hdrPutTag(Header h, rpmTagVal tag, PyObject *value)
     }
 
     /* validate all data before trying to insert */
-    if (!validData(tag, type, retype, value)) { 
+    if (!validData(tag, type, retype, value)) {
 	PyErr_SetString(PyExc_TypeError, "invalid type for tag");
 	return 0;
     }

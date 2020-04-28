@@ -14,7 +14,7 @@ static void rpmPubkey_dealloc(rpmPubkeyObject * s)
     Py_TYPE(s)->tp_free((PyObject *)s);
 }
 
-static PyObject *rpmPubkey_new(PyTypeObject *subtype, 
+static PyObject *rpmPubkey_new(PyTypeObject *subtype,
 			   PyObject *args, PyObject *kwds)
 {
     PyObject *key;
@@ -105,7 +105,7 @@ static void rpmKeyring_dealloc(rpmKeyringObject * s)
     Py_TYPE(s)->tp_free((PyObject *)s);
 }
 
-static PyObject *rpmKeyring_new(PyTypeObject *subtype, 
+static PyObject *rpmKeyring_new(PyTypeObject *subtype,
 			   PyObject *args, PyObject *kwds)
 {
     rpmKeyring keyring = rpmKeyringNew();

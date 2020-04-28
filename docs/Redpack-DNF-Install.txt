@@ -9,7 +9,7 @@ Dependencies
     python3-pyyaml
     libdnf-devel
     librpm-devel
-    libmodulemd-devel 
+    libmodulemd-devel
     libcurl-devel
     gcc++
     cmake
@@ -18,7 +18,7 @@ Dependencies
 # HOOPS !!
 -----------
     As today need to patch dnf:
-     - add dnf_sack_add_rpmdb_repo(DnfSack *sack, const char* reponame, GError **error)  
+     - add dnf_sack_add_rpmdb_repo(DnfSack *sack, const char* reponame, GError **error)
      - change 'import rpm' to 'import redrpm' in  /dnf/rpm/transaction.py
 
 
@@ -49,7 +49,7 @@ Check Module load
 
 Debug dnf plugin
 -----------------
-    gdb --args python3 /opt/bin/dnf-3 -c /opt/etc/dnf/redpack.yaml redpak install    
+    gdb --args python3 /opt/bin/dnf-3 -c /opt/etc/dnf/redpack.yaml redpak install
 
 redpack.yaml perleaf config
 ----------------------------
@@ -77,10 +77,10 @@ AGL Fedora-30 repo
   sudo mkdir /var/redpesk && sudo chown fulup /var/redpesk
 
   # creer les réperoires log+cache (config /opt/etc/dnf/reddnf.conf)
-  sudo mkdir /var/cache/redpak && sudo chown fulup /var/cache/redpak 
+  sudo mkdir /var/cache/redpak && sudo chown fulup /var/cache/redpak
   sudo mkdir /var/log/redpak   && sudo chown fulup /var/cache/redpak
 
- WARNING: Vérifier qu'il ne traine pas de packet AGL/OBS 
+ WARNING: Vérifier qu'il ne traine pas de packet AGL/OBS
   repo: http://download.opensuse.org/repositories/isv:/LinuxAutomotive:/AGL_Master/Fedora_30
   rpm -qa | grep agl
 
@@ -89,9 +89,9 @@ AGL Fedora-30 repo
    red-dnf --redpath=/var/redpesk/agl-redpesk9 red-manager --create --alias=agl-core
 
   1a) Update node config when system template have been changed
-     make install && red-dnf --redpath=/var/redpesk/agl-redpesk9 red-manager --update --alias=agl-core 
+     make install && red-dnf --redpath=/var/redpesk/agl-redpesk9 red-manager --update --alias=agl-core
 
-2) Add out repo 
+2) Add out repo
   red-dnf --redpath=/var/redpesk/agl-redpesk9 red-manager --add-repo http://kojihub.lorient.iot/kojifiles/repos/II--RedPesk-9-build/latest/x86_64/
 
 3) Search in avaliable repo
@@ -99,9 +99,9 @@ AGL Fedora-30 repo
 
 4) Install packet AGL
   red-dnf --redpath=/var/redpesk/agl-redpesk9 red-install agl-app-framework-binder
- 
+
     4a) Verifier que le paquet est installé
-      red-dnf --redpath=/var/redpesk/agl-redpesk9 red-list   
+      red-dnf --redpath=/var/redpesk/agl-redpesk9 red-list
 
     4b) Verifier que c'est bien une base RPM propre
        rpm --root=/var/redpesk/agl-redpesk9 -qa
@@ -116,7 +116,7 @@ AGL Fedora-30 repo
     + libafbwsc.so.1 est resolu dans le noeud
     + le reste viend de coreos
 
-  - rpm -qa 
+  - rpm -qa
 
 7) Virer la base RPM et refaire l'instalation
    + rm /var/redpesk/agl-redpesk9/var/lib/rpm/*
@@ -129,6 +129,6 @@ AGL Fedora-30 repo
 
 9) Ajouter le projet demo
    red-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo red-manager --add-repo http://kojihub.lorient.iot/kojifiles/repos/IIExtra--RedPesk-9-build/latest/x86_64/
-   
+
 10) Verifier les packets dispo
    red-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo red-search agl

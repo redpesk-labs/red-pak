@@ -44,7 +44,7 @@ class RedRepoListCommand(dnf.cli.Command):
         self.opts = None
         self.parser = None
         RedRepoListCommand._dnfcmd =  dnf.cli.commands.repolist.RepoListCommand(cli)
-        
+
     @staticmethod
     def set_argparser(parser):
         parser.add_argument("--redpath", help="container hierarchical rootfs path ex: /var/reddnf/platform/profile/project")
@@ -64,7 +64,7 @@ class RedRepoListCommand(dnf.cli.Command):
 
         if not os.path.isdir(self.opts.redpath):
             raise dnf.exceptions.Error("Error: Directory reddnf should exist [{}]".format(self.opts.redpath))
-   
+
     def run(self):
 
         # Move default repodir to nodepath

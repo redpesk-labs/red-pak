@@ -45,7 +45,7 @@ static PyObject *strpool_id2str(rpmstrPoolObject *s, PyObject *item)
 
 	if (str)
 	    ret = utf8FromString(str);
-	else 
+	else
 	    PyErr_SetObject(PyExc_KeyError, item);
     }
     return ret;

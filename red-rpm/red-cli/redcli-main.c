@@ -35,14 +35,14 @@
     int depFlag = rpmdsFlags(ds); // rpmsenseFlags rpmds.h
 
     printf ("rpmts_SolveCallback depname=%s version=%s\n", depName, version);
-    return 0; 
+    return 0;
 }
  */
 
 int main(int argc, char *argv[]) {
     mode_t mask = 0027;
     (void) umask(mask);
- 
+
 int rc;
 }
 /*
@@ -55,11 +55,11 @@ const char* pprefix="/profile";
 if (status != 0) {
     printf("Error reading RC files.\n");
     goto OnErrorExit;
-} 
+}
 printf("Read RPM config OK\n");
 
 // create an empty transaction and get DBpointer
-rpmts ts= rpmtsCreate(); 
+rpmts ts= rpmtsCreate();
 rpmdb rdb= rpmtsGetRdb(ts);
 
 
@@ -83,15 +83,15 @@ if (rc) {
     rc = rpmtsOpenDB(ts, O_RDWR);
     if (rc) {
         rpmlog(RPMLOG_ERR, "*** fail to open RPMdb in /profile\n");
-    } 
+    }
 }
 
 // force rpmlock in a location where we have write permission
 rpmPushMacro(NULL, "_rpmlock_path", NULL, "/profile/var/lib/rpm/.rpm.lock", 0);
 
-// Should loop on package to install 
+// Should loop on package to install
 // open RPM file
-FD_t rpmfd = Fopen(argv[1],"r.ufdio"); 
+FD_t rpmfd = Fopen(argv[1],"r.ufdio");
 if (rpmfd == NULL || Ferror(rpmfd)) {
     printf ("*** fail to open rpm=%s\n", argv[1]);
 	goto OnErrorExit;

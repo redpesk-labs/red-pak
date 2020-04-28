@@ -20,7 +20,7 @@ PROJECT_TARGET_ADD(red-wrap)
 
     file(GLOB CSOURCES [a-z]*.c)
 
-    add_executable (${TARGET_NAME} ${CSOURCES}) 
+    add_executable (${TARGET_NAME} ${CSOURCES})
 
     # compile + link depencencies
     target_link_libraries(${TARGET_NAME} redconf)

@@ -34,7 +34,7 @@ rpmmacro_DelMacro(PyObject * self, PyObject * args, PyObject * kwds)
     Py_RETURN_NONE;
 }
 
-PyObject * 
+PyObject *
 rpmmacro_ExpandMacro(PyObject * self, PyObject * args, PyObject * kwds)
 {
     const char *macro;

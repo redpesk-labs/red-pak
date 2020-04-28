@@ -11,7 +11,7 @@
  */
 
 /*
-    Implement RedTransactionCore class and gue python with C libRPM 
+    Implement RedTransactionCore class and gue python with C libRPM
     Freely inspired from original librpm rpmts-py.c and rpmmodule.c
 
     Everything related to initial Python object used by RedRPM start
@@ -98,24 +98,24 @@ int ModAddElements(PyObject *module) {
     MOD_REGISTER_TYPE ("strpool", rpmstrPool_Type);
     MOD_REGISTER_TYPE ("te", rpmte_Type);
     MOD_REGISTER_TYPE ("ts", rpmts_Type);
- 
+
     // ADD contante to rpmPy Object ex: rpm.RPMTAG_PROVIDENAME
     addRpmTags(module);
     PyModule_AddStringConstant(module, "__version__", RPMVERSION);
     PyModule_AddObject(module, "header_magic", PyBytes_FromStringAndSize((const char *)rpm_header_magic, 8));
-   
-    // Finally add every needed enumerations value 
+
+    // Finally add every needed enumerations value
     #include "redts-enum.inc"
 
     return 0;
 
 OnErrorExit:
-    return 1;    
+    return 1;
 }
 
-// used by DNF !!! only provide a setter until we have rpmfd wrappings 
+// used by DNF !!! only provide a setter until we have rpmfd wrappings
 static PyGetSetDef rpmts_getseters[] = {
-    
+
 	{"_flags",	  (getter)rpmts_get_flags, (setter)rpmts_set_flags, NULL},
 	{"_vsflags",  (getter)rpmts_get_vsflags, (setter)rpmts_set_vsflags, NULL},
   	{"_color",	(getter)rpmts_get_color, (setter)rpmts_set_color, NULL},
@@ -157,9 +157,9 @@ static struct PyMethodDef rpmts_methods[] = {
  {"run"          ,	(PyCFunction) redts_Run, METH_VARARGS|METH_KEYWORDS, "Run & return transaction unsolved issues: ts.run(callback, data)."},
 
 
- {"openDB"       ,	(PyCFunction) rpmts_OpenDB, METH_NOARGS, "Open the default transaction rpmdb ts.openDB()  [generally not used]." }, 
+ {"openDB"       ,	(PyCFunction) rpmts_OpenDB, METH_NOARGS, "Open the default transaction rpmdb ts.openDB()  [generally not used]." },
  {"closeDB"      ,	(PyCFunction) rpmts_CloseDB, METH_NOARGS, "Close the default transaction rpmdb: ts.closeDB() [generally not used]."},
- {"initDB"       ,	(PyCFunction) rpmts_InitDB, METH_NOARGS, "Initialize default transaction rpmdb: ts.initDB()."}, 
+ {"initDB"       ,	(PyCFunction) rpmts_InitDB, METH_NOARGS, "Initialize default transaction rpmdb: ts.initDB()."},
  {"rebuildDB"    ,	(PyCFunction) rpmts_RebuildDB, METH_NOARGS, "Rebuild the default transaction rpmdb: ts.rebuildDB()."},
  {"verifyDB"     ,	(PyCFunction) rpmts_VerifyDB, METH_NOARGS, "Verify the default transaction rpmdb: ts.verifyDB()."},
  {"dbIndex"      ,  (PyCFunction) rpmts_index, METH_VARARGS|METH_KEYWORDS, "Create a key iterator: ts.dbIndex(TagN)" },
@@ -198,13 +198,13 @@ static PyMethodDef rpmModuleMethods[] = {
 // transaction object
 static PyTypeObject rpmts_Type = {
 	PyVarObject_HEAD_INIT(&PyType_Type, 0)
-	.tp_name      = "_redrpm.ts",	
+	.tp_name      = "_redrpm.ts",
 	.tp_basicsize = sizeof(rpmtsObject),
     .tp_itemsize  = 0,
-	.tp_dealloc   = (destructor) rpmts_dealloc, 
+	.tp_dealloc   = (destructor) rpmts_dealloc,
 	.tp_getattro  = PyObject_GenericGetAttr,
 	.tp_setattro  = PyObject_GenericSetAttr,
-	.tp_flags     = Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,	
+	.tp_flags     = Py_TPFLAGS_DEFAULT|Py_TPFLAGS_BASETYPE,
 	.tp_doc       = rpmts_doc,
 	.tp_iter      = PyObject_SelfIter,
 	.tp_iternext  = (iternextfunc) rpmts_iternext,
@@ -226,8 +226,8 @@ static int rpmModuleClear(PyObject *m) {
 
 static struct PyModuleDef RedRpmModDef = {
     .m_base   = PyModuleDef_HEAD_INIT,
-    .m_name   = "_redrpm",            
-    .m_doc    = "redrpm expose redrpm and librpm C API in a DNF compatible manner", 
+    .m_name   = "_redrpm",
+    .m_doc    = "redrpm expose redrpm and librpm C API in a DNF compatible manner",
     .m_size   = 0,
     .m_methods= rpmModuleMethods,
     .m_slots  = NULL,

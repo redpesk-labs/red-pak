@@ -15,7 +15,7 @@
 # with original librpm Python API.
 
 import sys
-import redrpm 
+import redrpm
 from redrpm._redrpm import ts as TransactionSetCore
 
 class TransactionSet(TransactionSetCore):

@@ -26,15 +26,15 @@ RedDefaults = {
     'REDNODE_CONF'    : '$NODE_PATH/etc/redpack.yaml',
     'REDNODE_STATUS'  : '$NODE_PATH/.rednode.yaml',
     'REDNODE_VARDIR'  : '$NODE_PATH/var/lib/rpm',
-    'REDNODE_LOCK'    : '$NODE_PATH/.rpm.lock',  
+    'REDNODE_LOCK'    : '$NODE_PATH/.rpm.lock',
     'LOGNAME'         : 'Unknown',
     'HOSTNAME'        : 'localhost',
     'PERSISTDIR'      : '$redpak_HOME/var/lib/dnf',
-    'REDNODE_REPODIR' : '$NODE_PATH/etc/yum.repos.d'    
+    'REDNODE_REPODIR' : '$NODE_PATH/etc/yum.repos.d'
 }
 
 def values():
     return RedDefaults
-    
+
 
 

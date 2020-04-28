@@ -57,4 +57,4 @@ typedef struct rpmtsObject_s {
     int tsid;
 } rpmtsObject;
 
-#endif  
+#endif

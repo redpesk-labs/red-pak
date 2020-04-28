@@ -36,7 +36,7 @@ const char *RedGetRpmVarDir (redConfigT *config, redNodeT *node, const char*pref
     return rpmdir;
 }
 
-int RedRegisterFamilyDb (rpmts ts, redConfigT *config, redNodeT *redLeafNode) { 
+int RedRegisterFamilyDb (rpmts ts, redConfigT *config, redNodeT *redLeafNode) {
     const char *fullpath;
     const char *rpmdir;
     int error;
@@ -70,5 +70,5 @@ int RedRegisterFamilyDb (rpmts ts, redConfigT *config, redNodeT *redLeafNode) {
     return 0;
 
 OnErrorExit:
-    return 1;    
+    return 1;
 }

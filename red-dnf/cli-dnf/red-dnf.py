@@ -7,7 +7,7 @@
 #  - take default path from /etc/redpak/main.com
 #  - add arguments as dnf prevent many config options from being changed from insie a plugins
 #  - this launcher only with with red-dnf plugins (red-manager, red-install, ... )
-# 
+#
 # Author Fulup Ar Foll <fulup@iot.bzh> Apr-2020
 # Freely insprired from Redhat original DNF launcher.
 #
@@ -48,7 +48,7 @@ def RedpathToEnv(redpath):
     # cleanup redpath removing last '/' before expanding template
     if redpath[-1] == '/':
         os.environ['NODE_PATH']=redpath[:-1]
-    else:    
+    else:
         os.environ['NODE_PATH']=redpath
 
 # do this ASAP to prevent tracebacks after ^C during imports

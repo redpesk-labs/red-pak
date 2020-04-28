@@ -51,14 +51,14 @@ int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const
                     chmod(path, mask);
                     err = stat(path, &status);
                 }
-            }    
+            }
             if (err < 0) {
                 RedLog(REDLOG_ERROR, "*** Node [%s] export path=%s does not exist [use --force]", configN->headers->alias, path);
                 goto OnErrorExit;
             }
                 break;
         default:
-            break;    
+            break;
         }
 
         switch (mode) {
@@ -82,7 +82,7 @@ int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, path, NULL, NULL);
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
-        
+
         case RED_EXPORT_SYMLINK:
             argval[(*argcount)++]="--symlink";
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, path, NULL, NULL);
@@ -105,22 +105,22 @@ int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const
             argval[(*argcount)++]="--dir";
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
-        
+
         case RED_EXPORT_TMPFS:
             argval[(*argcount)++]="--tmpfs";
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
-        
+
         case RED_EXPORT_DEVFS:
             argval[(*argcount)++]="--dev";
             if (mount) argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
-        
+
         case RED_EXPORT_PROCFS:
             argval[(*argcount)++]="--proc";
             if (mount) argval[(*argcount)++]= RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
-        
+
         case RED_EXPORT_MQUEFS:
             argval[(*argcount)++]="--mqueue";
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, path, NULL, NULL);
@@ -166,7 +166,7 @@ int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const
             argval[(*argcount)++]=key;
             break;
 
-        default: 
+        default:
             break;
         }
 
@@ -175,7 +175,7 @@ int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const
 
 OnErrorExit:
     return 1;
-}    
+}
 
 int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
     int error;
@@ -197,7 +197,7 @@ int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const c
             RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is older that it's parent [require 'dnf red-update' or --force] nodepath=%s", configN->headers->alias, node->redpath);
             goto OnErrorExit;
         }
-        
+
         // check node was not moved from one family to an other
         if (RedConfGetInod(node->redpath) != RedConfGetInod(statusN->realpath)) {
             RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] was moved [require 'dnf red-update' or --force] nodepath=%s", configN->headers->alias, statusN->realpath);
@@ -210,10 +210,10 @@ int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const c
 
     // Finaly add environment from node config
     error=  RwrapParseConfig (node, cliargs, lastleaf, argval, argcount);
-    if (error) goto OnErrorExit;   
+    if (error) goto OnErrorExit;
 
     return 0;
 
 OnErrorExit:
     return 1;
-}    
+}

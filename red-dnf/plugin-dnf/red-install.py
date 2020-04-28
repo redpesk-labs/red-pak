@@ -43,7 +43,7 @@ class RedInstallCommand(dnf.cli.Command):
         self.parser = None
         RedInstallCommand._dnfcmd =  dnf.cli.commands.install.InstallCommand(cli)
         RedInstallCommand._dnfcmd2=  dnf.cli.commands.reinstall.ReinstallCommand(cli)
-        
+
     @staticmethod
     def set_argparser(parser):
         parser.add_argument("--redpath", help="container hierarchical rootfs path ex: /var/redpak/platform/profile/project")
@@ -70,7 +70,7 @@ class RedInstallCommand(dnf.cli.Command):
 
         if not os.access(self.opts.redpath, os.W_OK):
             raise dnf.exceptions.Error("Redpath not writable redpath=/xx/../xyz (check user permission)")
-    
+
         # Merge source default with main config environment
         self.redconf=reddnf.config.rednode_defaults(self.opts, None)
 
@@ -86,7 +86,7 @@ class RedInstallCommand(dnf.cli.Command):
 
         if not os.access(dirpath, os.W_OK):
             raise dnf.exceptions.Error("Directory {} not writable (check user permission) path={}".format(label, dirpath))
-   
+
     def run(self):
 
         # check terminal leaf node and set dnf persisdir and copy environment to dnf conf
@@ -101,13 +101,13 @@ class RedInstallCommand(dnf.cli.Command):
         # Create an empty libsolv dependencies sack
         reddnf.sack.repo_create_empty(self.base, "@rpmdb")
 
-        # Scan redpath and add existing rpm to libsolv 
+        # Scan redpath and add existing rpm to libsolv
         dirlist = reddnf.config.redpath_split (self.opts.redpath)
         for entry in dirlist:
             # check rednode as a valid status
             reddnf.sack.repo_load_rpmdb (self.base, entry[0], entry[1])
 
-  
+
         # finally add avaliable remote repo from redpath termination leaf
         dnf.conf.installroot=self.opts.redpath
         reddnf.sack.repo_load_available (self.base, self.opts.redpath)

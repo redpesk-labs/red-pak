@@ -41,7 +41,7 @@ PyObject *rpmtd_AsPyobj(rpmtd td)
     if (!array && rpmtdCount(td) < 1) {
 	Py_RETURN_NONE;
     }
-    
+
     if (array) {
 	int ix;
 	res = PyList_New(rpmtdCount(td));

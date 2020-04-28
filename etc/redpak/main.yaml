@@ -46,7 +46,7 @@ config:
     # nspace share/unshare option (oldest ancesor win)
     # - unset: ignored
     # - enabled: use share-xxx
-    # - disabled: use unshare-xxx 
+    # - disabled: use unshare-xxx
     share_all: disabled
     share_user: unset
     share_cgroup: unset
@@ -57,7 +57,7 @@ config:
     # Change HOSTNAME and move to prefere directory inside nspace
     hostname: red-tuna-$NODE_ALIAS
     chdir: /home/$NODE_ALIAS
-    
+
     # nspace command control
     die-with-parent: enabled
     new-session: unset
@@ -84,18 +84,18 @@ config:
 #---------------------------------------------------------------------
 environ:
   - key: PS1
-    value: Rednode($NODE_ALIAS)> 
+    value: Rednode($NODE_ALIAS)>
     mode: Default
 
   - key: SHELL_SESSION_ID
     mode: Remove
-    
+
   - key: HOME
     value: /home/$NODE_ALIAS
 
-  
+
 #---------------------------------------------------------------------
-# mode: 
+# mode:
 #  - Private: mount are visible from every apps running from a given node
 #  - Public: share are RW for every child
 #  - Restricted: share are RO for every child
@@ -131,7 +131,7 @@ exports:
    - mount: /home/$NODE_ALIAS
      path: /nodes/_private
      mode: Symlink
-     
+
    - mount: /var
      mode: Anonymous
 
@@ -151,9 +151,9 @@ exports:
      mode: Procfs
 
    - mount: /dev
-     mode: Devfs  
+     mode: Devfs
 
-   - mount: /tmp 
+   - mount: /tmp
      mode: Tmpfs
 
    - mount: /run
@@ -168,10 +168,10 @@ exports:
 #     mode:  Private
 
 
-#   - mount: 
+#   - mount:
 #     path: /dev/mqueue
 #     mode: Mqueue
 
-#   - mount: 
+#   - mount:
 #     path: /var/tmp/lock-$PID
 #     mode: Lock

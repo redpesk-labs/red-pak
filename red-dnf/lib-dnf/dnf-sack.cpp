@@ -1206,7 +1206,7 @@ dnf_sack_add_cmdline_package_flags(DnfSack *sack, const char *fn, const int flag
 DnfPackage *
 dnf_sack_add_cmdline_package(DnfSack *sack, const char *fn)
 {
-    return dnf_sack_add_cmdline_package_flags(sack, fn, 
+    return dnf_sack_add_cmdline_package_flags(sack, fn,
                                REPO_REUSE_REPODATA|REPO_NO_INTERNALIZE|
                                RPM_ADD_WITH_HDRID|RPM_ADD_WITH_SHA256SUM);
 }
@@ -1700,10 +1700,10 @@ dnf_sack_repo_enabled(DnfSack *sack, const char *reponame, int enabled)
 gboolean
 dnf_sack_add_rpmdb_repo(DnfSack *sack, const char* reponame, GError **error) try
 {
-    assert(sack); 
+    assert(sack);
     int status=0;
-    
-    // try to open reponame cache 
+
+    // try to open reponame cache
     char *cache_fn = dnf_sack_give_cache_fn(sack, reponame, NULL);
     FILE *cache_fp = fopen(cache_fn, "r");
 
@@ -1789,7 +1789,7 @@ dnf_sack_add_rpmdb_repo(DnfSack *sack, const char* reponame, GError **error) try
 gboolean
 dnf_sack_load_system_repo(DnfSack *sack, HyRepo a_hrepo, int flags, GError **error) try
 {
-  
+
     DnfSackPrivate *priv = GET_PRIVATE(sack);
     Pool *pool = dnf_sack_get_pool(sack);
     char *cache_fn = dnf_sack_give_cache_fn(sack, HY_SYSTEM_REPO_NAME, NULL);
@@ -2233,7 +2233,7 @@ process_excludes(DnfSack *sack, GPtrArray *enabled_repos)
                 repoExcludes += *query.runSet();
             }
         }
-        
+
         if (useGlobalIncludes) {
             dnf_sack_set_use_includes(sack, nullptr, true);
         }

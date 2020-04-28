@@ -10,8 +10,8 @@
  *
  */
 
-/* 
-   this file hold method that have been modified from original librpm 
+/*
+   this file hold method that have been modified from original librpm
    to support redpak hierarchical dependencies model.
 */
 
@@ -77,7 +77,7 @@ PyObject *redts_AddReinstall(rpmtsObject * s, PyObject * args){
     // at this point we should have valid config
     if (!s->redpak->redtree) return NULL;
 
-    if (!PyArg_ParseTuple(args, "O&O:AddReinstall", 
+    if (!PyArg_ParseTuple(args, "O&O:AddReinstall",
 			  hdrFromPyObject, &h, &key))
 	return NULL;
 
@@ -85,7 +85,7 @@ PyObject *redts_AddReinstall(rpmtsObject * s, PyObject * args){
     rc = rpmtsAddReinstallElement(s->ts, h, key);
     if (rc == 0)  {
         s->redpak->shouldcheck=RED_CHECK_PARENT;
-        if (key) 
+        if (key)
 	        PyList_Append(s->keyList, key);
     }
 
@@ -105,7 +105,7 @@ PyObject *redts_AddErase(rpmtsObject *s, PyObject * args) {
     printf("*** Fulup redts_AddErease tsid=%d\n", s->tsid);
 
     rc = rpmtsAddEraseElement(s->ts, h, -1);
-    if (rc == 0) 
+    if (rc == 0)
         s->redpak->shouldcheck=RED_CHECK_PARENT;
 
     return PyBool_FromLong(rc == 0);
@@ -151,7 +151,7 @@ PyObject *redts_Run(rpmtsObject *s, PyObject *args, PyObject *kwds) {
         }
 
         //printf ("------- redts_Run tsid=%d running RedRegisterFamilyDb -----------\n", s->tsid);
-        // load redpath cotresponding RpmDb 
+        // load redpath cotresponding RpmDb
         rc = RedRegisterFamilyDb (s->ts, s->redpak->redconf, s->redpak->redtree);
         if (rc != 0) {
             RedLog(REDLOG_ERROR, "redts_Run: Fail to RpmDb RedFamily from '%s'", s->redpak->redpath);
@@ -176,7 +176,7 @@ PyObject *redts_Run(rpmtsObject *s, PyObject *args, PyObject *kwds) {
 
     // retreive status from transaction handle update timestamp and info zone
     redStatusT *redstatus= s->redpak->redtree->status;
-    
+
    // save redpath terminal family leaf node
     rc= RedUpdateStatus(s->redpak->redtree, s->redpak->redconf->conftag->verbose);
     if (rc) {
@@ -188,7 +188,7 @@ PyObject *redts_Run(rpmtsObject *s, PyObject *args, PyObject *kwds) {
 
 OnErrorExit:
     RedLog(REDLOG_ERROR, "(ABORT) redts_run fail");
-    return NULL;    
+    return NULL;
 }
 
 
@@ -217,7 +217,7 @@ int redts_init(rpmtsObject *s, PyObject *args, PyObject *kwds) {
     if (!redConfPath) redConfPath= redpak_MAIN;
     const char *warningStr = getenv("redpak_WARN");
     if (!warningStr) {
-        warning=RED_CONFIG_WARNING_DEFAULT; 
+        warning=RED_CONFIG_WARNING_DEFAULT;
     } else {
         done= sscanf (warningStr,"%d", &warning);
         if (!done)  warning=RED_CONFIG_WARNING_DEFAULT;
@@ -252,5 +252,5 @@ int redts_init(rpmtsObject *s, PyObject *args, PyObject *kwds) {
 OnErrorExit:
     PyErr_SetString(pyrpmError, "(ABORT) redts_init fail creating core transaction object");
     return -1;
-   
+
 }

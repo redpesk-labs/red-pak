@@ -21,7 +21,7 @@ PROJECT_TARGET_ADD(rpm-cli)
     file(GLOB CSOURCES [a-z]*.c)
 
     add_link_options (-L${CMAKE_INSTALL_PREFIX}/lib64 -lrpm -lrpmio)
-    add_executable (${TARGET_NAME} ${CSOURCES}) 
+    add_executable (${TARGET_NAME} ${CSOURCES})
     target_link_libraries(${TARGET_NAME} redrpm)
 
 

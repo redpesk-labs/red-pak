@@ -22,7 +22,7 @@ from string import Template
 import reddnf
 
 class Environment():
-    def __init__(self, defaults=None): 
+    def __init__(self, defaults=None):
        self.defaults=defaults
 
     def ExpandValue (self, label, value):
@@ -62,15 +62,15 @@ class ParseNode(Environment):
             self.GetConf()
         else:
             self.defaults['redpath']='/'
-            self.GetMain() 
+            self.GetMain()
 
     def HasConf(self):
         return self.isnode
 
     def GetConf(self):
         if not os.path.exists(self.confpath):
-            if  self.strictmod:     
-                raise dnf.exceptions.Error("No file at path={}".format(self.confpath))     
+            if  self.strictmod:
+                raise dnf.exceptions.Error("No file at path={}".format(self.confpath))
             else:
                 self.isnode=False
                 print ("Info: Node ignored [no redpack.yaml] path={} ()".format(self.confpath))
@@ -103,14 +103,14 @@ class ParseNode(Environment):
         else:
             self.confpath='/etc/redpak/main.yaml'
 
-        self.GetConf()       
+        self.GetConf()
         if not 'umask' in self.config:
             os.umask(0o077)
         else:
             umask = self.config["umask"]
             os.umask(umask)
 
-        return  
+        return
 
     def GetEnv (self, label=None):
         if not self.config:
@@ -119,10 +119,10 @@ class ParseNode(Environment):
         if not label:
             return self.config
         else:
-            if label in self.config:  
+            if label in self.config:
                 return self.config[label]
             else:
-                return None    
+                return None
 
 
     def GetHeaders (self, label):
@@ -136,8 +136,8 @@ class ParseNode(Environment):
             if label in self.headers:
                 return self.headers[label]
             else:
-                return None 
-             
+                return None
+
 
     def CopyEnvTo (self, baseconf, label):
         if not self.config:
@@ -147,16 +147,16 @@ class ParseNode(Environment):
             if label in self.config:
                 value= self.config[label]
                 value = self.ExpandValue (label, value)
-                setattr(baseconf, label, value) 
+                setattr(baseconf, label, value)
         else:
             for keyname in self.config:
                     value= self.ExpandValue (keyname, self.config[keyname])
                     try:
                         # some attribute are readonly
-                        setattr(baseconf, keyname, value) 
+                        setattr(baseconf, keyname, value)
                     except:
                         print ("Warning ignoring config {}={}".format(keyname, value))
-                        pass    
+                        pass
 
 
 
@@ -183,7 +183,7 @@ def redpath_split(redpath):
         rednode= ParseNode(redpath=fullpath, strictmod=0)
         if not rednode.HasConf():
             continue
-          
+
         # build redpath hierarchie
         alias= rednode.GetHeaders('alias')
         if not alias:
@@ -196,7 +196,7 @@ def redpath_split(redpath):
 
         dirlist.append([repname, fullpath])
 
-    return dirlist    
+    return dirlist
 
 
 class ParseTemplate(Environment):
@@ -206,14 +206,14 @@ class ParseTemplate(Environment):
         if not defaults:
             defaults={}
             defaults['redpak_TMPL']= "/etc/redpak/templates.d"
-            
+
         self.defaults=defaults
         self.tmplpath='{}/{}.yaml'.format(defaults['redpak_TMPL'], tmplname)
 
         if not os.access(self.tmplpath, os.R_OK):
             raise dnf.exceptions.Error("Template not readable path={}".format(self.tmplpath))
 
-        try:    
+        try:
             with open(self.tmplpath, "r") as redtmpl:
                 template = yaml.load(redtmpl, Loader=yaml.FullLoader)
         except:
@@ -222,7 +222,7 @@ class ParseTemplate(Environment):
         if not 'headers' in template:
             raise dnf.exceptions.Error("No 'headers' sections in config at path={}".format(self.tmplpath))
 
-        # expand headers    
+        # expand headers
         for section in template:
             if isinstance (template[section], list):
                 for idx, item in enumerate(template[section]):
@@ -254,7 +254,7 @@ class ParseTemplate(Environment):
 
         try:
             with open(confpath, "w") as conffile:
-                yaml.dump(self.template, conffile, default_flow_style=False) 
+                yaml.dump(self.template, conffile, default_flow_style=False)
         except:
             raise dnf.exceptions.Error("Fail to push rednode config at path={}".format(confpath))
 
@@ -262,7 +262,7 @@ class ParseTemplate(Environment):
 def rednode_template (opts, srcdefaults):
     import uuid
     import datetime
-    
+
     if not srcdefaults:
         srcdefaults = reddnf.defaults.values()
 
@@ -302,7 +302,7 @@ def rednode_status (opts, srcdefaults):
 
     try:
         with open(confpath, "w") as conffile:
-                yaml.dump(status, conffile, default_flow_style=False) 
+                yaml.dump(status, conffile, default_flow_style=False)
     except:
         raise dnf.exceptions.Error("Fail to push rednode status at path={}".format(confpath))
 
@@ -315,7 +315,7 @@ def merge_two_dicts(x, y):
 
 # Merge pkgdefault with node environment
 def rednode_defaults (opts, srcdefaults):
-  
+
     if not srcdefaults:
        srcdefaults= reddnf.defaults.values()
 
@@ -323,6 +323,6 @@ def rednode_defaults (opts, srcdefaults):
     node= ParseNode(redpath=opts.redpath)
 
     # This only work with python > 3.5 (but I'm lazy for not using it)
-    defaults = srcdefaults.copy() 
+    defaults = srcdefaults.copy()
     defaults.update(node.config)
-    return defaults    
+    return defaults

@@ -18,4 +18,3 @@ static char rpmts_doc[] =
   "Every other argement including signature verification are taken from ${nodepath]/etc/redpack.yaml}:\n"
   "\n"
   ;
-  

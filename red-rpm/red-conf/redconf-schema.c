@@ -22,33 +22,33 @@
 
 
 static const cyaml_config_t yconfError= {
-    .log_level = CYAML_LOG_ERROR, 
-    .log_fn = cyaml_log, 
-    .mem_fn = cyaml_mem, 
+    .log_level = CYAML_LOG_ERROR,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
 };
 
 static const cyaml_config_t yconfWarning = {
-    .log_level = CYAML_LOG_WARNING, 
-    .log_fn = cyaml_log, 
-    .mem_fn = cyaml_mem, 
-};    
+    .log_level = CYAML_LOG_WARNING,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
+};
 
 static const cyaml_config_t yconfNotice = {
-    .log_level = CYAML_LOG_NOTICE, 
-    .log_fn = cyaml_log, 
-    .mem_fn = cyaml_mem, 
+    .log_level = CYAML_LOG_NOTICE,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
 };
 
 static const cyaml_config_t yconfInfo = {
-    .log_level = CYAML_LOG_INFO, 
-    .log_fn = cyaml_log,  
-    .mem_fn = cyaml_mem, 
+    .log_level = CYAML_LOG_INFO,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
 };
 
 static const cyaml_config_t yconfDebug= {
-    .log_level = CYAML_LOG_DEBUG, 
-    .log_fn = cyaml_log, 
-    .mem_fn = cyaml_mem, 
+    .log_level = CYAML_LOG_DEBUG,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
 };
 
 static const cyaml_config_t *yconft[] ={
@@ -108,7 +108,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
     };
 
     // mounting point label+path
-    static const cyaml_schema_field_t ExportEntry[] = {    
+    static const cyaml_schema_field_t ExportEntry[] = {
         CYAML_FIELD_STRING_PTR("mount", CYAML_FLAG_POINTER, redConfExportPathT, mount, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("path", CYAML_FLAG_POINTER, redConfExportPathT, path, 0, CYAML_UNLIMITED),
         CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT|CYAML_FLAG_OPTIONAL, redConfExportPathT, mode, exportFlagStrings, CYAML_ARRAY_LEN(exportFlagStrings)),
@@ -116,14 +116,14 @@ static const cyaml_config_t *yconfGet (int wlevel) {
     };
 
     // relocation old/new path
-    static const cyaml_schema_field_t RelocationEntry[] = {    
+    static const cyaml_schema_field_t RelocationEntry[] = {
         CYAML_FIELD_STRING_PTR("old", CYAML_FLAG_POINTER, redConfRelocationT, old, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("new", CYAML_FLAG_POINTER, redConfRelocationT, new, 0, CYAML_UNLIMITED),
         CYAML_FIELD_END
     };
 
     // dnf/rpm packages options
-    static const cyaml_schema_field_t PkgSchema[] = {   
+    static const cyaml_schema_field_t PkgSchema[] = {
         CYAML_FIELD_STRING_PTR("persistdir", CYAML_FLAG_POINTER|CYAML_FLAG_OPTIONAL, redConfVarT, persistdir, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("rpmdir", CYAML_FLAG_POINTER|CYAML_FLAG_OPTIONAL, redConfVarT, rpmdir, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("path", CYAML_FLAG_POINTER|CYAML_FLAG_OPTIONAL, redConfVarT, path, 0, CYAML_UNLIMITED),
@@ -166,7 +166,7 @@ static int SchemaSave (const char* filepath, const cyaml_schema_value_t *topsche
 	if (errcode != CYAML_OK) {
         rpmlog(REDLOG_ERROR, "Fail to reading yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
     }
- 
+
     return errcode;
 }
 
@@ -181,12 +181,12 @@ static int SchemaLoad (const char* filepath, const cyaml_schema_value_t *topsche
 
 	if (errcode != CYAML_OK) {
         // when error reparse with higger level of debug to make visible errors
-        if (wlevel == 1) 
+        if (wlevel == 1)
             errcode = SchemaLoad (filepath, topschema, config, wlevel+1);
-        else     
+        else
             rpmlog(REDLOG_ERROR, "Fail to reading yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
     }
- 
+
     return errcode;
 }
 
@@ -204,13 +204,13 @@ redConfigT* RedLoadConfig (const char* filepath, int warning) {
     redConfigT *config;
     int errcode= SchemaLoad (filepath, &ConfTopSchema, (void**)&config, warning);
     if (errcode) return NULL;
-    return config;  
+    return config;
 }
 
 redStatusT* RedLoadStatus (const char* filepath, int warning) {
     redStatusT *status;
     int errcode = SchemaLoad (filepath, &StatusTopSchema, (void**)&status, warning);
     if (errcode) return NULL;
-    return  status;  
+    return  status;
 }
 

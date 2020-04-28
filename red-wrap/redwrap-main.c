@@ -18,7 +18,7 @@
 
 // Small wrapper on top of bwrap. Read everynone node config from redpath
 // generated corresponding environment variables LD_PATh, PATH, ...
-// generate all sharing and mouting point 
+// generate all sharing and mouting point
 // exec bwrap
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,7 +40,7 @@ int main (int argc, char *argv[]) {
     char pathString[BWRAP_MAXVAR_LEN];
     char ldpathString[BWRAP_MAXVAR_LEN];
     unsigned int ldpathIdx=0;
-    unsigned int pathIdx=0; 
+    unsigned int pathIdx=0;
 
     // start argument list with red-wrap command name
     argval[argcount++] = argv[0];
@@ -98,7 +98,7 @@ int main (int argc, char *argv[]) {
         RedConfCopyConfTags (node->config->conftag, mergedConfTags);
 
         int error = RwrapParseNode (node, cliarg, (node == redtree), argval, &argcount);
-        if (error) goto OnErrorExit; 
+        if (error) goto OnErrorExit;
 
         // node looks good extract path/ldpath before adding red-wrap cli program+arguments
         error= RedConfAppendEnvKey(ldpathString, &ldpathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->ldpath, NULL, ":", NULL);
@@ -134,44 +134,44 @@ int main (int argc, char *argv[]) {
         argval[argcount++]="--share-all";
     } else if (mergedConfTags->share_all == RED_CONF_OPT_DISABLED) {
         argval[argcount++]="--unshare-all";
-    } 
+    }
 
     if (mergedConfTags->share_user == RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--share-user";
     } else  if (mergedConfTags->share_user == RED_CONF_OPT_DISABLED) {
         argval[argcount++]="--unshare-user";
-    } 
+    }
 
     if (mergedConfTags->share_cgroup == RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--share-cgroup";
     } else if (mergedConfTags->share_cgroup == RED_CONF_OPT_DISABLED) {
         argval[argcount++]="--unshare-cgroup";
-    } 
+    }
     if (mergedConfTags->share_ipc == RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--share-ipc";
     } else if (mergedConfTags->share_ipc == RED_CONF_OPT_DISABLED) {
         argval[argcount++]="--unshare-pic";
-    } 
+    }
 
     if (mergedConfTags->share_pid == RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--share-pid";
     } else if (mergedConfTags->share_pid == RED_CONF_OPT_DISABLED) {
         argval[argcount++]="--unshare-pid";
-    } 
+    }
 
     if (mergedConfTags->share_net == RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--share-net";
     } else if (mergedConfTags->share_net == RED_CONF_OPT_DISABLED) {
         argval[argcount++]="--unshare-net";
-    } 
+    }
 
     if (mergedConfTags->diewithparent == RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--die-with-parent";
-    } 
+    }
 
     if (mergedConfTags->newsession == RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--new-session";
-    } 
+    }
 
     // add remaining program to execute arguments
     for (int idx=cliarg->index; idx < argc; idx++ ) {
