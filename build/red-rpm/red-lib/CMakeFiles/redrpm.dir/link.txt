@@ -1,1 +1,0 @@
-/usr/bin/cc -fPIC -g -lpython3.7m -L/opt/lib64 -ldnf -lrepo -lglib-2.0 -lrpm -lrpmio -lsqlite3 -lyaml -L/usr/local/lib -lcyaml -shared -Wl,-soname,libredrpm.so -o libredrpm.so CMakeFiles/redrpm.dir/redlib-glue.c.o  -Wl,-rpath,/home/fulup/Workspace/DNF/red-pak/build/red-conf: ../../red-conf/libredconf.so 

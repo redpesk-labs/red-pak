@@ -1,1 +1,0 @@
-/usr/bin/cc -g  -lpython3.7m -L/opt/lib64 -ldnf -lrepo -lglib-2.0 -lrpm -lrpmio -lsqlite3 -lyaml -L/usr/local/lib -lcyaml CMakeFiles/red-wrap.dir/redwrap-conf.c.o CMakeFiles/red-wrap.dir/redwrap-main.c.o CMakeFiles/red-wrap.dir/redwrap-node.c.o  -o red-wrap  -Wl,-rpath,/home/fulup/Workspace/DNF/red-pak/build/red-conf: ../red-conf/libredconf.so 

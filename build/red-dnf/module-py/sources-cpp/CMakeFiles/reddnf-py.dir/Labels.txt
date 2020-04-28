@@ -1,4 +1,0 @@
-# Target labels
- LIBRARY
-# Source files and their labels
-/home/fulup/Workspace/DNF/red-pak/red-dnf/module-py/sources-cpp/reddnf-py.cpp

@@ -1,5 +1,0 @@
-# Target labels
- LIBRARY
-# Source files and their labels
-/home/fulup/Workspace/DNF/red-pak/red-rpm/red-lib/redlib-glue.c
-/home/fulup/Workspace/DNF/red-pak/red-rpm/red-lib/redrpm.h

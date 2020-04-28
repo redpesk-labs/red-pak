@@ -1,7 +1,0 @@
-# Target labels
- LIBRARY
-# Source files and their labels
-/home/fulup/Workspace/DNF/red-pak/red-conf/redconf-default.c
-/home/fulup/Workspace/DNF/red-pak/red-conf/redconf-schema.c
-/home/fulup/Workspace/DNF/red-pak/red-conf/redconf-utils.c
-/home/fulup/Workspace/DNF/red-pak/red-conf/redconf.h
