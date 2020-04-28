@@ -9,40 +9,40 @@ headers:
     # name: identify siblings within a familly (mostly for debug)
     name:  $NODE_UUID
 
-    # info: any text that may help you to manage a node 
+    # info: any text that may help you to manage a node
     info:  "Node created by $LOGNAME($HOSTNAME) the $TODAY"
 
 config:
-   # rpm/dnf storage dir and signature check (rpmdir+persist are automatically prefixed by node path)
-   rpmdir: $NODE_PATH/var/lib/rpm
-   persistdir: $NODE_PATH/var/lib/dnf
+    # rpm/dnf storage dir and signature check (rpmdir+persist are automatically prefixed by node path)
+    rpmdir: $NODE_PATH/var/lib/rpm
+    persistdir: $NODE_PATH/var/lib/dnf
 
-   # check rpm signature 
-   gpgcheck: false
+    # check rpm signature
+    gpgcheck: false
 
-   # exec path added at res-tart time
-   path: /nodes/$NODE_ALIAS/usr/bin
-   ldpath: /nodes/$NODE_ALIAS/usr/lib:/nodes/$NODE_ALIAS/usr/lib64
+    # exec path added at res-tart time
+    path: /nodes/$NODE_ALIAS/usr/bin
+    ldpath: /nodes/$NODE_ALIAS/usr/lib:/nodes/$NODE_ALIAS/usr/lib64
 
-   # inherit mounting point from anscestors 
-   inherit: true
+    # inherit mounting point from anscestors
+    inherit: true
 
-   # maxday age without 'dnf red-check' [0 == unlimited]
-   maxage: 0
+    # maxday age without 'dnf red-check' [0 == unlimited]
+    maxage: 0
 
-   # 0=quiet, 1=info 2=debug
-   verbose: 1
+    # 0=quiet, 1=info 2=debug
+    verbose: 1
 
-   # allow user to bypass redtree rpmdbs hierachy consistancy
-   unsafe: false
+    # allow user to bypass redtree rpmdbs hierachy consistancy
+    unsafe: false
 
 environ:
 
-  - key: XDG_RUNTIME_DIR 
+  - key: XDG_RUNTIME_DIR
     value: /run/user/$$UID
     mode: Default
 
-  - key: AFB_LDPATHS  
+  - key: AFB_LDPATHS
     value: /nodes/agl-core/usr/lib64/afb
     mode: Static
 
@@ -70,9 +70,7 @@ exports:
     path: $NODE_PATH/var
     mode: Public
 
-  # provide compatibility with redpesk rpm dir  
+  # provide compatibility with redpesk rpm dir
   - mount: /var/redpesk/$REDPESK_VERSION
     path: $NODE_PATH/usr
     mode: Private
-
-
