@@ -21,8 +21,8 @@
 import os
 
 RedDefaults = {
-    'redpak_MAIN'    : '/opt/etc/redpak/main.yaml',
-    'redpak_TMPL'    : '/opt/etc/redpak/templates.d',
+    'redpak_MAIN'    : '/usr/local/etc/redpak/main.yaml',
+    'redpak_TMPL'    : '/usr/local/etc/redpak/templates.d',
     'REDNODE_CONF'    : '$NODE_PATH/etc/redpack.yaml',
     'REDNODE_STATUS'  : '$NODE_PATH/.rednode.yaml',
     'REDNODE_VARDIR'  : '$NODE_PATH/var/lib/rpm',

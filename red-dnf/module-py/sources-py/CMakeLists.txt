@@ -16,7 +16,7 @@
 # limitations under the License.
 ##########################################################################
 
+configure_file(reddefaults.py.in reddefaults.py)
 
-file(GLOB PYSOURCES [a-z]*.py __init__.py)
+file(GLOB PYSOURCES [a-z]*.py __init__.py ${CMAKE_CURRENT_BINARY_DIR}/*.py)
 INSTALL (FILES ${PYSOURCES} DESTINATION ${PYTHON_MODULE_DIR})
-

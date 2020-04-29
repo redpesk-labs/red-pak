@@ -16,7 +16,9 @@
 # limitations under the License.
 ##########################################################################
 
-file(GLOB redpak_CONF [a-z]*.conf)
+configure_file(reddnf.conf.in reddnf.conf)
+
+file(GLOB redpak_CONF [a-z]*.conf ${CMAKE_CURRENT_BINARY_DIR}/*.conf)
 
 INSTALL (FILES ${redpak_CONF} DESTINATION ${CMAKE_INSTALL_PREFIX}/etc/redpak/)
 INSTALL (FILES "reddnf.bashrc" DESTINATION ${CMAKE_INSTALL_PREFIX}/etc/bash_completion.d/ RENAME "reddnf")

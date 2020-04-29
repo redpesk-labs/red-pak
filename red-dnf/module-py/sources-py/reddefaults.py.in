@@ -16,5 +16,25 @@
 # limitations under the License.
 ##########################################################################
 
-configure_file(red-dnf.py.in red-dnf.py )
-INSTALL(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/red-dnf.py" DESTINATION bin RENAME "red-dnf")
+# Contains default values to push as environment variable
+# Use to expand string from YAML config file
+import os
+
+RedDefaults = {
+    'redpak_MAIN'    : '@CMAKE_INSTALL_PREFIX@/etc/redpak/main.yaml',
+    'redpak_TMPL'    : '@CMAKE_INSTALL_PREFIX@/etc/redpak/templates.d',
+    'REDNODE_CONF'    : '$NODE_PATH/etc/redpack.yaml',
+    'REDNODE_STATUS'  : '$NODE_PATH/.rednode.yaml',
+    'REDNODE_VARDIR'  : '$NODE_PATH/var/lib/rpm',
+    'REDNODE_LOCK'    : '$NODE_PATH/.rpm.lock',
+    'LOGNAME'         : 'Unknown',
+    'HOSTNAME'        : 'localhost',
+    'PERSISTDIR'      : '$redpak_HOME/var/lib/dnf',
+    'REDNODE_REPODIR' : '$NODE_PATH/etc/yum.repos.d'
+}
+
+def values():
+    return RedDefaults
+
+
+

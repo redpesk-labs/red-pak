@@ -102,7 +102,7 @@ sys.argv.insert (1,"--releasever=/")
 
 # not the cleanest way to force config file, but it works
 if not configfound:
-    sys.argv.insert (1, "--config=/opt/etc/redpak/reddnf.conf")
+    sys.argv.insert (1, "--config=@CMAKE_INSTALL_PREFIX@/etc/redpak/reddnf.conf")
 
 if debugFound:
     import pdb; pdb.set_trace()
