@@ -18,7 +18,3 @@
 
 
     INSTALL(PROGRAMS "red-dnf.py" DESTINATION bin RENAME "red-dnf")
-
-    # replace rpmib original __init__ to enforce redrpm usage
-    INSTALL (FILES "rpm__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/rpm RENAME "__init__.py")
-    INSTALL (FILES "rpm__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/rpm RENAME "__init__.py")
