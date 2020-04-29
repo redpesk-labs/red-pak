@@ -19,6 +19,7 @@
 
 #include <fcntl.h>
 #include <rpm/rpmmacro.h>
+#include <assert.h>
 
 #include "redrpm.h"
 
@@ -39,33 +40,48 @@ const char *RedGetRpmVarDir (redConfigT *config, redNodeT *node, const char*pref
 int RedRegisterFamilyDb (rpmts ts, redConfigT *config, redNodeT *redLeafNode) {
     const char *fullpath;
     const char *rpmdir;
+    const char *fullpath;
+    redConfigT *configN = node->config;
+    redStatusT *statusN = node->status;
+
+    // make sure node is not disabled
+    if (statusN->state !=  RED_STATUS_ENABLE) {
+        rpmlog(REDLOG_ERROR, "*** Node [%s] is DISABLED [check/update node] nodepath=%s", configN->headers->alias, node->redpath);
+        goto OnErrorExit;
+    }
+
+    // Expand node config to fit within redpath
+    fullpath = RedNodeStringExpand (node, nodeConfigDefaults, configN->conftag->rpmdir, NULL, NULL);
+
+    //printf ("---- RedRegisterFamilyDb dbpath=%s ---\n", fullpath);
+    rpmPushMacro(NULL, "_dbpath", NULL, fullpath, 0);
+    int error = rpmtsOpenDB(ts, O_RDONLY);
+    if (error) {
+        rpmlog(REDLOG_ERROR, "*** Fail to open RPMdb node='%s' path='%s'", configN->headers->alias, statusN->realpath);
+        goto OnErrorExit;
+    }
+    return 0;
+    
+OnErrorExit:
+    return 1;    
+}        
+
+int RedRegisterFamilyDb (rpmts ts, redConfigT *config, redNodeT *redTerminalLeaf) { 
     int error;
+    assert (redTerminalLeaf);
 
     // Make sure last node was created in the future !!!
     unsigned long epocms = RedUtcGetTimeMs ();
 
     // Scan redpath family nodes from terminal leaf to root node
-    for (redNodeT *node=redLeafNode; node != NULL; node=node->ancestor) {
-        redConfigT *configN = node->config;
-        redStatusT *statusN = node->status;
-
-        // make sure node is not disabled
-        if (statusN->state !=  RED_STATUS_ENABLE) {
-            rpmlog(REDLOG_ERROR, "*** Node [%s] is DISABLED [check/update node] nodepath=%s", configN->headers->alias, node->redpath);
-            goto OnErrorExit;
-        }
-
-        // Expand node config to fit within redpath
-        fullpath = RedNodeStringExpand (node, nodeConfigDefaults, configN->conftag->rpmdir, NULL, NULL);
-
-        //printf ("---- RedRegisterFamilyDb dbpath=%s ---\n", fullpath);
-        rpmPushMacro(NULL, "_dbpath", NULL, fullpath, 0);
-        error = rpmtsOpenDB(ts, O_RDONLY);
-        if (error) {
-            rpmlog(REDLOG_ERROR, "*** Fail to open RPMdb node='%s' path='%s'", configN->headers->alias, statusN->realpath);
-            goto OnErrorExit;
-        }
+    for (redNodeT *node=redTerminalLeaf->ancestor; node != NULL; node=node->ancestor) {
+        error = RedRegisterNode (ts, node);
+        if (error) goto OnErrorExit;
     }
+
+    // Terminal redleaf should be the last one to appied.
+    error = RedRegisterNode (ts, redTerminalLeaf);
+    if (error) goto OnErrorExit;
 
     return 0;
 

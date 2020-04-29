@@ -33,6 +33,10 @@
 #define RED_MAXPATHLEN 512
 #endif
 
+#ifndef MAX_RED_FAMILY_MEMBERS
+#define MAX_RED_FAMILY_MEMBERS 32
+#endif
+
 #ifndef REDNODE_CONF
 #define REDNODE_CONF "etc/redpack.yaml"
 #endif
