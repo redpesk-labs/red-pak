@@ -17,6 +17,12 @@
 
 vi /etc/lxc/lxc_fedora.conf
     lxc.uts.name = fedora
+
+    # need to run red-wrap inside your container
+    lxc.apparmor.profile = generated
+    lxc.apparmor.allow_nesting = 1
+    
+    # I use routed network, but this is your call
     lxc.net.0.type = veth
     lxc.net.0.flags = up
     lxc.net.0.link = br0
@@ -24,13 +30,15 @@ vi /etc/lxc/lxc_fedora.conf
     lxc.net.0.ipv4.address = 10.20.105.100/24
     lxc.net.0.ipv4.gateway = 10.20.105.1
     lxc.net.0.name = eth0
+
+    # you probably have some workspace to mount
+    # WARNING: no '/' in front of home !!!!
     lxc.mount.entry = /home/fulup/Workspace/DNF home/fulup/Workspace none bind,rw,create=dir 0 0
     
     # uid/gid mapping
     lxc.idmap = u 0 100000 10000
     lxc.idmap = g 0 100000 10000
     
-    # WARNING: no '/' in front of home !!!!
 
 
 lxc-create -n fedora -t download  --config=/etc/lxc/lxc_fedora.conf
