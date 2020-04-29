@@ -167,8 +167,9 @@ Do not forget to retrieve the time measurement cost:
     + `red-dnf --redpath=/var/redpesk/agl-redpesk9 red-search binder`
     + `red-dnf --redpath=/var/redpesk/agl-redpesk9 red-install agl-app-framework-binder`
 
-1. Start an application in your node
+1. In the node: Check installation succeeded and check application can start
 
+    + `red-wrap --redpath=/var/redpesk/agl-redpesk9 --force -- rpm -qa
     + `red-wrap --redpath=/var/redpesk/agl-redpesk9 afb-daemon --version`
 
     Note: a this level we only have one node. If you want to compare with other existing containers technologies, you should think of the red-pak container as a Russian doll. Your container is not one node, but the imbrication of all nodes contained in your Redpath. i.e: node:core OS/node:agl-plateform/node:boat-middleware/node:my-projet->my-navigation-application
@@ -201,9 +202,8 @@ Do not forget to retrieve the time measurement cost:
 
 1. Enter your new node
 
-    + ls /nodes
-    + ls /nodes/agl-core/usr/bin/afb-daemon
     + `red-wrap --redpath=/var/redpesk/agl-redpesk9/agl-demo --force bash`
+    + `rpm -qa`
     + `afb-daemon --ldpaths=/nodes/agl-demo --workdir=. --roothttp=/nodes/agl-demo/usr/agl-service-helloworld/htdocs --verbose`
     + `browser http://10.20.101.105/1234`
 

@@ -37,10 +37,9 @@ const char *RedGetRpmVarDir (redConfigT *config, redNodeT *node, const char*pref
     return rpmdir;
 }
 
-int RedRegisterFamilyDb (rpmts ts, redConfigT *config, redNodeT *redLeafNode) {
+int RedRegisterNode (rpmts ts, redNodeT *node) {
     const char *fullpath;
     const char *rpmdir;
-    const char *fullpath;
     redConfigT *configN = node->config;
     redStatusT *statusN = node->status;
 

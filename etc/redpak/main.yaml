@@ -40,8 +40,8 @@ config:
     umask: 027
 
     # value are cumulated (coreos 1st, then node family from the yougest to the oldest)
-    path: '/usr/bin:/usr/sbin'
-    ldpath: '/usr/lib64'
+    path: '/bin'
+    ldpath: '/lib64'
 
     # nspace share/unshare option (oldest ancesor win)
     # - unset: ignored
@@ -116,48 +116,71 @@ environ:
 #---------------------------------------------------------------------
 exports:
 
-   - mount: /nodes/core/var
-     path: /var/shared
-     mode: Public
+  # node rw storage export to children
+  - mount: /nodes/core/var
+    path: /var/shared
+    mode: Public
 
-   - mount: /usr
-     path: /usr
-     mode: Restricted
+  # mount /usr/lib + /usr/bin in node '/' in order to keep /usr free for node hosted RPM
+  - mount: /lib64
+    path: /usr/lib64
+    mode: Restricted
 
-   - mount: /etc/resolv.conf
-     path: /etc/resolv.conf
-     mode: Restricted
+  - mount: /lib
+    path: /usr/lib
+    mode: Restricted
 
-   - mount: /home/$NODE_ALIAS
-     path: /nodes/_private
-     mode: Symlink
+  - mount: /bin
+    path: /usr/bin
+    mode: Restricted
 
-   - mount: /var
-     mode: Anonymous
+  # when network is exported, we probably need reesolv.conf
+  - mount: /etc/resolv.conf
+    path: /etc/resolv.conf
+    mode: Restricted
 
-   - mount: /lib64
-     path: /usr/lib64
-     mode: Symlink
+  - mount: /home/$NODE_ALIAS
+    path: /nodes/_private
+    mode: Symlink
 
-   - mount: /etc/passwd
-     path: getent passwd $UID 65534
-     mode: Execfd
+  # /var and /var are anonymous and private to each application
+  - mount: /var
+    mode: Anonymous
 
-   - mount: /etc/group
-     path: getent group $(id -g) 65534
-     mode: Execfd
+  # create a fake /etc/passwd + group
+  - mount: /etc/passwd
+    path: getent passwd $UID 65534
+    mode: Execfd
 
-   - mount: /proc
-     mode: Procfs
+  - mount: /etc/group
+    path: getent group $(id -g) 65534
+    mode: Execfd
 
-   - mount: /dev
-     mode: Devfs
+  # Exports coreos systemFS or fake with Anonymous/Tmpfs
+  - mount: /proc
+    mode: Procfs
 
-   - mount: /tmp
-     mode: Tmpfs
+  - mount: /dev
+    mode: Devfs
 
-   - mount: /run
-     mode: Tmpfs
+  - mount: /tmp
+    mode: Tmpfs
+
+  - mount: /run
+    mode: Anonymous
+
+  # need for rpm -qa to work within node
+  - mount: /usr/lib/rpm
+    path: /lib/rpm
+    mode: Symlink
+
+  # needed for bash readline to work
+  - mount: /usr/share
+    path: /usr/share
+    mode: Restricted
+
+  # need a hard link on /usr/lib/rpm/rpmrc for rpm -qa
+
 
 # private is here only for documentation
 # ----------------------------------------------------
@@ -167,6 +190,9 @@ exports:
 #     path: /etc
 #     mode:  Private
 
+#   - mount: /usr/libexec
+#     path: /usr/libexec
+#     mode: Restricted
 
 #   - mount:
 #     path: /dev/mqueue
