@@ -11,7 +11,7 @@
 
 # prevent firewall from creating trouble and allow routing
   systemctl firewalld stop  (Warning: do not forget to restart after initial testing)
-  /proc/sys/net/ipv4/ip_forward
+  echo 1 > /proc/sys/net/ipv4/ip_forward # allow routing
 
 # create an LXC config (man lxc.container.conf)
 
