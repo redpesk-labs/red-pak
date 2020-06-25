@@ -62,11 +62,12 @@ lxc-create -n fedora -t download  --config=/etc/lxc/lxc_fedora.conf
 # Fix Network route on LXC host
   sur host:     sysctl -w net.ipv4.ip_forward=1
                 firewall-cmd --zone=trusted --change-interface=br0
+                firewall-cmd --get-default-zone
+                firewall-cmd --zone=public --add-masquerade
 
    - Onboot ?   sysctl net.ipv4.ip_forward > /etc/sysctl.d/1_ip_forward.conf
                 firewall-cmd --zone=trusted --change-interface=br0  --permanent
-
-  sur gateway:  route add -net 10.20.105.0 netmask 255.255.255.0 gw 10.20.101.100
+                firewall-cmd --zone=public --add-masquerade --permanent
 
 # Fix Network route within container
   ip route
