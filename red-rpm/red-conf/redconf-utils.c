@@ -342,14 +342,18 @@ static void RedConfGetEnvKey (redNodeT *node, RedConfDefaultsT *defaults, int *i
         // Search for a default key
         for (int idx=0; defaults[idx].label; idx++) {
             if (!strcmp (envkey, defaults[idx].label)) {
+                char *envval_expand[MAX_CYAML_FORMAT_STR];
+                int idxOutEnv = 0;
                 switch (defaults[idx].type) {
                     case REDDEFLT_STR:
                         envval = defaults[idx].value;
-                        for (int jdx=0; envval[jdx]; jdx++) outputS[(*idxOut)++]= envval[jdx];
+                        stringExpand(node, defaults, &idxOutEnv, envval, envval_expand);
+                        for (int jdx=0; envval_expand[jdx]; jdx++) outputS[(*idxOut)++]= envval_expand[jdx];
                         break;
                     case REDDEFLT_CB:
                         envval = (*(RedGetDefaultCbT)defaults[idx].value) (node, defaults[idx].label);
-                        for (int jdx=0; envval[jdx]; jdx++) outputS[(*idxOut)++]= envval[jdx];
+                        stringExpand(node, defaults, &idxOutEnv, envval, envval_expand);
+                        for (int jdx=0; envval_expand[jdx]; jdx++) outputS[(*idxOut)++]= envval_expand[jdx];
                         free (envval);
                         break;
                     default:
@@ -368,6 +372,25 @@ OnErrorExit:
     for (int jdx=0; envval[jdx]; jdx++) outputS[(*idxOut)++]= envval[jdx];
     return;
 }
+
+static int stringExpand(redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, int *idxOut, char *outputS) {
+    int count = 0;
+    // search for a $within string input format
+    for (int idxIn=0; inputS[idxIn] != '\0'; idxIn++) {
+
+        if (inputS[idxIn] != '$') {
+            if (*idxOut == MAX_CYAML_FORMAT_STR)  return 1;
+            outputS[(*idxOut)++] = inputS[idxIn];
+
+        } else {
+            if (count == MAX_CYAML_FORMAT_ENV) return 2;
+            RedConfGetEnvKey (node, defaults, &idxIn, inputS, &idxOut, outputS);
+            count ++;
+        }
+    }
+    return 0;
+}
+
 
 // Expand string with environnement variable
 const char * RedNodeStringExpand (redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char* prefix, const char* trailler) {

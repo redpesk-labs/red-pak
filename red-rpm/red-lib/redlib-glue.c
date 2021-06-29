@@ -60,12 +60,12 @@ int RedRegisterNode (rpmts ts, redNodeT *node) {
         goto OnErrorExit;
     }
     return 0;
-    
-OnErrorExit:
-    return 1;    
-}        
 
-int RedRegisterFamilyDb (rpmts ts, redConfigT *config, redNodeT *redTerminalLeaf) { 
+OnErrorExit:
+    return 1;
+}
+
+int RedRegisterFamilyDb (rpmts ts, redConfigT *config, redNodeT *redTerminalLeaf) {
     int error;
     assert (redTerminalLeaf);
 

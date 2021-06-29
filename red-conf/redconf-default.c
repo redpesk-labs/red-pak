@@ -68,9 +68,9 @@ static char*GetPid(const char *label, void *ctx,  void*handle) {
     return strdup(string);
 }
 
-static char*GetEnviron(const char *label, void *ctx, void*handle) {
+static char * GetEnviron(const char *label, void *ctx, void*handle) {
     const char*key= handle;
-    const char*value;
+    char*value;
 
     value= getenv(label);
     if (!value) {
@@ -80,7 +80,7 @@ static char*GetEnviron(const char *label, void *ctx, void*handle) {
             value="#undef";
         }
     }
-    return strdup(value);
+    return value;
 }
 
 typedef enum {
@@ -114,20 +114,24 @@ static char*GetNodeInfo(const char *label, void *ctx, void*handle) {
 
     if (!value) value = "#undef";
 
-    return strdup(value);
-    
+    return value;
+
 OnErrorExit:
-    return NULL;    
+    return GetEnviron(label, ctx, handle);
 }
 
 // Warning: REDDEFLT_CB will get its return free
 RedConfDefaultsT nodeConfigDefaults[]= {
     // static strings
-    {"redpak_MAIN"   , GetEnviron, (void*)redpak_MAIN},
-    {"REDNODE_CONF"   , GetEnviron, (void*)REDNODE_CONF},
-    {"REDNODE_STATUS" , GetEnviron, (void*)REDNODE_STATUS},
-    {"REDNODE_VARDIR" , GetEnviron, (void*)REDNODE_VARDIR},
-    {"REDNODE_LOCK"   , GetEnviron, (void*)REDNODE_LOCK},
+    {"NODE_PREFIX"    , GetEnviron, (void*)NODE_PREFIX},
+    {"NODE_PATH"      , GetEnviron, (void*)NODE_PATH},
+    {"redpak_MAIN"    , GetEnviron, (void*)"$NODE_PREFIX"redpak_MAIN},
+    {"redpak_TMPL"    , GetEnviron, (void*)"$NODE_PREFIX"redpak_TMPL},
+    {"REDNODE_CONF"   , GetEnviron, (void*)"$NODE_PATH/"REDNODE_CONF},
+    {"REDNODE_STATUS" , GetEnviron, (void*)"$NODE_PATH/"REDNODE_STATUS},
+    {"REDNODE_VARDIR" , GetEnviron, (void*)"$NODE_PATH/"REDNODE_VARDIR},
+    {"REDNODE_REPODIR", GetEnviron, (void*)"$NODE_PATH/"REDNODE_REPODIR},
+    {"REDNODE_LOCK"   , GetEnviron, (void*)"$NODE_PATH/"REDNODE_LOCK},
     {"LOGNAME"        , GetEnviron, (void*)"Unknown"},
     {"HOSTNAME"       , GetEnviron, (void*)"localhost"},
     {"LEAF_ALIAS"     , GetEnviron, NULL},

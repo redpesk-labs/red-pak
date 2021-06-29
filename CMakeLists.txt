@@ -33,6 +33,8 @@ set (PYTHON_VERSION 3)
 set (INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib64)
 set (INSTALL_BIN_DIR ${CMAKE_INSTALL_PREFIX}/bin)
 
+option(WITH_MICRODNF "Build microdnf command-line package manager" ON)
+
 # External Packages requirements
 # ------------------------------
 set (PKG_REQUIRED_LIST
@@ -48,6 +50,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake/redpak.cmake)
 
 ADD_SUBDIRECTORY (etc)
 ADD_SUBDIRECTORY (red-conf)
-ADD_SUBDIRECTORY (red-dnf)
 ADD_SUBDIRECTORY (red-rpm)
 ADD_SUBDIRECTORY (red-wrap)
+ADD_SUBDIRECTORY (red-microdnf)

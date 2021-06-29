@@ -16,10 +16,10 @@
 *
 */
 
-/* 
+/*
  ** Redpath hierachie
-    
-    -'root' path='/' -> alias='coreos' 
+
+    -'root' path='/' -> alias='coreos'
     -'node' path=${redroot}/xxxxxx -> alias=(template, plateform, ....)
     -'leaf' same as node but without decendants (typically a projet)
     -'family' every nodes in direct line from a leaf to root node.
@@ -58,6 +58,7 @@ redNodeT *RedNodesScan(const char* redpath, int verbose);
 int RedUpdateStatus(redNodeT *node, int verbose);
 
 const char * RedNodeStringExpand (redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char*prefix, const char*trailler);
+const char *RedGetDefaultExpand(redNodeT *node, RedConfDefaultsT *defaults, const char* inputS);
 int RedConfGetEnvKey (redNodeT *node, RedConfDefaultsT *defaults, int *idxIn, const char *inputS, int *idxOut, char *outputS, int maxlen);
 int RedConfAppendEnvKey (char *outputS, int *idxOut, int maxlen, const char *inputS,  RedConfDefaultsT *defaults, const char* prefix, const char *trailler);
 void RedConfCopyConfTags (redConfTagT *source, redConfTagT *destination);

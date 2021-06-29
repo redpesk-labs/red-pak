@@ -29,8 +29,20 @@
 #define RED_CONFIG_WARNING_DEFAULT 1
 #endif
 
+#ifndef NODE_PREFIX
+#define NODE_PREFIX ""
+#endif
+
+#ifndef NODE_PATH
+#define NODE_PATH ""
+#endif
+
 #ifndef redpak_MAIN
 #define redpak_MAIN "/etc/redpak/main.yaml"
+#endif
+
+#ifndef redpak_TMPL
+#define redpak_TMPL "/etc/redpak/templates.d"
 #endif
 
 // Following file/dir are automatically prefixed by $REDPATH at runtime
@@ -44,6 +56,10 @@
 
 #ifndef REDNODE_VARDIR
 #define REDNODE_VARDIR "var/rpm/lib"
+#endif
+
+#ifndef REDNODE_REPODIR
+#define REDNODE_REPODIR "etc/yum.repos.d"
 #endif
 
 #ifndef REDNODE_LOCK

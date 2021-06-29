@@ -8,8 +8,6 @@
 #include "rpmds-py.h"
 #include "rpmstrpool-py.h"
 
-PyObject * pyrpmError;
-
 struct rpmdsObject_s {
     PyObject_HEAD
     PyObject *md_dict;		/*!< to look like PyModuleObject */
@@ -185,7 +183,7 @@ static PyObject * rpmds_Rpmlib(rpmdsObject * s, PyObject *args, PyObject *kwds)
     rpmds ds = NULL;
     char * kwlist[] = {"pool", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O&:rpmds_Rpmlib", kwlist, 
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O&:rpmds_Rpmlib", kwlist,
 		 &poolFromPyObject, &pool))
 	return NULL;
 
@@ -328,7 +326,7 @@ static PyObject * rpmds_new(PyTypeObject * subtype, PyObject *args, PyObject *kw
     rpmstrPool pool = NULL;
     char * kwlist[] = {"obj", "tag", "pool", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "OO&|O&:rpmds_new", kwlist, 
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "OO&|O&:rpmds_new", kwlist,
 	    	 &obj, tagNumFromPyObject, &tagN,
 		 &poolFromPyObject, &pool))
 	return NULL;
@@ -354,7 +352,7 @@ static PyObject * rpmds_new(PyTypeObject * subtype, PyObject *args, PyObject *kw
 	PyErr_SetString(PyExc_TypeError, "header or tuple expected");
 	return NULL;
     }
-    
+
     return rpmds_Wrap(subtype, ds);
 }
 

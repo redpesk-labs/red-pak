@@ -69,7 +69,7 @@
 
     typedef struct {
         const char *old;
-        const char *new;
+        const char *tnew;
     } redConfRelocationT;
 
     typedef struct {
@@ -80,8 +80,8 @@
 
     typedef enum {
        RED_CONF_OPT_UNSET=0,
-       RED_CONF_OPT_ENABLED, 
-       RED_CONF_OPT_DISABLED, 
+       RED_CONF_OPT_ENABLED,
+       RED_CONF_OPT_DISABLED,
     } redConfOptFlagE;
     extern const cyaml_strval_t redConfOptStrings[];
 
@@ -135,7 +135,7 @@
         const char *realpath;
         unsigned long timestamp;
         const char *info;
-    } redStatusT; 
+    } redStatusT;
 
 // ---- Family tree structure ----
 typedef enum {

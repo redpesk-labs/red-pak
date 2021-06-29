@@ -36,7 +36,7 @@ static rpmRelocation *redts_Relocate (rpmtsObject * s, redNodeT *node, RedConfDe
         relocation[0].newPath=(char*)s->redpak->redpath;
     } else for (int idx=0; idx < config->exports_count; idx++) {
         const char* old=config->relocations[idx].old;
-        const char* new=config->relocations[idx].new;
+        const char* new=config->relocations[idx].tnew;
 
         relocation[idx].oldPath= (char*)RedNodeStringExpand (node, defaults, old, NULL, NULL);
         relocation[idx].newPath= (char*)RedNodeStringExpand (node, defaults, new, NULL, NULL);

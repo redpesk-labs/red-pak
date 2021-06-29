@@ -21,38 +21,38 @@
 #include "redconf.h"
 
 // shorten schema line lenght
-#define CYFLAG_PTR  CYAML_FLAG_POINTER 
-#define CYFLAG_CASE CYAML_FLAG_CASE_INSENSITIVE 
-#define CYFLAG_OPT  CYAML_FLAG_OPTIONAL 
+#define CYFLAG_PTR  CYAML_FLAG_POINTER
+#define CYFLAG_CASE CYAML_FLAG_CASE_INSENSITIVE
+#define CYFLAG_OPT  CYAML_FLAG_OPTIONAL
 
 static const cyaml_config_t yconfError= {
-    .log_level = CYAML_LOG_ERROR, 
-    .log_fn = cyaml_log, 
-    .mem_fn = cyaml_mem, 
+    .log_level = CYAML_LOG_ERROR,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
 };
 
 static const cyaml_config_t yconfWarning = {
-    .log_level = CYAML_LOG_WARNING, 
-    .log_fn = cyaml_log, 
-    .mem_fn = cyaml_mem, 
-};    
+    .log_level = CYAML_LOG_WARNING,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
+};
 
 static const cyaml_config_t yconfNotice = {
-    .log_level = CYAML_LOG_NOTICE, 
-    .log_fn = cyaml_log, 
-    .mem_fn = cyaml_mem, 
+    .log_level = CYAML_LOG_NOTICE,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
 };
 
 static const cyaml_config_t yconfInfo = {
-    .log_level = CYAML_LOG_INFO, 
-    .log_fn = cyaml_log,  
-    .mem_fn = cyaml_mem, 
+    .log_level = CYAML_LOG_INFO,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
 };
 
 static const cyaml_config_t yconfDebug= {
-    .log_level = CYAML_LOG_DEBUG, 
-    .log_fn = cyaml_log, 
-    .mem_fn = cyaml_mem, 
+    .log_level = CYAML_LOG_DEBUG,
+    .log_fn = cyaml_log,
+    .mem_fn = cyaml_mem,
 };
 
 static const cyaml_config_t *yconft[] ={
@@ -122,7 +122,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
 
     const cyaml_strval_t redConfOptStrings[] ={
        {"Unset"  , RED_CONF_OPT_UNSET},
-       {"Enabled", RED_CONF_OPT_ENABLED}, 
+       {"Enabled", RED_CONF_OPT_ENABLED},
        {"Disabled",RED_CONF_OPT_DISABLED},
     };
 
@@ -135,7 +135,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
     };
 
     // mounting point label+path
-    static const cyaml_schema_field_t ExportEntry[] = {    
+    static const cyaml_schema_field_t ExportEntry[] = {
         CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT, redConfExportPathT, mode, exportFlagStrings, CYAML_ARRAY_LEN(exportFlagStrings)),
         CYAML_FIELD_STRING_PTR("mount", CYFLAG_PTR|CYFLAG_CASE, redConfExportPathT, mount, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("path", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfExportPathT, path, 0, CYAML_UNLIMITED),
@@ -143,14 +143,14 @@ static const cyaml_config_t *yconfGet (int wlevel) {
     };
 
     // relocation old/new path
-    static const cyaml_schema_field_t RelocationEntry[] = {    
+    static const cyaml_schema_field_t RelocationEntry[] = {
         CYAML_FIELD_STRING_PTR("old", CYFLAG_PTR|CYFLAG_CASE, redConfRelocationT, old, 0, CYAML_UNLIMITED),
-        CYAML_FIELD_STRING_PTR("new", CYFLAG_PTR|CYFLAG_CASE, redConfRelocationT, new, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("new", CYFLAG_PTR|CYFLAG_CASE, redConfRelocationT, tnew, 0, CYAML_UNLIMITED),
         CYAML_FIELD_END
     };
 
     // relocation old/new path
-    static const cyaml_schema_field_t EnvValEntry[] = {    
+    static const cyaml_schema_field_t EnvValEntry[] = {
         CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT|CYFLAG_OPT, redConfVarT, mode, redVarEnvStrings, CYAML_ARRAY_LEN(redVarEnvStrings)),
         CYAML_FIELD_STRING_PTR("key", CYFLAG_PTR|CYFLAG_CASE, redConfVarT, key, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("value", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfVarT, value, 0, CYAML_UNLIMITED),
@@ -158,7 +158,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
     };
 
     // dnf/rpm packages options
-    static const cyaml_schema_field_t EnvTagSchema[] = {   
+    static const cyaml_schema_field_t EnvTagSchema[] = {
         CYAML_FIELD_STRING_PTR("persistdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, persistdir, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("rpmdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, rpmdir, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("path", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, path, 0, CYAML_UNLIMITED),
@@ -213,7 +213,7 @@ static int SchemaSave (const char* filepath, const cyaml_schema_value_t *topsche
 	if (errcode != CYAML_OK) {
         rpmlog(REDLOG_ERROR, "Fail to reading yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
     }
- 
+
     return errcode;
 }
 
@@ -228,12 +228,12 @@ static int SchemaLoad (const char* filepath, const cyaml_schema_value_t *topsche
 
 	if (errcode != CYAML_OK) {
         // when error reparse with higger level of debug to make visible errors
-        if (wlevel == 1) 
+        if (wlevel == 1)
             errcode = SchemaLoad (filepath, topschema, config, wlevel+1);
-        else     
+        else
             rpmlog(REDLOG_ERROR, "Fail to reading yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
     }
- 
+
     return errcode;
 }
 
@@ -251,13 +251,13 @@ redConfigT* RedLoadConfig (const char* filepath, int warning) {
     redConfigT *config;
     int errcode= SchemaLoad (filepath, &ConfTopSchema, (void**)&config, warning);
     if (errcode) return NULL;
-    return config;  
+    return config;
 }
 
 redStatusT* RedLoadStatus (const char* filepath, int warning) {
     redStatusT *status;
     int errcode = SchemaLoad (filepath, &StatusTopSchema, (void**)&status, warning);
     if (errcode) return NULL;
-    return  status;  
+    return  status;
 }
 
