@@ -35,8 +35,6 @@ along with microdnf.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "redconfig.hpp"
 
-namespace fs = std::filesystem;
-
 namespace microdnf {
 
 using namespace libdnf::cli;

@@ -83,6 +83,7 @@ void CmdInstall::run(Context & ctx) {
     if (!ctx.get_redpath().empty()) {
         const std::string & redpath = ctx.get_redpath().get_value();
         auto node = redlib::ParseNode(redpath, true, 0);
+        node.scanNode();
         node.setPersistDir(ctx.base.get_config());
         node.setGpgCheck(ctx.base.get_config());
 

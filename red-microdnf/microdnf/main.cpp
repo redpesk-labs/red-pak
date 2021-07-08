@@ -284,9 +284,25 @@ int main(int argc, char *argv[])
     base.load_config_from_file();
 
     //iotbzh: set installroot to redpath if redpath
+    auto & reposdirtmp = base.get_config().reposdir();
+    std::cout << std::endl;
     auto & redpath = context.get_redpath();
-    if (!redpath.empty())
+    if (!redpath.empty()) {
         base.get_config().installroot().set(libdnf::Option::Priority::RUNTIME, redpath.get_value());
+
+        std::vector<std::string> reposdir(base.get_config().reposdir().get_value());
+
+        //prepend redpath in repodirs
+        for (auto i = reposdir.begin(); i != reposdir.end(); ++i) {
+            i->insert(0, redpath.get_value());
+            std::cout << *i << " ";
+        }
+        base.get_config().reposdir().set(libdnf::Option::Priority::RUNTIME, reposdir);
+    }
+
+    for (auto i = reposdirtmp.get_value().begin(); i != reposdirtmp.get_value().end(); ++i)
+        std::cout << *i << " ";
+    std::cout << std::endl;
 
     // Without "root" effective privileges program switches to user specific directories
     if (!microdnf::am_i_root())
