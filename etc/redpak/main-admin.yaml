@@ -1,0 +1,116 @@
+#---------------------------------------------------------------------------
+#
+#               redpak CoreOs Admin config
+#
+# - Author: Clément Bénier (fulup@iot.bzh)
+# - Define default exec time values for every rednode nspace
+# - Syntax is identical for all rednode (root, platform, terminal, ...)
+#
+# - CoreOS main.yaml should be edited manually
+# - RedNode main.yaml is typically generated at creation time from template:
+#   + red-dnf --redpath=/xxxx/xxxx --create --alias=xxxx [--template=Default]
+#-----------------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------
+# Headers:
+#   Alias: Mandatory it expands $NODE_ALIAS
+#   Name : A unique name for debug ($UUID will expand at creation time)
+#---------------------------------------------------------------------
+headers:
+  alias: coreos-admin
+  name: $UUID
+  info: 'redpak root node config admin'
+
+
+#---------------------------------------------------------------------
+# Config:
+#   In this section tag can be defined at any level of the node familly
+#    -root (coreos) value might be overloaded
+#    -If multiple definition the oldest ancestor wins
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+# Relocate: Relocate RPM in a rednode at installation time
+#   - default:
+#     + old='/'
+#     + new="$NODE_PATH"
+#
+#  Hopefull Default should do the job, otherwise you may provide your
+#  own list. Check 'rpm --location' for details.
+#---------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------
+# Enviroment might be add or remove. Mode:
+#  - Default: expand $VAR at runtime
+#  - Static:  use value without expanding variables
+#  - Execfd: User bash command STDOUT as var value
+#  - Remove: Skim existing (coreos) environment
+#
+# Environement section from all rednode family cummulate
+#---------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------
+# mode:
+#  - Private: mount are visible from every apps running from a given node
+#  - Public: share are RW for every child
+#  - Restricted: share are RO for every child
+#  - Anonymous: file are only visible from app within the same node+nspace
+#  - Symlink: Create a private symbolic link within nspace
+#  - Execfd: Virtual file added to nspace from bash command stdout
+#  - Special Linux FileSystems
+#    + Procfs
+#    + Devfs
+#    + Tmpsfs
+#    + Lock
+#  mount:
+#    the mounting point within nspace
+#  path:
+#    the realpath on coreos
+
+# Export section from all rednode family cummulate
+#---------------------------------------------------------------------
+exports:
+- mode: Restricted
+  mount: /etc/pki
+  path: /etc/pki
+- mode: Restricted
+  mount: /etc/os-release
+  path: /etc/os-release
+- mode: Restricted
+  mount: /etc/dnf
+  path: /etc/dnf
+- mode: Public
+  mount: /var/cache/dnf
+  path: /var/cache/dnf
+- mode: Public
+  mount: /var/redpesk
+  path: /var/redpesk
+- mode: Restricted
+  mount: /usr/lib64/rpm-plugins/redpak.so
+  path: /usr/lib64/rpm-plugins/redpak.so
+
+
+
+
+# private is here only for documentation
+# ----------------------------------------------------
+#  - private are only mounted when configpath==redpath
+#  - this never happen with coreos/main.yaml
+#  - mount: /etc
+#     path: /etc
+#     mode:  Private
+
+#   - mount: /usr/libexec
+#     path: /usr/libexec
+#     mode: Restricted
+
+#   - mount:
+#     path: /dev/mqueue
+#     mode: Mqueue
+
+#   - mount:
+#     path: /var/tmp/lock-$PID
+#     mode: Lock

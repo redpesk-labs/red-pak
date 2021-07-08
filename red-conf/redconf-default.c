@@ -124,7 +124,6 @@ OnErrorExit:
 RedConfDefaultsT nodeConfigDefaults[]= {
     // static strings
     {"NODE_PREFIX"    , GetEnviron, (void*)NODE_PREFIX},
-    {"NODE_PATH"      , GetEnviron, (void*)NODE_PATH},
     {"redpak_MAIN"    , GetEnviron, (void*)"$NODE_PREFIX"redpak_MAIN},
     {"redpak_TMPL"    , GetEnviron, (void*)"$NODE_PREFIX"redpak_TMPL},
     {"REDNODE_CONF"   , GetEnviron, (void*)"$NODE_PATH/"REDNODE_CONF},

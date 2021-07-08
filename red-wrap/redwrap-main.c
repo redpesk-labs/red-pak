@@ -31,6 +31,45 @@
 
 #define MAX_BWRAP_ARGS 512
 
+typedef struct {
+    const char *ldpathString;
+    unsigned int ldpathIdx;
+    const char *pathString;
+    unsigned int pathIdx;
+
+} dataNodeT;
+
+static redConfigT *loadRootNode(const char * path, int verbose, redConfTagT *mergedConfTags, dataNodeT *dataNode) {
+    int error;
+
+    redConfigT *redconf = RedLoadConfig (path, verbose);
+    if (!redconf) {
+        RedLog(REDLOG_ERROR, "redts_init: fail to parse redpak main cliarg at:'%s' ", path);
+	    goto OnErrorExit;
+    }
+
+    // load 1st root tags (lowest priority)
+    if(!redconf->conftag)
+        return redconf;
+
+    RedConfCopyConfTags (redconf->conftag, mergedConfTags);
+
+    // update process default umask
+    mode_t confmask=RedSetUmask (mergedConfTags);
+
+    // node looks good extract path/ldpath before adding red-wrap cli program+arguments
+    error= RedConfAppendEnvKey(dataNode->ldpathString, &dataNode->ldpathIdx, BWRAP_MAXVAR_LEN, redconf->conftag->ldpath, NULL, NULL, NULL);
+    if (error) goto OnErrorExit;
+
+    error= RedConfAppendEnvKey(dataNode->pathString, &dataNode->pathIdx, BWRAP_MAXVAR_LEN, redconf->conftag->path, NULL, NULL, NULL);
+    if (error) goto OnErrorExit;
+
+    return redconf;
+OnErrorExit:
+    return NULL;
+}
+
+
 int main (int argc, char *argv[]) {
 
     redConfTagT *mergedConfTags= calloc(1, sizeof(redConfTagT));
@@ -39,8 +78,12 @@ int main (int argc, char *argv[]) {
     const char *argval[MAX_BWRAP_ARGS];
     char pathString[BWRAP_MAXVAR_LEN];
     char ldpathString[BWRAP_MAXVAR_LEN];
-    unsigned int ldpathIdx=0;
-    unsigned int pathIdx=0;
+    dataNodeT dataNode = {
+        .ldpathString = ldpathString,
+        .ldpathIdx = 0,
+        .pathString = pathString,
+        .pathIdx = 0
+    };
 
     // start argument list with red-wrap command name
     argval[argcount++] = argv[0];
@@ -48,24 +91,14 @@ int main (int argc, char *argv[]) {
     rWrapConfigT *cliarg = RwrapParseArgs (argc, argv);
     if (!cliarg) exit(0);
 
-    redConfigT *redconf = RedLoadConfig (cliarg->cnfpath, cliarg->verbose);
-    if (!redconf) {
-        RedLog(REDLOG_ERROR, "redts_init: fail to parse redpak main cliarg at:'%s' ", cliarg->cnfpath);
-	    goto OnErrorExit;
+    redNodeT *redconfadmin = NULL;
+    redNodeT *redconf = loadRootNode(cliarg->cnfpath, cliarg->verbose, mergedConfTags, &dataNode);
+    if(!redconf) goto OnErrorExit;
+    // if admin: overload conf
+    if (cliarg->adminpath) {
+        redconfadmin = loadRootNode(cliarg->adminpath, cliarg->verbose, mergedConfTags, &dataNode);
+        if(!redconfadmin) goto OnErrorExit;
     }
-
-    // load 1st root tags (lowest priority)
-    RedConfCopyConfTags (redconf->conftag, mergedConfTags);
-
-    // update process default umask
-    mode_t confmask=RedSetUmask (mergedConfTags);
-
-    // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-    error= RedConfAppendEnvKey(ldpathString, &ldpathIdx, BWRAP_MAXVAR_LEN, redconf->conftag->ldpath, NULL, NULL, NULL);
-    if (error) goto OnErrorExit;
-
-    error= RedConfAppendEnvKey(pathString, &pathIdx, BWRAP_MAXVAR_LEN, redconf->conftag->path, NULL, NULL, NULL);
-    if (error) goto OnErrorExit;
 
     // update verbose/redpath from cliarg
     const char *redpath = cliarg->redpath;
@@ -86,25 +119,29 @@ int main (int argc, char *argv[]) {
     rootnode.redpath=redtree->status->realpath;
     rootnode.config= redconf;
     rootnode.config->headers=redtree->config->headers;
+    rootnode.confadmin = redconfadmin;
     rootnode.ancestor=NULL;
 
     error = RwrapParseConfig (&rootnode, cliarg, 0, argval, &argcount);
     if (error) goto OnErrorExit;
+
 
     // build arguments from nodes family tree
         // Scan redpath family nodes from terminal leaf to root node
     for (redNodeT *node=redtree; node != NULL; node=node->ancestor) {
 
         RedConfCopyConfTags (node->config->conftag, mergedConfTags);
+        if(node->confadmin)
+            RedConfCopyConfTags (node->confadmin->conftag, mergedConfTags);
 
         int error = RwrapParseNode (node, cliarg, (node == redtree), argval, &argcount);
         if (error) goto OnErrorExit;
 
         // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-        error= RedConfAppendEnvKey(ldpathString, &ldpathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->ldpath, NULL, ":", NULL);
+        error= RedConfAppendEnvKey(dataNode.ldpathString, &dataNode.ldpathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->ldpath, NULL, ":", NULL);
         if (error) goto OnErrorExit;
 
-        error= RedConfAppendEnvKey(pathString, &pathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->path, NULL, ":",NULL);
+        error= RedConfAppendEnvKey(dataNode.pathString, &dataNode.pathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->path, NULL, ":",NULL);
         if (error) goto OnErrorExit;
 
     }

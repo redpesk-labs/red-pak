@@ -31,6 +31,8 @@ along with microdnf.  If not, see <https://www.gnu.org/licenses/>.
 #include <utility>
 #include <vector>
 
+#include "redconfig.hpp"
+
 namespace microdnf
 {
 
@@ -39,6 +41,7 @@ namespace microdnf
     class Context
     {
     public:
+
         /// Updates the repositories metadata cache.
         /// Loads the updated metadata into rpm::RepoSack and into rpm::PackageSack.
         void load_rpm_repos(libdnf::repo::RepoQuery &repos, libdnf::rpm::PackageSack::LoadRepoFlags flags);
@@ -47,6 +50,7 @@ namespace microdnf
         void select_command(Command *cmd) { selected_command = cmd; }
 
         libdnf::Base base;
+        redlib::RedNode rednode{*this};
         std::vector<std::pair<std::string, std::string>> setopts;
         std::vector<std::unique_ptr<Command>> commands;
         Command *selected_command{nullptr};

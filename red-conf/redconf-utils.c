@@ -165,6 +165,19 @@ redNodeYamlE RedNodesLoad(const char* redpath, redNodeT *node, int verbose) {
         goto OnErrorExit;
     }
 
+    // parse redpath node config admin file: if exists
+    (void)snprintf (nodepath, sizeof(nodepath), "%s/%s", redpath, REDNODE_ADMIN);
+    error= stat(nodepath, &statinfo);
+    if (error || !S_ISCHR(statinfo.st_mode)) {
+        RedLog(REDLOG_DEBUG, "No admin config file=%s", nodepath);
+    } else {
+        node->confadmin = RedLoadConfig (nodepath, verbose);
+        if (!node->confadmin) {
+            RedLog(REDLOG_ERROR, "Fail to parse redpak admin config [path=%s]", nodepath);
+            goto OnErrorExit;
+        }
+    }
+
     // keep a copy of effective redpath for sanity check purpose
     node->redpath=strdup(redpath);
     rc = RED_NODE_CONFIG_OK;

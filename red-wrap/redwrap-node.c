@@ -24,9 +24,8 @@
 
 #include "redwrap.h"
 
-int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
+static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
     int err;
-    redConfigT *configN=node->config;
 
     // scan export directory
     for (int idx=0; idx <configN->exports_count; idx++) {
@@ -173,6 +172,25 @@ int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const
     }
     return 0;
 
+OnErrorExit:
+    return 1;
+}
+
+int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
+    int error;
+
+    error = RwrapParseSubConfig(node, node->config, cliargs, lastleaf, argval, argcount);
+    if (error) goto OnErrorExit;
+
+    //load admin config if needed
+    if(!node->confadmin)
+        goto OnSuccessExit;
+
+    error = RwrapParseSubConfig(node, node->confadmin, cliargs, lastleaf, argval, argcount);
+    if(error) goto OnErrorExit;
+
+OnSuccessExit:
+    return 0;
 OnErrorExit:
     return 1;
 }

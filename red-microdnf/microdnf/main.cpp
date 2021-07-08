@@ -46,6 +46,8 @@ along with microdnf.  If not, see <https://www.gnu.org/licenses/>.
 #include <fstream>
 #include <iostream>
 
+#include <rpm/rpmlog.h>
+
 namespace fs = std::filesystem;
 
 namespace microdnf
@@ -186,13 +188,7 @@ namespace microdnf
         microdnf->register_named_arg(installroot);
 
         //iotbzh
-        auto redpath = ctx.arg_parser.add_new_named_arg("redpath");
-        redpath->set_long_name("redpath");
-        redpath->set_has_value(true);
-        redpath->set_arg_value_help("ABSOLUTE_PATH");
-        redpath->set_short_description("redpath path");
-        redpath->link_value(&ctx.get_redpath());
-        microdnf->register_named_arg(redpath);
+        ctx.rednode.addOptions(microdnf);
 
         auto releasever = ctx.arg_parser.add_new_named_arg("releasever");
         releasever->set_long_name("releasever");
@@ -231,6 +227,7 @@ namespace microdnf
 
 int main(int argc, char *argv[])
 {
+    //rpmSetVerbosity(RPMLOG_DEBUG);
     microdnf::Context context;
     libdnf::Base &base = context.base;
 
@@ -283,26 +280,8 @@ int main(int argc, char *argv[])
     // Load main configuration
     base.load_config_from_file();
 
-    //iotbzh: set installroot to redpath if redpath
-    auto & reposdirtmp = base.get_config().reposdir();
-    std::cout << std::endl;
-    auto & redpath = context.get_redpath();
-    if (!redpath.empty()) {
-        base.get_config().installroot().set(libdnf::Option::Priority::RUNTIME, redpath.get_value());
-
-        std::vector<std::string> reposdir(base.get_config().reposdir().get_value());
-
-        //prepend redpath in repodirs
-        for (auto i = reposdir.begin(); i != reposdir.end(); ++i) {
-            i->insert(0, redpath.get_value());
-            std::cout << *i << " ";
-        }
-        base.get_config().reposdir().set(libdnf::Option::Priority::RUNTIME, reposdir);
-    }
-
-    for (auto i = reposdirtmp.get_value().begin(); i != reposdirtmp.get_value().end(); ++i)
-        std::cout << *i << " ";
-    std::cout << std::endl;
+    //iotbzh: configure rednode
+    context.rednode.configure();
 
     // Without "root" effective privileges program switches to user specific directories
     if (!microdnf::am_i_root())

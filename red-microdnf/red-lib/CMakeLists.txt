@@ -32,5 +32,5 @@ PROJECT_TARGET_ADD(red-lib)
 
     target_link_libraries(${TARGET_NAME} redconf)
 
-    target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+    target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/../microdnf")
     install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})

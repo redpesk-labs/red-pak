@@ -104,34 +104,23 @@ void CmdManager::configure([[maybe_unused]] Context & ctx) {
         if (tmplate.get_value().empty())
             create.set(libdnf::Option::Priority::RUNTIME, "default");
 
-        //if (!nodeconfig && !(ctx.get_base))
-        //.get_config().add_repo().empty()
-        //if (not self.nodeconfig and not (self.opts.add_repo != [] or
-        //    self.opts.save or
-        //    self.opts.dump or
-        //    self.opts.dump_variables or
-        //    self.opts.set_disabled or
-        //    self.opts.set_enabled) ):
-        //            self.cli.optparser.error("one of the following arguments is required: {}".format(' '.join([
-        //            "--save", "--add-repo", "--dump", "--dump-variables", "--enable", "--disable"])))
     }
 
     // check we redpath is defined and exist
-    if (ctx.get_redpath().get_value().empty())
+    if (ctx.rednode.isRedpath(false))
         throw std::runtime_error("Syntax Error: redpak --redpath=/xx/../xyz subcommand (missing --redpath)");
 }
 
 void CmdManager::run(Context & ctx) {
-    redlib::ParseNode node(ctx.get_redpath().get_value(), true, true);
     if (create.get_value()) {
-        node.createRedNode(alias.get_value(), create.get_value(), update.get_value(), tmplate.get_value());
+        ctx.rednode.createRedNode(alias.get_value(), create.get_value(), update.get_value(), tmplate.get_value());
     }
 
     //create system repo
     auto & package_sack = *ctx.base.get_rpm_package_sack();
     package_sack.create_system_repo(false);
 
-    std::cout << fmt::format("SUCCESS: rednode ready at {}", ctx.get_redpath().get_value()) << std::endl;
+    fmt::print(fmt::format("SUCCESS: rednode ready at {}", ctx.get_redpath().get_value()));
 }
 
 }  // namespace microdnf

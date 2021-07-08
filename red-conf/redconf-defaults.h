@@ -33,12 +33,12 @@
 #define NODE_PREFIX ""
 #endif
 
-#ifndef NODE_PATH
-#define NODE_PATH ""
-#endif
-
 #ifndef redpak_MAIN
 #define redpak_MAIN "/etc/redpak/main.yaml"
+#endif
+
+#ifndef redpak_MAIN_ADMIN
+#define redpak_MAIN_ADMIN "/etc/redpak/main-admin.yaml"
 #endif
 
 #ifndef redpak_TMPL
@@ -48,6 +48,10 @@
 // Following file/dir are automatically prefixed by $REDPATH at runtime
 #ifndef REDNODE_CONF
 #define REDNODE_CONF "etc/redpack.yaml"
+#endif
+
+#ifndef REDNODE_ADMIN
+#define REDNODE_ADMIN "etc/redpack-admin.yaml"
 #endif
 
 #ifndef REDNODE_STATUS

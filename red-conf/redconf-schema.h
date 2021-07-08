@@ -148,6 +148,7 @@ typedef enum {
 typedef struct redNodeS{
     redStatusT *status;
     redConfigT *config;
+    redConfigT *confadmin;
     struct redNodeS *ancestor;
     const char *redpath;
 } redNodeT;

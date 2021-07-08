@@ -20,66 +20,75 @@
 #define REDLIB_REDCONFIG_HPP
 
 #include <string>
-#include <map>
 #include <filesystem>
+#include <fmt/format.h>
 
 #include <libdnf/base/base.hpp>
 #include <libdnf/rpm/package.hpp>
-
-#include "reddefaults.hpp"
+#include <libdnf-cli/argument_parser.hpp>
 
 extern "C" {
 #include "redconf.h"
 }
 
+
+namespace microdnf {
+	class Context;
+}
+
 namespace redlib {
 
-	class Environment
-	{
-	public:
-		Environment(): defaults(REDDEFAULTS) {}
-		std::string expandValue(const char * value);
-	protected:
-		std::map<std::string, std::string> defaults;
-	};
+class RedNode
+{
+public:
+	RedNode(microdnf::Context & ctx): ctx(&ctx) {}
 
-	class ParseNode: public Environment
-	{
-	public:
-		ParseNode(const std::filesystem::path & redpath, bool strictmode, int verbose);
+	void addOptions(libdnf::cli::ArgumentParser::Command *microdnf);
+	void configure();
+	void install(libdnf::rpm::PackageSack & package_sack);
+	void createRedNode(const std::string & alias, bool create, bool update, const std::string & tmplate);
 
-		static void checkdir(const std::string & label, const std::string & dirpath, bool create);
+	bool isRedpath(bool strict = true) const;
 
-		void scanNode();
-		void setPersistDir(libdnf::ConfigMain & dnfconfig);
-		void setGpgCheck(libdnf::ConfigMain & dnfconfig);
-		void appendFamilyDb(libdnf::rpm::PackageSack & package_sack);
-		void createRedNode(const std::string & alias, bool create, bool update, const std::string & tmplate);
+private:
+	microdnf::Context * ctx;
+    libdnf::OptionPath redpathOpt{nullptr};
 
-	private:
-		bool strictmode;
-		std::filesystem::path redpath;
-		bool isnode;
-		redNodeT *node;
-		redConfigT *config;
-		int verbose;
+	const std::string & redpath() const { return redpathOpt.get_value(); }
 
-		static void get_uuid(char * uuid_str);
-		static std::filesystem::path confpath();
-		static void date(char *today, std::size_t size);
-		static long unsigned int timestamp();
-		static std::string expandTplFile(std::filesystem::path & confpath);
+	bool active{false};
+	bool strictmode{false};
+	bool isnode{false};
+	int verbose{0};
 
-		void getMain();
-		void getConf();
-		bool hasConf();
-		void saveto(bool);
-		void rednode_status();
-		void rednode_template(const std::string & alias, const std::string & tmplname, bool update);
-		void reloadConfig(const std::string & tmplname);
+	redNodeT *node{nullptr};
+	redConfigT *config{nullptr};
 
-		void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);
-	};
+	static void throw_error(std::string msg) { throw std::runtime_error(msg); }
+
+	static void get_uuid(char * uuid_str);
+	static std::filesystem::path confpath();
+	static void date(char *today, std::size_t size);
+	static long unsigned int timestamp();
+	static std::string expandTplFile(std::filesystem::path & confpath);
+
+	static void checkdir(const std::string & label, const std::string & dirpath, bool create);
+
+	void scanNode();
+	void setPersistDir(libdnf::ConfigMain & dnfconfig);
+	void setGpgCheck(libdnf::ConfigMain & dnfconfig);
+	void appendFamilyDb(libdnf::rpm::PackageSack & package_sack);
+
+	void getMain();
+	void getConf();
+	bool hasConf();
+	void saveto(bool);
+	void rednode_status();
+	void rednode_template(const std::string & alias, const std::string & tmplname, bool update);
+	void reloadConfig(const std::string & tmplname);
+
+	void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);
+};
 }
 
 #endif

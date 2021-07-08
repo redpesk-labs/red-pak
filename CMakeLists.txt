@@ -39,8 +39,8 @@ option(WITH_MICRODNF "Build microdnf command-line package manager" ON)
 # ------------------------------
 set (PKG_REQUIRED_LIST
 	python${PYTHON_VERSION}
-	libdnf
-	rpm
+	libdnf5
+	redrpm
 	yaml-0.1
 	libcyaml
   uuid
@@ -50,6 +50,5 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake/redpak.cmake)
 
 ADD_SUBDIRECTORY (etc)
 ADD_SUBDIRECTORY (red-conf)
-ADD_SUBDIRECTORY (red-rpm)
 ADD_SUBDIRECTORY (red-wrap)
 ADD_SUBDIRECTORY (red-microdnf)

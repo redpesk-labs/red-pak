@@ -1,0 +1,293 @@
+{
+	"version": "0.2.0",
+	"compounds": [
+		{
+			"name": "Compound",
+			"configurations": []
+		}
+	],
+	"configurations": [
+		{
+			"name": "redwrap-admin-bash",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-wrap/red-wrap",
+			"args": [
+				"--redpath",
+				"/var/redpesk/testtest",
+				"--redmain",
+				"${workspaceFolder}/etc/redpak/main.yaml",
+				"--admin=${workspaceFolder}/etc/redpak/main-admin.yaml",
+				"--force",
+				"bash"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing -gdb-set follow-fork-mode child",
+					"ignoreFailures": true
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redwrap-remove-toto",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-wrap/red-wrap",
+			"args": [
+				"--admin=${workspaceFolder}/etc/redpak/main-admin.yaml",
+				"--redpath=/var/redpesk/testtest",
+				"--redmain=${workspaceFolder}/etc/redpak/main.yaml",
+				"--",
+				"/root/red-pak/build/red-microdnf/microdnf/microdnf",
+				"--redpath=/var/redpesk/testtest",
+				"remove",
+				"toto",
+				"--releasever=33"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				},
+				{"text": "-gdb-set follow-exec-mode same"}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redmicrodnf-install",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/red-microdnf/microdnf/microdnf",
+			"args": [
+				"--redpath",
+				"/var/redpesk/testtest",
+				"install",
+				"boost"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"cwd": "${workspaceFolder}/build",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redmicrodnf-remove-toto",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/red-microdnf/microdnf/microdnf",
+			"args": [
+				"--redpath",
+				"/var/redpesk/testtest",
+				"remove",
+				"toto"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"cwd": "${workspaceFolder}/build",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redmicrodnf-install-toto",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/red-microdnf/microdnf/microdnf",
+			"args": [
+				"--redpath",
+				"/var/redpesk/testtest",
+				"install",
+				"toto"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"cwd": "${workspaceFolder}/build",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redmicrodnf-manager-testtest",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/red-microdnf/microdnf/microdnf",
+			"args": [
+				"--redpath",
+				"/var/redpesk/testtest",
+				"manager",
+				"--create",
+				"--alias",
+				"okokokoko"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"cwd": "${workspaceFolder}/build",
+			"environment": [
+				{
+					"name": "NODE_PREFIX",
+					"value": "/root/red-pak"
+				},
+			],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redmicrodnf-manager",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/red-microdnf/microdnf/microdnf",
+			"args": [
+				"manager",
+				"--create"
+			],
+			"stopAtEntry": true,
+			"cwd": "${workspaceFolder}/build",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			// afb-binder --name=afb-oidc --config=${workspaceFolder}/conf.d/project/etc/oidc-basic.json
+			"name": "redmicrodnf-install-no-redpath",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/build/red-microdnf/microdnf/microdnf",
+			"args": [
+				"install",
+				"boost"
+			],
+			"stopAtEntry": true,
+			"cwd": "${workspaceFolder}/build",
+			"environment": [
+				{
+					"name": "LD_LIBRARY_PATH",
+					"value": "/root/libdnf-5/build/libdnf:/root/libdnf-5/build/libdnf-cli:"
+				},
+			],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			// afb-binder --name=afb-oidc --config=${workspaceFolder}/conf.d/project/etc/oidc-basic.json
+			"name": "microdnf5-install",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/root/libdnf-5/build/microdnf/microdnf",
+			"args": [
+				"--redpath",
+				"/var/redpesk/agl-redpesk9/demo/",
+				"install",
+				"boost"
+			],
+			"stopAtEntry": true,
+			"cwd": "${workspaceFolder}/build",
+			"environment": [
+				{
+					"name": "LD_LIBRARY_PATH",
+					"value": "/root/libdnf-5/build/libdnf"
+				},
+				{
+					"name": "LIBDNF_PLUGIN_DIR",
+					"value": "/root/libdnf-5/build/libdnf-plugins/testplugin"
+				},
+			],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			// afb-binder --name=afb-oidc --config=${workspaceFolder}/conf.d/project/etc/oidc-basic.json
+			"name": "microdnf5-remove",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/root/libdnf-5/build/microdnf/microdnf",
+			"args": [
+				"remove",
+				"boost"
+			],
+			"stopAtEntry": true,
+			"cwd": "${workspaceFolder}/build",
+			"environment": [
+				{
+					"name": "LD_LIBRARY_PATH",
+					"value": "/root/libdnf-5/build/libdnf"
+				}
+			],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		}
+	]
+}

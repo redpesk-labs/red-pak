@@ -48,6 +48,7 @@ typedef struct {
     const char*redpath;
     const char*cnfpath;
     const char*bwrap;
+    const char*adminpath;
     int index;
     int verbose;
     int forcemod;

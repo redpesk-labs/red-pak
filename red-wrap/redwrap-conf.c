@@ -42,6 +42,7 @@ static struct option options[] = {
 	{"redmain", required_argument, 0,  'c' },
 	{"rmain"  , required_argument, 0,  'c' },
 	{"bwrap"  , required_argument, 0,  'b' },
+	{"admin"  , optional_argument, 0,  'a' },
 	{"force"  , no_argument      , 0,  'f' },
 	{"unsafe" , no_argument      , 0,  'u' },
 	{"help"   , no_argument      , 0,  '?' },
@@ -56,6 +57,7 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[]) {
 
 	for (int done=0; !done;) {
 		int option = getopt_long(argc, argv, "vp:m:", options, &index);
+
 		if (option == -1) {
 			config->index= optind;
 			break;
@@ -74,6 +76,12 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[]) {
 
 			case 'c':
 				config->cnfpath=optarg;
+				break;
+
+			case 'a':
+				config->adminpath = getenv("redpak_MAIN_ADMIN");
+    			if (!config->adminpath) config->adminpath= redpak_MAIN_ADMIN;
+				if (optarg) config->adminpath = optarg;
 				break;
 
 			case 'b':

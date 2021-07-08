@@ -80,20 +80,9 @@ void CmdInstall::run(Context & ctx) {
     // Creates system repository in the repo_sack and loads it into rpm::PackageSack.
     package_sack.create_system_repo(false);
 
-    if (!ctx.get_redpath().empty()) {
-        const std::string & redpath = ctx.get_redpath().get_value();
-        auto node = redlib::ParseNode(redpath, true, 0);
-        node.scanNode();
-        node.setPersistDir(ctx.base.get_config());
-        node.setGpgCheck(ctx.base.get_config());
-
-        redlib::ParseNode::checkdir("redpath", redpath, false);
-        redlib::ParseNode::checkdir("dnf persistdir", ctx.base.get_config().persistdir().get_value(), false);
-        node.appendFamilyDb(package_sack);
-    }
-
-    //package_sack.append_extra_system_repo("/");
-    //package_sack.append_extra_system_repo("/var/redpesk/agl-redpesk9/");
+    printf("installroot: %s\n",ctx.base.get_config().installroot().get_value().c_str());
+    //iotbzh: install rednode
+    ctx.rednode.install(package_sack);
 
     // To search in available repositories (available packages)
     libdnf::repo::RepoQuery enabled_repos(ctx.base);
