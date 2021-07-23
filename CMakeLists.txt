@@ -40,6 +40,7 @@ option(WITH_MICRODNF "Build microdnf command-line package manager" ON)
 set (PKG_REQUIRED_LIST
 	python${PYTHON_VERSION}
 	libdnf5
+	libdnf5-cli
 	redrpm
 	yaml-0.1
 	libcyaml
