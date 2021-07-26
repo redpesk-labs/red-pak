@@ -24,4 +24,4 @@ PROJECT_TARGET_ADD(red-wrap)
 
     # compile + link depencencies
     target_link_libraries(${TARGET_NAME} redconf)
-	install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+	install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
