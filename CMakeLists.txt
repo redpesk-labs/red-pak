@@ -30,10 +30,10 @@ set(PROJECT_ALIAS "redpak")
 # -------------------------------
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 set (PYTHON_VERSION 3)
-set (INSTALL_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib64)
-set (INSTALL_BIN_DIR ${CMAKE_INSTALL_PREFIX}/bin)
 
 option(WITH_MICRODNF "Build microdnf command-line package manager" ON)
+
+include(GNUInstallDirs)
 
 # External Packages requirements
 # ------------------------------
