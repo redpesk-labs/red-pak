@@ -1,3 +1,2 @@
 ADD_SUBDIRECTORY (redpak)
-ADD_SUBDIRECTORY (reddnf)
 ADD_SUBDIRECTORY (redwrap)

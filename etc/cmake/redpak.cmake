@@ -50,7 +50,7 @@ foreach (PKG_CONFIG ${PKG_REQUIRED_LIST})
 endforeach(PKG_CONFIG)
 
 # provide Installation directory for default path generation
-add_compile_options (-DINSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -Dredpak_MAIN="${CMAKE_INSTALL_PREFIX}/etc/redpak/main.yaml")
+add_compile_options (-DINSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} -Dredpak_MAIN="${CMAKE_INSTALL_FULL_SYSCONFDIR}/redpak/main.yaml")
 
 macro(PROJECT_TARGET_ADD TARGET_NAME)
     set_property(GLOBAL APPEND PROPERTY PROJECT_TARGETS ${TARGET_NAME})

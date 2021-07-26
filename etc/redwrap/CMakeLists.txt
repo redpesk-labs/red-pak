@@ -17,5 +17,5 @@
 ##########################################################################
 
 
-INSTALL (FILES "redwrap.bashrc" DESTINATION ${CMAKE_INSTALL_PREFIX}/etc/bash_completion.d/ RENAME "redwrap")
+INSTALL (FILES "redwrap.bashrc" DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/bash_completion.d/ RENAME "redwrap")
 
