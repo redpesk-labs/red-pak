@@ -27,7 +27,7 @@ PROJECT_TARGET_ADD(redconf)
 		LABELS "LIBRARY"
 		OUTPUT_NAME ${TARGET_NAME}
     LINKER_LANGUAGE C
-    PUBLIC_HEADER ${TARGET_NAME}.h
+    PUBLIC_HEADER ${TARGET_NAME}.h redconf-defaults.h
 	)
 
   # compliation include path for library consuming modules
