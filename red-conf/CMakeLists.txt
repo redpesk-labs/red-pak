@@ -19,6 +19,7 @@
 PROJECT_TARGET_ADD(redconf)
 
   file(GLOB CSOURCES [a-z]*.c )
+  file(GLOB CHEADERS [a-z]*.h )
 
   add_library(${TARGET_NAME} SHARED ${CSOURCES} ${TARGET_NAME}.h)
 
@@ -27,7 +28,7 @@ PROJECT_TARGET_ADD(redconf)
 		LABELS "LIBRARY"
 		OUTPUT_NAME ${TARGET_NAME}
     LINKER_LANGUAGE C
-    PUBLIC_HEADER ${TARGET_NAME}.h redconf-defaults.h
+	PUBLIC_HEADER "${CHEADERS}"
 	)
 
   # compliation include path for library consuming modules
