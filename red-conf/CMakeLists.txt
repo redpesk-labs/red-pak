@@ -34,7 +34,7 @@ PROJECT_TARGET_ADD(redconf)
   pkg_search_module(RPM REQUIRES redrpm rpm)
 
   # compliation include path for library consuming modules
-  target_link_libraries(${TARGET_NAME} ${RPM_LIBRAIRIES})
+  target_link_libraries(${TARGET_NAME} ${RPM_LIBRARIES})
   target_include_directories(${TARGET_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR} ${RPM_INCLUDEDIR}")
 
   # final install destination for sharelib

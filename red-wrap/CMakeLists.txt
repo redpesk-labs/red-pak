@@ -25,6 +25,6 @@ PROJECT_TARGET_ADD(red-wrap)
     # compile + link depencencies
 	pkg_search_module(RPM REQUIRES redrpm rpm)
 	target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf ${RPM_INCLUDEDIR})
-    target_link_libraries(${TARGET_NAME} redconf ${RPM_LIBRAIRIES})
+    target_link_libraries(${TARGET_NAME} redconf ${RPM_LIBRARIES})
 	install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 
