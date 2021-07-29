@@ -56,6 +56,7 @@ ADD_SUBDIRECTORY (etc)
 ADD_SUBDIRECTORY (red-conf)
 ADD_SUBDIRECTORY (red-wrap)
 ADD_SUBDIRECTORY (red-microdnf)
+ADD_SUBDIRECTORY (red-plugin)
 
 configure_file("red-pak.pc.in" ${CMAKE_CURRENT_BINARY_DIR}/red-pak.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/red-pak.pc DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig)
