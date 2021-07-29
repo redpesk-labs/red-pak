@@ -35,17 +35,20 @@ option(WITH_MICRODNF "Build microdnf command-line package manager" ON)
 
 include(GNUInstallDirs)
 
+find_package(PkgConfig REQUIRED)
+
 # External Packages requirements
 # ------------------------------
 set (PKG_REQUIRED_LIST
 	python${PYTHON_VERSION}
-	libdnf5
-	libdnf5-cli
-	redrpm
 	yaml-0.1
 	libcyaml
 	uuid
 )
+
+# use search module to be compatible in native mode
+find_package(PkgConfig REQUIRED)
+message("BBBBBBB ${RPM_LIBRARIES}")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake/redpak.cmake)
 

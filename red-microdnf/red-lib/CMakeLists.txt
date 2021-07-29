@@ -18,6 +18,9 @@
 
 configure_file(reddefaults.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/reddefaults.hpp)
 
+pkg_search_module(LIBDNF REQUIRES libdnf5 libdnf)
+pkg_search_module(LIBDNFCLI REQUIRES libdnf5-cli libdnf-cli)
+
 PROJECT_TARGET_ADD(red-lib)
 
     file(GLOB CXXSOURCES [a-z]*.cpp)
@@ -31,7 +34,7 @@ PROJECT_TARGET_ADD(red-lib)
     PUBLIC_HEADER redconfig.hpp
     )
 
-    target_link_libraries(${TARGET_NAME} redconf)
+	target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../red-conf ${CMAKE_CURRENT_SOURCE_DIR}/../microdnf ${LIBDNF_INCLUDEDIR} ${LIBDNFCLI_INCLUDEDIR} ${RPM_INCLUDEDIR})
+	target_link_libraries(${TARGET_NAME} redconf ${LIBDNF_LIBRARIES} ${LIBDNFCLI_LIBRARIES} ${RPM_LIBRAIRIES})
 
-    target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/../microdnf")
 	install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})

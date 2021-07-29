@@ -80,10 +80,10 @@ exports:
   mount: /etc/os-release
   path: /etc/os-release
 - mode: Restricted
-  mount: /etc/dnf
-  path: /etc/dnf
+  mount: /etc/dnf/dnf.conf
+  path: /etc/dnf/dnf.conf
 - mode: Public
-  mount: /var/cache/dnf
+  mount: /var/redpak/var/cache/dnf
   path: /var/cache/dnf
 - mode: Public
   mount: /var/redpesk
@@ -91,6 +91,9 @@ exports:
 - mode: Restricted
   mount: /usr/lib64/rpm-plugins/redpak.so
   path: /usr/lib64/rpm-plugins/redpak.so
+- mount: /etc/dnf/vars/releasever
+  path: (source /etc/os-release; echo $VERSION)
+  mode: Execfd
 
 
 
@@ -114,3 +117,4 @@ exports:
 #   - mount:
 #     path: /var/tmp/lock-$PID
 #     mode: Lock
+
