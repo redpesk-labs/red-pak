@@ -35,7 +35,7 @@ PROJECT_TARGET_ADD(redconf)
 
   # compliation include path for library consuming modules
   target_link_libraries(${TARGET_NAME} ${RPM_LIBRARIES})
-  target_include_directories(${TARGET_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR} ${RPM_INCLUDEDIR}")
+  target_include_directories(${TARGET_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR} ${RPM_INCLUDE_DIRS}")
 
   # final install destination for sharelib
   install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})

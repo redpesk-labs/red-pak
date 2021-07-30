@@ -16,12 +16,16 @@
 # limitations under the License.
 ##########################################################################
 PROJECT_TARGET_ADD(red-plugin)
-MESSAGE(STATUS "Creating rpm plugin for redpak")
+	MESSAGE(STATUS "Creating rpm plugin for redpak")
 
-	pkg_check_modules(RPM REQUIRED redrpm rpm)
+	pkg_search_module(RPM REQUIRED redrpm rpm)
 
-	add_library(redpak SHARED rpm-redpak.c)
-	set_target_properties(redpak PROPERTIES PREFIX "")
+	add_library(${TARGET_NAME} SHARED rpm-redpak.c)
+	set_target_properties(${TARGET_NAME} PROPERTIES
+		PREFIX ""
+		LABELS "LIBRARY"
+		OUTPUT_NAME "redpak"
+		)
 
-	target_link_directories(redpak PUBLIC ${RPM_LIBRARY_DIRS})
-	target_link_libraries(redpak LINK_PUBLIC ${RPM_LIBRARIES})
+	target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS})
+	target_link_libraries(${TARGET_NAME} LINK_PUBLIC ${RPM_LIBRARIES})
