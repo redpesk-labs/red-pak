@@ -29,3 +29,5 @@ PROJECT_TARGET_ADD(red-plugin)
 
 	target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS})
 	target_link_libraries(${TARGET_NAME} LINK_PUBLIC ${RPM_LIBRARIES})
+
+	install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/rpm-plugins)

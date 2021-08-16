@@ -168,7 +168,7 @@ redNodeYamlE RedNodesLoad(const char* redpath, redNodeT *node, int verbose) {
     // parse redpath node config admin file: if exists
     (void)snprintf (nodepath, sizeof(nodepath), "%s/%s", redpath, REDNODE_ADMIN);
     error= stat(nodepath, &statinfo);
-    if (error || !S_ISCHR(statinfo.st_mode)) {
+    if (error || !S_ISREG(statinfo.st_mode)) {
         RedLog(REDLOG_DEBUG, "No admin config file=%s", nodepath);
     } else {
         node->confadmin = RedLoadConfig (nodepath, verbose);

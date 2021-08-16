@@ -8,6 +8,62 @@
 	],
 	"configurations": [
 		{
+			"name": "redwrap-admin-bash-test-10",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-wrap/red-wrap",
+			"args": [
+				"--redpath",
+				"/var/redpesk3/testtest",
+				"--redmain",
+				"/etc/redpak/main.yaml",
+				"--admin=/etc/redpak/main-admin.yaml",
+				"--force",
+				"bash"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redwrap-admin-bash-test",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-wrap/red-wrap",
+			"args": [
+				"--redpath",
+				"/var/redpesk/node1",
+				"--redmain",
+				"/etc/redpak/main.yaml",
+				"--admin=/etc/redpak/main-admin.yaml",
+				"--force",
+				"bash"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
 			"name": "redwrap-admin-bash",
 			"type": "cppdbg",
 			"request": "launch",
@@ -29,8 +85,8 @@
 			"setupCommands": [
 				{
 					"description": "Enable pretty-printing for gdb",
-					"text": "-enable-pretty-printing -gdb-set follow-fork-mode child",
-					"ignoreFailures": true
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
 				}
 			],
 			"miDebuggerPath": "/usr/bin/gdb"
@@ -43,14 +99,14 @@
 			"program": "${workspaceFolder}/build/red-wrap/red-wrap",
 			"args": [
 				"--admin=${workspaceFolder}/etc/redpak/main-admin.yaml",
-				"--redpath=/var/redpesk/testtest",
+				"--redpath=/var/redpesk/node1",
 				"--redmain=${workspaceFolder}/etc/redpak/main.yaml",
 				"--",
-				"/root/red-pak/build/red-microdnf/microdnf/microdnf",
-				"--redpath=/var/redpesk/testtest",
+				"/home/1001/red-microdnf/build/redmicrodnf",
+				"--redpath=/var/redpesk/node1",
 				"remove",
 				"toto",
-				"--releasever=33"
+				"--releasever=arz"
 			],
 			"stopAtEntry": true,
 			"envFile": "${workspaceFolder}/.env",
@@ -59,10 +115,9 @@
 			"setupCommands": [
 				{
 					"description": "Enable pretty-printing for gdb",
-					"text": "-enable-pretty-printing",
+					"text": "-gdb-set follow-fork-mode parent",
 					"ignoreFailures": true
 				},
-				{"text": "-gdb-set follow-exec-mode same"}
 			],
 			"miDebuggerPath": "/usr/bin/gdb"
 		},
@@ -142,13 +197,13 @@
 			"miDebuggerPath": "/usr/bin/gdb"
 		},
 		{
-			"name": "redmicrodnf-manager-testtest",
+			"name": "redmicrodnf-manager-testtest2",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/build/red-microdnf/microdnf/microdnf",
 			"args": [
 				"--redpath",
-				"/var/redpesk/testtest",
+				"/var/redpesk2/testtest",
 				"manager",
 				"--create",
 				"--alias",

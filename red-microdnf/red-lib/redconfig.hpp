@@ -22,8 +22,10 @@
 #include <string>
 #include <filesystem>
 #include <fmt/format.h>
+#include <memory>
 
 #include <libdnf/base/base.hpp>
+#include <libdnf/base/transaction.hpp>
 #include <libdnf/rpm/package.hpp>
 #include <libdnf-cli/argument_parser.hpp>
 
@@ -46,13 +48,15 @@ public:
 	void addOptions(libdnf::cli::ArgumentParser::Command *microdnf);
 	void configure();
 	void install(libdnf::rpm::PackageSack & package_sack);
-	void createRedNode(const std::string & alias, bool create, bool update, const std::string & tmplate);
+	void createRedNode(const std::string & alias, bool create, bool update, const std::string & tmplate, const std::string & tmplateadmin);
+	void checkTransactionPkgs(libdnf::base::Transaction & transaction);
 
 	bool isRedpath(bool strict = true) const;
 
 private:
 	microdnf::Context * ctx;
     libdnf::OptionPath redpathOpt{nullptr};
+    libdnf::OptionBool forcenode{false};
 
 	const std::string & redpath() const { return redpathOpt.get_value(); }
 
@@ -61,8 +65,9 @@ private:
 	bool isnode{false};
 	int verbose{0};
 
-	redNodeT *node{nullptr};
-	redConfigT *config{nullptr};
+	std::unique_ptr<redNodeT> node{nullptr};
+	std::unique_ptr<redConfigT> config{nullptr};
+	std::unique_ptr<redConfigT> configadmin{nullptr};
 
 	static void throw_error(std::string msg) { throw std::runtime_error(msg); }
 
@@ -82,10 +87,12 @@ private:
 	void getMain();
 	void getConf();
 	bool hasConf();
-	void saveto(bool);
-	void rednode_status();
-	void rednode_template(const std::string & alias, const std::string & tmplname, bool update);
-	void reloadConfig(const std::string & tmplname);
+	void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
+	void rednode_status(const std::string & realpath);
+	void rednode_template(const std::string & alias, const std::string & tmplname, const std::string & tmpladmin, bool update);
+	void reloadConfig(const std::string & tmplname, std::unique_ptr<redConfigT> & redconfig);
+	void createRedNodePath(const std::string & redpath, const std::string & alias, bool create, bool update,
+						   const std::string & tmplate, const std::string & tmplateadmin);
 
 	void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);
 };

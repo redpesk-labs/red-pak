@@ -131,7 +131,7 @@ int main (int argc, char *argv[]) {
     for (redNodeT *node=redtree; node != NULL; node=node->ancestor) {
 
         RedConfCopyConfTags (node->config->conftag, mergedConfTags);
-        if(node->confadmin)
+        if(node->confadmin && node->confadmin->conftag)
             RedConfCopyConfTags (node->confadmin->conftag, mergedConfTags);
 
         int error = RwrapParseNode (node, cliarg, (node == redtree), argval, &argcount);
