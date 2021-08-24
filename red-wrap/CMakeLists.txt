@@ -16,15 +16,25 @@
 # limitations under the License.
 ##########################################################################
 
-PROJECT_TARGET_ADD(red-wrap)
+
+PROJECT_TARGET_ADD(red-wrap-lib)
 
     file(GLOB CSOURCES [a-z]*.c)
 
-    add_executable (${TARGET_NAME} ${CSOURCES})
+    add_library(${TARGET_NAME} SHARED ${CSOURCES})
 
     # compile + link depencencies
 	pkg_search_module(RPM REQUIRES redrpm rpm)
-	target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf ${RPM_INCLUDE_DIRS})
+	target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
     target_link_libraries(${TARGET_NAME} redconf ${RPM_LIBRARIES})
-	install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+	install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
+
+foreach(CMD redwrap redwrap-dnf)
+    message(STATUS "CMD=${CMD}")
+    PROJECT_TARGET_ADD(${CMD})
+        add_executable(${CMD} commands/${CMD}.c)
+	    target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
+        target_link_libraries(${TARGET_NAME} red-wrap-lib)
+	    install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+endforeach()

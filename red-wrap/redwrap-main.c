@@ -27,9 +27,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "redwrap.h"
-
-#define MAX_BWRAP_ARGS 512
+#include "redwrap-main.h"
 
 typedef struct {
     const char *ldpathString;
@@ -70,7 +68,7 @@ OnErrorExit:
 }
 
 
-int main (int argc, char *argv[]) {
+void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, const char **subargv) {
 
     redConfTagT *mergedConfTags= calloc(1, sizeof(redConfTagT));
     int argcount=0;
@@ -86,10 +84,7 @@ int main (int argc, char *argv[]) {
     };
 
     // start argument list with red-wrap command name
-    argval[argcount++] = argv[0];
-
-    rWrapConfigT *cliarg = RwrapParseArgs (argc, argv);
-    if (!cliarg) exit(0);
+    argval[argcount++] = command_name;
 
     redNodeT *redconfadmin = NULL;
     redNodeT *redconf = loadRootNode(cliarg->cnfpath, cliarg->verbose, mergedConfTags, &dataNode);
@@ -211,11 +206,11 @@ int main (int argc, char *argv[]) {
     }
 
     // add remaining program to execute arguments
-    for (int idx=cliarg->index; idx < argc; idx++ ) {
+    for (int idx=0; idx < subargc; idx++ ) {
         if (idx == MAX_BWRAP_ARGS) {
             RedLog(REDLOG_ERROR,"red-wrap too many arguments limit=[%s]", MAX_BWRAP_ARGS);
         }
-        argval[argcount++]=argv[idx];
+        argval[argcount++]=subargv[idx];
     }
 
     if (cliarg->verbose) {
