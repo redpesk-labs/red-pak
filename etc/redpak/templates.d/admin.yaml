@@ -1,0 +1,17 @@
+headers:
+  alias: $NODE_ALIAS-admin
+  name: $UUID
+  info:  "Node created by $LOGNAME($HOSTNAME) the $TODAY"
+exports:
+  - mode: Restricted
+    mount: $NODE_PATH/var/lib/rpm/
+    path: $NODE_PATH/var/lib/rpm/
+  - mode: Restricted
+    mount: $NODE_PATH/etc/redpack.yaml
+    path: $NODE_PATH/etc/redpack.yaml
+  - mode: Restricted
+    mount: $NODE_PATH/.rednode.yaml
+    path: $NODE_PATH/.rednode.yaml
+  - mode: Private
+    mount: $NODE_PATH
+    path: $NODE_PATH

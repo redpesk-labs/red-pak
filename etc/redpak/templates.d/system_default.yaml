@@ -1,0 +1,22 @@
+headers:
+  alias: system
+  name: system
+  info: system
+config:
+  persistdir: $NODE_PATH/var/lib/dnf
+  rpmdir: $NODE_PATH/var/lib/rpm
+  path: /nodes/usr/bin
+  ldpath: /nodes/usr/lib:/nodes/usr/lib64
+  verbose: 1
+  maxage: 0
+  gpgcheck: false
+  inherit: true
+  unsafe: false
+  die-with-parent: Unset
+  new-session: Unset
+  share_all: Unset
+  share_user: Unset
+  share_cgroup: Unset
+  share_net: Unset
+  share_pid: Unset
+  share_ipc: Unset

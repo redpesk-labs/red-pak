@@ -85,12 +85,12 @@ exports:
 - mode: Public
   mount: /var/redpak/var/cache/dnf
   path: /var/cache/dnf
-- mode: Public
-  mount: /var/redpesk
-  path: /var/redpesk
 - mode: Restricted
   mount: /usr/lib64/rpm-plugins/redpak.so
   path: /usr/lib64/rpm-plugins/redpak.so
+- mode: Restricted
+  mount: /sbin
+  path: /sbin
 - mount: /etc/dnf/vars/releasever
   path: (source /etc/os-release; echo $VERSION)
   mode: Execfd
