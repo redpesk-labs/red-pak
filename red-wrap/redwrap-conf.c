@@ -119,7 +119,7 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 	return config;
 
 OnErrorExit:
-	fprintf (stderr, usage);
+	fprintf (stderr, "%s", usage);
 	return NULL;
 }
 
