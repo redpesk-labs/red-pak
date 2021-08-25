@@ -301,9 +301,15 @@ void RedNode::createRedNode(const std::string & alias, bool create, bool update,
     auto parent_path = std::filesystem::path(redpath()).parent_path();
     if(!std::filesystem::exists(parent_path / REDNODE_STATUS)) {
         //create system node
-        std::string alias_system = parent_path.string();
+        std::string alias_system = "system" + parent_path.string();
         std::replace(alias_system.begin(), alias_system.end(), '/', '-');
         createRedNodePath(parent_path.string(), alias_system, false, false, "system_default", "admin");
+
+        //create symlink to /var/lib/rpm of system
+        std::filesystem::path var_lib_rpm("/var/lib/rpm");
+        std::filesystem::path var_lib_rpm_system_node(alias_system / var_lib_rpm);
+        std::filesystem::create_directories(var_lib_rpm_system_node.parent_path());
+        std::filesystem::create_directory_symlink(var_lib_rpm, var_lib_rpm_system_node);
     }
 
     createRedNodePath(redpath(), alias, create, update, tmplate, tmplateadmin);
