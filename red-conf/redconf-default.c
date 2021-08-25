@@ -75,7 +75,7 @@ static char * GetEnviron(const char *label, void *ctx, void*handle) {
     value= getenv(label);
     if (!value) {
         if (key) {
-            value=key;
+            value=(char *)key;
         } else {
             value="#undef";
         }
@@ -114,7 +114,7 @@ static char*GetNodeInfo(const char *label, void *ctx, void*handle) {
 
     if (!value) value = "#undef";
 
-    return value;
+    return (char *)value;
 
 OnErrorExit:
     return GetEnviron(label, ctx, handle);

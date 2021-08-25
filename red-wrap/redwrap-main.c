@@ -30,9 +30,9 @@
 #include "redwrap-main.h"
 
 typedef struct {
-    const char *ldpathString;
+    char *ldpathString;
     unsigned int ldpathIdx;
-    const char *pathString;
+    char *pathString;
     unsigned int pathIdx;
 
 } dataNodeT;
@@ -86,8 +86,8 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
     // start argument list with red-wrap command name
     argval[argcount++] = command_name;
 
-    redNodeT *redconfadmin = NULL;
-    redNodeT *redconf = loadRootNode(cliarg->cnfpath, cliarg->verbose, mergedConfTags, &dataNode);
+    redConfigT *redconfadmin = NULL;
+    redConfigT *redconf = loadRootNode(cliarg->cnfpath, cliarg->verbose, mergedConfTags, &dataNode);
     if(!redconf) goto OnErrorExit;
     // if admin: overload conf
     if (cliarg->adminpath) {
