@@ -24,7 +24,8 @@ static const char * outnode_commands [] = {
 	"manager"
 };
 
-#define REDMICRODNF_CMD "/usr/bin/redmicrodnf"
+#define REDMICRODNF_CMD "redmicrodnf"
+#define REDMICRODNF_CMD_PATH "/usr/bin/"REDMICRODNF_CMD
 
 static const char * usage = "usage: redwrap-dnf --redpath=... [--verbose] [--force] [--admin[=.../main-admin.yaml]] [--rmain=.../main.yaml] [redmicrodnfcmd [args]]  \n\n";
 
@@ -56,7 +57,7 @@ int main (int argc, char *argv[]) {
 	}
 
 	if (outnode)
-		return execv(REDMICRODNF_CMD, (char**) subargv);
+		return execv(REDMICRODNF_CMD_PATH, (char**) subargv);
 	else
 		redwrapMain(argv[0], cliarg, argcount, (const char **)&subargv);
 
@@ -65,5 +66,5 @@ int main (int argc, char *argv[]) {
 OnErrorExit:
 	subargv[1] = "--help";
 	subargv[2] = NULL;
-    return execv(REDMICRODNF_CMD, (char**) subargv);
+    return execv(REDMICRODNF_CMD_PATH, (char**) subargv);
 }
