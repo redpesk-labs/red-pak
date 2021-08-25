@@ -31,7 +31,7 @@ int main (int argc, char *argv[]) {
 	subargv[argcount++] = "redmicrodnf";
 	subargv[argcount++] = "--redpath";
 	subargv[argcount++] = cliarg->redpath;
-	for (int i = cliarg->index; i < argc;)
+	for (int i = cliarg->index; i < argc; i++)
 		subargv[argcount++] = argv[i];
 
 	redwrapMain(argv[0], cliarg, argcount, (const char **)&subargv);
