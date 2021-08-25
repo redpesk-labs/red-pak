@@ -55,7 +55,7 @@ typedef struct {
     int unsafe;
 } rWrapConfigT;
 
-rWrapConfigT *RwrapParseArgs(int argc, char *argv[]);
+rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage);
 const char* MemFdExecCmd (const char* mount, const char* command);
 int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs,  int lastleaf, const char *argval[], int *argcount);
 int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount);

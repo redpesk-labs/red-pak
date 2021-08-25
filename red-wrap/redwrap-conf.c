@@ -50,8 +50,7 @@ static struct option options[] = {
 	{0,         0,                 0,  0 }
 };
 
-
-rWrapConfigT *RwrapParseArgs(int argc, char *argv[]) {
+rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 	rWrapConfigT *config = calloc (1, sizeof(rWrapConfigT));
  	int index;
 
@@ -120,7 +119,7 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[]) {
 	return config;
 
 OnErrorExit:
-	fprintf (stderr, "usage: red-wrap --rpath=... [--verbose] [--force] [--rmain=.../main.yaml] [--] program arg-1... arg-n\n");
+	fprintf (stderr, usage);
 	return NULL;
 }
 

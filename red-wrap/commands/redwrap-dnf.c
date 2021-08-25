@@ -15,24 +15,55 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
+#include <string.h>
+
 #include "../redwrap-main.h"
 
+/* list of out node context commands */
+static const char * outnode_commands [] = {
+	"manager"
+};
+
+#define REDMICRODNF_CMD "/usr/bin/redmicrodnf"
+
+static const char * usage = "usage: redwrap-dnf --redpath=... [--verbose] [--force] [--admin[=.../main-admin.yaml]] [--rmain=.../main.yaml] [redmicrodnfcmd [args]]  \n\n";
+
 int main (int argc, char *argv[]) {
+	int outnode = 0; //out node context
 	int argcount = 0;
-    rWrapConfigT *cliarg = RwrapParseArgs (argc, argv);
-    if (!cliarg) exit(0);
+    const char *subargv[MAX_BWRAP_ARGS];
+
+	//add redmicrodnf command
+	subargv[argcount++] = REDMICRODNF_CMD;
+
+    rWrapConfigT *cliarg = RwrapParseArgs (argc, argv, usage);
+    if (!cliarg) goto OnErrorExit;
 
 	//admin is needed for redmicrodnf
 	if(!cliarg->adminpath)
 		cliarg->adminpath = redpak_MAIN_ADMIN;
 
-    const char *subargv[MAX_BWRAP_ARGS];
-	//add redmicrodnf command
-	subargv[argcount++] = "redmicrodnf";
 	subargv[argcount++] = "--redpath";
 	subargv[argcount++] = cliarg->redpath;
+
+
 	for (int i = cliarg->index; i < argc; i++)
 		subargv[argcount++] = argv[i];
 
-	redwrapMain(argv[0], cliarg, argcount, (const char **)&subargv);
+	for (int i = 0; i < sizeof(outnode_commands)/sizeof(outnode_commands[0]); i++) {
+		if(!strcmp(argv[cliarg->index], outnode_commands[i]))
+			outnode = 1;
+	}
+
+	if (outnode)
+		return execv(REDMICRODNF_CMD, (char**) subargv);
+	else
+		redwrapMain(argv[0], cliarg, argcount, (const char **)&subargv);
+
+	return 0;
+
+OnErrorExit:
+	subargv[1] = "--help";
+	subargv[2] = NULL;
+    return execv(REDMICRODNF_CMD, (char**) subargv);
 }

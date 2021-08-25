@@ -17,9 +17,11 @@
 */
 #include "../redwrap-main.h"
 
+static const char * usage = "usage: redwrap --redpath=... [--verbose] [--force] [--admin[=.../main-admin.yaml]] [--rmain=.../main.yaml] -- program args\n";
+
 int main (int argc, char *argv[]) {
 
-    rWrapConfigT *cliarg = RwrapParseArgs (argc, argv);
+    rWrapConfigT *cliarg = RwrapParseArgs (argc, argv, usage);
     if (!cliarg) exit(0);
 
 	redwrapMain(argv[0], cliarg, argc-cliarg->index, argv+cliarg->index);
