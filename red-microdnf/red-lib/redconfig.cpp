@@ -307,7 +307,7 @@ void RedNode::createRedNode(const std::string & alias, bool create, bool update,
 
         //create symlink to /var/lib/rpm of system
         std::filesystem::path var_lib_rpm("/var/lib/rpm");
-        std::filesystem::path var_lib_rpm_system_node(alias_system / var_lib_rpm);
+        std::filesystem::path var_lib_rpm_system_node(parent_path / var_lib_rpm.string().substr(1));
         std::filesystem::create_directories(var_lib_rpm_system_node.parent_path());
         std::filesystem::create_directory_symlink(var_lib_rpm, var_lib_rpm_system_node);
     }
