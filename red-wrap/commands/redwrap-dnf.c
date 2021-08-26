@@ -16,12 +16,31 @@
  limitations under the License.
 */
 #include <string.h>
+#include <errno.h>
 
 #include "../redwrap-main.h"
 
-/* list of out node context commands */
-static const char * outnode_commands [] = {
-	"manager"
+
+struct red_cmd {
+	const char *cmd; //cmd name
+	int outnode; //context execution
+};
+
+/* list of redmicrodnf commands */
+static struct red_cmd redmicrodnf_commands [] = {
+	{"install", 0},
+	{"download", 0},
+	{"downgrade", 0},
+	{"groupinfo", 0},
+	{"grouplist", 0},
+	{"reinstall", 0},
+	{"remove", 0},
+	{"repolist", 0},
+	{"repoinfo", 0},
+	{"repoquery", 0},
+	{"upgrade", 0},
+	{"advisory", 0},
+	{"manager", 1},
 };
 
 #define REDMICRODNF_CMD "redmicrodnf"
@@ -29,14 +48,47 @@ static const char * outnode_commands [] = {
 
 static const char * usage = "usage: redwrap-dnf --redpath=... [--verbose] [--force] [--admin[=.../main-admin.yaml]] [--rmain=.../main.yaml] [redmicrodnfcmd [args]]  \n\n";
 
-int main (int argc, char *argv[]) {
-	int outnode = 0; //out node context
-	int argcount = 0;
-    const char *subargv[MAX_BWRAP_ARGS];
 
-	//add redmicrodnf command
-	subargv[argcount++] = REDMICRODNF_CMD;
+static struct red_cmd *find_redmicrodnf_cmd (int argc, char *argv[]) {
+	for (int i = 1; i < argc; i++) {
+		if (argv[i][0] == '-')
+			continue;
 
+		for (int j = 0; j < sizeof(redmicrodnf_commands)/sizeof(redmicrodnf_commands[0]); j++) {
+			if(!strcmp(argv[i], redmicrodnf_commands[j].cmd)) {
+				return &redmicrodnf_commands[j];
+			}
+		}
+	}
+	return NULL;
+}
+
+static int exec_redmicrodnf(int argc, char *argv[], int argcount, char *subargv[]) {
+    struct stat statinfo;
+	int error = 0;
+
+	/* check redmicrodnf exists */
+   	error = stat(REDMICRODNF_CMD_PATH, &statinfo);
+   	if (error || !S_ISREG(statinfo.st_mode)) {
+		error = -1;
+       	fprintf(stderr, "Not found redmicrodnf command: %s\n", REDMICRODNF_CMD_PATH);
+		goto OnErrorExit;
+	}
+
+	for (int i = 1; i < argc; i++) {
+		subargv[argcount++] = argv[i];
+	}
+	subargv[argcount] = NULL;
+
+	error = execv(REDMICRODNF_CMD_PATH, (char**) subargv);
+	if(error)
+		fprintf(stderr, "Issue exec outnode command %s error:%s\n", REDMICRODNF_CMD_PATH, strerror(errno));
+
+OnErrorExit:
+	return error;
+}
+
+static int exec_bwrap(int argc, char *argv[], int argcount, char *subargv[]) {
     rWrapConfigT *cliarg = RwrapParseArgs (argc, argv, usage);
     if (!cliarg) goto OnErrorExit;
 
@@ -45,26 +97,46 @@ int main (int argc, char *argv[]) {
 		cliarg->adminpath = redpak_MAIN_ADMIN;
 
 	subargv[argcount++] = "--redpath";
-	subargv[argcount++] = cliarg->redpath;
+	subargv[argcount++] = (char *)cliarg->redpath;
 
 
 	for (int i = cliarg->index; i < argc; i++)
 		subargv[argcount++] = argv[i];
 
-	for (int i = 0; i < sizeof(outnode_commands)/sizeof(outnode_commands[0]); i++) {
-		if(!strcmp(argv[cliarg->index], outnode_commands[i]))
-			outnode = 1;
+	redwrapMain(argv[0], cliarg, argcount, subargv);
+
+OnErrorExit:
+	return -1;
+}
+
+int main (int argc, char *argv[]) {
+	int error = 0;
+	int argcount = 0;
+    char *subargv[MAX_BWRAP_ARGS];
+
+	//add redmicrodnf command
+	subargv[argcount++] = REDMICRODNF_CMD;
+
+	struct red_cmd * redcmd = find_redmicrodnf_cmd(argc, argv);
+	if (!redcmd) {
+		fprintf(stderr, "No redmicrodnf command found!");
+		goto OnErrorExit;
 	}
 
-	if (outnode)
-		return execv(REDMICRODNF_CMD_PATH, (char**) subargv);
-	else
-		redwrapMain(argv[0], cliarg, argcount, (const char **)&subargv);
+	if (redcmd->outnode) {
+		error = exec_redmicrodnf(argc, argv, argcount, subargv);
+		if (error) goto OnErrorExit;
+	} else {
+		error = exec_bwrap(argc, argv, argcount, subargv);
+		if (error) goto OnErrorExit;
+	}
 
 	return 0;
 
-OnErrorExit:
+OnErrorExitHelp:
 	subargv[1] = "--help";
 	subargv[2] = NULL;
-    return execv(REDMICRODNF_CMD_PATH, (char**) subargv);
+    execv(REDMICRODNF_CMD_PATH, (char**) subargv);
+OnErrorExit:
+	return error;
 }

@@ -24,5 +24,5 @@ int main (int argc, char *argv[]) {
     rWrapConfigT *cliarg = RwrapParseArgs (argc, argv, usage);
     if (!cliarg) exit(0);
 
-	redwrapMain(argv[0], cliarg, argc-cliarg->index, (const char **)argv+cliarg->index);
+	redwrapMain(argv[0], cliarg, argc-cliarg->index, argv+cliarg->index);
 }

@@ -25,6 +25,6 @@
 
 #define MAX_BWRAP_ARGS 512
 
-void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, const char **subargv);
+void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]);
 
 #endif //_REDWRAP_MAIN_INCLUDE_

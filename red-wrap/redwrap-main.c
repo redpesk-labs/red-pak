@@ -26,6 +26,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #include "redwrap-main.h"
 
@@ -68,7 +69,7 @@ OnErrorExit:
 }
 
 
-void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, const char **subargv) {
+void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
 
     redConfTagT *mergedConfTags= calloc(1, sizeof(redConfTagT));
     int argcount=0;
@@ -222,7 +223,8 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
 
     // exec command
     argval[argcount]=NULL;
-    execv(cliarg->bwrap, (char**) argval);
+    if(execv(cliarg->bwrap, (char**) argval));
+        RedLog(REDLOG_ERROR, "bwrap commend issue: %s", strerror(errno));
 
 OnErrorExit:
     RedLog(REDLOG_ERROR,"red-wrap aborted");
