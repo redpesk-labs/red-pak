@@ -32,8 +32,9 @@ headers:
 config:
 
     # dnf/rpm config value from current node is used
-    rpmdir: '/var/lib/rpm'
-    persistdir: '/var/lib/dnf'
+    rpmdir: /var/lib/rpm
+    persistdir: /var/lib/dnf
+    cachedir: $NODE_PATH/var/cache/dnf
     gpgcheck: true
     verbose: 0
     maxage: 0
@@ -55,8 +56,8 @@ config:
     share_ipc: unset
 
     # Change HOSTNAME and move to prefere directory inside nspace
-    hostname: red-tuna-$NODE_ALIAS
-    chdir: /home/$NODE_ALIAS
+    hostname: \$NODE_ALIAS
+    chdir: /home/\$NODE_ALIAS
 
     # nspace command control
     die-with-parent: enabled
@@ -84,14 +85,14 @@ config:
 #---------------------------------------------------------------------
 environ:
   - key: PS1
-    value: Rednode($NODE_ALIAS)>
+    value: Rednode(\$NODE_ALIAS)>
     mode: Default
 
   - key: SHELL_SESSION_ID
     mode: Remove
 
   - key: HOME
-    value: /home/$NODE_ALIAS
+    value: /home/\$NODE_ALIAS
 
 
 #---------------------------------------------------------------------
@@ -139,7 +140,7 @@ exports:
     path: /etc/resolv.conf
     mode: Restricted
 
-  - mount: /home/$NODE_ALIAS
+  - mount: /home/\$NODE_ALIAS
     path: /nodes/_private
     mode: Symlink
 
@@ -149,11 +150,11 @@ exports:
 
   # create a fake /etc/passwd + group
   - mount: /etc/passwd
-    path: getent passwd $UID 65534
+    path: getent passwd \$UID 65534
     mode: Execfd
 
   - mount: /etc/group
-    path: getent group $(id -g) 65534
+    path: getent group \$(id -g) 65534
     mode: Execfd
 
   # Exports coreos systemFS or fake with Anonymous/Tmpfs

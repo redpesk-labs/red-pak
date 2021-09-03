@@ -14,7 +14,9 @@
 static rpmRC redpak_scriptlet_pre(rpmPlugin plugin, const char *s_name,
                                      int type)
 {
+    printf("CHROOT !!!!!!!\n");
     chroot(".");
+    printf("CHROOTED !!!!!!!\n");
     return RPMRC_OK;
 }
 

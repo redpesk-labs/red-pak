@@ -74,6 +74,7 @@ void RedNode::configure() {
     //installroot: set to redpath
     ctx->base.get_config().installroot().set(libdnf::Option::Priority::RUNTIME, redpath());
 
+
     //prepend redpath in repodirs
     std::vector<std::string> reposdir(ctx->base.get_config().reposdir().get_value());
     for (auto i = reposdir.begin(); i != reposdir.end(); ++i)

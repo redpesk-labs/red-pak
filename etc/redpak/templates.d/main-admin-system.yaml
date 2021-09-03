@@ -82,9 +82,6 @@ exports:
 - mode: Restricted
   mount: /etc/dnf/dnf.conf
   path: /etc/dnf/dnf.conf
-- mode: Public
-  mount: /var/redpak/var/cache/dnf
-  path: /var/cache/dnf
 - mode: Restricted
   mount: /usr/lib64/rpm-plugins/redpak.so
   path: /usr/lib64/rpm-plugins/redpak.so
@@ -94,6 +91,21 @@ exports:
 - mount: /etc/dnf/vars/releasever
   path: (source /etc/os-release; echo $VERSION)
   mode: Execfd
+- mode: Public #common cachedir between nodes
+  mount: $NODE_PATH/var/cache/dnf
+  path: $NODE_PATH/var/cache/dnf
+- mode: Restricted
+  mount: $NODE_PATH/var/lib/rpm/
+  path: $NODE_PATH/var/lib/rpm/
+- mode: Restricted
+  mount: $NODE_PATH/etc/redpack.yaml
+  path: $NODE_PATH/etc/redpack.yaml
+- mode: Restricted
+  mount: $NODE_PATH/.rednode.yaml
+  path: $NODE_PATH/.rednode.yaml
+- mode: Private
+  mount: $NODE_PATH
+  path: $NODE_PATH
 
 
 

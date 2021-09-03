@@ -39,7 +39,7 @@ config:
 environ:
 
   - key: XDG_RUNTIME_DIR
-    value: /run/user/$$UID
+    value: /run/user/\$UID
     mode: Default
 
   - key: AFB_LDPATHS
@@ -52,25 +52,21 @@ exports:
 
   # provide a private permanent storage (i.e. to symlink home)
   - mount: /nodes/_private
-    path:  $NODE_PATH/private
+    path:  \$NODE_PATH/private
     mode:  Private
 
   # make rpm -qa to work from within the node
   - mount: /var/lib/rpm
-    path:  $NODE_PATH/var/lib/rpm
+    path:  \$NODE_PATH/var/lib/rpm
     mode:  Private
 
   # typical dir dor binary, lib, ...
   - mount: /nodes/$NODE_ALIAS/usr
-    path: $NODE_PATH/usr
+    path: \$NODE_PATH/usr
     mode: Restricted
 
   # general share zone with all siblings and childrens
   - mount: /nodes/$NODE_ALIAS/var
-    path: $NODE_PATH/var
+    path: \$NODE_PATH/var
     mode: Public
 
-  # provide compatibility with redpesk rpm dir
-  - mount: /var/redpesk/$REDPESK_VERSION
-    path: $NODE_PATH/usr
-    mode: Private

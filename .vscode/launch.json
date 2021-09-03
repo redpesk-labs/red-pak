@@ -8,11 +8,88 @@
 	],
 	"configurations": [
 		{
+			"name": "redwrap-dnf-manager",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-wrap/redwrap-dnf",
+			"args": [
+				"--redpath",
+				"/var/redpak2/core1.0",
+				"manager",
+				"--create",
+				"--alias",
+				"core1.0"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redwrap-dnf-help",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-wrap/redwrap-dnf",
+			"args": [
+				"--help",
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redwrap-dnf",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-wrap/redwrap-dnf",
+			"args": [
+				"--redpath",
+				"/var/redpesk3/testtest",
+				"--redmain",
+				"/etc/redpak/main.yaml",
+				"--admin=/etc/redpak/main-admin.yaml",
+				"install",
+				"boost"
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
 			"name": "redwrap-admin-bash-test-10",
 			"type": "cppdbg",
 			"request": "launch",
 			"cwd": "${workspaceFolder}",
-			"program": "${workspaceFolder}/build/red-wrap/red-wrap",
+			"program": "${workspaceFolder}/build/red-wrap/redwrap",
 			"args": [
 				"--redpath",
 				"/var/redpesk3/testtest",
@@ -40,10 +117,10 @@
 			"type": "cppdbg",
 			"request": "launch",
 			"cwd": "${workspaceFolder}",
-			"program": "${workspaceFolder}/build/red-wrap/red-wrap",
+			"program": "${workspaceFolder}/build/red-wrap/redwrap",
 			"args": [
 				"--redpath",
-				"/var/redpesk/node1",
+				"/var/redpesk4/testtest",
 				"--redmain",
 				"/etc/redpak/main.yaml",
 				"--admin=/etc/redpak/main-admin.yaml",
