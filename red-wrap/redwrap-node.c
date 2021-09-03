@@ -33,52 +33,32 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         const char* mount= configN->exports[idx].mount;
         const char* path=configN->exports[idx].path;
         struct stat status;
+        char * expandpath = NULL;
 
         // if mouting path is not privide let's duplicate mount
         if (!path) path=mount;
-        err = stat(path, &status);
-        switch (mode) {
-        case RED_EXPORT_PRIVATE:
-        case RED_EXPORT_PUBLIC:
-        case RED_EXPORT_RESTRICTED:
-            if (err < 0) {
-                if (cliargs->forcemod) {
-                    // mkdir ACL do not work as documented, need chmod to install proper acl
-                    mode_t mask=RedSetUmask(configN->conftag);
-               		mask= 07777 & ~mask;
-                    mkdir(path, 0);
-                    chmod(path, mask);
-                    err = stat(path, &status);
-                }
-            }
-            if (err < 0) {
-                RedLog(REDLOG_ERROR, "*** Node [%s] export path=%s does not exist [use --force]", configN->headers->alias, path);
-                goto OnErrorExit;
-            }
-                break;
-        default:
-            break;
-        }
-
         switch (mode) {
         case RED_EXPORT_PRIVATE:
             // on export if we are in terminal lead node
             if (lastleaf) {
+                expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
                 argval[(*argcount)++]="--bind";
-                argval[(*argcount)++]=RedNodeStringExpand (node, NULL, path, NULL, NULL);
+                argval[(*argcount)++]=expandpath;
                 argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             }
             break;
 
         case  RED_EXPORT_PUBLIC:
+            expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
             argval[(*argcount)++]="--bind";
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, path, NULL, NULL);
+            argval[(*argcount)++]=expandpath;
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
 
         case RED_EXPORT_RESTRICTED:
+            expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
             argval[(*argcount)++]="--ro-bind";
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, path, NULL, NULL);
+            argval[(*argcount)++]=expandpath;
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
 
@@ -130,6 +110,32 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
             argval[(*argcount)++]= RedNodeStringExpand (node, NULL, path, NULL, NULL);
             break;
 
+        default:
+            break;
+        }
+
+        if (!expandpath) continue;
+        //check path after expanding
+        err = stat(expandpath, &status);
+        switch (mode) {
+        case RED_EXPORT_PRIVATE:
+        case RED_EXPORT_PUBLIC:
+        case RED_EXPORT_RESTRICTED:
+            if (err < 0) {
+                if (cliargs->forcemod) {
+                    // mkdir ACL do not work as documented, need chmod to install proper acl
+                    mode_t mask=RedSetUmask(configN->conftag);
+               		mask= 07777 & ~mask;
+                    mkdir(expandpath, 0);
+                    chmod(expandpath, mask);
+                    err = stat(expandpath, &status);
+                }
+            }
+            if (err < 0) {
+                RedLog(REDLOG_ERROR, "*** Node [%s] export path=%s does not exist [use --force]", configN->headers->alias, path);
+                goto OnErrorExit;
+            }
+                break;
         default:
             break;
         }
@@ -209,7 +215,7 @@ int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const c
     }
 
     // if not in force mode do further sanity check
-    if (!configN->conftag->unsafe || !cliargs->unsafe) {
+    if (!(configN->conftag->unsafe || cliargs->unsafe)) {
         // check it was updated in the future
         if (epocms < statusN->timestamp) {
             RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is older that it's parent [require 'dnf red-update' or --force] nodepath=%s", configN->headers->alias, node->redpath);

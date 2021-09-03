@@ -161,6 +161,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
     static const cyaml_schema_field_t EnvTagSchema[] = {
         CYAML_FIELD_STRING_PTR("persistdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, persistdir, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("rpmdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, rpmdir, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("cachedir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, cachedir, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("path", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, path, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("ldpath", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, ldpath, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("umask", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, umask, 0, CYAML_UNLIMITED),

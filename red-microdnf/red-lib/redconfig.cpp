@@ -124,13 +124,17 @@ void RedNode::getMain() {
         umask(node.get()->config->acl->umask);
 }
 
-void RedNode::setPersistDir(libdnf::ConfigMain & dnfconfig) {
+void RedNode::setPersistDir() {
 	auto ex_persistdir = RedNodeStringExpand(node.get(), NULL, node.get()->config->conftag->persistdir, NULL, NULL);
-	dnfconfig.persistdir().set(libdnf::Option::Priority::RUNTIME, ex_persistdir);
+	ctx->base.get_config().persistdir().set(libdnf::Option::Priority::RUNTIME, ex_persistdir);
 }
 
-void RedNode::setGpgCheck(libdnf::ConfigMain & dnfconfig) {
-	dnfconfig.gpgcheck().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->gpgcheck);
+void RedNode::setGpgCheck() {
+	ctx->base.get_config().gpgcheck().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->gpgcheck);
+}
+
+void RedNode::setCacheDir() {
+	ctx->base.get_config().cachedir().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->cachedir);
 }
 
 void RedNode::checkdir(const std::string & label, const std::string & dirpath, bool create) {
@@ -239,7 +243,8 @@ void RedNode::reloadConfig(const std::string & tmplname, std::unique_ptr<redConf
 
 }
 
-void RedNode::rednode_template(const std::string & alias, const std::string & tmplname, const std::string & tmpladmin, bool update) {
+void RedNode::rednode_template(const std::string & redpath, const std::string & alias, const std::string & tmplname,
+                               const std::string & tmpladmin, bool update) {
     char today[100];
     char uuid[100];
 
@@ -252,6 +257,11 @@ void RedNode::rednode_template(const std::string & alias, const std::string & tm
 
     //save config file
     reloadConfig(tmplname, config);
+    //system: create common cachedir
+    if(!tmplname.compare("main-system")) {
+        std::filesystem::create_directories(config->conftag->cachedir);
+    }
+
     saveto(update, "REDNODE_CONF", config);
 
     //save admin config file
@@ -289,7 +299,7 @@ void RedNode::createRedNodePath(const std::string & redpath, const std::string &
 
     checkdir("redpath", redpath, true);
 
-    rednode_template(alias, tmplate, tmplateadmin, update);
+    rednode_template(redpath, alias, tmplate, tmplateadmin, update);
     rednode_status(redpath);
 }
 
@@ -303,7 +313,7 @@ void RedNode::createRedNode(const std::string & alias, bool create, bool update,
         //create system node
         std::string alias_system = "system" + parent_path.string();
         std::replace(alias_system.begin(), alias_system.end(), '/', '-');
-        createRedNodePath(parent_path.string(), alias_system, false, false, "system_default", "admin");
+        createRedNodePath(parent_path.string(), alias_system, false, false, "main-system", "main-admin-system");
 
         //create symlink to /var/lib/rpm of system
         std::filesystem::path var_lib_rpm("/var/lib/rpm");
@@ -321,8 +331,9 @@ void RedNode::install(libdnf::rpm::PackageSack & package_sack) {
         return;
 
     scanNode();
-    setPersistDir(ctx->base.get_config());
-    setGpgCheck(ctx->base.get_config());
+    setPersistDir();
+    setGpgCheck();
+    setCacheDir();
 
     checkdir("redpath", redpath(), false);
     checkdir("dnf persistdir", ctx->base.get_config().persistdir().get_value(), false);

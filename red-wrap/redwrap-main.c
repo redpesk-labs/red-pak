@@ -38,36 +38,29 @@ typedef struct {
 
 } dataNodeT;
 
-static redConfigT *loadRootNode(const char * path, int verbose, redConfTagT *mergedConfTags, dataNodeT *dataNode) {
-    int error;
+static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, redConfTagT *mergedConfTags, dataNodeT *dataNode, int *argcount, char *argval[]) {
+    RedConfCopyConfTags (node->config->conftag, mergedConfTags);
+    if(node->confadmin && node->confadmin->conftag)
+        RedConfCopyConfTags (node->confadmin->conftag, mergedConfTags);
 
-    redConfigT *redconf = RedLoadConfig (path, verbose);
-    if (!redconf) {
-        RedLog(REDLOG_ERROR, "redts_init: fail to parse redpak main cliarg at:'%s' ", path);
-	    goto OnErrorExit;
+    if(!node->ancestor) { //system_node
+        // update process default umask
+        RedSetUmask (mergedConfTags);
     }
 
-    // load 1st root tags (lowest priority)
-    if(!redconf->conftag)
-        return redconf;
-
-    RedConfCopyConfTags (redconf->conftag, mergedConfTags);
-
-    // update process default umask
-    mode_t confmask=RedSetUmask (mergedConfTags);
+    int error = RwrapParseNode (node, cliarg, lastleaf, argval, argcount);
+    if (error) goto OnErrorExit;
 
     // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-    error= RedConfAppendEnvKey(dataNode->ldpathString, &dataNode->ldpathIdx, BWRAP_MAXVAR_LEN, redconf->conftag->ldpath, NULL, NULL, NULL);
+    error= RedConfAppendEnvKey(dataNode->ldpathString, &dataNode->ldpathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->ldpath, NULL, ":", NULL);
     if (error) goto OnErrorExit;
 
-    error= RedConfAppendEnvKey(dataNode->pathString, &dataNode->pathIdx, BWRAP_MAXVAR_LEN, redconf->conftag->path, NULL, NULL, NULL);
+    error= RedConfAppendEnvKey(dataNode->pathString, &dataNode->pathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->path, NULL, ":",NULL);
     if (error) goto OnErrorExit;
 
-    return redconf;
 OnErrorExit:
-    return NULL;
+    return error;
 }
-
 
 void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
 
@@ -87,15 +80,6 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
     // start argument list with red-wrap command name
     argval[argcount++] = command_name;
 
-    redConfigT *redconfadmin = NULL;
-    redConfigT *redconf = loadRootNode(cliarg->cnfpath, cliarg->verbose, mergedConfTags, &dataNode);
-    if(!redconf) goto OnErrorExit;
-    // if admin: overload conf
-    if (cliarg->adminpath) {
-        redconfadmin = loadRootNode(cliarg->adminpath, cliarg->verbose, mergedConfTags, &dataNode);
-        if(!redconfadmin) goto OnErrorExit;
-    }
-
     // update verbose/redpath from cliarg
     const char *redpath = cliarg->redpath;
 
@@ -104,6 +88,11 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
         RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", redpath);
         goto OnErrorExit;
     }
+    redNodeT *system_node = NULL;
+    for (redNodeT *node=redtree; node != NULL; node=node->ancestor) {
+        if(!node->ancestor)
+            system_node = node;
+    }
 
     // push NODE_ALIAS in case some env var expand it.
     RedPutEnv("LEAF_ALIAS", redtree->config->headers->alias);
@@ -111,35 +100,17 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
     RedPutEnv("LEAF_PATH" , redtree->status->realpath);
 
     // build a phony root node for config variable expansion
-    redNodeT rootnode;
-    rootnode.redpath=redtree->status->realpath;
-    rootnode.config= redconf;
-    rootnode.config->headers=redtree->config->headers;
-    rootnode.confadmin = redconfadmin;
-    rootnode.ancestor=NULL;
-
-    error = RwrapParseConfig (&rootnode, cliarg, 0, argval, &argcount);
+    system_node->redpath=redtree->status->realpath;
+    system_node->config->headers=redtree->config->headers;
+    system_node->config->conftag->unsafe = 1;
+    // load 1st root tags (lowest priority)
+    error = loadNode(system_node, cliarg, 0, mergedConfTags, &dataNode, &argcount, argval);
     if (error) goto OnErrorExit;
-
-
     // build arguments from nodes family tree
-        // Scan redpath family nodes from terminal leaf to root node
-    for (redNodeT *node=redtree; node != NULL; node=node->ancestor) {
-
-        RedConfCopyConfTags (node->config->conftag, mergedConfTags);
-        if(node->confadmin && node->confadmin->conftag)
-            RedConfCopyConfTags (node->confadmin->conftag, mergedConfTags);
-
-        int error = RwrapParseNode (node, cliarg, (node == redtree), argval, &argcount);
+    // Scan redpath family nodes from terminal leaf to root node without ancestor
+    for (redNodeT *node=redtree; node->ancestor != NULL; node=node->ancestor) {
+        error = loadNode(node, cliarg, (node == redtree), mergedConfTags, &dataNode, &argcount, argval);
         if (error) goto OnErrorExit;
-
-        // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-        error= RedConfAppendEnvKey(dataNode.ldpathString, &dataNode.ldpathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->ldpath, NULL, ":", NULL);
-        if (error) goto OnErrorExit;
-
-        error= RedConfAppendEnvKey(dataNode.pathString, &dataNode.pathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->path, NULL, ":",NULL);
-        if (error) goto OnErrorExit;
-
     }
 
     // add commulated LD_PATH_LIBRARY & PATH

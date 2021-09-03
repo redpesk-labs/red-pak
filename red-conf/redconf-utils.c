@@ -327,18 +327,22 @@ unsigned long RedUtcGetTimeMs () {
 }
 
 static int stringExpand(redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, int *idxOut, char *outputS) {
-    int idxIn, count = 0;
+    int idxIn, count, escaped = 0;
     // search for a $within string input format
     for (idxIn=0; inputS[idxIn] != '\0'; idxIn++) {
 
-        if (inputS[idxIn] != '$') {
-            if (*idxOut == MAX_CYAML_FORMAT_STR)  goto OnErrorExit;
-            outputS[(*idxOut)++] = inputS[idxIn];
 
-        } else {
+        if (inputS[idxIn] == '\\' && inputS[idxIn+1] == '$') { //$ escaped
+            if (*idxOut == MAX_CYAML_FORMAT_STR)  goto OnErrorExit;
+            outputS[(*idxOut)++] = inputS[++idxIn];
+        }
+        else if (inputS[idxIn] == '$' && (idxIn == 0 || inputS[idxIn - 1] != '\\')) {
             if (count == MAX_CYAML_FORMAT_ENV) goto OnErrorExit;
             if(RedConfGetEnvKey (node, defaults, &idxIn, inputS, idxOut, outputS, MAX_CYAML_FORMAT_STR)) goto OnErrorExit;
             count ++;
+        } else {
+            if (*idxOut == MAX_CYAML_FORMAT_STR)  goto OnErrorExit;
+            outputS[(*idxOut)++] = inputS[idxIn];
         }
     }
     return 0;

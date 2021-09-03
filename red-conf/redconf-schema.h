@@ -88,6 +88,7 @@
     typedef struct {
         const char *rpmdir;
         const char *persistdir;
+        const char *cachedir;
         const char *path;
         const char *ldpath;
         const char *hostname;

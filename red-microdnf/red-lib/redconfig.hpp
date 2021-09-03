@@ -80,8 +80,9 @@ private:
 	static void checkdir(const std::string & label, const std::string & dirpath, bool create);
 
 	void scanNode();
-	void setPersistDir(libdnf::ConfigMain & dnfconfig);
-	void setGpgCheck(libdnf::ConfigMain & dnfconfig);
+	void setPersistDir();
+	void setGpgCheck();
+	void setCacheDir();
 	void appendFamilyDb(libdnf::rpm::PackageSack & package_sack);
 
 	void getMain();
@@ -89,7 +90,8 @@ private:
 	bool hasConf();
 	void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
 	void rednode_status(const std::string & realpath);
-	void rednode_template(const std::string & alias, const std::string & tmplname, const std::string & tmpladmin, bool update);
+	void rednode_template(const std::string & redpath, const std::string & alias, const std::string & tmplname,
+						  const std::string & tmpladmin, bool update);
 	void reloadConfig(const std::string & tmplname, std::unique_ptr<redConfigT> & redconfig);
 	void createRedNodePath(const std::string & redpath, const std::string & alias, bool create, bool update,
 						   const std::string & tmplate, const std::string & tmplateadmin);
