@@ -513,6 +513,7 @@ OnErrorExit:
 // Only merge tags that should overloaded
 void RedConfCopyConfTags (redConfTagT *source, redConfTagT *destination) {
 
+    if (source->cachedir) destination->cachedir = source->cachedir;
     if (source->hostname) destination->hostname = source->hostname;
     if (source->chdir) destination->chdir = source->chdir;
     if (source->umask) destination->umask = source->umask;
