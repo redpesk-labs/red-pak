@@ -34,7 +34,7 @@ config:
     # dnf/rpm config value from current node is used
     rpmdir: /var/lib/rpm
     persistdir: /var/lib/dnf
-    cachedir: \$NODE_PATH/var/cache/dnf
+    cachedir: $NODE_PATH/var/cache/dnf
     gpgcheck: true
     verbose: 0
     maxage: 0
