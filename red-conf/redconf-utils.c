@@ -134,7 +134,6 @@ redNodeYamlE RedNodesLoad(const char* redpath, redNodeT *node, int verbose) {
     int error;
     redNodeYamlE rc;
 
-    printf("RedNodesLoad: %s\n", redpath);
     // check redpath is a readable directory
     error= stat(redpath, &statinfo);
     if (error || !S_ISDIR(statinfo.st_mode)) {
