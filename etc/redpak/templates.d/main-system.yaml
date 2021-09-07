@@ -140,7 +140,7 @@ exports:
     path: /etc/resolv.conf
     mode: Restricted
 
-  - mount: /home/\$NODE_ALIAS
+  - mount: /home/\$LEAF_ALIAS
     path: /nodes/_private
     mode: Symlink
 
