@@ -135,10 +135,18 @@ void RedNode::setGpgCheck() {
 }
 
 void RedNode::setCacheDir() {
-	if(!node.get()->config->conftag->cachedir) {
-		throw_error(fmt::format("No cachedir in conftag for node: {}", node->redpath));
+    const char *cachedir = NULL;
+    for (redNodeT *ancestor_node=node->ancestor; ancestor_node != NULL; ancestor_node=ancestor_node->ancestor) {
+    	if(ancestor_node->config->conftag->cachedir) {
+		cachedir = ancestor_node->config->conftag->cachedir;
+		break;
 	}
-	ctx->base.get_config().cachedir().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->cachedir);
+    }
+
+    if(!cachedir) {
+	throw_error(fmt::format("No cachedir in conftag for node: {}", node->redpath));
+	}
+    ctx->base.get_config().cachedir().set(libdnf::Option::Priority::RUNTIME, cachedir);
 }
 
 void RedNode::checkdir(const std::string & label, const std::string & dirpath, bool create) {
