@@ -10,7 +10,6 @@ add_definitions(-DPROJECT_SOURCE_DIR="${PROJECT_SOURCE_DIR}")
 
 # use any sources found under the current directory
 file(GLOB_RECURSE MICRODNF_SOURCES *.cpp)
-message("CLEMENT ${MICRODNF_SOURCES}")
 
 add_executable(microdnf ${MICRODNF_SOURCES})
 

@@ -360,10 +360,10 @@ void RedNode::checkTransactionPkgs(libdnf::base::Transaction & transaction) {
         auto rpmdbid = tpkg->get_package().get_rpmdbid();
 
         //check of rpm is from a external repo(rpmdbid=0) or installed in the node one(rpmdbid=1)
-        std::cout << fmt::format("CLEMENT: {} {} {}",
-            tpkg->get_package().get_full_nevra(),
-            tpkg->get_package().get_location(),
-            tpkg->get_package().get_rpmdbid()) << std::endl;
+        //std::cout << fmt::format("CLEMENT: {} {} {}",
+        //    tpkg->get_package().get_full_nevra(),
+        //    tpkg->get_package().get_location(),
+        //    tpkg->get_package().get_rpmdbid()) << std::endl;
 
         if (rpmdbid > 1) {
             log_pkgs += fmt::format(" {}", tpkg->get_package().get_full_nevra());
