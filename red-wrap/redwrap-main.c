@@ -88,27 +88,15 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
         RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", redpath);
         goto OnErrorExit;
     }
-    redNodeT *system_node = NULL;
-    for (redNodeT *node=redtree; node != NULL; node=node->ancestor) {
-        if(!node->ancestor)
-            system_node = node;
-    }
 
     // push NODE_ALIAS in case some env var expand it.
     RedPutEnv("LEAF_ALIAS", redtree->config->headers->alias);
     RedPutEnv("LEAF_NAME" , redtree->config->headers->name);
     RedPutEnv("LEAF_PATH" , redtree->status->realpath);
 
-    // build a phony root node for config variable expansion
-    system_node->redpath=redtree->status->realpath;
-    system_node->config->headers=redtree->config->headers;
-    system_node->config->conftag->unsafe = 1;
-    // load 1st root tags (lowest priority)
-    error = loadNode(system_node, cliarg, 0, mergedConfTags, &dataNode, &argcount, argval);
-    if (error) goto OnErrorExit;
     // build arguments from nodes family tree
     // Scan redpath family nodes from terminal leaf to root node without ancestor
-    for (redNodeT *node=redtree; node->ancestor != NULL; node=node->ancestor) {
+    for (redNodeT *node=redtree; node != NULL; node=node->ancestor) {
         error = loadNode(node, cliarg, (node == redtree), mergedConfTags, &dataNode, &argcount, argval);
         if (error) goto OnErrorExit;
     }

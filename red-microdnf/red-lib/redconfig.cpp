@@ -135,6 +135,9 @@ void RedNode::setGpgCheck() {
 }
 
 void RedNode::setCacheDir() {
+	if(!node.get()->config->conftag->cachedir) {
+		throw_error(fmt::format("No cachedir in conftag for node: {}", node->redpath));
+	}
 	ctx->base.get_config().cachedir().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->cachedir);
 }
 

@@ -34,7 +34,7 @@ config:
     # dnf/rpm config value from current node is used
     rpmdir: /var/lib/rpm
     persistdir: /var/lib/dnf
-    cachedir: $NODE_PATH/var/cache/dnf
+    cachedir: \$NODE_PATH/var/cache/dnf
     gpgcheck: true
     verbose: 0
     maxage: 0
@@ -56,8 +56,8 @@ config:
     share_ipc: unset
 
     # Change HOSTNAME and move to prefere directory inside nspace
-    hostname: \$NODE_ALIAS
-    chdir: /home/\$NODE_ALIAS
+    hostname: \$LEAF_ALIAS
+    chdir: /home/\$LEAF_ALIAS
 
     # nspace command control
     die-with-parent: enabled
@@ -85,14 +85,14 @@ config:
 #---------------------------------------------------------------------
 environ:
   - key: PS1
-    value: Rednode(\$NODE_ALIAS)>
+    value: Rednode(\$LEAF_ALIAS)>
     mode: Default
 
   - key: SHELL_SESSION_ID
     mode: Remove
 
   - key: HOME
-    value: /home/\$NODE_ALIAS
+    value: /home/\$LEAF_ALIAS
 
 
 #---------------------------------------------------------------------

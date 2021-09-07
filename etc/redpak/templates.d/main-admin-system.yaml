@@ -89,7 +89,7 @@ exports:
   mount: /sbin
   path: /sbin
 - mount: /etc/dnf/vars/releasever
-  path: (source /etc/os-release; echo $VERSION)
+  path: (source /etc/os-release; echo \$VERSION)
   mode: Execfd
 - mode: Public #common cachedir between nodes
   mount: $NODE_PATH/var/cache/dnf
@@ -100,6 +100,9 @@ exports:
 - mode: Restricted
   mount: $NODE_PATH/etc/redpack.yaml
   path: $NODE_PATH/etc/redpack.yaml
+- mode: Restricted
+  mount: $NODE_PATH/etc/redpack-admin.yaml
+  path: $NODE_PATH/etc/redpack-admin.yaml
 - mode: Restricted
   mount: $NODE_PATH/.rednode.yaml
   path: $NODE_PATH/.rednode.yaml

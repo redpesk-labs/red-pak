@@ -118,11 +118,11 @@ OnErrorExit:
 
 static int PopDownRedpath (char *redpath) {
     int idx;
+    // to get cleaner path remove trailing '/' if any
+    if (redpath[strlen(redpath)-1]='/') redpath[strlen(redpath)-1]=0;
     for (idx = strlen(redpath)-1; redpath[idx] != '/' && redpath[idx] != 0; idx--) {
         redpath[idx]=0;
     }
-    // to get cleaner path remove trailing '/' if any
-    if (redpath[idx]='/') redpath[idx]=0;
     return idx;
 }
 
@@ -134,6 +134,7 @@ redNodeYamlE RedNodesLoad(const char* redpath, redNodeT *node, int verbose) {
     int error;
     redNodeYamlE rc;
 
+    printf("RedNodesLoad: %s\n", redpath);
     // check redpath is a readable directory
     error= stat(redpath, &statinfo);
     if (error || !S_ISDIR(statinfo.st_mode)) {
@@ -169,7 +170,7 @@ redNodeYamlE RedNodesLoad(const char* redpath, redNodeT *node, int verbose) {
     (void)snprintf (nodepath, sizeof(nodepath), "%s/%s", redpath, REDNODE_ADMIN);
     error= stat(nodepath, &statinfo);
     if (error || !S_ISREG(statinfo.st_mode)) {
-        RedLog(REDLOG_DEBUG, "No admin config file=%s", nodepath);
+        RedLog(REDLOG_DEBUG, "No admin config file=%s.!!!!", nodepath);
     } else {
         node->confadmin = RedLoadConfig (nodepath, verbose);
         if (!node->confadmin) {

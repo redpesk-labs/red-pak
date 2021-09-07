@@ -132,7 +132,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
                 }
             }
             if (err < 0) {
-                RedLog(REDLOG_ERROR, "*** Node [%s] export path=%s does not exist [use --force]", configN->headers->alias, path);
+                RedLog(REDLOG_ERROR, "*** Node [%s] export path=%s(=%s) does not exist [use --force]", configN->headers->alias, path, expandpath);
                 goto OnErrorExit;
             }
                 break;
