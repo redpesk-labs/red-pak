@@ -28,6 +28,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
     int err;
 
     // scan export directory
+    printf("\n\n\n--------- Scan export for %s\n", node->redpath);
     for (int idx=0; idx <configN->exports_count; idx++) {
         redExportFlagE mode= configN->exports[idx].mode;
         const char* mount= configN->exports[idx].mount;
@@ -37,6 +38,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         // if mouting path is not privide let's duplicate mount
         if (!path) path=mount;
+	printf("path=%s expandpath%s mount=%s \n", path, expandpath, mount);
         switch (mode) {
         case RED_EXPORT_PRIVATE:
             // on export if we are in terminal lead node

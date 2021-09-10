@@ -89,6 +89,7 @@ private:
 	void getConf();
 	bool hasConf();
 	void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
+	bool checkInNodeDataBase(std::string name);
 	void rednode_status(const std::string & realpath);
 	void rednode_template(const std::string & redpath, const std::string & alias, const std::string & tmplname,
 						  const std::string & tmpladmin, bool update);

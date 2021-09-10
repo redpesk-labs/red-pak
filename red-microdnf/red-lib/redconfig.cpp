@@ -31,6 +31,13 @@
 
 #include <context.hpp>
 
+extern "C" {
+#include <solv/pool.h>
+#include <solv/repo.h>
+#include <solv/repo_rpmdb.h>
+}
+
+
 namespace redlib {
 
 
@@ -335,7 +342,6 @@ void RedNode::createRedNode(const std::string & alias, bool create, bool update,
     }
 
     createRedNodePath(redpath(), alias, create, update, tmplate, tmplateadmin);
-
 }
 
 void RedNode::install(libdnf::rpm::PackageSack & package_sack) {
@@ -352,20 +358,38 @@ void RedNode::install(libdnf::rpm::PackageSack & package_sack) {
     appendFamilyDb(package_sack);
 }
 
+bool RedNode::checkInNodeDataBase(std::string name) {
+    bool present = false;
+    Pool * pool = pool_create();
+    pool_set_rootdir(pool, redpath().c_str());
+    Repo * repo = repo_create(pool, "redpak");
+    int flagsrpm = REPO_REUSE_REPODATA | RPM_ADD_WITH_HDRID | REPO_USE_ROOTDIR;
+    int rc = repo_add_rpmdb(repo, nullptr, flagsrpm);
+    void *rpmstate;
+	Queue q;
+
+	queue_init(&q);
+	rpmstate = rpm_state_create(pool, redpath().c_str());
+	rpm_installedrpmdbids(rpmstate, "Name", name.c_str(), &q);
+   printf("CLEMENT: %s %d\n", name.c_str(), q.count);
+    if (q.count)
+        present = true;
+	rpm_state_free(rpmstate);
+	queue_free(&q);
+    pool_free(pool);
+    return present;
+}
+
 void RedNode::checkTransactionPkgs(libdnf::base::Transaction & transaction) {
     std::string log_pkgs;
 
     auto & tpkgs = transaction.get_packages();
     for (auto tpkg = tpkgs.begin(); tpkg != tpkgs.end(); tpkg++) {
         auto rpmdbid = tpkg->get_package().get_rpmdbid();
+        if (rpmdbid == 0) //not installed
+            continue;
 
-        //check of rpm is from a external repo(rpmdbid=0) or installed in the node one(rpmdbid=1)
-        //std::cout << fmt::format("CLEMENT: {} {} {}",
-        //    tpkg->get_package().get_full_nevra(),
-        //    tpkg->get_package().get_location(),
-        //    tpkg->get_package().get_rpmdbid()) << std::endl;
-
-        if (rpmdbid > 1) {
+        if (!checkInNodeDataBase(tpkg->get_package().get_name())) {
             log_pkgs += fmt::format(" {}", tpkg->get_package().get_full_nevra());
             tpkgs.erase(tpkg--);
             tpkgs.erase(tpkg--);
