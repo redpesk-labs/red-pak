@@ -21,7 +21,16 @@
 # red-pak: an Ultra Light Weight Container for embedded applications
 
 ## Important note
-Red-pak is Work-In-progress. Binary packages should come soon. In the meantime early adopters should work from source.
+Red-pak is Work-In-progress.
+
+Binary packages can be found https://download.redpesk.bzh/redpesk-lts/ and be used on redpesk os.
+
+Please have a look to https://docs.redpesk.bzh/docs/en/master/getting_started/quickstart/03-boot-images.html to boot a redpesk image.
+
+Then you can install redpak with
+```bash
+dnf install red-pak
+```
 
 ## Videos
    - Introduction to concepts and architecture: https://vimeo.com/412131602
@@ -37,13 +46,13 @@ Red-pak targets embedded and critical infrastructures:
 
 ## Main differences with other existing containers
 ### Docker, LXC, ...
-   - mostly IT/Datacenter-oriented containers 
+   - mostly IT/Datacenter-oriented containers
    - They duplicate the rootfs
    - They generally run or at least start as privileged users
    - They share as little resources as possible with the host (to provide portability)
    - They have a lot of tools to handle Devops operations (backup, migration, elasticity, ..)
 ### Snap, Flatpak, Appimage, ...
-   - Desktop driven containers 
+   - Desktop driven containers
    - Except for Flatpak they also duplicate the rootfs
    - Like red-pak they run without privileges
    - Because they target ease of application installation, they cannot maximize resource sharing with the host core OS.
@@ -53,7 +62,7 @@ Red-pak targets embedded and critical infrastructures:
    - A management-driven system for the embedded world
    - An embedded and generally every critical system is fully managed. Every configuration and combination should be tested before getting to production. The fact your application SHOULD work with ALMOST every configuration without having to be tested is not good enough.
    - Embedded target are generally limited in resources (RAM,CPU,DISK,POWER,...). Duplicating libraries/tools on disk/memory is not an option.
-   - Embedded systems need to be auditable/certifiable. A black box container model is not acceptable. 
+   - Embedded systems need to be auditable/certifiable. A black box container model is not acceptable.
 
 Everyone understands that installing a software component on millions of cars, on a submarine or in a train is very different from installing a new application on a desktop or a phone.
 
@@ -63,19 +72,17 @@ red-pak targets embedded devices used within critical infrastructure (automotive
 
 ## Tools
 
-- `red-dnf`: handles the nodes lifecycle (target development time)
+- `red-wrap`: creates execution namespaces
+- `redwrap-dnf`: handles the nodes lifecycle (target development time)
         + creation
         + adding packages repositories
         + install/update packages
         ...
 
-- `red-rpm`: provides rpm management on the target. It is also used to install packages coming from an 'Over the Air' update.
-
-- `red-wrap`: creates execution namespaces
 
 ## Concepts
 
-- **Redpath**: represents a family of nodes that are imported in a namespace at application launch time. Every action on red-pak is done by providing the path to the terminal node of its family tree. 
+- **Redpath**: represents a family of nodes that are imported in a namespace at application launch time. Every action on red-pak is done by providing the path to the terminal node of its family tree.
 
 - **RedNode**: the atomic component of red-pak. A node is an independent subset of a full tree rootfs. Each node owns a private RPMdb and repository lists. A node can be installed or updated independently. Each Rednode owns the following items:
    + Alias: should be unique within your Redpath, but may not be globally (i.e. two versions of QT may have the same alias)
@@ -93,8 +100,8 @@ red-pak targets embedded devices used within critical infrastructure (automotive
    + Anonymous: not visible outside the current name space (even two applications running in the node have separated namespaces)
       <!-- + XXX: mixing node/namespace terminology. -->
    + ExecFd: resulting file will contain the result of a shell command execution (i.e: one line of /etc/passwd)
-   + Symlink: symbolic link 
-   Note: a mount may indifferently import directories or files.
+   + Symlink: symbolic link
+> **_NOTE:_** a mount may indifferently import directories or files.
 
 - **Share/unshare**:
    + List of tag to expose: network, pid, users, ...
@@ -109,22 +116,17 @@ red-pak targets embedded devices used within critical infrastructure (automotive
    + Remove: remove a variable from the environment before entering the application namespace
 
 ## Underlying technologies used and their modifications
-- `dnf`/`libdnf`: 
-    - Unfortunately as of today red-pak requires a small patch on `libdnf` (~100 lines)
-    - Uses a custom main CLI to set proper arguments
-       <!-- - XXX: need explanation -->
-    - Ships a C++/Python module that is used by red-plugins
+- `libdnf`:
+    - Use libdnf5
 - `rpm`:
     - No change to `librpm.so`, only need `librpm-devel` to compile
-    - Shipping a custom version of the librpm/Python interface
-    - Shipping a custom `red-rpm` CLI that understands the additional `--redpath` argument
 - `bubblewrap`:
     - No change to `bwrap`
     - As today `red-wrap` execs the `bwrap` command (in the future this could change in favor of a direct call)
 
 # Performance
 
-More tests need to be done, with many different conditions/configuration (target, versions, ...) 
+More tests need to be done, with many different conditions/configuration (target, versions, ...)
 
 - On my home laptop I used the following sample scenario with:
    - 3 nodes (redpesk-dev/agl-plateform/agl-demos-> demo->applications)
@@ -135,8 +137,8 @@ Namespace Start/Stop time is around 50-60ms (depends on global system load)
 - To check on your own system you can use the following code:
 
 ```
-    TIMEMS=`echo "- $(($(date +%s%N)/1000000))  + "  && `red-wrap` --rpath=/var/redpesk/agl-redpesk9/agl-demo -- cat </dev/null ; echo $(($(date +%s%N)/1000000))`; echo $(($TIME))
-```    
+    TIMEMS=`echo "- $(($(date +%s%N)/1000000))  + "  && `redwrap` --rpath=/var/redpesk/agl-redpesk9/agl-demo -- cat </dev/null ; echo $(($(date +%s%N)/1000000))`; echo $(($TIME))
+```
 
 Do not forget to retrieve the time measurement cost:
 
@@ -146,66 +148,91 @@ Do not forget to retrieve the time measurement cost:
 
 # Quick Start
 
-0. Create a non privileged pool to host your Rednodes 
+0. Create a non privileged pool to host your Rednodes
 
     + `sudo mkdir /var/redpesk`
     + `sudo chown $USER /var/redpesk`
 
-1. Create your 1st node 
+1. Create your 1st node
 
-    + `red-dnf --redpath=/var/redpesk/agl-redpesk9 red-manager --create --alias=agl-core`
+    + `redwrap-dnf --redpath=/var/redpesk/agl-redpesk9 manager --create --alias=agl-core`
 
 1. Add a repository of rpm packages to your node
 
-    +  `red-dnf --redpath=/var/redpesk/agl-redpesk9 red-manager --add-repo http://kojihub.lorient.iot/kojifiles/repos/II--RedPesk-9-build/latest/x86_64`
+    For now it misses a command, so you need to create a .repo file into /var/redpesk/agl-redpesk9/etc/yum.repos.d
 
-    Note: you may have multiple repositories per node. (should be fixed) My sample URL is not public 
-    <!-- - XXX: need explanations/details on what should be fixed -->
+```bash
+mkdir -p /var/redpesk/agl-redpesk9/etc/yum.repos.d
+
+cat << EOF > /etc/yum.repos.d/repo.repo
+[repo]
+name=repo
+baseurl='https://community-app.redpesk.bzh/kbuild/repos/repo/latest/$basearch'
+enabled=1
+repo_gpgcheck=0
+type=rpm
+gpgcheck=0
+skip_if_unavailable=False
+EOF
+```
+
+
+> **_NOTE:_** My sample URL is not public
+
+<!-- - XXX: need explanations/details on what should be fixed -->
+
+> **_NOTE:_** For testing purpose you simply can copy from your system, e.g.:
+
+```bash
+cp /etc/yum.repos.d/redpesk.repo /var/redpesk/agl-redpesk9/etc/yum.repos.d
+```
 
 1. Install a package in your node
 
-    + `red-dnf --redpath=/var/redpesk/agl-redpesk9 red-search binder`
-    + `red-dnf --redpath=/var/redpesk/agl-redpesk9 red-install agl-app-framework-binder`
+    + `redwrap-dnf --redpath=/var/redpesk/agl-redpesk9 repoquery *binder*`
+    + `redwrap-dnf --redpath=/var/redpesk/agl-redpesk9 install afb-binder`
 
 1. In the node: Check installation succeeded and check application can start
 
-    + `red-wrap --redpath=/var/redpesk/agl-redpesk9 --force -- rpm -qa
-    + `red-wrap --redpath=/var/redpesk/agl-redpesk9 afb-daemon --version`
+    + `redwrap --redpath=/var/redpesk/agl-redpesk9 -- rpm -qa`
+    + `redwrap --redpath=/var/redpesk/agl-redpesk9 -- afb-binder --version`
 
-    Note: a this level we only have one node. If you want to compare with other existing containers technologies, you should think of the red-pak container as a Russian doll. Your container is not one node, but the imbrication of all nodes contained in your Redpath. i.e: node:core OS/node:agl-plateform/node:boat-middleware/node:my-projet->my-navigation-application
+> **_NOTE:_** a this level we only have one node. If you want to compare with other existing containers technologies, you should think of the red-pak container as a Russian doll. Your container is not one node, but the imbrication of all nodes contained in your Redpath. i.e: node:core OS/node:agl-plateform/node:boat-middleware/node:my-projet->my-navigation-application
 
 1. Enter 'bash' in your container
 
     <!-- + XXX: explain the `--force` + provide simpler binaries to be run instead of
       the AGL ones -->
-    +  `red-wrap --redpath=/var/redpesk/agl-redpesk9 --force bash `
+    +  `redwrap --redpath=/var/redpesk/agl-redpesk9 --force bash `
     ```
         > ls /
         > ls /nodes/agl-core/usr/bin/
-        > afb-daemon --version
-        > ldd /nodes/agl-core/usr/bin/afb-daemon
+        > afb-binder --version
+        > ldd /nodes/agl-core/usr/bin/afb-binder
         > rpm -qa
     ```
 
 1. Add a new leaf to our tree
 
-    + `red-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo red-manager --create --alias=agl-demo`
+    + `redwrap-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo manager --create --alias=agl-demo`
 
 1. Add a repository to your agl-demo node
 
-    +  `red-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo red-manager --add-repo http://kojihub.lorient.iot/kojifiles/repos/IIExtra--RedPesk-9-build/latest/x86_64/`
-
 1. Install the helloworld demo
 
-    +  `red-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo red-search agl`
-    +  `red-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo red-install agl-service-helloworld.x86_64`
+    +  `redwrap-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo repoquery *agl*`
+    +  `redwrap-dnf --redpath=/var/redpesk/agl-redpesk9/agl-demo install agl-service-helloworld.x86_64`
 
 1. Enter your new node
 
-    + `red-wrap --redpath=/var/redpesk/agl-redpesk9/agl-demo --force bash`
+    + `redwrap --redpath=/var/redpesk/agl-redpesk9/agl-demo --force bash`
     + `rpm -qa`
-    + `afb-daemon --ldpaths=/nodes/agl-demo --workdir=. --roothttp=/nodes/agl-demo/usr/agl-service-helloworld/htdocs --verbose`
+    + `afb-binder --ldpaths=/nodes/agl-demo --workdir=. --roothttp=/nodes/agl-demo/var/local/lib/afm/applications/helloworld-binding/htdocs/ --verbose`
+
+Outside the node:
+
     + `browser http://10.20.101.105/1234`
+    + ` curl -H "Content-Type: application/json" http://localhost:1234/api/helloworld/ping`
 
 1. delete a node (they are atomic, a simple 'rm' is enough)
 
@@ -213,12 +240,12 @@ Do not forget to retrieve the time measurement cost:
 
 # Configuration
 
-- main config is at `/xxx/etc/red-pak/main.yaml`
+- main config is at `$ROOT_PATH/etc/red-pak/main.yaml`
 - node config is at `$NODE_PATH/etc/redpack.yaml`
 
-Notes on configuration: 
-   - All sections but 'config/tags' accumulate. 
+Notes on configuration:
+   - All sections but 'config/tags' accumulate.
    - Every export path, mounting point or environment variable defined within each node of a given redpath are visible at runtime from the application namespace.
    - Config/tags are unique and merged at run time. Tags defined within `redmain.yaml` are used as default values. Then within a redpath, the oldest ancestor has priority. As the result, if a parent enforces a constraint, children cannot overload the selection (i.e rpm signature require, unshare network, ...)
-   
+
    <!-- XXX: need explanation on what is in parenthesis -->
