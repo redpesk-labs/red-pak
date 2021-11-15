@@ -43,7 +43,7 @@ namespace redlib {
 class RedNode
 {
 public:
-	RedNode(microdnf::Context & ctx): ctx(&ctx) {}
+	RedNode(libdnf::cli::ArgumentParser &arg_parser, libdnf::Base &base): arg_parser(arg_parser), base(base) {}
 
 	void addOptions(libdnf::cli::ArgumentParser::Command *microdnf);
 	void configure();
@@ -54,7 +54,8 @@ public:
 	bool isRedpath(bool strict = true) const;
 
 private:
-	microdnf::Context * ctx;
+	libdnf::cli::ArgumentParser &arg_parser;
+	libdnf::Base &base;
     libdnf::OptionPath redpathOpt{nullptr};
     libdnf::OptionBool forcenode{false};
 

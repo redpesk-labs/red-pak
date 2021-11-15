@@ -49,7 +49,7 @@ bool RedNode::isRedpath(bool strict) const {
 }
 
 void RedNode::addOptions(libdnf::cli::ArgumentParser::Command *microdnf) {
-    auto redpath_opt = ctx->arg_parser.add_new_named_arg("redpath");
+    auto redpath_opt = arg_parser.add_new_named_arg("redpath");
     redpath_opt->set_long_name("redpath");
     redpath_opt->set_has_value(true);
     redpath_opt->set_arg_value_help("ABSOLUTE_PATH");
@@ -57,7 +57,7 @@ void RedNode::addOptions(libdnf::cli::ArgumentParser::Command *microdnf) {
     redpath_opt->link_value(&redpathOpt);
     microdnf->register_named_arg(redpath_opt);
 
-    auto forcenode_opt = ctx->arg_parser.add_new_named_arg("forcenode");
+    auto forcenode_opt = arg_parser.add_new_named_arg("forcenode");
     forcenode_opt->set_long_name("forcenode");
     forcenode_opt->set_has_value(false);
     forcenode_opt->set_short_description("force node");
@@ -79,14 +79,14 @@ void RedNode::configure() {
     setenv("NODE_PATH", redpath().c_str(), true);
 
     //installroot: set to redpath
-    ctx->base.get_config().installroot().set(libdnf::Option::Priority::RUNTIME, redpath());
+    base.get_config().installroot().set(libdnf::Option::Priority::RUNTIME, redpath());
 
 
     //prepend redpath in repodirs
-    std::vector<std::string> reposdir(ctx->base.get_config().reposdir().get_value());
+    std::vector<std::string> reposdir(base.get_config().reposdir().get_value());
     for (auto i = reposdir.begin(); i != reposdir.end(); ++i)
         i->insert(0, redpath());
-    ctx->base.get_config().reposdir().set(libdnf::Option::Priority::RUNTIME, reposdir);
+    base.get_config().reposdir().set(libdnf::Option::Priority::RUNTIME, reposdir);
 }
 
 void RedNode::scanNode() {
@@ -134,11 +134,11 @@ void RedNode::getMain() {
 
 void RedNode::setPersistDir() {
 	auto ex_persistdir = RedNodeStringExpand(node.get(), NULL, node.get()->config->conftag->persistdir, NULL, NULL);
-	ctx->base.get_config().persistdir().set(libdnf::Option::Priority::RUNTIME, ex_persistdir);
+	base.get_config().persistdir().set(libdnf::Option::Priority::RUNTIME, ex_persistdir);
 }
 
 void RedNode::setGpgCheck() {
-	ctx->base.get_config().gpgcheck().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->gpgcheck);
+	base.get_config().gpgcheck().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->gpgcheck);
 }
 
 void RedNode::setCacheDir() {
@@ -153,7 +153,7 @@ void RedNode::setCacheDir() {
     if(!cachedir) {
 	throw_error(fmt::format("No cachedir in conftag for node: {}", node->redpath));
 	}
-    ctx->base.get_config().cachedir().set(libdnf::Option::Priority::RUNTIME, cachedir);
+    base.get_config().cachedir().set(libdnf::Option::Priority::RUNTIME, cachedir);
 }
 
 void RedNode::checkdir(const std::string & label, const std::string & dirpath, bool create) {
@@ -354,7 +354,7 @@ void RedNode::install(libdnf::rpm::PackageSack & package_sack) {
     setCacheDir();
 
     checkdir("redpath", redpath(), false);
-    checkdir("dnf persistdir", ctx->base.get_config().persistdir().get_value(), false);
+    checkdir("dnf persistdir", base.get_config().persistdir().get_value(), false);
     appendFamilyDb(package_sack);
 }
 
