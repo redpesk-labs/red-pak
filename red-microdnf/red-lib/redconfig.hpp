@@ -49,7 +49,7 @@ public:
 	void configure();
 	void install(libdnf::rpm::PackageSack & package_sack);
 	void createRedNode(const std::string & alias, bool create, bool update, const std::string & tmplate, const std::string & tmplateadmin);
-	void checkTransactionPkgs(libdnf::base::Transaction & transaction);
+	 std::vector<libdnf::base::TransactionPackage> checkTransactionPkgs(libdnf::base::Transaction & transaction);
 
 	bool isRedpath(bool strict = true) const;
 

@@ -380,10 +380,10 @@ bool RedNode::checkInNodeDataBase(std::string name) {
     return present;
 }
 
-void RedNode::checkTransactionPkgs(libdnf::base::Transaction & transaction) {
+std::vector<libdnf::base::TransactionPackage> RedNode::checkTransactionPkgs(libdnf::base::Transaction & transaction) {
     std::string log_pkgs;
 
-    auto & tpkgs = transaction.get_packages();
+    auto tpkgs = transaction.get_transaction_packages();
     for (auto tpkg = tpkgs.begin(); tpkg != tpkgs.end(); tpkg++) {
         auto rpmdbid = tpkg->get_package().get_rpmdbid();
         if (rpmdbid == 0) //not installed
@@ -401,6 +401,7 @@ void RedNode::checkTransactionPkgs(libdnf::base::Transaction & transaction) {
         if(!forcenode.get_value())
             throw_error("Aborting... (Use --forcenode to force the installation in the node");
     }
+	return tpkgs;
 
 }
 
