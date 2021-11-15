@@ -34,10 +34,6 @@ extern "C" {
 }
 
 
-namespace microdnf {
-	class Context;
-}
-
 namespace redlib {
 
 class RedNode

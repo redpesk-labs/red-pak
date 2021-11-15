@@ -29,8 +29,6 @@
 #include <fstream>
 #include <rpm/rpmmacro.h>
 
-#include <context.hpp>
-
 extern "C" {
 #include <solv/pool.h>
 #include <solv/repo.h>
