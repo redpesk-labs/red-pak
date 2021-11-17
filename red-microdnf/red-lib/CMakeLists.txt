@@ -24,6 +24,8 @@ pkg_search_module(LIBDNFCLI REQUIRES libdnf5-cli libdnf-cli)
 PROJECT_TARGET_ADD(red-lib)
 
     file(GLOB CXXSOURCES [a-z]*.cpp)
+    file(GLOB CXXHEADERS [a-z]*.hpp)
+    message("CXXHEADERS ${CXXHEADERS}")
 
     add_library(${TARGET_NAME} SHARED ${CXXSOURCES})
 
@@ -31,7 +33,7 @@ PROJECT_TARGET_ADD(red-lib)
 		LABELS "LIBRARY"
 		OUTPUT_NAME redlib
         LINKER_LANGUAGE CXX
-    PUBLIC_HEADER redconfig.hpp
+	PUBLIC_HEADER "${CXXHEADERS}"
     )
 
 	target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../red-conf ${CMAKE_CURRENT_SOURCE_DIR}/../microdnf ${LIBDNF_INCLUDE_DIRS} ${LIBDNFCLI_INCLUDE_DIRS} ${RPM_INCLUDE_DIRS})
