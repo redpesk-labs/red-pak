@@ -41,7 +41,7 @@ class RedNode
 public:
 	RedNode(libdnf::cli::ArgumentParser &arg_parser, libdnf::Base &base): arg_parser(arg_parser), base(base) {}
 
-	void addOptions(libdnf::cli::ArgumentParser::Command *microdnf);
+	void addOptions(libdnf::cli::ArgumentParser::Group *global_options);
 	void configure();
 	void install(libdnf::rpm::PackageSack & package_sack);
 	void createRedNode(const std::string & alias, bool create, bool update, const std::string & tmplate, const std::string & tmplateadmin);

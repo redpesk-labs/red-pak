@@ -46,21 +46,21 @@ bool RedNode::isRedpath(bool strict) const {
     return ret;
 }
 
-void RedNode::addOptions(libdnf::cli::ArgumentParser::Command *microdnf) {
+void RedNode::addOptions(libdnf::cli::ArgumentParser::Group *global_options) {
     auto redpath_opt = arg_parser.add_new_named_arg("redpath");
     redpath_opt->set_long_name("redpath");
     redpath_opt->set_has_value(true);
     redpath_opt->set_arg_value_help("ABSOLUTE_PATH");
     redpath_opt->set_short_description("redpath path");
     redpath_opt->link_value(&redpathOpt);
-    microdnf->register_named_arg(redpath_opt);
+    global_options->register_argument(redpath_opt);
 
     auto forcenode_opt = arg_parser.add_new_named_arg("forcenode");
     forcenode_opt->set_long_name("forcenode");
     forcenode_opt->set_has_value(false);
     forcenode_opt->set_short_description("force node");
     forcenode_opt->link_value(&forcenode);
-    microdnf->register_named_arg(forcenode_opt);
+    global_options->register_argument(forcenode_opt);
 }
 
 void RedNode::configure() {
