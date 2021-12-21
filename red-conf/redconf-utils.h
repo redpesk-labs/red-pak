@@ -39,6 +39,7 @@
 #define STATIC_STR_CONCAT(S1,S2) S1 S2
 
 #include "redconf-schema.h"
+#include "redconf-defaults.h"
 
 unsigned long RedUtcGetTimeMs ();
 
@@ -68,6 +69,7 @@ typedef void(*RedLogCbT) (RedLogLevelE level, const char *format, ...);
 
 void RedLogCbRegister (RedLogCbT *redlogcb);
 void RedLog (RedLogLevelE level, const char *format, ...);
+void SetLogLevel(RedLogLevelE level);
 int RedConfGetInod (const char* path);
 
 #endif

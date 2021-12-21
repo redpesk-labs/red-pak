@@ -134,6 +134,7 @@ RedConfDefaultsT nodeConfigDefaults[]= {
     {"REDNODE_LOCK"   , GetEnviron, (void*)"$NODE_PATH/"REDNODE_LOCK},
     {"LOGNAME"        , GetEnviron, (void*)"Unknown"},
     {"HOSTNAME"       , GetEnviron, (void*)"localhost"},
+    {"CGROUPS_MOUNT_POINT", GetEnviron, (void*)CGROUPS_MOUNT_POINT},
     {"LEAF_ALIAS"     , GetEnviron, NULL},
     {"LEAF_NAME"      , GetEnviron, NULL},
     {"LEAF_PATH"      , GetEnviron, NULL},

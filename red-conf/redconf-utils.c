@@ -34,14 +34,23 @@
 #define MAX_CYAML_FORMAT_STR 512
 #endif
 
+static RedLogLevelE RedLogLevel = REDLOG_INFO;
+
+void SetLogLevel(RedLogLevelE level) {
+    RedLogLevel = level;
+}
+
 // Allow log function to be mapped on RedLog, syslog, ...
 static RedLogCbT *redLogRegisteredCb;
 void RedLogRegister (RedLogCbT *redlogcb) {
 
     redLogRegisteredCb= redlogcb;
 }
+
 // redlib and redconf use RedLog to display error messages
 void RedLog (RedLogLevelE level, const char *format, ...) {
+    if (level > RedLogLevel)
+        return;
     va_list args;
     va_start(args, format);
 
@@ -234,6 +243,7 @@ static int RedNodesDigToRoot(char* nodepath, redNodeT *childrenNode, int verbose
         switch (result) {
             case RED_NODE_CONFIG_OK:
                 childrenNode->ancestor = parentNode;
+                parentNode->child = childrenNode;
                 childrenNode=parentNode;
                 break;
             case  RED_NODE_CONFIG_MISSING:
@@ -266,6 +276,7 @@ redNodeT *RedNodesScan(const char* redpath, int verbose) {
 
     // allocate leaf terminal end node and search for redpak config
     redNodeT *redleaf = calloc (1, sizeof(redNodeT));
+    redleaf->child = NULL;
     result = RedNodesLoad(nodepath, redleaf, verbose);
     if (result != RED_NODE_CONFIG_OK) {
         RedLog(REDLOG_ERROR, "redpak terminal leaf config & status not found [path=%s]", nodepath);
@@ -528,6 +539,7 @@ void RedConfCopyConfTags (redConfTagT *source, redConfTagT *destination) {
     if (source->share_pid != RED_CONF_OPT_UNSET) destination->share_pid = source->share_pid;
     if (source->share_net != RED_CONF_OPT_UNSET) destination->share_net = source->share_net;
 
+    if (source->cgroups) destination->cgroups = source->cgroups;
 }
 
 // return file inode (use to check if two path are pointing on the same file)

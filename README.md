@@ -15,6 +15,8 @@
 * [Performance](#performance)
 * [Quick Start](#quick-start)
 * [Configuration](#configuration)
+* [Cgroups](#cgroups)
+    * [Cgroup Issues](#cgroup-issues)
 
 <!-- vim-markdown-toc -->
 
@@ -249,3 +251,91 @@ Notes on configuration:
    - Config/tags are unique and merged at run time. Tags defined within `redmain.yaml` are used as default values. Then within a redpath, the oldest ancestor has priority. As the result, if a parent enforces a constraint, children cannot overload the selection (i.e rpm signature require, unshare network, ...)
 
    <!-- XXX: need explanation on what is in parenthesis -->
+
+# Cgroups
+
+Cgroups allow to distribute system resources along a hierarchy.
+
+Redpak can manage cgroups v2 for its nodes.
+
+Below an example of cgroup configuration for a node.
+
+```yaml
+config:
+  share_all: Unset
+  share_user: Unset
+  ...
+  cgroups:
+          cpuset:
+                cpus: 0-2
+                mems: 0
+                cpus_partition: member
+          mem:
+                  min: 10M
+                  low: 10M
+                  high: 521M
+                  max: 512M
+                  oom_group: 10
+                  swap_high: 1024M
+                  swap_max: 512M
+          cpu:
+                  max: 1000 1000
+                  weight: 200
+                  weight_nice: 10
+          io:
+                weight: 200
+                max: 8:0 rbps=2097152 wiops=120
+          pids:
+                max: 50
+
+```
+
+The configuration respects the definition of https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html for cgroup v2.
+
+## Cgroup Issues
+
+### V2 Issue
+
+Redpak handles cgroups only in pure v2 version. If you are in cgroup v1 or hybrid, you need to reboot by appending to the command line:
+
+```bash
+systemd.unified_cgroup_hierarchy=1
+```
+
+After reboot, you can check that `/sys/fs/cgroup' is in v2 with:
+
+```bash
+mount -l | grep /sys/fs/cgroup
+cgroup2 on /sys/fs/cgroup type cgroup2 (rw,nosuid,nodev,noexec,relatime,nsdelegate)
+```
+
+### User issue
+
+If you don't have right to create a sub cgroup into your current parent cgroup, it may be due to the fact that your not in a user cgroup session.
+
+You can try to start one with:
+
+```bash
+systemd-run --user --pty -p "Delegate=yes"  bash
+```
+
+### Controller Issue
+
+If you don't manage to write into some controllers, it may be due to a issue in delegation. For that, you need to verify from /sys/fs/cgroup to your parent cgroup (`cat /proc/self/cgroup`), the available controllers `cat cgroup.controllers` and the delegated controllers to their children `cgroup.subtree_control`.
+
+A temporary way to test it, is to append the missing ones at each level, for example:
+
+```bash
+echo "+cpuset +cpu +memory +io +pids" > cgroup.subtree_control
+```
+
+After you can check that in clild, you have them in controlles
+
+```bash
+# in child
+cat cgroup.contollers
+```
+
+### Issue writing into controllers
+
+All of the elements of redpak config file respects kernel definitions, please have a look at https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html.

@@ -37,6 +37,47 @@
         mode_t umask;
     } redConfAclT;
 
+    typedef struct {
+        const char *max;
+        const char *high;
+        const char *min;
+        const char *low;
+        const char *oom_group;
+        const char *swap_high;
+        const char *swap_max;
+    } redMemT;
+
+    typedef struct {
+        const char *weight;
+        const char *max;
+        const char *weight_nice;
+    } redCpuT;
+
+    typedef struct {
+        const char *cost_qos;
+        const char *cost_model;
+        const char *weight;
+        const char *max;
+    } redIoT;
+
+    typedef struct {
+        const char *max;
+    } redPidsT;
+
+    typedef struct {
+        const char *cpus;
+        const char *mems;
+        const char *cpus_partition;
+    } redCpusetT;
+
+    typedef struct {
+        redCpusetT *cpuset;
+        redMemT *mem;
+        redCpuT *cpu;
+        redIoT *io;
+        redPidsT *pids;
+    } redConfCgroupT;
+
     typedef enum {
         RED_EXPORT_PRIVATE=0,
         RED_EXPORT_RESTRICTED,
@@ -106,6 +147,7 @@
         redConfOptFlagE share_ipc;
         redConfOptFlagE share_pid;
         redConfOptFlagE share_net;
+        redConfCgroupT *cgroups;
         int verbose;
     } redConfTagT;
 
@@ -151,6 +193,7 @@ typedef struct redNodeS{
     redConfigT *config;
     redConfigT *confadmin;
     struct redNodeS *ancestor;
+    struct redNodeS *child;
     const char *redpath;
 } redNodeT;
 

@@ -78,6 +78,10 @@
 #define REDPESK_DFLT_VERSION "agl-redpesk9"
 #endif
 
+#ifndef CGROUPS_MOUNT_POINT
+#define CGROUPS_MOUNT_POINT "/sys/fs/cgroup"
+#endif
+
 typedef enum  {
     REDLOG_EMERGENCY = 0,
     REDLOG_ALERT = 1,

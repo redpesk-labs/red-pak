@@ -126,6 +126,53 @@ static const cyaml_config_t *yconfGet (int wlevel) {
        {"Disabled",RED_CONF_OPT_DISABLED},
     };
 
+    static const cyaml_schema_field_t CgroupsMem[] = {
+        CYAML_FIELD_STRING_PTR("max", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redMemT, max, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("high", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redMemT, high, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("min", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redMemT, min, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("low", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redMemT, low, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("oom_group", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redMemT, oom_group, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("swap_high", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redMemT, swap_high, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("swap_max", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redMemT, swap_max, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_END
+    };
+
+    static const cyaml_schema_field_t CgroupsCpu[] = {
+        CYAML_FIELD_STRING_PTR("weight", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redCpuT, weight, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("weight_nice", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redCpuT, weight_nice, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("max", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redCpuT, max, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_END
+    };
+
+    static const cyaml_schema_field_t CgroupsCpuSet[] = {
+        CYAML_FIELD_STRING_PTR("cpus", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redCpusetT, cpus, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("mems", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redCpusetT, mems, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("cpus_partition", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redCpusetT, cpus_partition, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_END
+    };
+
+    static const cyaml_schema_field_t CgroupsIo[] = {
+        CYAML_FIELD_STRING_PTR("cost_qos", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redIoT, cost_qos, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("cost_model", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redIoT, cost_model, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("weight", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redIoT, weight, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("max", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redIoT, max, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_END
+    };
+
+    static const cyaml_schema_field_t CgroupsPids[] = {
+        CYAML_FIELD_STRING_PTR("max", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redPidsT, max, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_END
+    };
+
+    static const cyaml_schema_field_t CgroupsSchema[] = {
+        CYAML_FIELD_MAPPING_PTR("cpuset", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT, cpuset, (const struct cyaml_schema_field *)&CgroupsCpuSet),
+        CYAML_FIELD_MAPPING_PTR("mem", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , mem, (const struct cyaml_schema_field *)&CgroupsMem),
+        CYAML_FIELD_MAPPING_PTR("cpu", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , cpu, (const struct cyaml_schema_field *)&CgroupsCpu),
+        CYAML_FIELD_MAPPING_PTR("io", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , io, (const struct cyaml_schema_field *)&CgroupsIo),
+        CYAML_FIELD_MAPPING_PTR("pids", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , pids, (const struct cyaml_schema_field *)&CgroupsPids),
+        CYAML_FIELD_END
+    };
+
     // redpak config headers schema
     static const cyaml_schema_field_t HeaderSchema[] = {
         CYAML_FIELD_STRING_PTR("alias", CYFLAG_PTR|CYFLAG_CASE, redConfHeaderT, alias, 0, CYAML_UNLIMITED),
@@ -157,6 +204,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
         CYAML_FIELD_END
     };
 
+
     // dnf/rpm packages options
     static const cyaml_schema_field_t EnvTagSchema[] = {
         CYAML_FIELD_STRING_PTR("persistdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, persistdir, 0, CYAML_UNLIMITED),
@@ -178,6 +226,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
         CYAML_FIELD_ENUM("share_net", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, share_net, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
         CYAML_FIELD_ENUM("share_pid", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, share_pid, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
         CYAML_FIELD_ENUM("share_ipc", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, share_ipc, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
+        CYAML_FIELD_MAPPING_PTR("cgroups", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, cgroups, CgroupsSchema),
         CYAML_FIELD_STRING_PTR("hostname", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, hostname, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("chdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, chdir, 0, CYAML_UNLIMITED),
         CYAML_FIELD_END

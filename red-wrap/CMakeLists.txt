@@ -20,6 +20,7 @@
 PROJECT_TARGET_ADD(red-wrap-lib)
 
     file(GLOB CSOURCES [a-z]*.c)
+    message("CSOURCES: ${CSOURCES}")
 
     add_library(${TARGET_NAME} SHARED ${CSOURCES})
 

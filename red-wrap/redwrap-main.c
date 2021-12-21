@@ -27,8 +27,12 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
 
 #include "redwrap-main.h"
+#include "redconf-defaults.h"
+#include "cgroups.h"
 
 typedef struct {
     char *ldpathString;
@@ -38,7 +42,7 @@ typedef struct {
 
 } dataNodeT;
 
-static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, redConfTagT *mergedConfTags, dataNodeT *dataNode, int *argcount, char *argval[]) {
+static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, redConfTagT *mergedConfTags, dataNodeT *dataNode, int *argcount, const char *argval[]) {
     RedConfCopyConfTags (node->config->conftag, mergedConfTags);
     if(node->confadmin && node->confadmin->conftag)
         RedConfCopyConfTags (node->confadmin->conftag, mergedConfTags);
@@ -63,6 +67,9 @@ OnErrorExit:
 }
 
 void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
+    if (cliarg->verbose)
+        SetLogLevel(REDLOG_DEBUG);
+
 
     redConfTagT *mergedConfTags= calloc(1, sizeof(redConfTagT));
     int argcount=0;
@@ -83,6 +90,7 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
     // update verbose/redpath from cliarg
     const char *redpath = cliarg->redpath;
 
+
     redNodeT *redtree = RedNodesScan(redpath, cliarg->verbose);
     if (!redtree) {
         RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", redpath);
@@ -96,9 +104,22 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
 
     // build arguments from nodes family tree
     // Scan redpath family nodes from terminal leaf to root node without ancestor
+    int isCgroups = 0;
+    redNodeT *rootNode = NULL;
     for (redNodeT *node=redtree; node != NULL; node=node->ancestor) {
         error = loadNode(node, cliarg, (node == redtree), mergedConfTags, &dataNode, &argcount, argval);
         if (error) goto OnErrorExit;
+        rootNode = node;
+        if (node->config->conftag->cgroups)
+            isCgroups = 1;
+    }
+
+    //set cgroups
+    if (isCgroups) {
+        RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
+        for (redNodeT *node=rootNode; node != NULL; node=node->child) {
+            cgroups(node->config->conftag->cgroups, node->status->realpath);
+        }
     }
 
     // add commulated LD_PATH_LIBRARY & PATH
@@ -174,16 +195,18 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
     }
 
     if (cliarg->verbose) {
+        printf("\n#### OPTIONS ####\n");
         for (int idx=1; idx < argcount; idx++) {
             printf (" %s", argval[idx]);
         }
-        printf ("\n");
+        printf ("\n###################\n");
     }
+
 
     // exec command
     argval[argcount]=NULL;
     if(execv(cliarg->bwrap, (char**) argval));
-        RedLog(REDLOG_ERROR, "bwrap commend issue: %s", strerror(errno));
+        RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
 
 OnErrorExit:
     RedLog(REDLOG_ERROR,"red-wrap aborted");

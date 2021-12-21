@@ -34,7 +34,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         const char* mount= configN->exports[idx].mount;
         const char* path=configN->exports[idx].path;
         struct stat status;
-        char * expandpath = NULL;
+        const char * expandpath = NULL;
 
         // if mouting path is not privide let's duplicate mount
         if (!path) path=mount;
