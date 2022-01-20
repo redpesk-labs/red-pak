@@ -25,6 +25,8 @@
 #define CYFLAG_CASE CYAML_FLAG_CASE_INSENSITIVE
 #define CYFLAG_OPT  CYAML_FLAG_OPTIONAL
 
+static int LOGYAML = 0;
+
 static const cyaml_config_t yconfError= {
     .log_level = CYAML_LOG_ERROR,
     .log_fn = cyaml_log,
@@ -66,6 +68,9 @@ static const cyaml_config_t *yconft[] ={
 static const cyaml_config_t *yconfGet (int wlevel) {
     static int maxLevel = (int) (sizeof(yconft) / sizeof(cyaml_config_t*)) -1;
 
+    if (wlevel < LOGYAML)
+        wlevel = LOGYAML;
+
     if (wlevel > maxLevel) {
         rpmlog(REDLOG_ERROR, "Fail yconf verbosity wlevel too high val=%d max=%d", wlevel, maxLevel);
         return NULL;
@@ -93,7 +98,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
 
     // Top wlevel schema entry point must be a unique CYAML_VALUE_MAPPING
     static const cyaml_schema_value_t StatusTopSchema = {
-        CYAML_VALUE_MAPPING(CYFLAG_PTR|CYFLAG_CASE, redConfigT, StatusEntry),
+        CYAML_VALUE_MAPPING(CYFLAG_PTR|CYFLAG_CASE, redConfigT, StatusEntry)
     };
 
     // ---- Red config Schema parse ${redpath}/etc/redpack.yaml ----
@@ -186,6 +191,8 @@ static const cyaml_config_t *yconfGet (int wlevel) {
         CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT, redConfExportPathT, mode, exportFlagStrings, CYAML_ARRAY_LEN(exportFlagStrings)),
         CYAML_FIELD_STRING_PTR("mount", CYFLAG_PTR|CYFLAG_CASE, redConfExportPathT, mount, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("path", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfExportPathT, path, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("info", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfExportPathT, info, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("warn", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfExportPathT, warn, 0, CYAML_UNLIMITED),
         CYAML_FIELD_END
     };
 
@@ -201,6 +208,8 @@ static const cyaml_config_t *yconfGet (int wlevel) {
         CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT|CYFLAG_OPT, redConfVarT, mode, redVarEnvStrings, CYAML_ARRAY_LEN(redVarEnvStrings)),
         CYAML_FIELD_STRING_PTR("key", CYFLAG_PTR|CYFLAG_CASE, redConfVarT, key, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("value", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfVarT, value, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("info", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfVarT, info, 0, CYAML_UNLIMITED),
+        CYAML_FIELD_STRING_PTR("warn", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfVarT, warn, 0, CYAML_UNLIMITED),
         CYAML_FIELD_END
     };
 
@@ -250,6 +259,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
     static const cyaml_schema_value_t ConfTopSchema = {
         CYAML_VALUE_MAPPING(CYFLAG_PTR|CYFLAG_CASE, redConfigT, RedConfigSchema),
     };
+
 // ---- end ${redpath}/etc/redpack.yaml schema ----
 
 
@@ -287,6 +297,42 @@ static int SchemaLoad (const char* filepath, const cyaml_schema_value_t *topsche
     return errcode;
 }
 
+static int SchemaGet(char **output, size_t *len, const cyaml_schema_value_t *topschema, cyaml_data_t *data, int wlevel) {
+    int errcode = 0;
+    // select parsing log wlevel
+    const cyaml_config_t *yconf = yconfGet (wlevel);
+    if (!yconf) {
+        errcode = 1;
+        goto Exit;
+    }
+
+    errcode = cyaml_save_data(output, len, yconf, topschema, data, 0);
+    if (errcode) {
+        RedLog(REDLOG_ERROR, "issue get schema %s", cyaml_strerror(errcode));
+    }
+
+Exit:
+    return errcode;
+}
+
+static int SchemaFree(const cyaml_schema_value_t *topschema, cyaml_data_t *data, int wlevel) {
+    int errcode = 0;
+    // select parsing log wlevel
+    const cyaml_config_t *yconf = yconfGet (wlevel);
+    if (!yconf) {
+        errcode = 1;
+        goto Exit;
+    }
+
+    errcode = cyaml_free(yconf, topschema, data, 0);
+    if (errcode) {
+        RedLog(REDLOG_ERROR, "issue free schema %s", cyaml_strerror(errcode));
+    }
+
+Exit:
+    return errcode;
+}
+
 int RedSaveConfig (const char* filepath, redConfigT *config, int warning ) {
     int errcode = SchemaSave(filepath, &ConfTopSchema, (void*)config, 0);
     return errcode;
@@ -304,6 +350,14 @@ redConfigT* RedLoadConfig (const char* filepath, int warning) {
     return config;
 }
 
+int RedGetConfig(char **output, size_t *len, redConfigT *config) {
+    return SchemaGet(output, len, &ConfTopSchema, config, 0);
+}
+
+int RedFreeConfig(redConfigT *config, int wlevel) {
+    return SchemaFree(&ConfTopSchema, (cyaml_data_t *)config, 0);
+}
+
 redStatusT* RedLoadStatus (const char* filepath, int warning) {
     redStatusT *status;
     int errcode = SchemaLoad (filepath, &StatusTopSchema, (void**)&status, warning);
@@ -311,3 +365,10 @@ redStatusT* RedLoadStatus (const char* filepath, int warning) {
     return  status;
 }
 
+int RedFreeStatus(redStatusT *status, int wlevel) {
+    return SchemaFree(&StatusTopSchema, (cyaml_data_t *)status, 0);
+}
+
+int setLogYaml(int level) {
+    LOGYAML = level;
+}

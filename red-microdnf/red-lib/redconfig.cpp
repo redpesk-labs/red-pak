@@ -369,7 +369,6 @@ bool RedNode::checkInNodeDataBase(std::string name) {
 	queue_init(&q);
 	rpmstate = rpm_state_create(pool, redpath().c_str());
 	rpm_installedrpmdbids(rpmstate, "Name", name.c_str(), &q);
-   printf("CLEMENT: %s %d\n", name.c_str(), q.count);
     if (q.count)
         present = true;
 	rpm_state_free(rpmstate);

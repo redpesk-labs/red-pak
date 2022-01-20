@@ -34,32 +34,12 @@
 #include "redconf-defaults.h"
 #include "cgroups.h"
 
-typedef struct {
-    char *ldpathString;
-    unsigned int ldpathIdx;
-    char *pathString;
-    unsigned int pathIdx;
-
-} dataNodeT;
-
-static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, redConfTagT *mergedConfTags, dataNodeT *dataNode, int *argcount, const char *argval[]) {
-    RedConfCopyConfTags (node->config->conftag, mergedConfTags);
-    if(node->confadmin && node->confadmin->conftag)
-        RedConfCopyConfTags (node->confadmin->conftag, mergedConfTags);
-
-    if(!node->ancestor) { //system_node
-        // update process default umask
-        RedSetUmask (mergedConfTags);
-    }
-
+static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, dataNodeT *dataNode, int *argcount, const char *argval[]) {
     int error = RwrapParseNode (node, cliarg, lastleaf, argval, argcount);
     if (error) goto OnErrorExit;
 
     // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-    error= RedConfAppendEnvKey(dataNode->ldpathString, &dataNode->ldpathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->ldpath, NULL, ":", NULL);
-    if (error) goto OnErrorExit;
-
-    error= RedConfAppendEnvKey(dataNode->pathString, &dataNode->pathIdx, BWRAP_MAXVAR_LEN, node->config->conftag->path, NULL, ":",NULL);
+    error = mergeSpecialConfVar(node, dataNode);
     if (error) goto OnErrorExit;
 
 OnErrorExit:
@@ -71,7 +51,7 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
         SetLogLevel(REDLOG_DEBUG);
 
 
-    redConfTagT *mergedConfTags= calloc(1, sizeof(redConfTagT));
+    redConfTagT *mergedConfTags = NULL;
     int argcount=0;
     int error;
     const char *argval[MAX_BWRAP_ARGS];
@@ -90,34 +70,31 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
     // update verbose/redpath from cliarg
     const char *redpath = cliarg->redpath;
 
-
     redNodeT *redtree = RedNodesScan(redpath, cliarg->verbose);
     if (!redtree) {
         RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", redpath);
         goto OnErrorExit;
     }
 
-    // push NODE_ALIAS in case some env var expand it.
-    RedPutEnv("LEAF_ALIAS", redtree->config->headers->alias);
-    RedPutEnv("LEAF_NAME" , redtree->config->headers->name);
-    RedPutEnv("LEAF_PATH" , redtree->status->realpath);
-
     // build arguments from nodes family tree
     // Scan redpath family nodes from terminal leaf to root node without ancestor
     int isCgroups = 0;
+
     redNodeT *rootNode = NULL;
     for (redNodeT *node=redtree; node != NULL; node=node->ancestor) {
-        error = loadNode(node, cliarg, (node == redtree), mergedConfTags, &dataNode, &argcount, argval);
+        error = loadNode(node, cliarg, (node == redtree), &dataNode, &argcount, argval);
         if (error) goto OnErrorExit;
         rootNode = node;
         if (node->config->conftag->cgroups)
             isCgroups = 1;
     }
 
+    mergedConfTags = mergedConftags(rootNode, cliarg->adminpath ? 1 : 0);
+
     //set cgroups
     if (isCgroups) {
         RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
-        for (redNodeT *node=rootNode; node != NULL; node=node->child) {
+        for (redNodeT *node=rootNode; node != NULL; node=node->childs->child) {
             cgroups(node->config->conftag->cgroups, node->status->realpath);
         }
     }
@@ -143,46 +120,37 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
         argval[argcount++]= RedNodeStringExpand (redtree, NULL, mergedConfTags->chdir, NULL, NULL);
     }
 
-    if (mergedConfTags->share_all == RED_CONF_OPT_ENABLED) {
-        argval[argcount++]="--share-all";
-    } else if (mergedConfTags->share_all == RED_CONF_OPT_DISABLED) {
+    if (!(mergedConfTags->share_all & RED_CONF_OPT_ENABLED)) {
         argval[argcount++]="--unshare-all";
     }
 
-    if (mergedConfTags->share_user == RED_CONF_OPT_ENABLED) {
-        argval[argcount++]="--share-user";
-    } else  if (mergedConfTags->share_user == RED_CONF_OPT_DISABLED) {
+    if (!(mergedConfTags->share_user & RED_CONF_OPT_ENABLED)) {
         argval[argcount++]="--unshare-user";
     }
 
-    if (mergedConfTags->share_cgroup == RED_CONF_OPT_ENABLED) {
-        argval[argcount++]="--share-cgroup";
-    } else if (mergedConfTags->share_cgroup == RED_CONF_OPT_DISABLED) {
+    if (!(mergedConfTags->share_cgroup & RED_CONF_OPT_ENABLED)) {
         argval[argcount++]="--unshare-cgroup";
     }
-    if (mergedConfTags->share_ipc == RED_CONF_OPT_ENABLED) {
-        argval[argcount++]="--share-ipc";
-    } else if (mergedConfTags->share_ipc == RED_CONF_OPT_DISABLED) {
+
+    if (!mergedConfTags->share_ipc & RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--unshare-pic";
     }
 
-    if (mergedConfTags->share_pid == RED_CONF_OPT_ENABLED) {
-        argval[argcount++]="--share-pid";
-    } else if (mergedConfTags->share_pid == RED_CONF_OPT_DISABLED) {
+    if (!(mergedConfTags->share_pid & RED_CONF_OPT_ENABLED)) {
         argval[argcount++]="--unshare-pid";
     }
 
-    if (mergedConfTags->share_net == RED_CONF_OPT_ENABLED) {
+    if (mergedConfTags->share_net & RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--share-net";
-    } else if (mergedConfTags->share_net == RED_CONF_OPT_DISABLED) {
+    } else {
         argval[argcount++]="--unshare-net";
     }
 
-    if (mergedConfTags->diewithparent == RED_CONF_OPT_ENABLED) {
+    if (mergedConfTags->diewithparent & RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--die-with-parent";
     }
 
-    if (mergedConfTags->newsession == RED_CONF_OPT_ENABLED) {
+    if (mergedConfTags->newsession & RED_CONF_OPT_ENABLED) {
         argval[argcount++]="--new-session";
     }
 

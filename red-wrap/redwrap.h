@@ -59,7 +59,5 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage);
 const char* MemFdExecCmd (const char* mount, const char* command);
 int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs,  int lastleaf, const char *argval[], int *argcount);
 int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount);
-void RedPutEnv (const char*key, const char*value);
-mode_t RedSetUmask (redConfTagT *conftag);
 
 #endif

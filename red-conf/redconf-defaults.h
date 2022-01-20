@@ -90,16 +90,16 @@ typedef enum  {
     REDLOG_WARNING = 4,
     REDLOG_NOTICE = 5,
     REDLOG_INFO = 6,
-    REDLOG_DEBUG = 7
+    REDLOG_DEBUG = 7,
+    REDLOG_TRACE = 8
 } RedLogLevelE;
-
 
 typedef enum {
     REDDEFLT_STR,
     REDDEFLT_CB
 } RedConfDefaultE;
 
-typedef char*(*RedGetDefaultCbT)(const char *label, void *ctx, void*handle);
+typedef char*(*RedGetDefaultCbT)(const char *label, void *ctx, void*handle, char *output);
 
 typedef struct {
     const char *label;

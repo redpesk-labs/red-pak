@@ -1,7 +1,6 @@
 ###########################################################################
-# Copyright 2020 IoT.bzh
-#
-# author: Fulup Ar Foll <fulup@iot.bzh>
+#* Copyright (C) 2022 "IoT.bzh"
+#* Clément Bénier <clement.benier@iot.bzh>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,31 +15,26 @@
 # limitations under the License.
 ##########################################################################
 
-PROJECT_TARGET_ADD(libredconf)
+PROJECT_TARGET_ADD(redconf-py)
+  find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
   file(GLOB CSOURCES [a-z]*.c )
   file(GLOB CHEADERS [a-z]*.h )
 
-  add_library(${TARGET_NAME} SHARED ${CSOURCES} redconf.h)
+  add_library(${TARGET_NAME} SHARED ${CSOURCES})
 
 
   SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
-		PREFIX ""
-		LABELS "LIBRARY"
-		OUTPUT_NAME ${TARGET_NAME}
+               PREFIX ""
+               LABELS "LIBRARY"
+               OUTPUT_NAME redconf
     LINKER_LANGUAGE C
-	PUBLIC_HEADER "${CHEADERS}"
-	)
+       )
 
-  pkg_search_module(RPM REQUIRED redrpm rpm)
-  pkg_search_module(URCU REQUIRED liburcu)
-  pkg_search_module(URCUCDS REQUIRED liburcu-cds)
 
   # compliation include path for library consuming modules
-  target_link_libraries(${TARGET_NAME} ${RPM_LIBRARIES} ${URCU_LIBRARIES} ${URCUCDS_LIBRARIES})
-  target_include_directories(${TARGET_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR} ${RPM_INCLUDE_DIRS}")
+  target_link_libraries(${TARGET_NAME} libredconf)
+  target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../red-conf ${_Python3_INCLUDE_DIR})
 
   # final install destination for sharelib
-  install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
-
-ADD_SUBDIRECTORY(commands)
+  install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${PYTHON_INSTALL_DIR}/redconf)

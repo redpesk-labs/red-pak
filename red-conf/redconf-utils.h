@@ -38,38 +38,40 @@
 
 #define STATIC_STR_CONCAT(S1,S2) S1 S2
 
+#include <stdio.h>
+
 #include "redconf-schema.h"
 #include "redconf-defaults.h"
 
 unsigned long RedUtcGetTimeMs ();
 
-void RedDumpStatusHandle (redStatusT *status);
-void RedDumpConfigHandle(redConfigT *config);
-
-int RedDumpConfigPath (const char *filepath, int warning);
-int RedDumpStatusPath (const char *filepath, int warning);
-
-void RedDumpFamilyNodeHandle(redNodeT *familyTree);
-int RedDumpFamilyNodePath (const char* redpath, int verbose);
-
-int RedDumpStatusPath (const char *filepath, int warning);
-int RedDumpConfigPath (const char *filepath, int warning);
-
 redNodeT *RedNodesScan(const char* redpath, int verbose);
+redNodeT *RedNodesDownScan(const char* redroot, int verbose);
 int RedUpdateStatus(redNodeT *node, int verbose);
 
-const char * RedNodeStringExpand (redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char*prefix, const char*trailler);
+void freeRedLeaf(redNodeT *redleaf);
+void freeRedRoot(redNodeT *redroot);
+
+const char * RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char*prefix, const char*trailler);
 const char *RedGetDefaultExpand(redNodeT *node, RedConfDefaultsT *defaults, const char* inputS);
-int RedConfGetEnvKey (redNodeT *node, RedConfDefaultsT *defaults, int *idxIn, const char *inputS, int *idxOut, char *outputS, int maxlen);
+int RedConfGetEnvKey (const redNodeT *node, RedConfDefaultsT *defaults, int *idxIn, const char *inputS, int *idxOut, char *outputS, int maxlen);
 int RedConfAppendEnvKey (char *outputS, int *idxOut, int maxlen, const char *inputS,  RedConfDefaultsT *defaults, const char* prefix, const char *trailler);
-void RedConfCopyConfTags (redConfTagT *source, redConfTagT *destination);
+
+mode_t RedSetUmask (redConfTagT *conftag);
 
 // callback type definition
 typedef void(*RedLogCbT) (RedLogLevelE level, const char *format, ...);
 
-void RedLogCbRegister (RedLogCbT *redlogcb);
-void RedLog (RedLogLevelE level, const char *format, ...);
+//void redlog (RedLogLevelE level, const char *file, const char *line, const char *format, ...);
+void redlog (RedLogLevelE level, const char *file, int line, const char *format, ...);
+
+//#define RedLog(REDLOGLEVEL, REDLOGFORMAT, ...) _redlog((REDLOGLEVEL), __FILE__, __LINE__, (REDLOGFORMAT), __VA_ARGS__)
+#define RedLog(REDLOGLEVEL,REDLOGFORMAT,...) redlog((REDLOGLEVEL),__FILE__,__LINE__,(REDLOGFORMAT),##__VA_ARGS__)
+
 void SetLogLevel(RedLogLevelE level);
 int RedConfGetInod (const char* path);
+
+/* set environment value and return allocate string */
+char *RedPutEnv (const char*key, const char*value);
 
 #endif

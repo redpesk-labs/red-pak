@@ -185,22 +185,19 @@ OnErrorExit:
 }
 
 int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
-    int error;
+    int error = 0;
 
     error = RwrapParseSubConfig(node, node->config, cliargs, lastleaf, argval, argcount);
-    if (error) goto OnErrorExit;
+    if (error) goto OnExit;
 
     //load admin config if needed
-    if(!node->confadmin)
-        goto OnSuccessExit;
+    if(!node->confadmin) goto OnExit;
 
     error = RwrapParseSubConfig(node, node->confadmin, cliargs, lastleaf, argval, argcount);
-    if(error) goto OnErrorExit;
+    if(error) goto OnExit;
 
-OnSuccessExit:
-    return 0;
-OnErrorExit:
-    return 1;
+OnExit:
+    return error;
 }
 
 int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {

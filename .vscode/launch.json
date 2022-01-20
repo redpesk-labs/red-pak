@@ -8,6 +8,81 @@
 	],
 	"configurations": [
 		{
+			"name": "redconf-tree",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-conf/commands/redconf",
+			"args": [
+				"-v",
+				"tree",
+				"-r",
+				"/var/redpak",
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redconf-mergeconfig",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-conf/commands/redconf",
+			"args": [
+				"-vvv",
+				"mergeconfig",
+				"-r",
+				"/var/redpak/testtest/bisou",
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redconf-tree",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-conf/redconf",
+			"args": [
+				"-v",
+				"tree",
+				"-r",
+				"/var/redpak",
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
 			"name": "redwrap-dnf-manager",
 			"type": "cppdbg",
 			"request": "launch",

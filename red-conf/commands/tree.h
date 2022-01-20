@@ -1,6 +1,6 @@
 /*
-* Copyright (C) 2020 "IoT.bzh"
-* Author Fulup Ar Foll <fulup@iot.bzh>
+* Copyright (C) 2022 "IoT.bzh"
+* Author Clément Bénier <clement.benier@iot.bzh>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* Documentation: https://docs.fedoraproject.org/en-US/Fedora_Draft_Documentation/0.1/html/RPM_Guide/ch-programming-c.html#id752589
 */
 
-#ifndef _RED_CONF_INCLUDE_
-#define _RED_CONF_INCLUDE_
+#ifndef _REDCONF_TREE_INCLUDE_
+#define _REDCONF_TREE_INCLUDE_
 
-#include <stdio.h>
-#include <stdlib.h>
+#include "utils.h"
 
-#include "redconf-defaults.h"
-#include "redconf-schema.h"
-#include "redconf-dump.h"
-#include "redconf-utils.h"
-#include "redconf-merge.h"
+int tree(const rGlobalConfigT *gConfig);
 
-
-#endif // _RED_LIB_INCLUDE_
+#endif

@@ -24,6 +24,8 @@
 #include <sys/types.h>
 #include <cyaml/cyaml.h>
 
+#include <urcu/rculfhash.h>	/* RCU Lock-free hash table */
+
 // ---- RedConfig Schema for ${redpath}/etc/redpack.yaml ----
     typedef struct {
         const char *alias;
@@ -106,6 +108,8 @@
         const char *mount;
         const char *path;
         redExportFlagE mode;
+        const char *info;
+        const char *warn;
     } redConfExportPathT;
 
     typedef struct {
@@ -117,12 +121,14 @@
         redVarEnvFlagE mode;
         const char *key;
         const char *value;
+        const char *info;
+        const char *warn;
     } redConfVarT;
 
     typedef enum {
-       RED_CONF_OPT_UNSET=0,
-       RED_CONF_OPT_ENABLED,
-       RED_CONF_OPT_DISABLED,
+       RED_CONF_OPT_UNSET = 0,
+       RED_CONF_OPT_DISABLED = 1,
+       RED_CONF_OPT_ENABLED = 2,
     } redConfOptFlagE;
     extern const cyaml_strval_t redConfOptStrings[];
 
@@ -187,20 +193,47 @@ typedef enum {
     RED_NODE_CONFIG_MISSING,
 }  redNodeYamlE;
 
+typedef struct redChildNodeS{
+    struct redNodeS* child;
+    struct redChildNodeS* brother;
+} redChildNodeT;
+
+typedef struct {
+    char *leafalias;
+    char *leafname;
+    char *leafpath;
+} redEnvValT;
+
 // --- Redpath Node Directory Hierarchy (from leaf to root)
 typedef struct redNodeS{
     redStatusT *status;
     redConfigT *config;
     redConfigT *confadmin;
     struct redNodeS *ancestor;
-    struct redNodeS *child;
+    redChildNodeT *childs;
     const char *redpath;
+    redEnvValT env;
 } redNodeT;
+
+// ---- Special confvar
+typedef struct {
+    char *ldpathString;
+    unsigned int ldpathIdx;
+    char *pathString;
+    unsigned int pathIdx;
+
+} dataNodeT;
 
 redStatusT* RedLoadStatus (const char* filepath, int warning);
 redConfigT* RedLoadConfig (const char* filepath, int warning);
 int RedSaveStatus (const char* filepath, redStatusT *status, int warning);
 int RedSaveConfig (const char* filepath, redConfigT *config, int warning);
 
+int RedGetConfig(char **output, size_t *len, redConfigT *config);
+
+int RedFreeConfig(redConfigT *config, int wlevel);
+int RedFreeStatus(redStatusT *status, int wlevel);
+
+int setLogYaml(int level);
 
 #endif // _REDCONFIG_INCLUDE_

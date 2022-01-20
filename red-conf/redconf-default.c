@@ -26,49 +26,44 @@
 
 #include "redconf.h"
 
-static char*GetUuidString(const char *label, void *ctx, void*handle) {
-    char *uuid = malloc(37);
+static char*GetUuidString(const char *label, void *ctx, void*handle, char *output) {
     uuid_t binuuid;
 
     uuid_generate_random(binuuid);
-    uuid_unparse_lower(binuuid, uuid);
+    uuid_unparse_lower(binuuid, output);
 
-    return uuid;
+    return output;
 }
 
-static char*GetDateString(const char *label, void *ctx,  void*handle) {
+static char*GetDateString(const char *label, void *ctx,  void*handle, char *output) {
     #define MAX_DATE_LEN 80
     time_t now= time(NULL);
-    char *date= malloc(MAX_DATE_LEN);
     struct tm *time= localtime(&now);
 
-    strftime (date, MAX_DATE_LEN, "%d-%b-%Y %h:%M (%Z)",time);
-    return date;
+    strftime (output, MAX_DATE_LEN, "%d-%b-%Y %h:%M (%Z)",time);
+    return output;
 }
 
-static char*GetUid(const char *label, void *ctx, void*handle) {
-    char string[10];
+static char*GetUid(const char *label, void *ctx, void*handle, char *output) {
     uid_t uid= getuid();
-    snprintf (string, sizeof(string), "%d",uid);
-    return strdup(string);
+    snprintf (output, sizeof(output), "%d",uid);
+    return output;
 }
 
-static char*GetGid(const char *label, void *ctx, void*handle) {
-    char string[10];
+static char*GetGid(const char *label, void *ctx, void*handle, char *output) {
     gid_t gid= getgid();
-    snprintf (string, sizeof(string), "%d",gid);
-    return strdup(string);
+    snprintf (output, sizeof(output), "%d",gid);
+    return output;
 }
 
-static char*GetPid(const char *label, void *ctx,  void*handle) {
+static char*GetPid(const char *label, void *ctx,  void*handle, char *output) {
     const char*key =handle;
-    char string[10];
     pid_t pid= getpid();
-    snprintf (string, sizeof(string), "%d",pid);
-    return strdup(string);
+    snprintf (output, sizeof(output), "%d", pid);
+    return output;
 }
 
-static char * GetEnviron(const char *label, void *ctx, void*handle) {
+static char * GetEnviron(const char *label, void *ctx, void*handle, char *output) {
     const char*key= handle;
     char*value;
 
@@ -80,7 +75,8 @@ static char * GetEnviron(const char *label, void *ctx, void*handle) {
             value="#undef";
         }
     }
-    return value;
+    strncpy(output, value, strlen(value));
+    return output;
 }
 
 typedef enum {
@@ -90,7 +86,7 @@ typedef enum {
     REDNODE_INFO_INFO,
 } RednodeInfoE;
 
-static char*GetNodeInfo(const char *label, void *ctx, void*handle) {
+static char*GetNodeInfo(const char *label, void *ctx, void*handle, char *output) {
     redNodeT *node =ctx;
     const char*value;
     if (!node) goto OnErrorExit;
@@ -113,11 +109,12 @@ static char*GetNodeInfo(const char *label, void *ctx, void*handle) {
     }
 
     if (!value) value = "#undef";
+    strncpy(output, value, strlen(value));
 
-    return (char *)value;
+    return output;
 
 OnErrorExit:
-    return GetEnviron(label, ctx, handle);
+    return GetEnviron(label, ctx, handle, output);
 }
 
 // Warning: REDDEFLT_CB will get its return free

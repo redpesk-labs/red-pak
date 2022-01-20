@@ -160,25 +160,3 @@ OnErrorExit:
 	fprintf (stderr, "error: red-wrap Fail to exec command=%s\n", command);
 	return NULL;
 }
-
-void RedPutEnv (const char*key, const char*value) {
-	char string[RED_MAXPATHLEN];
-
-	snprintf(string, sizeof(string),"%s=%s", key, value);
-	putenv (strdup(string));
-
-	const char*test= getenv(key);
-}
-
-// if string is not null extract umask and apply
-mode_t RedSetUmask (redConfTagT *conftag) {
-	mode_t mask;
-	if (!conftag || !conftag->umask) {
-        mask= umask(0);
-    } else {
-		sscanf (conftag->umask, "%o", &mask);
-	}
-    // posix umask would need some helpers
-	(void)umask(mask);
-	return mask;
-}
