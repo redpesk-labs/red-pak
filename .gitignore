@@ -1,2 +1,4 @@
 build/
 red-microdnf/red-lib/reddefaults.hpp
+.vscode*
+.vscode/*

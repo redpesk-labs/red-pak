@@ -4,5 +4,5 @@ includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
 Name: red-pak
 Version: @PROGRAM_VERSION@
 Description: red pak
-Libs: -L${libdir} -lredlib -lredconf
+Libs: -L${libdir} -lredlib -lredconf -lredwrap
 Cflags: -I${includedir}

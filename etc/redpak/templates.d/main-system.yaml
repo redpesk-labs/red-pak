@@ -117,11 +117,6 @@ environ:
 #---------------------------------------------------------------------
 exports:
 
-  # node rw storage export to children
-  - mount: /nodes/core/var
-    path: /var/shared
-    mode: Public
-
   # mount /usr/lib + /usr/bin in node '/' in order to keep /usr free for node hosted RPM
   - mount: /lib64
     path: /usr/lib64

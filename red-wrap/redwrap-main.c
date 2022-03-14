@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <sys/wait.h>
 
 #include "redwrap-main.h"
 #include "redconf-defaults.h"
@@ -46,7 +47,7 @@ OnErrorExit:
     return error;
 }
 
-void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
+int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     if (cliarg->verbose)
         SetLogLevel(REDLOG_DEBUG);
 
@@ -172,11 +173,18 @@ void redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, c
 
 
     // exec command
-    argval[argcount]=NULL;
-    if(execv(cliarg->bwrap, (char**) argval));
-        RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
+	int pid = fork();
+	if (pid == 0) {
+        argval[argcount]=NULL;
+        if(execv(cliarg->bwrap, (char**) argval));
+            RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
+    }
+	int returnStatus;
+	waitpid(pid, &returnStatus, 0);
+	return -returnStatus;
 
 OnErrorExit:
     RedLog(REDLOG_ERROR,"red-wrap aborted");
-    exit(1);
+    return -1;
+    // exit(1);
 }

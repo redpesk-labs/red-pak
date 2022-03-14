@@ -1,7 +1,8 @@
 ###########################################################################
-# Copyright 2020 IoT.bzh
+# Copyright 2022 IoT.bzh
 #
-# author: Fulup Ar Foll <fulup@iot.bzh>
+# Author: Fulup Ar Foll <fulup@iot.bzh>
+# Contrib: Valentin Lefebvre <valentin.lefebvre@iot.bzh>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,25 +18,34 @@
 ##########################################################################
 
 
-PROJECT_TARGET_ADD(red-wrap-lib)
+PROJECT_TARGET_ADD(libredwrap)
 
-    file(GLOB CSOURCES [a-z]*.c)
+    file(GLOB CSOURCES [a-z]*.c commands/redwrap-cmd.c)
+    file(GLOB CHEADERS redwrap-main.h redwrap.h commands/redwrap-cmd.h)
+
     message("CSOURCES: ${CSOURCES}")
 
     add_library(${TARGET_NAME} SHARED ${CSOURCES})
 
     # compile + link depencencies
 	pkg_search_module(RPM REQUIRED redrpm rpm)
-	target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
-    target_link_libraries(${TARGET_NAME} libredconf ${RPM_LIBRARIES})
-	install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
+    SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
+		PREFIX ""
+		LABELS "LIBRARY"
+		OUTPUT_NAME ${TARGET_NAME}
+        LINKER_LANGUAGE C
+	    PUBLIC_HEADER "${CHEADERS}"
+	)
 
+	target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
+    target_link_libraries(${TARGET_NAME} libredconf ${RPM_LIBRARIES})
+    install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
 foreach(CMD redwrap redwrap-dnf)
     message(STATUS "CMD=${CMD}")
     PROJECT_TARGET_ADD(${CMD})
         add_executable(${CMD} commands/${CMD}.c)
 	    target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
-        target_link_libraries(${TARGET_NAME} red-wrap-lib)
+        target_link_libraries(${TARGET_NAME} libredwrap)
 	    install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endforeach()
