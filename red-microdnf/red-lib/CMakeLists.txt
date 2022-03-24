@@ -18,8 +18,8 @@
 
 configure_file(reddefaults.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/reddefaults.hpp)
 
-pkg_search_module(LIBDNF REQUIRES libdnf5 libdnf)
-pkg_search_module(LIBDNFCLI REQUIRES libdnf5-cli libdnf-cli)
+pkg_search_module(LIBDNF REQUIRED libdnf5 libdnf)
+pkg_search_module(LIBDNFCLI REQUIRED libdnf5-cli libdnf-cli)
 
 PROJECT_TARGET_ADD(red-lib)
 

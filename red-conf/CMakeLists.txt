@@ -31,7 +31,7 @@ PROJECT_TARGET_ADD(redconf)
 	PUBLIC_HEADER "${CHEADERS}"
 	)
 
-  pkg_search_module(RPM REQUIRES redrpm rpm)
+  pkg_search_module(RPM REQUIRED redrpm rpm)
 
   # compliation include path for library consuming modules
   target_link_libraries(${TARGET_NAME} ${RPM_LIBRARIES})
