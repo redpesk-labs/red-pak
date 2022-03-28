@@ -59,3 +59,5 @@ endmacro(PROJECT_TARGET_ADD)
 
 # Pass variables from CMAKE to C-preprocessor
 add_compile_options (-DPROJECT_ALIAS=${PROJECT_ALIAS} -DPROJECT_VERSION=${PROJECT_VERSION})
+
+add_compile_options("-Wall" "-Werror=format-security" "-fexceptions" "-fstack-protector-strong" "-grecord-gcc-switches" "-fasynchronous-unwind-tables" "-fstack-clash-protection" "-fcf-protection")

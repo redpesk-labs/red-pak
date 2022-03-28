@@ -74,7 +74,6 @@ static const debugStrValT debugPrefixFormat[] = {
 
 // redlib and redconf use RedLog to display error messages
 void redlog(RedLogLevelE level, const char *file, int line, const char *format, ...) {
-    char prefix[10];
     if (level > RedLogLevel)
         return;
     va_list args;
@@ -103,7 +102,7 @@ char *RedPutEnv (const char*key, const char*value) {
 static int PopDownRedpath (char *redpath) {
     int idx;
     // to get cleaner path remove trailing '/' if any
-    if (redpath[strlen(redpath)-1]='/') redpath[strlen(redpath)-1]=0;
+    if (redpath[strlen(redpath)-1] == '/') redpath[strlen(redpath)-1] = 0;
     for (idx = strlen(redpath)-1; redpath[idx] != '/' && redpath[idx] != 0; idx--) {
         redpath[idx]=0;
     }
@@ -113,7 +112,6 @@ static int PopDownRedpath (char *redpath) {
 int RedCheckSetStatusPath(const char *nodepath, char *statuspath, size_t size) {
     struct stat statinfo;
     int error;
-    redNodeYamlE rc;
 
     // check look like a valide node
     (void)snprintf (statuspath, size, "%s/%s", nodepath, REDNODE_STATUS);
@@ -236,9 +234,8 @@ OnErrorExit:
 // loop down within all redpath nodes from a given familly
 static int RedNodesDigToRoot(const char* redpath, redNodeT *childNode, int verbose) {
     char nodepath[RED_MAXPATHLEN];
-    snprintf(nodepath, RED_MAXPATHLEN, redpath);
+    strncpy(nodepath, redpath, RED_MAXPATHLEN);
     int index;
-    redNodeT *parentNode;
 
     while (1) {
 
@@ -270,7 +267,6 @@ static int RedNodesDigToRoot(const char* redpath, redNodeT *childNode, int verbo
         }
     }
 
-OnSuccessExit:
     return 0;
 
 OnErrorExit:
@@ -289,7 +285,7 @@ static int RedChildrenNodesLoad(redNodeT *node, int verbose) {
         goto OnErrorExit;
 
     // readdir redpath
-    while(de = readdir(fd)) {
+    while((de = readdir(fd))) {
 
         // if not a directory: ignore
         if (de->d_type != DT_DIR)
@@ -353,8 +349,6 @@ OnErrorExit:
 
 // loop up within all redpath nodes from a given familly
 static int RedNodesDigToChilds(redNodeT *currentNode, int verbose) {
-    int index;
-    redChildNodeT *childrenNodes;
 
     // load all children nodes
     if (RedChildrenNodesLoad(currentNode, verbose))
@@ -383,8 +377,7 @@ OnErrorExit:
 redNodeT *RedNodesScan(const char* redpath, int verbose) {
 
     redNodeT *redleaf = NULL;
-    char *nodepath;
-    int error, index;
+    int error;
     redNodeYamlE result;
 
 
@@ -414,14 +407,13 @@ OnErrorExit:
 
 redNodeT *RedNodesDownScan(const char* redroot, int verbose) {
 
-    char *nodepath;
-    int error, index;
+    int error;
     redNodeYamlE result;
 
 
     // allocate root node and search for redpak config
     redNodeT *redrootNode = NULL;
-    result = RedNodesLoad(nodepath, &redrootNode, verbose);
+    result = RedNodesLoad(redroot, &redrootNode, verbose);
     if (result != RED_NODE_CONFIG_OK) {
         RedLog(REDLOG_ERROR, "redpak redroot node config & status not found [path=%s]", redroot);
         goto OnErrorExit;
@@ -491,7 +483,7 @@ unsigned long RedUtcGetTimeMs () {
 }
 
 static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, int *idxOut, char *outputS) {
-    int count = 0, escaped = 0;
+    int count = 0;
     // search for a $within string input format
     for (int idxIn=0; inputS[idxIn] != '\0'; idxIn++) {
 
@@ -526,8 +518,6 @@ static int RedGetDefault(const char *envkey, RedConfDefaultsT *defaults, const r
             break;
         }
     }
-
-    if (!envval) goto OnErrorExit;
 
     //try to expand envkey
     char envvalExp[MAX_CYAML_FORMAT_STR];
@@ -582,7 +572,7 @@ OnErrorExit:
 }
 
 int RedConfAppendEnvKey (char *outputS, int *idxOut, int maxlen, const char *inputS,  RedConfDefaultsT *defaults, const char* prefix, const char *trailler) {
-    int err, idxIn;
+    int err;
 
     if (!defaults) defaults=nodeConfigDefaults;
 
@@ -638,9 +628,8 @@ const char *RedGetDefaultExpand(redNodeT *node, RedConfDefaultsT *defaults, cons
 
 // Expand string with environnement variable
 const char * RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char* prefix, const char* trailler) {
-    int count=0, idxIn, idxOut=0;
+    int idxOut=0;
     char outputS[MAX_CYAML_FORMAT_STR] = {0};
-    int err;
 
     if (!defaults) defaults=nodeConfigDefaults;
 
