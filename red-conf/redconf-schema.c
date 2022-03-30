@@ -103,18 +103,22 @@ static const cyaml_config_t *yconfGet (int wlevel) {
 
     // ---- Red config Schema parse ${redpath}/etc/redpack.yaml ----
     const cyaml_strval_t exportFlagStrings[] = {
-        { "Restricted", RED_EXPORT_RESTRICTED},
-        { "Public",     RED_EXPORT_PUBLIC},
-        { "Private",    RED_EXPORT_PRIVATE},
-        { "Anonymous",  RED_EXPORT_ANONYMOUS},
-        { "Symlink",    RED_EXPORT_SYMLINK},
-        { "Execfd" ,    RED_EXPORT_EXECFD},
-        { "Internal" ,  RED_EXPORT_DEFLT},
-        { "Tmpfs"    ,  RED_EXPORT_TMPFS},
-        { "Procfs"   ,  RED_EXPORT_PROCFS},
-        { "Mqueue"   ,  RED_EXPORT_MQUEFS},
-        { "Devfs"    ,  RED_EXPORT_DEVFS},
-        { "Lock"     ,  RED_EXPORT_LOCK},
+        { "Restricted",     RED_EXPORT_RESTRICTED},
+        { "Public",         RED_EXPORT_PUBLIC},
+        { "Private",        RED_EXPORT_PRIVATE},
+        { "PrivateRestricted",        RED_EXPORT_PRIVATE_RESTRICTED},
+        { "RestrictedFile", RED_EXPORT_RESTRICTED_FILE},
+        { "PublicFile",     RED_EXPORT_PUBLIC_FILE},
+        { "PrivateFile",    RED_EXPORT_PRIVATE_FILE},
+        { "Anonymous",      RED_EXPORT_ANONYMOUS},
+        { "Symlink",        RED_EXPORT_SYMLINK},
+        { "Execfd" ,        RED_EXPORT_EXECFD},
+        { "Internal" ,      RED_EXPORT_DEFLT},
+        { "Tmpfs"    ,      RED_EXPORT_TMPFS},
+        { "Procfs"   ,      RED_EXPORT_PROCFS},
+        { "Mqueue"   ,      RED_EXPORT_MQUEFS},
+        { "Devfs"    ,      RED_EXPORT_DEVFS},
+        { "Lock"     ,      RED_EXPORT_LOCK},
     };
 
     const cyaml_strval_t redVarEnvStrings[] = {

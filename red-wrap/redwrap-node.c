@@ -1,6 +1,7 @@
 /*
- * Copyright (C) 2020 "IoT.bzh"
- * Author fulup Ar Foll <fulup@iot.bzh>
+ * Copyright (C) 2020 - 2022 "IoT.bzh"
+ * Author: fulup Ar Foll <fulup@iot.bzh>
+ * Contrib: Valentin Lefebvre <valentin.lefebvre@iot.bzh>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +25,54 @@
 
 #include "redwrap.h"
 
+/**
+ * @brief Check if folder to mount exists, and try to create it if not
+ * 
+ * @param path      Path into the node
+ * @param configN   Config of the Node
+ * @param forcemod  force command
+ * @return 0 in success negative otherwise
+ */
+static int RwrapCreateDir(const char *path, redConfigT *configN, int forcemod) {
+    struct stat status;
+    int err = stat(path, &status);
+    if (err < 0) {
+        if (forcemod) {
+            // mkdir ACL do not work as documented, need chmod to install proper acl
+            mode_t mask=RedSetUmask(configN->conftag);
+            mask= 07777 & ~mask;
+            mkdir(path, 0);
+            chmod(path, mask);
+            err = stat(path, &status);
+        }
+    }
+    if (err < 0) {
+        RedLog(REDLOG_ERROR, "*** Node [%s] export expanded path=%s does not exist [use --force]", configN->headers->alias, path);
+        return err;
+    }
+    return 0;
+}
+
+/**
+ * @brief Adding arguments for bwrap to mount path from system to node
+ * 
+ * @param node          Node data
+ * @param mount         System path to mount
+ * @param bindMode      Mode of the bind "--bind" or "--ro-bind"
+ * @param expandpath    Node path to mount
+ * @param argval        List of arguments
+ * @param argcount      Index and count args
+ */
+static void RwrapMountModeArgval(redNodeT *node, const char *mount, const char *bindMode, const char *expandpath, const char *argval[], int *argcount) {
+    argval[(*argcount)++]=bindMode;
+    argval[(*argcount)++]=expandpath;
+    argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
+}
+
 static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
     int err;
 
     // scan export directory
-    //printf("\n\n\n--------- Scan export for %s\n", node->redpath);
     for (int idx=0; idx <configN->exports_count; idx++) {
         redExportFlagE mode= configN->exports[idx].mode;
         const char* mount= configN->exports[idx].mount;
@@ -38,30 +82,68 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         // if mouting path is not privide let's duplicate mount
         if (!path) path=mount;
-	//printf("path=%s expandpath%s mount=%s \n", path, expandpath, mount);
         switch (mode) {
+        case RED_EXPORT_PRIVATE_FILE:
+            if (lastleaf) {
+                expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
+                if (expandpath && (stat(path, &status) >= 0))
+                    RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
+                else
+                    RedLog(REDLOG_WARNING, "*** Node [%s] export path=%s Missing file, not mount for now", configN->headers->alias, expandpath);
+            }
+            break;
         case RED_EXPORT_PRIVATE:
             // on export if we are in terminal lead node
             if (lastleaf) {
                 expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-                argval[(*argcount)++]="--bind";
-                argval[(*argcount)++]=expandpath;
-                argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
+                RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
+                if (expandpath) {
+                    if (RwrapCreateDir(expandpath, configN, cliargs->forcemod) < 0)
+                        goto OnErrorExit;
+                }
             }
             break;
 
-        case  RED_EXPORT_PUBLIC:
+        case RED_EXPORT_PUBLIC_FILE:
             expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-            argval[(*argcount)++]="--bind";
-            argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
+            if (!expandpath && (stat(path, &status) >= 0))
+                RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
+            else
+                RedLog(REDLOG_WARNING, "*** Node [%s] export path=%s Missing file, not mount for now", configN->headers->alias, expandpath);
+            break;
+        case RED_EXPORT_PUBLIC:
+            expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
+            RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
+            if (expandpath) {
+                if (RwrapCreateDir(expandpath, configN, cliargs->forcemod) < 0)
+                    goto OnErrorExit;
+            }
             break;
 
+        case RED_EXPORT_RESTRICTED_FILE:
+            expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
+            if (expandpath && (stat(path, &status) >= 0))
+                RwrapMountModeArgval(node, mount, "--ro-bind", expandpath, argval, argcount);
+            else
+                RedLog(REDLOG_WARNING, "*** Node [%s] export path=%s Missing file, not mount for now", configN->headers->alias, expandpath);
+            break;
         case RED_EXPORT_RESTRICTED:
             expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-            argval[(*argcount)++]="--ro-bind";
-            argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
+            RwrapMountModeArgval(node, mount, "--ro-bind", expandpath, argval, argcount);
+            if (expandpath) {
+                if (RwrapCreateDir(expandpath, configN, cliargs->forcemod) < 0)
+                    goto OnErrorExit;
+            }
+            break;
+        
+        case RED_EXPORT_PRIVATE_RESTRICTED:
+            // on export in ro if we are in terminal lead node
+            if (lastleaf) {
+                expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
+                argval[(*argcount)++]="--ro-bind";
+                argval[(*argcount)++]=expandpath;
+                argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
+            }
             break;
 
         case RED_EXPORT_SYMLINK:
@@ -112,32 +194,6 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
             argval[(*argcount)++]= RedNodeStringExpand (node, NULL, path, NULL, NULL);
             break;
 
-        default:
-            break;
-        }
-
-        if (!expandpath) continue;
-        //check path after expanding
-        err = stat(expandpath, &status);
-        switch (mode) {
-        case RED_EXPORT_PRIVATE:
-        case RED_EXPORT_PUBLIC:
-        case RED_EXPORT_RESTRICTED:
-            if (err < 0) {
-                if (cliargs->forcemod) {
-                    // mkdir ACL do not work as documented, need chmod to install proper acl
-                    mode_t mask=RedSetUmask(configN->conftag);
-               		mask= 07777 & ~mask;
-                    mkdir(expandpath, 0);
-                    chmod(expandpath, mask);
-                    err = stat(expandpath, &status);
-                }
-            }
-            if (err < 0) {
-                RedLog(REDLOG_ERROR, "*** Node [%s] export path=%s(=%s) does not exist [use --force]", configN->headers->alias, path, expandpath);
-                goto OnErrorExit;
-            }
-                break;
         default:
             break;
         }
