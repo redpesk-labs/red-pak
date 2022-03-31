@@ -46,7 +46,12 @@ static const char *expandAlloc(const redNodeT *node, const char *input, int expa
 }
 
 // Only merge tags that should overloaded
-static void RedConfCopyConfTags(redConfTagT *source, redConfTagT *destination) {
+static int RedConfCopyConfTags(redConfTagT *source, redConfTagT *destination) {
+    if(!source || !destination) {
+        RedLog(REDLOG_ERROR, "source=%p or destination=%p is NULL", source, destination);
+        goto OnError;
+    }
+
     if (source->cachedir) destination->cachedir = source->cachedir;
     if (source->hostname) destination->hostname = source->hostname;
     if (source->chdir) destination->chdir = source->chdir;
@@ -63,6 +68,9 @@ static void RedConfCopyConfTags(redConfTagT *source, redConfTagT *destination) {
     if(destination->share_pid != RED_CONF_OPT_DISABLED) destination->share_pid = source->share_pid;
     if(destination->share_net != RED_CONF_OPT_DISABLED) destination->share_net = source->share_net;
 
+    return 0;
+OnError:
+    return 1;
 }
 
 int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
@@ -94,6 +102,10 @@ redConfTagT *mergedConftags(const redNodeT *rootnode, int admin) {
     //assume admin overload everything exepted node specific
     if (admin) {
         for (const redNodeT *node=rootnode; node != NULL; node=node->ancestor) {
+	        if (!node->confadmin->conftag) {
+                RedLog(REDLOG_INFO, "no admin conftag for %s", node->redpath);
+		        continue;
+            }
             (void) RedConfCopyConfTags(node->confadmin->conftag, mergedConfTags);
         }
     }
