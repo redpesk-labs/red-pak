@@ -76,10 +76,10 @@ OnError:
 int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
     int error;
     // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-    error= RedConfAppendEnvKey(dataNode->ldpathString, &dataNode->ldpathIdx, RED_MAXPATHLEN, node->config->conftag->ldpath, NULL, ":", NULL);
+    error= RedConfAppendEnvKey(dataNode->ldpathString, (int *)&dataNode->ldpathIdx, RED_MAXPATHLEN, node->config->conftag->ldpath, NULL, ":", NULL);
     if (error) goto OnErrorExit;
 
-    error= RedConfAppendEnvKey(dataNode->pathString, &dataNode->pathIdx, RED_MAXPATHLEN, node->config->conftag->path, NULL, ":",NULL);
+    error= RedConfAppendEnvKey(dataNode->pathString, (int *)&dataNode->pathIdx, RED_MAXPATHLEN, node->config->conftag->path, NULL, ":",NULL);
     if (error) goto OnErrorExit;
 
 OnErrorExit:
@@ -141,7 +141,6 @@ static int setDataExports(const redNodeT *node, const void *destdata, const void
 }
 
 static const char* getKeyExports(const redNodeT *node, const void *srcdata, int *ignore) {
-    const char *key;
     redConfExportPathT *export = (redConfExportPathT*)srcdata;
 
     /* if not leaf: ignore mode: */

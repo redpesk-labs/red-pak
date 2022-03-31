@@ -46,20 +46,19 @@ static char*GetDateString(const char *label, void *ctx,  void*handle, char *outp
 
 static char*GetUid(const char *label, void *ctx, void*handle, char *output) {
     uid_t uid= getuid();
-    snprintf (output, sizeof(output), "%d",uid);
+    snprintf (output, strlen(output), "%d",uid);
     return output;
 }
 
 static char*GetGid(const char *label, void *ctx, void*handle, char *output) {
     gid_t gid= getgid();
-    snprintf (output, sizeof(output), "%d",gid);
+    snprintf (output, strlen(output), "%d",gid);
     return output;
 }
 
 static char*GetPid(const char *label, void *ctx,  void*handle, char *output) {
-    const char*key =handle;
     pid_t pid= getpid();
-    snprintf (output, sizeof(output), "%d", pid);
+    snprintf (output, strlen(output), "%d", pid);
     return output;
 }
 
