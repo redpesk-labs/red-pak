@@ -18,31 +18,142 @@
 
 #define PY_SSIZE_T_CLEAN  /* Make "s#" use Py_ssize_t rather than int. */
 #include <Python.h>
+#include <stdio.h>
+#include <fcntl.h>
 
 #include "redconf-merge.h"
+
+static PyObject *RedConfError = NULL;
+
+//{
+//    int stdout_dupfd;
+//    FILE *temp_out;
+//
+//    /* duplicate stdout */
+//    stdout_dupfd = _dup(1);
+//
+//    temp_out = fopen("file.txt", "w");
+//
+//    /* replace stdout with our output fd */
+//    _dup2(_fileno(temp_out), 1);
+//    /* output something... */
+//    printf("Woot!\n");
+//    /* flush output so it goes to our file */
+//    fflush(stdout);
+//    fclose(temp_out);
+//    /* Now restore stdout */
+//    _dup2(stdout_dupfd, 1);
+//    _close(stdout_dupfd);
+//}
+
+static FILE *savedstderr = NULL;
+
+static FILE *catchstderr() {
+
+    // save right stderr
+    savedstderr = (FILE *)stderr;
+
+    //redirect stderr
+    FILE *fstderr = tmpfile();
+    stderr = fstderr;
+    return fstderr;
+}
+
+static void resetstderr(FILE *fstderr, int error) {
+    if(!fstderr) return;
+
+    if (!error)
+        goto Exit;
+
+    char *buf, *itbuf;
+    size_t size;
+
+    fflush(fstderr);
+    //get size of fstderr and alloc buffer
+    size = ftell(fstderr);
+    buf = malloc(size);
+    itbuf = buf;
+
+    //reset cursor at the beginning of the FILE
+    fseek(fstderr, 0, SEEK_SET);
+
+    //get stderr
+    char tmpbuf[120];
+    while (fgets(tmpbuf, 120, fstderr)) {
+        //copy stderr to buf
+        strncpy(itbuf, tmpbuf, strlen(tmpbuf));
+        itbuf += strlen(tmpbuf);
+    }
+
+    //set stderr to python exception
+    PyErr_SetString(RedConfError, buf);
+    free(buf);
+
+Exit:
+    //restore stderr
+    stderr = savedstderr;
+    fclose(fstderr);
+}
 
 static PyObject *mergeconfig(PyObject *self, PyObject *args) {
     const char *mergedconfig;
     const char *redpath  = NULL;
     size_t len;
     PyObject *o = NULL;
+    FILE *fstderr;
+    int error = 0;
+
+    if(!PyArg_ParseTuple(args, "s", &redpath)) {
+        goto OnExit;
+    }
+
+    fstderr = catchstderr();
+    mergedconfig = getMergeConfig(redpath, &len, 0);
+
+    if(!mergedconfig) {
+        error = 1;
+        goto OnExit;
+    }
+
+    o = PyBytes_FromStringAndSize(mergedconfig, len);
+    free((char *)mergedconfig);
+
+OnExit:
+    resetstderr(fstderr, error);
+    return o;
+}
+
+static PyObject *config(PyObject *self, PyObject *args) {
+    const char *config;
+    const char *redpath  = NULL;
+    size_t len;
+    PyObject *o = NULL;
+    FILE *fstderr;
+    int error = 0;
 
     if(!PyArg_ParseTuple(args, "s", &redpath)) {
         return NULL;
     }
 
-    mergedconfig = getMergeConfig(redpath, &len, 0);
+    fstderr = catchstderr();
+    config = getConfig(redpath, &len);
 
-    if(mergedconfig) {
-        o = PyBytes_FromStringAndSize(mergedconfig, len);
-        free((char *)mergedconfig);
+    if(!config) {
+        error = 1;
+        goto OnExit;
     }
 
+    o = PyBytes_FromStringAndSize(config, len);
+    free((char *)config);
+
+OnExit:
+    resetstderr(fstderr, error);
     return o;
 }
 
 static PyMethodDef redconf_methods[] = {
     {"mergeconfig", mergeconfig, METH_VARARGS, "Python interface for mergeconfig redpak"},
+    {"config", config, METH_VARARGS, "Python interface for config redpak"},
     {NULL, NULL, 0, NULL}
 };
 
@@ -55,6 +166,23 @@ static struct PyModuleDef redconf_module = {
     redconf_methods
 };
 
-PyMODINIT_FUNC PyInit_redconf(void) {
-    return PyModule_Create(&redconf_module);
+PyMODINIT_FUNC
+PyInit_redconf(void)
+{
+    PyObject *m;
+
+    m = PyModule_Create(&redconf_module);
+    if (m == NULL)
+        return NULL;
+
+    RedConfError = PyErr_NewException("redconf.error", NULL, NULL);
+    Py_XINCREF(RedConfError);
+    if (PyModule_AddObject(m, "error", RedConfError) < 0) {
+        Py_XDECREF(RedConfError);
+        Py_CLEAR(RedConfError);
+        Py_DECREF(m);
+        return NULL;
+    }
+
+    return m;
 }
