@@ -127,12 +127,10 @@ OnErrorExit:
 
 
 int cgroups (redConfCgroupT *cgroups, const char *cgroup_name) {
-    int i, err, cgProcFd, cgRootFd, subgroupFd = 0, subgroupNodeFd;
-    ssize_t count;
+    int err, cgRootFd, subgroupFd = 0, subgroupNodeFd;
     char pid[1000];
     char cgroup_parent[PATH_MAX];
     char *cgroup_name_unshlash;
-
 
 	//remove / from cgroup name
     cgroup_name_unshlash = (char *)alloca(strlen(cgroup_name));

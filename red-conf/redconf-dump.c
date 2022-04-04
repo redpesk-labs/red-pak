@@ -32,7 +32,7 @@ void RedDumpStatusHandle (redStatusT *status) {
     printf ("---\n");
     printf ("  state=%s'\n", flag);
     printf ("  realpath=%s'\n", status->realpath);
-    printf ("  timestamp=%d'\n", status->timestamp);
+    printf ("  timestamp=%ld'\n", status->timestamp);
     printf ("  info=%s'\n", status->info);
     printf ("---\n\n");
 }
@@ -42,7 +42,6 @@ void RedDumpStatusHandle (redStatusT *status) {
 int RedDumpStatusPath (const char *filepath, int warning) {
 
     redStatusT *status;
-    cyaml_log_t logLevel;
 
     status = RedLoadStatus(filepath, warning);
     if (!status) goto OnErrorExit;
@@ -95,7 +94,6 @@ void RedDumpConfigHandle(redConfigT *config) {
 int RedDumpConfigPath (const char *filepath, int warning) {
 
     redConfigT *config;
-    cyaml_log_t logLevel;
 
     config = RedLoadConfig (filepath, warning);
     if (!config) goto OnErrorExit;
@@ -193,26 +191,34 @@ OnErrorExit:
     return ret;
 }
 
+/*
 // Debug tool dump a merge redpak node tree
 static void RedDumpNodeMerge(redNodeT *redroot) {
     redConfTagT * mergeConftag = mergedConftags(redroot, 0);
     RedDumpConftag(mergeConftag);
     free(mergeConftag);
 }
+*/
 
 static int DumpGetConfig(redConfigT *config) {
     char *output;
     size_t len;
-    RedGetConfig(&output, &len, config);
-    printf("----CONFIG %d\n",len);
+    int ret = RedGetConfig(&output, &len, config);
+    if (ret){
+        free(output);
+        return ret;
+    }
+    printf("----CONFIG %ld\n",len);
     for (int i = 0; i < len; i++)
         printf("%c", output[i]);
     printf("----\n");
     free(output);
+    return 0;
 }
 
 int RedDumpNodePathMerge(const char* redpath, int expand) {
     redNodeT *redroot, *mergedNode, *node;
+    int ret = 0;
 
     node = RedNodesScan(redpath, 0);
     if(!node)
@@ -223,12 +229,12 @@ int RedDumpNodePathMerge(const char* redpath, int expand) {
     mergedNode = mergeNode(node, redroot, expand);
 
     RedLog(REDLOG_DEBUG, "redroot path:%s", redroot->redpath);
-    DumpGetConfig(mergedNode->config);
+    ret = DumpGetConfig(mergedNode->config);
 
     freeRedLeaf(mergedNode);
     freeRedLeaf(node);
 
-    return 0;
+    return ret;
 
 OnErrorExit:
     return 1;

@@ -1,7 +1,8 @@
 /*
  * Copyright (C) 2020 - 2022 "IoT.bzh"
+ *
  * Author: fulup Ar Foll <fulup@iot.bzh>
- * Contrib: Valentin Lefebvre <valentin.lefebvre@iot.bzh>
+ * Author: Valentin Lefebvre <valentin.lefebvre@iot.bzh>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,8 +71,7 @@ static void RwrapMountModeArgval(redNodeT *node, const char *mount, const char *
 }
 
 static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
-    int err;
-
+    
     // scan export directory
     for (int idx=0; idx <configN->exports_count; idx++) {
         redExportFlagE mode= configN->exports[idx].mode;

@@ -115,13 +115,14 @@ static int _exec_redmicrodnf(int argc, char *argv[], int argcount, char *subargv
 
 static int _exec_bwrap(int argc, char *argv[], int argcount, char *subargv[]) {
     rWrapConfigT *cliarg = RwrapParseArgs (argc, argv, redwrap_dnf_usage);
-    if (!cliarg) 
+    if (!cliarg) {
         return -1;
+	}
 
 	//admin is needed for redmicrodnf
-	if(!cliarg->adminpath)
+	if(!cliarg->adminpath) {
 		cliarg->adminpath = redpak_MAIN_ADMIN;
-
+	}
 	subargv[argcount++] = "--redpath";
 	subargv[argcount++] = (char *)cliarg->redpath;
 

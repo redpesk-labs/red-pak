@@ -126,7 +126,6 @@ OnErrorExit:
 
 // Exec a command in a memory buffer and return stdout result as FD
 const char* MemFdExecCmd (const char* mount, const char* command) {
-	int err;
 	char fdstr[32];
 	int fd = memfd_create (mount, 0);
 	if (fd <0) goto OnErrorExit;

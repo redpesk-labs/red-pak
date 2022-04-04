@@ -89,11 +89,11 @@ void RedNode::configure() {
 
 void RedNode::scanNode() {
     // If we have no redpath or when redpath=/ than we seach for coreos redpack.yaml otherwise search for a rednode
-	if (redpath() != "/") {
-		getConf();
-	} else {
-		getMain();
-	}
+    if (redpath() != "/") {
+        getConf();
+    } else {
+        getMain();
+    }
 }
 
 bool RedNode::hasConf() {
@@ -101,22 +101,22 @@ bool RedNode::hasConf() {
 }
 
 void RedNode::getConf() {
-	if (!std::filesystem::exists(redpath())) {
-		if (strictmode) {
+    if (!std::filesystem::exists(redpath())) {
+        if (strictmode) {
             throw_error(fmt::format("No file at path={}", redpath()));
-		} else {
-			isnode = false;
+        } else {
+            isnode = false;
             fmt::print("Info: Node ignored [no redpack.yaml] path={} ()", redpath().c_str());
-		}
-	} else {
-		isnode = true;
-	}
+        }
+    } else {
+        isnode = true;
+    }
 
     node =  std::unique_ptr<redNodeT>(RedNodesScan(redpath().c_str(), 0));
     config = std::unique_ptr<redConfigT>(node.get()->config);
-	if (!node.get()) {
+    if (!node.get()) {
         throw_error("Issue RedNodeScan");
-	}
+    }
 }
 
 // get main /etc/repack/main.yaml and set umask default value
@@ -131,26 +131,26 @@ void RedNode::getMain() {
 }
 
 void RedNode::setPersistDir() {
-	auto ex_persistdir = RedNodeStringExpand(node.get(), NULL, node.get()->config->conftag->persistdir, NULL, NULL);
-	base.get_config().persistdir().set(libdnf::Option::Priority::RUNTIME, ex_persistdir);
+    auto ex_persistdir = RedNodeStringExpand(node.get(), NULL, node.get()->config->conftag->persistdir, NULL, NULL);
+    base.get_config().persistdir().set(libdnf::Option::Priority::RUNTIME, ex_persistdir);
 }
 
 void RedNode::setGpgCheck() {
-	base.get_config().gpgcheck().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->gpgcheck);
+    base.get_config().gpgcheck().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->gpgcheck);
 }
 
 void RedNode::setCacheDir() {
     const char *cachedir = NULL;
     for (redNodeT *ancestor_node=node->ancestor; ancestor_node != NULL; ancestor_node=ancestor_node->ancestor) {
-    	if(ancestor_node->config->conftag->cachedir) {
-		cachedir = ancestor_node->config->conftag->cachedir;
-		break;
-	}
+        if(ancestor_node->config->conftag->cachedir) {
+        cachedir = ancestor_node->config->conftag->cachedir;
+        break;
+    }
     }
 
     if(!cachedir) {
-	throw_error(fmt::format("No cachedir in conftag for node: {}", node->redpath));
-	}
+    throw_error(fmt::format("No cachedir in conftag for node: {}", node->redpath));
+    }
     base.get_config().cachedir().set(libdnf::Option::Priority::RUNTIME, cachedir);
 }
 
@@ -364,15 +364,15 @@ bool RedNode::checkInNodeDataBase(std::string name) {
     int flagsrpm = REPO_REUSE_REPODATA | RPM_ADD_WITH_HDRID | REPO_USE_ROOTDIR;
     int rc = repo_add_rpmdb(repo, nullptr, flagsrpm);
     void *rpmstate;
-	Queue q;
+    Queue q;
 
-	queue_init(&q);
-	rpmstate = rpm_state_create(pool, redpath().c_str());
-	rpm_installedrpmdbids(rpmstate, "Name", name.c_str(), &q);
+    queue_init(&q);
+    rpmstate = rpm_state_create(pool, redpath().c_str());
+    rpm_installedrpmdbids(rpmstate, "Name", name.c_str(), &q);
     if (q.count)
         present = true;
-	rpm_state_free(rpmstate);
-	queue_free(&q);
+    rpm_state_free(rpmstate);
+    queue_free(&q);
     pool_free(pool);
     return present;
 }
@@ -398,7 +398,7 @@ std::vector<libdnf::base::TransactionPackage> RedNode::checkTransactionPkgs(libd
         if(!forcenode.get_value())
             throw_error("Aborting... (Use --forcenode to force the installation in the node");
     }
-	return tpkgs;
+    return tpkgs;
 
 }
 

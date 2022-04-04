@@ -133,7 +133,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
         argval[argcount++]="--unshare-cgroup";
     }
 
-    if (!mergedConfTags->share_ipc & RED_CONF_OPT_ENABLED) {
+    if (!(mergedConfTags->share_ipc & RED_CONF_OPT_ENABLED)) {
         argval[argcount++]="--unshare-pic";
     }
 

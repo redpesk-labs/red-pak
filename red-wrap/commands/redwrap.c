@@ -2,7 +2,7 @@
  * Copyright (C) 2022 "IoT.bzh"
  *
  * Author: Clément Bénier <clement.benier@iot.bzh>
- * Contrib: Valentin Lefebvre <valentin.lefebvre@iot.bzh>
+ * Author: Valentin Lefebvre <valentin.lefebvre@iot.bzh>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

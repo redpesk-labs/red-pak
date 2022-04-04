@@ -375,4 +375,5 @@ int RedFreeStatus(redStatusT *status, int wlevel) {
 
 int setLogYaml(int level) {
     LOGYAML = level;
+    return 0;
 }

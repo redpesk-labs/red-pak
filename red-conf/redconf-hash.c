@@ -42,7 +42,6 @@ static int destroyHashExport(struct cds_lfht *ht) {
 	struct cds_lfht_iter iter;	/* For iteration on hash table */
     redHashT *hnode;
 
-    int idx = 0;
 	cds_lfht_for_each_entry(ht, &iter, hnode, lfht_node) {
         cds_lfht_del(ht, &hnode->lfht_node);
         free(hnode);
@@ -125,7 +124,7 @@ void * mergeData(const redNodeT* rootnode, size_t dataLen, int *mergecount, redH
     int offset = 0, count = 0, ignore = 0;
     struct cds_lfht *ht = NULL;	/* Hash table */
     const void *data;
-    void *destdata = NULL, *tmpdestdata;
+    void *destdata = NULL;
     char warn[RED_MAXPATHLEN] = {0};
     const char *hashkey;
 
