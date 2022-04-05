@@ -48,7 +48,6 @@ set (PKG_REQUIRED_LIST
 
 # use search module to be compatible in native mode
 find_package(PkgConfig REQUIRED)
-message("BBBBBBB ${RPM_LIBRARIES}")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake/redpak.cmake)
 

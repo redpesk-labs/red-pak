@@ -21,23 +21,6 @@
 include (FindPkgConfig)
 include (CMakeCXXInformation)
 
-# Find Phython version and target directory
-# ------------------------------------------
-find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
-EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "
-from distutils import sysconfig
-print(sysconfig.get_python_lib(True, prefix=\"${CMAKE_INSTALL_PREFIX}\"))"
-OUTPUT_VARIABLE PYTHON_INSTALL_DIR
-OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "
-from distutils import sysconfig
-print(sysconfig.get_python_lib(True))"
-OUTPUT_VARIABLE PYTHON_SITELIB_DIR
-OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-MESSAGE(STATUS "Python=${PYTHON_EXECUTABLE} install dir is ${PYTHON_INSTALL_DIR}")
-
 # few usefull macro from AGL cmake template
 # -----------------------------------------
 foreach (PKG_CONFIG ${PKG_REQUIRED_LIST})

@@ -23,8 +23,6 @@ PROJECT_TARGET_ADD(libredwrap)
     file(GLOB CSOURCES [a-z]*.c commands/redwrap-cmd.c)
     file(GLOB CHEADERS redwrap-main.h redwrap.h commands/redwrap-cmd.h)
 
-    message("CSOURCES: ${CSOURCES}")
-
     add_library(${TARGET_NAME} SHARED ${CSOURCES})
 
     # compile + link depencencies
@@ -42,7 +40,6 @@ PROJECT_TARGET_ADD(libredwrap)
     install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
 foreach(CMD redwrap redwrap-dnf)
-    message(STATUS "CMD=${CMD}")
     PROJECT_TARGET_ADD(${CMD})
         add_executable(${CMD} commands/${CMD}.c)
 	    target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)

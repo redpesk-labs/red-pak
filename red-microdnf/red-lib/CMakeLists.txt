@@ -25,7 +25,6 @@ PROJECT_TARGET_ADD(red-lib)
 
     file(GLOB CXXSOURCES [a-z]*.cpp)
     file(GLOB CXXHEADERS [a-z]*.hpp)
-    message("CXXHEADERS ${CXXHEADERS}")
 
     add_library(${TARGET_NAME} SHARED ${CXXSOURCES})
 
