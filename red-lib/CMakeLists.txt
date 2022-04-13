@@ -16,6 +16,9 @@
 # limitations under the License.
 ##########################################################################
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 configure_file(reddefaults.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/reddefaults.hpp)
 
 pkg_search_module(LIBDNF REQUIRED libdnf5 libdnf)
@@ -35,7 +38,10 @@ PROJECT_TARGET_ADD(red-lib)
 	PUBLIC_HEADER "${CXXHEADERS}"
     )
 
-	target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../red-conf ${CMAKE_CURRENT_SOURCE_DIR}/../microdnf ${LIBDNF_INCLUDE_DIRS} ${LIBDNFCLI_INCLUDE_DIRS} ${RPM_INCLUDE_DIRS})
+	target_include_directories(${TARGET_NAME} PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf
+        ${LIBDNF_INCLUDE_DIRS} ${LIBDNFCLI_INCLUDE_DIRS} ${RPM_INCLUDE_DIRS}
+    )
 	target_link_libraries(${TARGET_NAME} libredconf ${LIBDNF_LIBRARIES} ${LIBDNFCLI_LIBRARIES} ${RPM_LIBRARIES})
 
 	install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})

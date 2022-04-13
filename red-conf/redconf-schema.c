@@ -275,7 +275,11 @@ static int SchemaSave (const char* filepath, const cyaml_schema_value_t *topsche
 
     errcode = cyaml_save_file(filepath, yconf, topschema, config, 0);
 	if (errcode != CYAML_OK) {
-        rpmlog(REDLOG_ERROR, "Fail to reading yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
+        // when error reparse with higger level of debug to make visible errors
+        if (wlevel <= 1)
+            errcode = SchemaSave (filepath, topschema, config, 2);
+        else
+            rpmlog(REDLOG_ERROR, "Fail to save yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
     }
 
     return errcode;
@@ -292,8 +296,8 @@ static int SchemaLoad (const char* filepath, const cyaml_schema_value_t *topsche
 
 	if (errcode != CYAML_OK) {
         // when error reparse with higger level of debug to make visible errors
-        if (wlevel == 1)
-            errcode = SchemaLoad (filepath, topschema, config, wlevel+1);
+        if (wlevel <= 1)
+            errcode = SchemaLoad (filepath, topschema, config, 2);
         else
             rpmlog(REDLOG_ERROR, "Fail to reading yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
     }
@@ -348,6 +352,7 @@ int RedSaveStatus (const char* filepath, redStatusT *status, int warning ) {
 }
 
 redConfigT* RedLoadConfig (const char* filepath, int warning) {
+    RedLog(REDLOG_DEBUG, "load config from %s", filepath);
     redConfigT *config;
     int errcode= SchemaLoad (filepath, &ConfTopSchema, (void**)&config, warning);
     if (errcode) return NULL;

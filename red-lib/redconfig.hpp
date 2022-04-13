@@ -39,29 +39,45 @@ namespace redlib {
 class RedNode
 {
 public:
-	RedNode(libdnf::cli::ArgumentParser &arg_parser, libdnf::Base &base): arg_parser(arg_parser), base(base) {}
+	RedNode(libdnf::cli::ArgumentParser *arg_parser, libdnf::Base &base): arg_parser(arg_parser), base(base) {}
+	RedNode(std::filesystem::path installrootnode, std::filesystem::path redpath, libdnf::Base &base):
+        installrootnode(installrootnode), redpath(redpath), base(base) {}
 
 	void addOptions(libdnf::cli::ArgumentParser::Group *global_options);
 	void configure();
 	void install(libdnf::rpm::PackageSack & package_sack);
-	void createRedNode(const std::string & alias, bool create, bool update, const std::string & tmplate, const std::string & tmplateadmin);
+	void createRedNode(const std::string & alias, bool update, const std::string & tmplate, const std::string & tmplateadmin, bool no_system_node);
 	 std::vector<libdnf::base::TransactionPackage> checkTransactionPkgs(libdnf::base::Transaction & transaction);
 
 	bool isRedpath(bool strict = true) const;
+	const std::filesystem::path &getRedpath() const { return redpath; }
 
 private:
-	libdnf::cli::ArgumentParser &arg_parser;
-	libdnf::Base &base;
-    libdnf::OptionPath redpathOpt{nullptr};
-    libdnf::OptionBool forcenode{false};
+	/* default template names */
+	inline static const std::string tmplDefault = "default";
+	inline static const std::string tmplAdmin = "admin";
+	inline static const std::string tmplDefaultNoSystemNode = "default-no-system-node";
+	inline static const std::string tmplAdminNoSystemNode = "admin-no-system-node";
+	inline static const std::string tmplSystem = "main-system";
+	inline static const std::string tmplSystemAdmin = "main-admin-system";
 
-	const std::string & redpath() const { return redpathOpt.get_value(); }
-
-	bool active{false};
+    /* node members */
 	bool strictmode{false};
 	bool isnode{false};
 	int verbose{0};
+    std::filesystem::path installrootnode{"/"};
+	std::filesystem::path redpath;
 
+	/* dnf objects */
+	libdnf::cli::ArgumentParser *arg_parser{nullptr};
+	libdnf::Base &base;
+
+	/* parser options */
+    libdnf::OptionPath redpathOpt{nullptr};
+    libdnf::OptionPath installRootNodeOpt{"/"};
+    libdnf::OptionBool forcenode{false};
+
+    /* redconf pointers */
 	std::unique_ptr<redNodeT> node{nullptr};
 	std::unique_ptr<redConfigT> config{nullptr};
 	std::unique_ptr<redConfigT> configadmin{nullptr};
@@ -72,9 +88,7 @@ private:
 	static std::filesystem::path confpath();
 	static void date(char *today, std::size_t size);
 	static long unsigned int timestamp();
-	static std::string expandTplFile(std::filesystem::path & confpath);
-
-	static void checkdir(const std::string & label, const std::string & dirpath, bool create);
+	static void checkdir(const std::string & label, const std::filesystem::path & dirpath, bool create);
 
 	void scanNode();
 	void setPersistDir();
@@ -87,11 +101,11 @@ private:
 	bool hasConf();
 	void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
 	bool checkInNodeDataBase(std::string name);
-	void rednode_status(const std::string & realpath);
-	void rednode_template(const std::string & redpath, const std::string & alias, const std::string & tmplname,
+	void rednode_status();
+	void rednode_template(const std::string & alias, const std::string & tmplname,
 						  const std::string & tmpladmin, bool update);
 	void reloadConfig(const std::string & tmplname, std::unique_ptr<redConfigT> & redconfig);
-	void createRedNodePath(const std::string & redpath, const std::string & alias, bool create, bool update,
+	void createRedNodePath(const std::string & alias, bool update,
 						   const std::string & tmplate, const std::string & tmplateadmin);
 
 	void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);

@@ -13,60 +13,44 @@ headers:
     info:  "Node created by $LOGNAME($HOSTNAME) the $TODAY"
 
 config:
-    # rpm/dnf storage dir and signature check (rpmdir+persist are automatically prefixed by node path)
+    # rpm/dnf storage dir
     rpmdir: $NODE_PATH/var/lib/rpm
     persistdir: $NODE_PATH/var/lib/dnf
-
-    # check rpm signature
-    gpgcheck: false
 
     # exec path added at res-tart time
     path: /nodes/$NODE_ALIAS/usr/bin
     ldpath: /nodes/$NODE_ALIAS/usr/lib:/nodes/$NODE_ALIAS/usr/lib64
 
-    # inherit mounting point from anscestors
-    inherit: true
-
-    # maxday age without 'dnf red-check' [0 == unlimited]
-    maxage: 0
-
     # 0=quiet, 1=info 2=debug
     verbose: 1
-
-    # allow user to bypass redtree rpmdbs hierachy consistancy
-    unsafe: false
 
 environ:
 
   - key: XDG_RUNTIME_DIR
-    value: /run/user/\$UID
+    value: /run/user/$UID
     mode: Default
-
-  - key: AFB_LDPATHS
-    value: /nodes/agl-core/usr/lib64/afb
-    mode: Static
 
 # mounted paths not starting by '/' are prefixed by node effective path
 # mounting points are automatically prefixed by node 'alias' from 'header'
 exports:
 
-  # provide a private permanent storage (i.e. to symlink home)
+ # provide a private permanent storage (i.e. to symlink home)
   - mount: /nodes/_private
-    path:  \$NODE_PATH/private
+    path:  $NODE_PATH/private
     mode:  Private
 
   # make rpm -qa to work from within the node
   - mount: /var/lib/rpm
-    path:  \$NODE_PATH/var/lib/rpm
+    path:  $NODE_PATH/var/lib/rpm
     mode:  Private
 
   # typical dir dor binary, lib, ...
   - mount: /nodes/$NODE_ALIAS/usr
-    path: \$NODE_PATH/usr
+    path: $NODE_PATH/usr
     mode: Restricted
 
   # general share zone with all siblings and childrens
   - mount: /nodes/$NODE_ALIAS/var
-    path: \$NODE_PATH/var
+    path: $NODE_PATH/var
     mode: Public
 

@@ -40,14 +40,14 @@ namespace redlib {
 
 
 bool RedNode::isRedpath(bool strict) const {
-    bool ret = redpathOpt.empty();
-    if (!ret && strict)
+    bool empty = redpath.empty();
+    if (empty && strict)
         throw_error("No redpath set! Aborting...");
-    return ret;
+    return empty;
 }
 
 void RedNode::addOptions(libdnf::cli::ArgumentParser::Group *global_options) {
-    auto redpath_opt = arg_parser.add_new_named_arg("redpath");
+    auto redpath_opt = arg_parser->add_new_named_arg("redpath");
     redpath_opt->set_long_name("redpath");
     redpath_opt->set_has_value(true);
     redpath_opt->set_arg_value_help("ABSOLUTE_PATH");
@@ -55,12 +55,19 @@ void RedNode::addOptions(libdnf::cli::ArgumentParser::Group *global_options) {
     redpath_opt->link_value(&redpathOpt);
     global_options->register_argument(redpath_opt);
 
-    auto forcenode_opt = arg_parser.add_new_named_arg("forcenode");
+    auto forcenode_opt = arg_parser->add_new_named_arg("forcenode");
     forcenode_opt->set_long_name("forcenode");
     forcenode_opt->set_has_value(false);
     forcenode_opt->set_short_description("force node");
     forcenode_opt->link_value(&forcenode);
     global_options->register_argument(forcenode_opt);
+
+    auto installrootnode_opt = arg_parser->add_new_named_arg("installrootnode");
+    forcenode_opt->set_long_name("installrootnode");
+    forcenode_opt->set_has_value(true);
+    forcenode_opt->set_short_description("install root path for node");
+    forcenode_opt->link_value(&installRootNodeOpt);
+    global_options->register_argument(installrootnode_opt);
 }
 
 void RedNode::configure() {
@@ -71,25 +78,28 @@ void RedNode::configure() {
 
     rpmPushMacro(NULL, "__transaction_redpak", NULL, "%{__plugindir}/redpak.so", RMIL_CMDLINE);
 
-    //active rednode
-    active = true;
+    //set redpath
+    redpath = redpathOpt.get_value();
 
-    setenv("NODE_PATH", redpath().c_str(), true);
+    setenv("NODE_PATH", redpath.c_str(), true);
+
 
     //installroot: set to redpath
-    base.get_config().installroot().set(libdnf::Option::Priority::RUNTIME, redpath());
+    base.get_config().installroot().set(libdnf::Option::Priority::RUNTIME, redpath);
 
+    //set installrootnode
+    installrootnode = installRootNodeOpt.get_value();
 
     //prepend redpath in repodirs
     std::vector<std::string> reposdir(base.get_config().reposdir().get_value());
     for (auto i = reposdir.begin(); i != reposdir.end(); ++i)
-        i->insert(0, redpath());
+        i->insert(0, redpath);
     base.get_config().reposdir().set(libdnf::Option::Priority::RUNTIME, reposdir);
 }
 
 void RedNode::scanNode() {
     // If we have no redpath or when redpath=/ than we seach for coreos redpack.yaml otherwise search for a rednode
-    if (redpath() != "/") {
+    if (redpath != "/") {
         getConf();
     } else {
         getMain();
@@ -101,18 +111,18 @@ bool RedNode::hasConf() {
 }
 
 void RedNode::getConf() {
-    if (!std::filesystem::exists(redpath())) {
+    if (!std::filesystem::exists(redpath)) {
         if (strictmode) {
-            throw_error(fmt::format("No file at path={}", redpath()));
+            throw_error(fmt::format("No file at path={}", redpath.string()));
         } else {
             isnode = false;
-            fmt::print("Info: Node ignored [no redpack.yaml] path={} ()", redpath().c_str());
+            fmt::print("Info: Node ignored [no redpack.yaml] path={} ()", redpath.c_str());
         }
     } else {
         isnode = true;
     }
 
-    node =  std::unique_ptr<redNodeT>(RedNodesScan(redpath().c_str(), 0));
+    node =  std::unique_ptr<redNodeT>(RedNodesScan(redpath.c_str(), 0));
     config = std::unique_ptr<redConfigT>(node.get()->config);
     if (!node.get()) {
         throw_error("Issue RedNodeScan");
@@ -154,16 +164,16 @@ void RedNode::setCacheDir() {
     base.get_config().cachedir().set(libdnf::Option::Priority::RUNTIME, cachedir);
 }
 
-void RedNode::checkdir(const std::string & label, const std::string & dirpath, bool create) {
+void RedNode::checkdir(const std::string & label, const std::filesystem::path & dirpath, bool create) {
     if (create) {
-        std::filesystem::create_directory(dirpath);
+        std::filesystem::create_directories(dirpath);
     }
 
     std::filesystem::perms perms = std::filesystem::status(dirpath).permissions();
 
     // check write permission on dirpath
     if ((perms & std::filesystem::perms::owner_write) == std::filesystem::perms::none)
-        throw_error(fmt::format("{}: No permissions to write on {}", label, dirpath));
+        throw_error(fmt::format("{}: No permissions to write on {}", label, dirpath.string()));
 
 }
 
@@ -190,32 +200,7 @@ void RedNode::appendFamilyDb(libdnf::rpm::PackageSack & package_sack) {
 void RedNode::get_uuid(char * uuid_str) {
     uuid_t u;
     uuid_generate(u);
-    uuid_parse(uuid_str, u);
-}
-
-std::string RedNode::expandTplFile(std::filesystem::path & tmplpath) {
-
-    // tmp expand template file
-    std::string tmp_path = std::tmpnam(nullptr);
-    std::ofstream tmp_tpl(tmp_path);
-
-    if(!tmp_tpl.is_open())
-        throw_error("Cannot open tmpfile in write mode");
-
-    //template file
-    std::ifstream file(tmplpath);
-    if (!file.is_open())
-        throw_error(fmt::format("Cannot read confpath {}", tmplpath.string()));
-
-    std::string line;
-    while (std::getline(file, line)) {
-        std::unique_ptr<const char> line_expand(RedNodeStringExpand(NULL, NULL, line.c_str(), NULL, NULL));
-        tmp_tpl << line_expand.get() << std::endl;
-    }
-
-    file.close();
-    tmp_tpl.close();
-    return tmp_path;
+    uuid_unparse(u, uuid_str);
 }
 
 void RedNode::saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig) {
@@ -224,12 +209,12 @@ void RedNode::saveto(bool update, const std::string & var_rednode, std::unique_p
     if (!confpath_ptr.get())
         throw_error(fmt::format("Cannot find path to {} variable", var_rednode));
 
-    std::filesystem::path confpath(confpath_ptr.get());
+    std::filesystem::path confpath(installrootnode / std::filesystem::path(confpath_ptr.get()).relative_path());
     auto confdir = confpath.parent_path();
     std::filesystem::create_directories(confdir);
 
 
-    if (update && std::filesystem::exists(confpath))
+    if (!update && std::filesystem::exists(confpath))
         throw_error(fmt::format("Rednode config already exist [use --update] confpath={}", confpath.c_str()));
 
     if(RedSaveConfig(confpath.c_str(), redconfig.get(), 0))
@@ -245,25 +230,31 @@ void RedNode::date(char *today, std::size_t size) {
 
 void RedNode::reloadConfig(const std::string & tmplname, std::unique_ptr<redConfigT> & redconfig) {
     std::unique_ptr<const char> tmpldir(RedGetDefaultExpand(NULL, NULL, "redpak_TMPL"));
-    std::filesystem::path tmplpath(fmt::format("{}/{}.yaml", tmpldir.get(), tmplname));
+    std::filesystem::path tmplpath(tmplname);
 
-    std::string tmp_tpl = expandTplFile(tmplpath);
+    if (tmplname.substr(tmplname.length() - 5).compare(".yaml"))
+        tmplpath += ".yaml";
 
-    redconfig = std::unique_ptr<redConfigT>(RedLoadConfig(tmp_tpl.c_str(), 0));
-    //remove config file
-    int ret_code = std::remove(tmp_tpl.c_str());
-    if(ret_code)
-        throw_error(fmt::format("Cannot remove temporary file: err={}", ret_code));
+    if (!tmplpath.has_parent_path())
+        //tmplpath(fmt::format("{}/{}.yaml", tmpldir.get(), tmplname));
+        tmplpath = std::filesystem::path(tmpldir.get()) / tmplpath;
 
-    if (!config)
+    // check template path exists
+    if (!std::filesystem::is_regular_file(tmplpath))
+        throw_error(fmt::format("Cannot find {} template file (given opt was {})", tmplpath.string(), tmplname));
+
+    redconfig = std::unique_ptr<redConfigT>(RedLoadConfig(tmplpath.c_str(), 0));
+
+    if (!redconfig)
         throw_error(fmt::format("Issue RedLoadConfig with template={}", tmplname));
 
 }
 
-void RedNode::rednode_template(const std::string & redpath, const std::string & alias, const std::string & tmplname,
+void RedNode::rednode_template(const std::string & alias, const std::string & tmplname,
                                const std::string & tmpladmin, bool update) {
     char today[100];
-    char uuid[100];
+    char uuid[UUID_STR_LEN];
+    const char *info;
 
     date(today, sizeof(today));
     get_uuid(uuid);
@@ -274,9 +265,19 @@ void RedNode::rednode_template(const std::string & redpath, const std::string & 
 
     //save config file
     reloadConfig(tmplname, config);
-    //system: create common cachedir
-    if(!tmplname.compare("main-system")) {
-        std::filesystem::create_directories(config->conftag->cachedir);
+
+    if(!update) {
+        // set new headers
+        info = RedNodeStringExpand(NULL, NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY", NULL, NULL);
+        if(config->headers->info) free((char *)config->headers->info);
+        config->headers->info = info;
+
+        if(config->headers->name) free((char *)config->headers->name);
+        config->headers->name = strdup(uuid);
+
+        if(config->headers->alias) free((char *)config->headers->alias);
+        config->headers->alias = strdup(alias.c_str());
+
     }
 
     saveto(update, "REDNODE_CONF", config);
@@ -290,19 +291,19 @@ unsigned long RedNode::timestamp() {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-void RedNode::rednode_status(const std::string & realpath) {
+void RedNode::rednode_status() {
 
     char today[100];
     date(today, sizeof(today));
 
     std::unique_ptr<const char> rednode_status_ptr(RedGetDefaultExpand(NULL, NULL, "REDNODE_STATUS"));
-    std::filesystem::path rednode_status_path(rednode_status_ptr.get());
+    std::filesystem::path rednode_status_path(installrootnode / std::filesystem::path(rednode_status_ptr.get()).relative_path());
 
     std::string info = fmt::format("created by red-manager the {}", today);
     // create default node status
     redStatusT status = {
         .state = RED_STATUS_ENABLE,
-        .realpath = realpath.c_str(),
+        .realpath = redpath.c_str(),
         .timestamp = timestamp(),
         .info = info.c_str()
     };
@@ -311,47 +312,51 @@ void RedNode::rednode_status(const std::string & realpath) {
         throw_error(fmt::format("Fail to push rednode status at path={}", rednode_status_path.c_str()));
 }
 
-void RedNode::createRedNodePath(const std::string & redpath, const std::string & alias, bool create, bool update, const std::string & tmplate, const std::string & tmplateadmin) {
+void RedNode::createRedNodePath(const std::string & alias, bool update, const std::string & tmplate, const std::string & tmplateadmin) {
     setenv("NODE_PATH", redpath.c_str(), true);
 
-    checkdir("redpath", redpath, true);
+    checkdir("redpath", installrootnode / redpath.relative_path(), true);
 
-    rednode_template(redpath, alias, tmplate, tmplateadmin, update);
-    rednode_status(redpath);
+    rednode_template(alias, tmplate, tmplateadmin, update);
+    rednode_status();
 }
 
-void RedNode::createRedNode(const std::string & alias, bool create, bool update, const std::string & tmplate, const std::string & tmplateadmin) {
-    if(!active)
-        throw_error("No redpath: aborting...");
+void RedNode::createRedNode(const std::string & alias, bool update, const std::string & tmplate, const std::string & tmplateadmin, bool no_system_node) {
+    isRedpath(true);
+
+    /* default templates */
+    const std::string *tpl = &(tmplate.empty() ? RedNode::tmplDefault : tmplate);
+    const std::string *tpladmin = &(tmplateadmin.empty() ? RedNode::tmplAdmin : tmplateadmin);
+
+    /* default alias */
+    const std::string &real_alias = alias.empty() ? redpath.filename().string() : alias;
 
     //check parent exists
-    auto parent_path = std::filesystem::path(redpath()).parent_path();
-    if(!std::filesystem::exists(parent_path / REDNODE_STATUS)) {
-        //create system node
-        std::string alias_system = "system" + parent_path.string();
-        std::replace(alias_system.begin(), alias_system.end(), '/', '-');
-        createRedNodePath(parent_path.string(), alias_system, false, false, "main-system", "main-admin-system");
+    auto parent_path = std::filesystem::path(redpath).parent_path();
+    if(!std::filesystem::exists( installrootnode / redpath.parent_path().relative_path() / REDNODE_STATUS)) {
+        if(!no_system_node) {
+            auto systemnode = RedNode(installrootnode, redpath.parent_path(), base);
+            systemnode.createRedNode("system", false, RedNode::tmplSystem, RedNode::tmplSystemAdmin, true);
 
-        //create symlink to /var/lib/rpm of system
-        std::filesystem::path var_lib_rpm("/var/lib/rpm");
-        std::filesystem::path var_lib_rpm_system_node(parent_path / var_lib_rpm.string().substr(1));
-        std::filesystem::create_directories(var_lib_rpm_system_node.parent_path());
-        std::filesystem::create_directory_symlink(var_lib_rpm, var_lib_rpm_system_node);
+        } else {
+            /* templates are different if not system node (indeed system node is inside first parent node) */
+            tpl = &(tmplate.empty() ? RedNode::tmplDefaultNoSystemNode : tmplate);
+            tpladmin = &(tmplateadmin.empty() ? RedNode::tmplAdminNoSystemNode : tmplateadmin);
+        }
     }
 
-    createRedNodePath(redpath(), alias, create, update, tmplate, tmplateadmin);
+    createRedNodePath(real_alias, update, *tpl, *tpladmin);
 }
 
 void RedNode::install(libdnf::rpm::PackageSack & package_sack) {
-    if (!active)
-        return;
+    isRedpath(true);
 
     scanNode();
     setPersistDir();
     setGpgCheck();
     setCacheDir();
 
-    checkdir("redpath", redpath(), false);
+    checkdir("redpath", redpath, false);
     checkdir("dnf persistdir", base.get_config().persistdir().get_value(), false);
     appendFamilyDb(package_sack);
 }
@@ -359,15 +364,15 @@ void RedNode::install(libdnf::rpm::PackageSack & package_sack) {
 bool RedNode::checkInNodeDataBase(std::string name) {
     bool present = false;
     Pool * pool = pool_create();
-    pool_set_rootdir(pool, redpath().c_str());
+    pool_set_rootdir(pool, redpath.c_str());
     Repo * repo = repo_create(pool, "redpak");
     int flagsrpm = REPO_REUSE_REPODATA | RPM_ADD_WITH_HDRID | REPO_USE_ROOTDIR;
-    int rc = repo_add_rpmdb(repo, nullptr, flagsrpm);
+    repo_add_rpmdb(repo, nullptr, flagsrpm);
     void *rpmstate;
     Queue q;
 
     queue_init(&q);
-    rpmstate = rpm_state_create(pool, redpath().c_str());
+    rpmstate = rpm_state_create(pool, redpath.c_str());
     rpm_installedrpmdbids(rpmstate, "Name", name.c_str(), &q);
     if (q.count)
         present = true;

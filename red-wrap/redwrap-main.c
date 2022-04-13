@@ -134,7 +134,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
     }
 
     if (!(mergedConfTags->share_ipc & RED_CONF_OPT_ENABLED)) {
-        argval[argcount++]="--unshare-pic";
+        argval[argcount++]="--unshare-ipc";
     }
 
     if (!(mergedConfTags->share_pid & RED_CONF_OPT_ENABLED)) {
@@ -158,12 +158,12 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
     // add remaining program to execute arguments
     for (int idx=0; idx < subargc; idx++ ) {
         if (idx == MAX_BWRAP_ARGS) {
-            RedLog(REDLOG_ERROR,"red-wrap too many arguments limit=[%s]", MAX_BWRAP_ARGS);
+            RedLog(REDLOG_ERROR,"red-wrap too many arguments limit=[%d]", MAX_BWRAP_ARGS);
         }
         argval[argcount++]=subargv[idx];
     }
 
-    if (cliarg->verbose) {
+    if (cliarg->verboseopts) {
         printf("\n#### OPTIONS ####\n");
         for (int idx=1; idx < argcount; idx++) {
             printf (" %s", argval[idx]);
@@ -173,18 +173,19 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
 
 
     // exec command
-	int pid = fork();
-	if (pid == 0) {
+    int pid = fork();
+    if (pid == 0) {
         argval[argcount]=NULL;
-        if(execv(cliarg->bwrap, (char**) argval));
+        if(execv(cliarg->bwrap, (char**) argval)) {
             RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
+            return 1;
+        }
     }
-	int returnStatus;
-	waitpid(pid, &returnStatus, 0);
-	return -returnStatus;
+    int returnStatus;
+    waitpid(pid, &returnStatus, 0);
+    return returnStatus;
 
 OnErrorExit:
     RedLog(REDLOG_ERROR,"red-wrap aborted");
     return -1;
-    // exit(1);
 }

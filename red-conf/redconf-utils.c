@@ -27,6 +27,8 @@
 #include <dirent.h>
 #include <libgen.h>
 #include <search.h>
+#include <ftw.h>
+#include <errno.h>
 
 #include "redconf.h"
 #include "redconf-utils.h"
@@ -90,11 +92,28 @@ void redlog(RedLogLevelE level, const char *file, int line, const char *format, 
     va_end(args);
 }
 
+static int remove_cb(const char *path, const struct stat *s, int flag, struct FTW *ftw)
+{
+    int err;
+    err = remove(path);
+
+    if (err)
+        RedLog(REDLOG_ERROR, "Cannot remove %s error=%s", path, strerror(errno));
+
+    return err;
+}
+
+int remove_directories(const char *path)
+{
+    return nftw(path, remove_cb, 64, FTW_DEPTH | FTW_PHYS);
+}
+
 char *RedPutEnv (const char*key, const char*value) {
-    size_t length = sizeof(char)*(strlen(key) + strlen(value) + 1);
+    size_t length = sizeof(char)*(strlen(key) + strlen(value) + 2);
     char *envval = malloc(length);
 
 	snprintf(envval, length, "%s=%s", key, value);
+    RedLog(REDLOG_INFO, "set environment variable %s", envval);
 	putenv(envval);
     return envval;
 }

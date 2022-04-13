@@ -81,7 +81,6 @@ static int add_hash(struct cds_lfht *ht, const char *hashkey, char *warn, size_t
         if(!append_duplicate)
             goto Exit;
 
-		redHashT *from_hnode = caa_container_of(lookup_node, redHashT, lfht_node);
         snprintf(warn, warnlen, "value is overload by %s", info);
     }
 

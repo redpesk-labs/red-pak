@@ -41,7 +41,7 @@ struct red_cmd {
 
 /**
  * @brief list of redmicrodnf commands
- * 
+ *
  */
 static struct red_cmd redmicrodnf_commands [] = {
 	{"install", 0},
@@ -105,12 +105,14 @@ static int _exec_redmicrodnf(int argc, char *argv[], int argcount, char *subargv
 	int pid = fork();
 	if (pid == 0) {
 		error = execv(REDMICRODNF_CMD_PATH, (char**) subargv);
-		if(error)
+		if(error) {
 			fprintf(stderr, "Issue exec outnode command %s error:%s\n", REDMICRODNF_CMD_PATH, strerror(errno));
+			return 1;
+		}
 	}
 	int returnStatus;
 	waitpid(pid, &returnStatus, 0);
-	return -returnStatus;
+	return returnStatus;
 }
 
 static int _exec_bwrap(int argc, char *argv[], int argcount, char *subargv[]) {

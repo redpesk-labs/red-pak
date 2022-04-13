@@ -2,6 +2,7 @@
 # Copyright 2020 IoT.bzh
 #
 # author: Fulup Ar Foll <fulup@iot.bzh>
+# author: Clément Bénier <clement.benier@iot.bzh>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,4 +44,12 @@ endmacro(PROJECT_TARGET_ADD)
 # Pass variables from CMAKE to C-preprocessor
 add_compile_options (-DPROJECT_ALIAS=${PROJECT_ALIAS} -DPROJECT_VERSION=${PROJECT_VERSION})
 
-add_compile_options("-Wall" "-Werror=format-security" "-fexceptions" "-fstack-protector-strong" "-grecord-gcc-switches" "-fasynchronous-unwind-tables" "-fstack-clash-protection" )
+add_compile_options(
+    "-Wall"
+    "-Werror=format-security"
+    "-fexceptions"
+    "-fstack-protector-strong"
+    "-grecord-gcc-switches"
+    "-fasynchronous-unwind-tables"
+    "-fstack-clash-protection"
+    )

@@ -3,25 +3,26 @@
 #               redpak CoreOs config
 #
 # - Author: Fulup Ar Foll (fulup@iot.bzh)
+# - Author: Clément Bénier (clement.benier@iot.bzh)
 # - Define default exec time values for every rednode nspace
 # - Syntax is identical for all rednode (root, platform, terminal, ...)
 #
 # - CodeOS main.yaml should be edited manually
 # - RedNode main.yaml is typically generated at creation time from template:
-#   + red-dnf --redpath=/xxxx/xxxx --create --alias=xxxx [--template=Default]
+#   + redmicrodnf --redpath=/xxxx/xxxx manager --create --alias=xxxx [--template=Default]
 #-----------------------------------------------------------------------------
 
 
 #---------------------------------------------------------------------
-# Headers:
-#   Alias: Mandatory it expands $NODE_ALIAS
-#   Name : A unique name for debug ($UUID will expand at creation time)
+# Headers: (automatically provided at node creation)
+#   Alias: alias given or node name if not provided
+#   Name : uuid
+#   Info:
 #---------------------------------------------------------------------
 headers:
-    alias: coreos
-    name: $UUID
-    info: 'redpak root node config'
-
+  alias:
+  name:
+  info:
 
 #---------------------------------------------------------------------
 # Config:
@@ -31,18 +32,16 @@ headers:
 #---------------------------------------------------------------------
 config:
 
-    # dnf/rpm config value from current node is used
-    rpmdir: /var/lib/rpm
-    persistdir: /var/lib/dnf
+    # rpm/dnf storage dir
+    rpmdir: $NODE_PATH/var/lib/rpm
+    persistdir: $NODE_PATH/var/lib/dnf
     cachedir: $NODE_PATH/var/cache/dnf
-    gpgcheck: true
     verbose: 0
-    maxage: 0
     umask: 027
 
     # value are cumulated (coreos 1st, then node family from the yougest to the oldest)
-    path: '/bin'
-    ldpath: '/lib64'
+    path: /bin:/nodes/$NODE_ALIAS/usr/bin
+    ldpath: /lib64:/nodes/$NODE_ALIAS/usr/lib:/nodes/$NODE_ALIAS/usr/lib64
 
     # nspace share/unshare option (oldest ancesor win)
     # - unset: ignored
@@ -63,16 +62,6 @@ config:
     die-with-parent: enabled
     new-session: unset
 
-#---------------------------------------------------------------------
-# Relocate: Relocate RPM in a rednode at installation time
-#   - default:
-#     + old='/'
-#     + new="$NODE_PATH"
-#
-#  Hopefull Default should do the job, otherwise you may provide your
-#  own list. Check 'rpm --location' for details.
-#---------------------------------------------------------------------
-
 
 #---------------------------------------------------------------------
 # Enviroment might be add or remove. Mode:
@@ -84,6 +73,10 @@ config:
 # Environement section from all rednode family cummulate
 #---------------------------------------------------------------------
 environ:
+  - key: XDG_RUNTIME_DIR
+    value: /run/user/$UID
+    mode: Default
+
   - key: PS1
     value: Rednode($LEAF_ALIAS)>
     mode: Default
@@ -175,25 +168,22 @@ exports:
     path: /usr/share
     mode: Restricted
 
-  # need a hard link on /usr/lib/rpm/rpmrc for rpm -qa
+ # provide a private permanent storage (i.e. to symlink home)
+  - mount: /nodes/_private
+    path:  $NODE_PATH/private
+    mode:  Private
 
+  # make rpm -qa to work from within the node
+  - mount: /var/lib/rpm
+    path:  $NODE_PATH/var/lib/rpm
+    mode:  Private
 
-# private is here only for documentation
-# ----------------------------------------------------
-#  - private are only mounted when configpath==redpath
-#  - this never happen with coreos/main.yaml
-#  - mount: /etc
-#     path: /etc
-#     mode:  Private
+  # typical dir dor binary, lib, ...
+  - mount: /nodes/$NODE_ALIAS/usr
+    path: $NODE_PATH/usr
+    mode: Restricted
 
-#   - mount: /usr/libexec
-#     path: /usr/libexec
-#     mode: Restricted
-
-#   - mount:
-#     path: /dev/mqueue
-#     mode: Mqueue
-
-#   - mount:
-#     path: /var/tmp/lock-$PID
-#     mode: Lock
+  # general share zone with all siblings and childrens
+  - mount: /nodes/$NODE_ALIAS/var
+    path: $NODE_PATH/var
+    mode: Public

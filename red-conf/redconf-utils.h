@@ -43,6 +43,7 @@
 #include "redconf-schema.h"
 #include "redconf-defaults.h"
 
+int remove_directories(const char *path);
 unsigned long RedUtcGetTimeMs ();
 
 redNodeT *RedNodesScan(const char* redpath, int verbose);

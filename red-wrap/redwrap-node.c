@@ -23,12 +23,49 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #include "redwrap.h"
 
+static int mkdir_p(const char *path, mode_t mode) {
+    size_t len = strlen(path);
+    if(len + 1 > RED_MAXPATHLEN) {
+        RedLog(REDLOG_ERROR, "size=%d of path %s is bigger the RED_MAXPATHLEN=%d", len, path, RED_MAXPATHLEN);
+        goto OnError;
+    }
+
+    int err;
+    char tmp[RED_MAXPATHLEN];
+    struct stat status;
+
+    for (int i = 0; i < len + 1; i++) {
+        tmp[i] = path[i];
+
+        /* if not / or not full path */
+        if(tmp[i] != '/' && i < len)
+            continue;
+
+        tmp[i+1] = '\0';
+        /* is directory exist */
+        err = stat(tmp, &status);
+        if(!err)
+            continue;
+
+        err = mkdir((const char *)tmp, mode);
+        if(err) {
+            RedLog(REDLOG_ERROR, "Cannot create %s (error=%s)", tmp, strerror(errno));
+            goto OnError;
+        }
+    }
+
+    return 0;
+OnError:
+    return 1;
+}
+
 /**
  * @brief Check if folder to mount exists, and try to create it if not
- * 
+ *
  * @param path      Path into the node
  * @param configN   Config of the Node
  * @param forcemod  force command
@@ -37,18 +74,17 @@
 static int RwrapCreateDir(const char *path, redConfigT *configN, int forcemod) {
     struct stat status;
     int err = stat(path, &status);
-    if (err < 0) {
+    if (err) {
         if (forcemod) {
-            // mkdir ACL do not work as documented, need chmod to install proper acl
-            mode_t mask=RedSetUmask(configN->conftag);
-            mask= 07777 & ~mask;
-            mkdir(path, 0);
-            chmod(path, mask);
-            err = stat(path, &status);
+            //err = mkdir(path, 07777);
+            err = mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+            // try to recursively create directories
+            if(err)
+                err = mkdir_p(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
         }
     }
-    if (err < 0) {
-        RedLog(REDLOG_ERROR, "*** Node [%s] export expanded path=%s does not exist [use --force]", configN->headers->alias, path);
+    if (err) {
+        RedLog(REDLOG_ERROR, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", configN->headers->alias, path, strerror(errno));
         return err;
     }
     return 0;
@@ -56,7 +92,7 @@ static int RwrapCreateDir(const char *path, redConfigT *configN, int forcemod) {
 
 /**
  * @brief Adding arguments for bwrap to mount path from system to node
- * 
+ *
  * @param node          Node data
  * @param mount         System path to mount
  * @param bindMode      Mode of the bind "--bind" or "--ro-bind"
@@ -71,7 +107,7 @@ static void RwrapMountModeArgval(redNodeT *node, const char *mount, const char *
 }
 
 static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
-    
+
     // scan export directory
     for (int idx=0; idx <configN->exports_count; idx++) {
         redExportFlagE mode= configN->exports[idx].mode;
@@ -135,7 +171,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
                     goto OnErrorExit;
             }
             break;
-        
+
         case RED_EXPORT_PRIVATE_RESTRICTED:
             // on export in ro if we are in terminal lead node
             if (lastleaf) {

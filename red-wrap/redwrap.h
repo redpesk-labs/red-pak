@@ -53,6 +53,7 @@ typedef struct {
     int verbose;
     int forcemod;
     int unsafe;
+    int verboseopts;
 } rWrapConfigT;
 
 rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage);

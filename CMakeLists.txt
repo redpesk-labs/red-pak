@@ -16,7 +16,7 @@
 # limitations under the License.
 ##########################################################################
 
-PROJECT (redpak-dnf-plugin C CXX)
+PROJECT (redpak C CXX)
 set(PROJECT_VERSION "0.1")
 set(PROJECT_PRETTY_NAME "redpak Lightweigh Containers for embedded critical systems")
 set(PROJECT_DESCRIPTION "Allow to split rootfs in a hierarchie of dependencies")
@@ -31,7 +31,11 @@ set(PROJECT_ALIAS "redpak")
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 set (PYTHON_VERSION 3)
 
-option(WITH_MICRODNF "Build microdnf command-line package manager" ON)
+# possible options
+# -------------------------------
+option(WITHOUT_TESTS    "Avoid compiling tests"     OFF)
+
+set(REDMICRODNF         "/usr/bin/redmicrodnf"      CACHE STRING "redmicrodnf path")
 
 include(GNUInstallDirs)
 
@@ -40,23 +44,31 @@ find_package(PkgConfig REQUIRED)
 # External Packages requirements
 # ------------------------------
 set (PKG_REQUIRED_LIST
-	python${PYTHON_VERSION}
-	yaml-0.1
-	libcyaml
-	uuid
+    python${PYTHON_VERSION}
+    yaml-0.1
+    libcyaml
+    uuid
 )
 
 # use search module to be compatible in native mode
 find_package(PkgConfig REQUIRED)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake/redpak.cmake)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake")
 
+enable_testing()
+
+# add sub directories
 ADD_SUBDIRECTORY (etc)
 ADD_SUBDIRECTORY (red-conf)
 ADD_SUBDIRECTORY (red-wrap)
-ADD_SUBDIRECTORY (red-microdnf)
+ADD_SUBDIRECTORY (red-lib)
 ADD_SUBDIRECTORY (red-plugin)
+if(NOT WITHOUT_TESTS)
+    ADD_SUBDIRECTORY (tests)
+endif()
 ADD_SUBDIRECTORY (python)
 
+# add pkgconfig file
 configure_file("red-pak.pc.in" ${CMAKE_CURRENT_BINARY_DIR}/red-pak.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/red-pak.pc DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/pkgconfig)

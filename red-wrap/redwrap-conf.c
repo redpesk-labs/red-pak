@@ -148,7 +148,6 @@ const char* MemFdExecCmd (const char* mount, const char* command) {
 		close (fd);
 		execv("/usr/bin/bash", argv);
 		fprintf (stderr, "hoops: red-wrap exec command return command=%s\n", command);
-		exit;
 	}
 
 	// argv require string
