@@ -151,7 +151,7 @@ void RedNode::setGpgCheck() {
 
 void RedNode::setCacheDir() {
     const char *cachedir = NULL;
-    for (redNodeT *ancestor_node=node->ancestor; ancestor_node != NULL; ancestor_node=ancestor_node->ancestor) {
+    for (redNodeT *ancestor_node=node; ancestor_node != NULL; ancestor_node=ancestor_node->ancestor) {
         if(ancestor_node->config->conftag->cachedir) {
         cachedir = ancestor_node->config->conftag->cachedir;
         break;
