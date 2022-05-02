@@ -184,6 +184,7 @@ void RedNode::registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_s
     }
 
     // Expand node config to fit within redpath
+    fmt::print("Append db from {}\n", node->redpath);
     package_sack.append_extra_system_repo(node->redpath);
 }
 
@@ -192,17 +193,21 @@ void RedNode::appendFamilyDb(libdnf::rpm::PackageSack & package_sack) {
         throw_error("Need node in apppendFamilyDb!");
 
     // Scan redpath family nodes from terminal leaf to root node
-    redNodeT * ancestor_node;
-    for (ancestor_node=node.get()->ancestor; ancestor_node != NULL; ancestor_node=ancestor_node->ancestor) {
+    redNodeT * ancestor_node = node.get();
+    for (ancestor_node=node.get(); ancestor_node; ancestor_node=ancestor_node->ancestor) {
         registerNode(ancestor_node, package_sack);
+
+        //no system node handle rpm system node
+        if (!ancestor_node->ancestor) {
+            std::string no_system_node_path(std::string(ancestor_node->redpath) + "/..");
+            std::string no_system_node_path_var_lib_rpm(no_system_node_path + "/var/lib/rpm");
+            if (std::filesystem::exists(no_system_node_path_var_lib_rpm)) {
+                fmt::print("Append db from {}\n", no_system_node_path);
+                package_sack.append_extra_system_repo(no_system_node_path);
+            }
+        }
     }
 
-    //no system node handle rpm system node
-    std::string no_system_node_path(std::string(ancestor_node->redpath) + "/..");
-    std::string no_system_node_path_var_lib_rpm(no_system_node_path + "/var/lib/rpm");
-    if (std::filesystem::exists(no_system_node_path_var_lib_rpm)) {
-        package_sack.append_extra_system_repo(no_system_node_path);
-    }
 }
 
 void RedNode::get_uuid(char * uuid_str) {
