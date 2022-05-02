@@ -51,11 +51,13 @@ static struct red_cmd redmicrodnf_commands [] = {
 	{"grouplist", 0},
 	{"reinstall", 0},
 	{"remove", 0},
+	{"repo", 0},
 	{"repolist", 0},
 	{"repoinfo", 0},
 	{"repoquery", 0},
 	{"upgrade", 0},
 	{"advisory", 0},
+	{"--help", 1},
 	{"manager", 1},
 };
 
