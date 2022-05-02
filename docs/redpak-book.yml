@@ -1,0 +1,18 @@
+type: books
+books:
+-
+    id: redpak
+    title: redpak
+    description: redpak documentation
+    keywords:
+    author: "IotBzh"
+    version: master
+    chapters:
+    - url: 1-Introduction.md
+      name: Introduction
+    - url: 2-Concept.md
+      name: Concept
+    - url: 3-Configuration.md
+      name: Configuration
+    - url: 4-Usage.md
+      name: Usage Guide

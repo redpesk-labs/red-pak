@@ -1,0 +1,10 @@
+The list is too long, I will write it later :)
+
+Fixer le planter dans redts-glue-py.c
+ OnErrorExit:
+    PyErr_SetString(pyrpmError, "(ABORT) redts_run fail");
+    return NULL;   
+
+Virer la dependance à cmake  3.13 oiyr revenir à 3.10
+
+Virer les lib RPM de red-wrap (fait juste grossir l'exec file)
