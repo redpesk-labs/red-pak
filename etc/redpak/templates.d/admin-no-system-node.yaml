@@ -73,7 +73,6 @@ headers:
 # Export section from all rednode family cummulate
 #---------------------------------------------------------------------
 exports:
-- mode: Restricted
   mount: $NODE_PATH/var/lib/rpm
   path: /var/lib/rpm
 - mode: Restricted
@@ -97,6 +96,10 @@ exports:
 - mode: Public #common cachedir between nodes
   mount: $NODE_PATH/var/cache/dnf
   path: $NODE_PATH/var/cache/dnf
+- mode: Restricted
+  mount: $NODE_PATH/../var/lib/rpm
+  path: /var/lib/rpm
+- mode: Restricted
 - mode: Restricted
   mount: $NODE_PATH/var/lib/rpm/
   path: $NODE_PATH/var/lib/rpm/
