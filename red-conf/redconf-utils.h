@@ -75,4 +75,8 @@ int RedConfGetInod (const char* path);
 /* set environment value and return allocate string */
 char *RedPutEnv (const char*key, const char*value);
 
+/* Exec Cmd */
+int MemFdExecCmd (const char* mount, const char* command);
+int ExecCmd (const char* mount, const char* command, char *res, size_t size);
+
 #endif

@@ -71,11 +71,13 @@ private:
 	/* dnf objects */
 	libdnf::cli::ArgumentParser *arg_parser{nullptr};
 	libdnf::Base &base;
+	libdnf::LogRouter & logger{*base.get_logger()};
 
 	/* parser options */
     libdnf::OptionPath redpathOpt{nullptr};
     libdnf::OptionPath installRootNodeOpt{"/"};
     libdnf::OptionBool forcenode{false};
+    libdnf::OptionNumber<std::int32_t> rpmverbosity{2};
 
     /* redconf pointers */
 	std::unique_ptr<redNodeT> node{nullptr};

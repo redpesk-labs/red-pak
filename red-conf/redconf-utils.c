@@ -20,6 +20,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -512,10 +513,40 @@ static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const 
             if (*idxOut == MAX_CYAML_FORMAT_STR)  goto OnErrorExit;
             outputS[(*idxOut)++] = inputS[++idxIn];
         }
-        /* ignore escape $=\$ and ignore parenthesis $=$() */
-        else if (inputS[idxIn] == '$' && (idxIn == 0 || inputS[idxIn - 1] != '\\') && inputS[idxIn + 1] != '(') {
+        /* ignore escape $=\$ */
+        else if (inputS[idxIn] == '$' && (idxIn == 0 || inputS[idxIn - 1] != '\\')) {
             if (count == MAX_CYAML_FORMAT_ENV) goto OnErrorExit;
-            if(RedConfGetEnvKey (node, defaults, &idxIn, inputS, idxOut, outputS, MAX_CYAML_FORMAT_STR)) goto OnErrorExit;
+
+            //check command to exec is $()
+            if(inputS[idxIn + 1] == '(') {
+                int command_size = 0;
+                while(inputS [idxIn + 2 + command_size] != ')') {
+                    if (inputS [idxIn + 2 + command_size] == '\0') {
+                        RedLog(REDLOG_WARNING, "No end parenthesis ')' found in %s: Ignoring", inputS+idxIn);
+                        command_size = 0;
+                        break;
+                    }
+                    command_size++;
+                }
+
+                if (command_size > 0) {
+                    char command_res[100];
+                    char command[command_size + 1];
+                    size_t command_res_size = 0;
+
+                    strncpy(command, inputS+idxIn+2, command_size);
+                    command[command_size] = '\0';
+                    if(ExecCmd(command, command, command_res, 100)) goto OnErrorExit;
+                    command_res_size = strlen(command_res);
+
+                    //copy command res to output
+                    strncpy(outputS+(*idxOut), command_res, command_res_size);
+                    *idxOut += command_res_size;
+                    idxIn += 2 + command_size; //2: because 2 parenthesis
+                }
+            } else {
+                if(RedConfGetEnvKey (node, defaults, &idxIn, inputS, idxOut, outputS, MAX_CYAML_FORMAT_STR)) goto OnErrorExit;
+            }
             count ++;
         } else {
             if (*idxOut == MAX_CYAML_FORMAT_STR)  goto OnErrorExit;
@@ -709,4 +740,60 @@ mode_t RedSetUmask (redConfTagT *conftag) {
     // posix umask would need some helpers
     (void)umask(mask);
     return mask;
+}
+
+int memfd_create (const char *__name, unsigned int __flags);
+
+// Exec a command in a memory buffer and return stdout result as FD
+int MemFdExecCmd (const char* mount, const char* command) {
+    int fd = memfd_create (mount, 0);
+    if (fd <0) goto OnErrorExit;
+
+    int pid = fork();
+    if (pid != 0) {
+        // wait for child to finish
+        (void)wait(NULL);
+        lseek (fd, 0, SEEK_SET);
+        syncfs(fd);
+    } else {
+        // redirect stdout to fd and exec command
+        char *argv[4];
+        argv[0]="bash";
+        argv[1]="-c";
+        argv[2]=(char*)command;
+        argv[3]=NULL;
+
+        dup2(fd, 1);
+        close (fd);
+        execv("/usr/bin/bash", argv);
+        fprintf (stderr, "hoops: red-wrap exec command return command=%s\n", command);
+    }
+
+    return fd;
+
+OnErrorExit:
+    fprintf (stderr, "error: red-wrap Fail to exec command=%s\n", command);
+    return -1;
+}
+
+int ExecCmd (const char* mount, const char* command, char *res, size_t size) {
+    int err = 0;
+    int fd = MemFdExecCmd(mount, command);
+
+    ssize_t bytes = read(fd, res, size);
+    if (bytes <= 0) {
+        RedLog(REDLOG_WARNING, "Cannot read stdout of command %s", command);
+        err = 1;
+        goto Error;
+    } else if(bytes >= 100) {
+        RedLog(REDLOG_WARNING, "Cannot read entire stdout of command %s (max size is=%d)", command, size);
+        err = 2;
+        goto Error;
+    }
+
+    res[bytes] = '\0';
+
+Error:
+    close(fd);
+    return err;
 }

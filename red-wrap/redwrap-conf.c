@@ -23,138 +23,97 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <sys/wait.h>
 #include <string.h>
-
-
-// missing from fedora-30 !!!
-int memfd_create (const char *__name, unsigned int __flags);
 
 
 
 #include "redwrap.h"
 
 static struct option options[] = {
-	{"verbose", optional_argument, 0,  'v' },
-	{"redpath", required_argument, 0,  'r' },
-	{"rpath"  , required_argument, 0,  'r' },
-	{"rp"     , required_argument, 0,  'r' },
-	{"redmain", required_argument, 0,  'c' },
-	{"rmain"  , required_argument, 0,  'c' },
-	{"bwrap"  , required_argument, 0,  'b' },
-	{"admin"  , optional_argument, 0,  'a' },
-	{"force"  , no_argument      , 0,  'f' },
-	{"unsafe" , no_argument      , 0,  'u' },
-	{"help"   , no_argument      , 0,  '?' },
-	{"--"     , no_argument      , 0,  '-' },
-	{0,         0,                 0,  0 }
+    {"verbose", optional_argument, 0,  'v' },
+    {"redpath", required_argument, 0,  'r' },
+    {"rpath"  , required_argument, 0,  'r' },
+    {"rp"     , required_argument, 0,  'r' },
+    {"redmain", required_argument, 0,  'c' },
+    {"rmain"  , required_argument, 0,  'c' },
+    {"bwrap"  , required_argument, 0,  'b' },
+    {"admin"  , optional_argument, 0,  'a' },
+    {"force"  , no_argument      , 0,  'f' },
+    {"unsafe" , no_argument      , 0,  'u' },
+    {"help"   , no_argument      , 0,  '?' },
+    {"--"     , no_argument      , 0,  '-' },
+    {0,         0,                 0,  0 }
 };
 
 rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
-	rWrapConfigT *config = calloc (1, sizeof(rWrapConfigT));
- 	int index;
+    rWrapConfigT *config = calloc (1, sizeof(rWrapConfigT));
+     int index;
 
-	for (int done=0; !done;) {
-		int option = getopt_long(argc, argv, "vp:m:", options, &index);
+    for (int done=0; !done;) {
+        int option = getopt_long(argc, argv, "vp:m:", options, &index);
 
-		if (option == -1) {
-			config->index= optind;
-			break;
-		}
+        if (option == -1) {
+            config->index= optind;
+            break;
+        }
 
-		// option return short option even when long option is given
-		switch (option) {
-			case 'r':
-				config->redpath=optarg;
-				break;
+        // option return short option even when long option is given
+        switch (option) {
+            case 'r':
+                config->redpath=optarg;
+                break;
 
-			case 'v':
-				config->verbose++;
-  				if (optarg)	config->verbose = atoi(optarg);
-				break;
+            case 'v':
+                config->verbose++;
+                  if (optarg)	config->verbose = atoi(optarg);
+                break;
 
-			case 'c':
-				config->cnfpath=optarg;
-				break;
+            case 'c':
+                config->cnfpath=optarg;
+                break;
 
-			case 'a':
-				config->adminpath = getenv("redpak_MAIN_ADMIN");
-    			if (!config->adminpath) config->adminpath= redpak_MAIN_ADMIN;
-				if (optarg) config->adminpath = optarg;
-				break;
+            case 'a':
+                config->adminpath = getenv("redpak_MAIN_ADMIN");
+                if (!config->adminpath) config->adminpath= redpak_MAIN_ADMIN;
+                if (optarg) config->adminpath = optarg;
+                break;
 
-			case 'b':
-				config->bwrap=optarg;
-				break;
+            case 'b':
+                config->bwrap=optarg;
+                break;
 
-			case 'f':
-				config->forcemod=1;
-				break;
+            case 'f':
+                config->forcemod=1;
+                break;
 
-			case 'u':
-				config->unsafe=1;
-				break;
+            case 'u':
+                config->unsafe=1;
+                break;
 
-			case '-':
-				done=1;
-				break;
+            case '-':
+                done=1;
+                break;
 
-			default:
-				goto OnErrorExit;
-		}
-	}
+            default:
+                goto OnErrorExit;
+        }
+    }
 
-	if (!config->cnfpath) {
-		config->cnfpath = getenv("redpak_MAIN");
-    	if (!config->cnfpath) config->cnfpath= redpak_MAIN;
-	}
+    if (!config->cnfpath) {
+        config->cnfpath = getenv("redpak_MAIN");
+        if (!config->cnfpath) config->cnfpath= redpak_MAIN;
+    }
 
-	if (!config->bwrap) {
-		config->bwrap= BWRAP_CMD_PATH;
-	}
+    if (!config->bwrap) {
+        config->bwrap= BWRAP_CMD_PATH;
+    }
 
-	if (!config->redpath)
-		goto OnErrorExit;
+    if (!config->redpath)
+        goto OnErrorExit;
 
-	return config;
-
-OnErrorExit:
-	fprintf (stderr, "%s", usage);
-	return NULL;
-}
-
-
-// Exec a command in a memory buffer and return stdout result as FD
-const char* MemFdExecCmd (const char* mount, const char* command) {
-	char fdstr[32];
-	int fd = memfd_create (mount, 0);
-	if (fd <0) goto OnErrorExit;
-
-	int pid = fork();
-	if (pid != 0) {
-		// wait for child to finish
-		(void)wait(NULL);
-		lseek (fd, 0, SEEK_SET);
-		syncfs(fd);
-	} else {
-		// redirect stdout to fd and exec command
-		char *argv[4];
-		argv[0]="bash";
-		argv[1]="-c";
-		argv[2]=(char*)command;
-		argv[3]=NULL;
-
-		dup2(fd, 1);
-		close (fd);
-		execv("/usr/bin/bash", argv);
-		fprintf (stderr, "hoops: red-wrap exec command return command=%s\n", command);
-	}
-
-	// argv require string
-    snprintf (fdstr, sizeof(fdstr), "%d", fd);
-	return strdup(fdstr);
+    return config;
 
 OnErrorExit:
-	fprintf (stderr, "error: red-wrap Fail to exec command=%s\n", command);
-	return NULL;
+    fprintf (stderr, "%s", usage);
+    return NULL;
 }

@@ -115,6 +115,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         const char* path=configN->exports[idx].path;
         struct stat status;
         const char * expandpath = NULL;
+        char fdstr[32];
 
         // if mouting path is not privide let's duplicate mount
         if (!path) path=mount;
@@ -190,7 +191,8 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         case RED_EXPORT_EXECFD:
             argval[(*argcount)++]="--file";
-            argval[(*argcount)++]=MemFdExecCmd (mount, path);
+            snprintf(fdstr, sizeof(fdstr), "%d", MemFdExecCmd(mount, path));
+            argval[(*argcount)++]=strdup(fdstr);
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
 
@@ -240,6 +242,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         redVarEnvFlagE mode= configN->confvar[idx].mode;
         const char* key= configN->confvar[idx].key;
         const char* value=configN->confvar[idx].value;
+        char fdstr[32];
 
         switch (mode) {
         case RED_CONFVAR_STATIC:
@@ -251,7 +254,8 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         case RED_CONFVAR_EXECFD:
             argval[(*argcount)++]="--setenv";
             argval[(*argcount)++]=key;
-            argval[(*argcount)++]=MemFdExecCmd (key, value);
+            snprintf(fdstr, sizeof(fdstr), "%d", MemFdExecCmd(key, value));
+            argval[(*argcount)++]=strdup(fdstr);
             break;
 
         case RED_CONFVAR_DEFLT:
