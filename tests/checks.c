@@ -6,6 +6,7 @@
 
 #include "redconf-utils.h"
 #include "redwrap-main.h"
+#include "redconf-merge.h"
 
 #ifndef REDMICRODNF_CMD
 #define REDMICRODNF_CMD "/usr/bin/redmicrodnf"
@@ -30,9 +31,19 @@
 #define TEMPLATE TEMPLATES_DIR"/default.yaml"
 #define TEMPLATE_ADMIN TEMPLATES_DIR"/admin.yaml"
 
+static void debugargv(char * const argv[]) {
+    int i = 0;
+    printf("[CMD] = ");
+    while(argv[i]) {
+        printf("%s ", argv[i]);
+        i++;
+    }
+    printf("\n");
+}
 
 /* create node */
 static int redmicrodnf_manager(char * const argv[]) {
+    debugargv(argv);
     int pid = fork();
     if (pid == 0) {
         int error;
@@ -47,7 +58,7 @@ static int redmicrodnf_manager(char * const argv[]) {
 
 static int createNodeNoSystem(const char *redpath) {
     char * argv[] = {
-        "redmicrodnf",
+        REDMICRODNF_CMD,
         "--redpath",
         (char *)redpath,
         "manager",
@@ -104,6 +115,7 @@ static int testcmd(const char *redpath, char *cmd) {
         .unsafe = 0
     };
 
+    printf("\n[TESTCMD] = redpath=%s cmd=%s", redpath, cmd);
     return redwrapMain(cmd, &cliargs, subargc, subargv);
 }
 
@@ -112,33 +124,52 @@ static void test_simple_cmds(const char *redpath) {
     ck_assert_int_eq(testcmd(redpath, "sureititdoesnotexits"), 256);
 }
 
+static void test_config(const char *redpath) {
+    printf("[TEST CONFIG] ...");
+    size_t len;
+    const char *resyaml = getConfig(redpath, &len);
+    ck_assert_ptr_nonnull(resyaml);
+}
+
+static void test_mergeconfig(const char *redpath) {
+    size_t len;
+    const char *resyaml = getMergeConfig(redpath, &len, 0);
+    ck_assert_ptr_nonnull(resyaml);
+}
+
+static void test_node(const char *redpath) {
+    test_simple_cmds(redpath);
+    test_config(redpath);
+    test_mergeconfig(redpath);
+}
+
 START_TEST (test_node_parent) {
-    test_simple_cmds(PARENT_REDPATH);
+    test_node(PARENT_REDPATH);
 }
 END_TEST
 
 START_TEST (test_node_child) {
-    test_simple_cmds(CHILD_REDPATH);
+    test_node(CHILD_REDPATH);
 }
 END_TEST
 
 START_TEST (test_node_parent_nos) {
-    test_simple_cmds(PARENT_REDPATH_NOS);
+    test_node(PARENT_REDPATH_NOS);
 }
 END_TEST
 
 START_TEST (test_node_child_nos) {
-    test_simple_cmds(CHILD_REDPATH_NOS);
+    test_node(CHILD_REDPATH_NOS);
 }
 END_TEST
 
 START_TEST (test_node_parent_templates) {
-    test_simple_cmds(PARENT_REDPATH_TEMPLATES);
+    test_node(PARENT_REDPATH_TEMPLATES);
 }
 END_TEST
 
 START_TEST (test_node_child_templates) {
-    test_simple_cmds(CHILD_REDPATH_TEMPLATES);
+    test_node(CHILD_REDPATH_TEMPLATES);
 }
 END_TEST
 

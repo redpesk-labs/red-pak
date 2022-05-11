@@ -132,7 +132,8 @@ static int setDataExports(const redNodeT *node, const void *destdata, const void
     //if not expand: free hashkey
     if(!expand) {
         free((char *)hashkey);
-        export_expand->path = strdup(export->path);
+        if(export->path)
+            export_expand->path = strdup(export->path);
     } else {
         export_expand->path = hashkey;
     }
