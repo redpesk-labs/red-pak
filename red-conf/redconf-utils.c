@@ -412,10 +412,10 @@ redNodeT *RedNodesScan(const char* redpath, int verbose) {
     error= RedNodesDigToRoot (redpath, redleaf, verbose);
     if (error) goto OnErrorFree;
 
-    // push NODE_ALIAS in case some env var expand it.
-    redleaf->env.leafalias = RedPutEnv("LEAF_ALIAS", redleaf->config->headers->alias);
-    redleaf->env.leafname = RedPutEnv("LEAF_NAME" , redleaf->config->headers->name);
-    redleaf->env.leafpath = RedPutEnv("LEAF_PATH" , redleaf->status->realpath);
+    // set NODE_ALIAS in case some env var expand it.
+    setenv("LEAF_ALIAS", redleaf->config->headers->alias, 1);
+    setenv("LEAF_NAME", redleaf->config->headers->name, 1);
+    setenv("LEAF_PATH", redleaf->status->realpath, 1);
 
     return redleaf;
 
@@ -464,10 +464,10 @@ static void freeNode(redNodeT *node) {
 }
 
 void freeRedLeaf(redNodeT *redleaf) {
-    //free env values
-    free(redleaf->env.leafalias);
-    free(redleaf->env.leafname);
-    free(redleaf->env.leafpath);
+    //unset env values
+    unsetenv("LEAF_ALIAS");
+    unsetenv("LEAF_NAME");
+    unsetenv("LEAF_PATH");
 
     redNodeT *node = redleaf, *nextnode;
     while(node) {
