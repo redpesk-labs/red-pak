@@ -67,6 +67,7 @@ static int RedConfCopyConfTags(redConfTagT *source, redConfTagT *destination) {
     if(destination->share_cgroup != RED_CONF_OPT_DISABLED) destination->share_cgroup =source->share_cgroup;
     if(destination->share_pid != RED_CONF_OPT_DISABLED) destination->share_pid = source->share_pid;
     if(destination->share_net != RED_CONF_OPT_DISABLED) destination->share_net = source->share_net;
+    if(destination->share_time != RED_CONF_OPT_DISABLED) destination->share_time = source->share_time;
 
     return 0;
 OnError:

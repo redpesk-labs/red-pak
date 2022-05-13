@@ -239,6 +239,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
         CYAML_FIELD_ENUM("share_net", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, share_net, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
         CYAML_FIELD_ENUM("share_pid", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, share_pid, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
         CYAML_FIELD_ENUM("share_ipc", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, share_ipc, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
+        CYAML_FIELD_ENUM("share_time", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, share_time, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
         CYAML_FIELD_MAPPING_PTR("cgroups", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, cgroups, CgroupsSchema),
         CYAML_FIELD_STRING_PTR("hostname", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, hostname, 0, CYAML_UNLIMITED),
         CYAML_FIELD_STRING_PTR("chdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, chdir, 0, CYAML_UNLIMITED),

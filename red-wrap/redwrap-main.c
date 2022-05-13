@@ -31,6 +31,10 @@
 #include <limits.h>
 #include <sys/wait.h>
 
+#define _GNU_SOURCE
+#include <linux/sched.h>
+#include <sys/syscall.h>
+
 #include "redwrap-main.h"
 #include "redconf-defaults.h"
 #include "cgroups.h"
@@ -45,6 +49,59 @@ static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, dataNode
 
 OnErrorExit:
     return error;
+}
+
+static int setmap(const char *map_path, const char *map_buf) {
+    int err = 0;
+    int fd;
+
+    fd = open(map_path, O_RDWR);
+    if (fd < 0) {
+        RedLog(REDLOG_ERROR, "Issue open map_path=%s error=%s", map_path, strerror(errno));
+        err = 1;
+        goto Error;
+    }
+
+    if (write(fd, map_buf, strlen(map_buf)) != strlen(map_buf)) {
+        fprintf(stderr, "ERROR: write %s: %s\n", map_buf, strerror(errno));
+        err = 2;
+        goto ErrorOpen;
+    }
+
+ErrorOpen:
+    close(fd);
+Error:
+    return err;
+}
+
+static int setuidgidmap(int pid) {
+    const int MAP_BUF_SIZE = 100;
+    char map_path[PATH_MAX];
+    char map_buf[MAP_BUF_SIZE];
+    int uid = getuid();
+    int gid = getgid();
+
+    /* set uid map */
+    snprintf(map_path, PATH_MAX, "/proc/%d/uid_map", pid);
+    snprintf(map_buf, MAP_BUF_SIZE, "%d %d 1", uid, uid);
+    if(setmap(map_path, map_buf))
+        goto Error;
+
+    /* setgroups to deny */
+    snprintf(map_path, PATH_MAX, "/proc/%d/setgroups", pid);
+    snprintf(map_buf, MAP_BUF_SIZE, "deny");
+    if(setmap(map_path, map_buf))
+        goto Error;
+
+    /* set gid map */
+    snprintf(map_path, PATH_MAX, "/proc/%d/gid_map", pid);
+    snprintf(map_buf, MAP_BUF_SIZE, "%d %d 1", gid, gid);
+    if(setmap(map_path, map_buf))
+        goto Error;
+
+    return 0;
+Error:
+    return -1;
 }
 
 int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
@@ -172,15 +229,38 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
     }
 
 
+    int pipe_fd[2];
+    if (pipe(pipe_fd) == -1) {
+        RedLog(REDLOG_ERROR, "Cannot pipe error=%s", strerror(errno));
+        goto OnErrorExit;
+    }
+
+    int pid = (int) syscall (__NR_clone, CLONE_NEWUSER|SIGCHLD, NULL);
+    if (pid < 0) {
+        RedLog(REDLOG_ERROR, "Cannot clone with NEWUSER error=%s", strerror(errno));
+        goto OnErrorExit;
+    }
+
     // exec command
-    int pid = fork();
     if (pid == 0) {
+        /* wait for parent to set uid/gid maps */
+        close(pipe_fd[1]);
+        close(pipe_fd[0]);
+
+        /* unshare time ns */
+        if (!(mergedConfTags->share_time & RED_CONF_OPT_ENABLED))
+            unshare(CLONE_NEWTIME);
+
         argval[argcount]=NULL;
         if(execv(cliarg->bwrap, (char**) argval)) {
             RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
             return 1;
         }
+        return 0;
     }
+    setuidgidmap(pid);
+    /* signal child that uid/gid maps are set */
+    close(pipe_fd[1]);
     int returnStatus;
     waitpid(pid, &returnStatus, 0);
     return returnStatus;

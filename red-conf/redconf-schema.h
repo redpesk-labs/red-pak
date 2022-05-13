@@ -157,6 +157,7 @@
         redConfOptFlagE share_ipc;
         redConfOptFlagE share_pid;
         redConfOptFlagE share_net;
+        redConfOptFlagE share_time;
         redConfCgroupT *cgroups;
         int verbose;
     } redConfTagT;

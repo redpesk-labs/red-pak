@@ -53,6 +53,7 @@ config:
     share_net: enabled
     share_pid: unset
     share_ipc: unset
+    share_time: unset
 
     # Change HOSTNAME and move to prefere directory inside nspace
     hostname: $LEAF_ALIAS

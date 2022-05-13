@@ -69,6 +69,7 @@ void RedDumpConftag(redConfTagT *conftag) {
     printf("\tshare_ipc: %s\n", redConfOptStrings[conftag->share_ipc].str);
     printf("\tshare_pid: %s\n", redConfOptStrings[conftag->share_pid].str);
     printf("\tshare_net: %s\n", redConfOptStrings[conftag->share_net].str);
+    printf("\tshare_time: %s\n", redConfOptStrings[conftag->share_time].str);
     //printf("cgroups=%s\n", conftag->cgroups);
 }
 
