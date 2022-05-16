@@ -1,0 +1,200 @@
+#---------------------------------------------------------------------------
+#
+#               redpak CoreOs config
+#
+# - Author: Fulup Ar Foll (fulup@iot.bzh)
+# - Define default exec time values for every rednode nspace
+# - Syntax is identical for all rednode (root, platform, terminal, ...)
+#
+# - CodeOS main.yaml should be edited manually
+# - RedNode main.yaml is typically generated at creation time from template:
+#   + red-dnf --redpath=/xxxx/xxxx --create --alias=xxxx [--template=Default]
+#-----------------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------
+# Headers:
+#   Alias: Mandatory it expands $NODE_ALIAS
+#   Name : A unique name for debug ($UUID will expand at creation time)
+#---------------------------------------------------------------------
+headers:
+    alias: coreos
+    name: $UUID
+    info: 'redpak root node config'
+
+
+#---------------------------------------------------------------------
+# Config:
+#   In this section tag can be defined at any level of the node familly
+#    -root (coreos) value might be overloaded
+#    -If multiple definition the oldest ancestor wins
+#---------------------------------------------------------------------
+config:
+
+    # dnf/rpm config value from current node is used
+    rpmdir: /var/lib/rpm
+    persistdir: /var/lib/dnf
+    cachedir: $NODE_PATH/var/cache/dnf
+    gpgcheck: true
+    verbose: 0
+    maxage: 0
+    umask: 027
+
+    # value are cumulated (coreos 1st, then node family from the yougest to the oldest)
+    path: '/bin'
+    ldpath: '/lib64'
+
+    # nspace share/unshare option (oldest ancesor win)
+    # - unset: ignored
+    # - enabled: use share-xxx
+    # - disabled: use unshare-xxx
+    share_all: disabled
+    share_user: unset
+    share_cgroup: unset
+    share_net: enabled
+    share_pid: unset
+    share_ipc: unset
+    share_time: unset
+
+    # Change HOSTNAME and move to prefere directory inside nspace
+    hostname: $LEAF_ALIAS
+    chdir: /home/$LEAF_ALIAS
+
+    # nspace command control
+    die-with-parent: enabled
+    new-session: unset
+
+#---------------------------------------------------------------------
+# Relocate: Relocate RPM in a rednode at installation time
+#   - default:
+#     + old='/'
+#     + new="$NODE_PATH"
+#
+#  Hopefull Default should do the job, otherwise you may provide your
+#  own list. Check 'rpm --location' for details.
+#---------------------------------------------------------------------
+
+
+#---------------------------------------------------------------------
+# Enviroment might be add or remove. Mode:
+#  - Default: expand $VAR at runtime
+#  - Static:  use value without expanding variables
+#  - Execfd: User bash command STDOUT as var value
+#  - Remove: Skim existing (coreos) environment
+#
+# Environement section from all rednode family cummulate
+#---------------------------------------------------------------------
+environ:
+  - key: PS1
+    value: Rednode($LEAF_ALIAS)>
+    mode: Default
+
+  - key: SHELL_SESSION_ID
+    mode: Remove
+
+  - key: HOME
+    value: /home/$LEAF_ALIAS
+
+
+#---------------------------------------------------------------------
+# mode:
+#  - Private: mount are visible from every apps running from a given node
+#  - Public: share are RW for every child
+#  - Restricted: share are RO for every child
+#  - Anonymous: file are only visible from app within the same node+nspace
+#  - Symlink: Create a private symbolic link within nspace
+#  - Execfd: Virtual file added to nspace from bash command stdout
+#  - Special Linux FileSystems
+#    + Procfs
+#    + Devfs
+#    + Tmpsfs
+#    + Lock
+#  mount:
+#    the mounting point within nspace
+#  path:
+#    the realpath on coreos
+
+# Export section from all rednode family cummulate
+#---------------------------------------------------------------------
+exports:
+
+  # mount /usr/lib + /usr/bin in node '/' in order to keep /usr free for node hosted RPM
+  - mount: /lib64
+    path: /usr/lib64
+    mode: Restricted
+
+  - mount: /lib
+    path: /usr/lib
+    mode: Restricted
+
+  - mount: /bin
+    path: /usr/bin
+    mode: Restricted
+
+  # when network is exported, we probably need reesolv.conf
+  - mount: /etc/resolv.conf
+    path: /etc/resolv.conf
+    mode: Restricted
+
+  - mount: /home/$LEAF_ALIAS
+    path: /nodes/_private
+    mode: Symlink
+
+  # /var and /var are anonymous and private to each application
+  - mount: /var
+    mode: Anonymous
+
+  # create a fake /etc/passwd + group
+  - mount: /etc/passwd
+    path: getent passwd $UID 65534
+    mode: Execfd
+
+  - mount: /etc/group
+    path: getent group $(id -g) 65534
+    mode: Execfd
+
+  # Exports coreos systemFS or fake with Anonymous/Tmpfs
+  - mount: /proc
+    mode: Procfs
+
+  - mount: /dev
+    mode: Devfs
+
+  - mount: /tmp
+    mode: Tmpfs
+
+  - mount: /run
+    mode: Anonymous
+
+  # need for rpm -qa to work within node
+  - mount: /usr/lib/rpm
+    path: /lib/rpm
+    mode: Symlink
+
+  # needed for bash readline to work
+  - mount: /usr/share
+    path: /usr/share
+    mode: Restricted
+
+  # need a hard link on /usr/lib/rpm/rpmrc for rpm -qa
+
+
+# private is here only for documentation
+# ----------------------------------------------------
+#  - private are only mounted when configpath==redpath
+#  - this never happen with coreos/main.yaml
+#  - mount: /etc
+#     path: /etc
+#     mode:  Private
+
+#   - mount: /usr/libexec
+#     path: /usr/libexec
+#     mode: Restricted
+
+#   - mount:
+#     path: /dev/mqueue
+#     mode: Mqueue
+
+#   - mount:
+#     path: /var/tmp/lock-$PID
+#     mode: Lock

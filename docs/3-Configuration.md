@@ -1,9 +1,3 @@
-<!---
-include yaml files
-![main system](images/main-system.txt "main system")
-![default](images/default.txt "default")
--->
-
 # Yaml configuration
 
 ## Sections
@@ -21,16 +15,11 @@ There parameters are merged in rednode hierarchy.
 
 Below, there is the template of yaml configuration file
 
-<embed type="text/plain" src='images/main-system.txt' width="100%" height="500">
-<a href="https://github.com/redpesk-labs/red-pak/blob/master/etc/redpak/templates.d/main-system.yaml">main-system.yaml</a>
-</embed>
+<embed type="text/plain" src='yaml/main-system.txt' width="100%" height="800"/>
 
 ## Yaml defaut configuration
 
-<embed type="text/plain" src='images/default.txt' width="100%" height="500">
-<a href="https://github.com/redpesk-labs/red-pak/blob/master/etc/redpak/templates.d/default.yaml">default.yaml</a>
-</embed>
+<embed type="text/plain" src='yaml/default.txt' width="100%" height="500"/>
 
 ## Good Practises
-
 
