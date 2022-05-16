@@ -8,6 +8,25 @@
 	],
 	"configurations": [
 		{
+			"name": "redwrap-test",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/tests/checks",
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
 			"name": "redconf-tree",
 			"type": "cppdbg",
 			"request": "launch",
@@ -160,18 +179,14 @@
 			"miDebuggerPath": "/usr/bin/gdb"
 		},
 		{
-			"name": "redwrap-admin-bash-test-10",
+			"name": "redwrap-ls",
 			"type": "cppdbg",
 			"request": "launch",
 			"cwd": "${workspaceFolder}",
 			"program": "${workspaceFolder}/build/red-wrap/redwrap",
 			"args": [
 				"--redpath",
-				"/var/redpesk3/testtest",
-				"--redmain",
-				"/etc/redpak/main.yaml",
-				"--admin=/etc/redpak/main-admin.yaml",
-				"--force",
+				"/var/redpak/testtest",
 				"bash"
 			],
 			"stopAtEntry": true,
@@ -277,8 +292,9 @@
 			"name": "redmicrodnf-install",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/build/red-microdnf/microdnf/microdnf",
+			"program": "${workspaceFolder}/build/red-microdnf/redmicrodnf",
 			"args": [
+				"--rpmverbosity=9",
 				"--redpath",
 				"/var/redpesk/testtest",
 				"install",

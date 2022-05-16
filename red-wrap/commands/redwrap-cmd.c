@@ -57,7 +57,6 @@ static struct red_cmd redmicrodnf_commands [] = {
 	{"repoquery", 0},
 	{"upgrade", 0},
 	{"advisory", 0},
-	{"--help", 1},
 	{"manager", 1},
 };
 
@@ -84,6 +83,10 @@ static struct red_cmd *_find_redmicrodnf_cmd (int argc, char *argv[]) {
 		}
 	}
 	return NULL;
+}
+
+static void redmicrodnfhelp(void) {
+
 }
 
 static int _exec_redmicrodnf(int argc, char *argv[], int argcount, char *subargv[]) {

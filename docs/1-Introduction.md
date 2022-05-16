@@ -2,6 +2,8 @@
 
 ![redpak log](images/logo_redpak.png "redpak logo")
 
+Redpak is available in redpesk with the commercial license.
+
 ## Links
 
 - github: https://github.com/redpesk-labs/red-pak

@@ -28,8 +28,9 @@ Below, there is the template of yaml configuration file
 ## Yaml defaut configuration
 
 <embed type="text/plain" src='images/default.txt' width="100%" height="500">
-<a href="https://github.com/redpesk-labs/red-pak/blob/master/etc/redpak/templates.d/default.yaml">main-system.yaml</a>
+<a href="https://github.com/redpesk-labs/red-pak/blob/master/etc/redpak/templates.d/default.yaml">default.yaml</a>
 </embed>
 
 ## Good Practises
+
 

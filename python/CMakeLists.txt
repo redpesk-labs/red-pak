@@ -21,7 +21,7 @@ set(Python3_SITELIB_PREFIXED ${Python3_SITELIB})
 # prepend CMAKE_INSTALL_PREFIX if not present
 execute_process(
     COMMAND ${Python3_EXECUTABLE} -c
-        "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(prefix='', plat_specific=False,standard_lib=False))"
+        "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(prefix='', plat_specific=False,standard_lib=True))"
     OUTPUT_VARIABLE Python3_SITELIB_PREFIXED
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
