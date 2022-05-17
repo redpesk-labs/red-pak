@@ -6,7 +6,7 @@ Redpak is available in redpesk with the commercial license.
 
 ## Links
 
-- github: https://github.com/redpesk-labs/red-pak
+- github: [https://github.com/redpesk-labs/red-pak](https://github.com/redpesk-labs/red-pak)
 
 ## Red-pak motivations
 

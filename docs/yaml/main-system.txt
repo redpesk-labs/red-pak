@@ -3,25 +3,27 @@
 #               redpak CoreOs config
 #
 # - Author: Fulup Ar Foll (fulup@iot.bzh)
+# - Author: Clément Bénier (clement.benier@iot.bzh)
 # - Define default exec time values for every rednode nspace
 # - Syntax is identical for all rednode (root, platform, terminal, ...)
 #
-# - CodeOS main.yaml should be edited manually
-# - RedNode main.yaml is typically generated at creation time from template:
-#   + red-dnf --redpath=/xxxx/xxxx --create --alias=xxxx [--template=Default]
+# - RedNode redpack.yaml is typically generated at creation time from template:
+#   + redwrap-dnf --redpath=/xxxx/xxxx --alias=xxxx [--template=default]
 #-----------------------------------------------------------------------------
 
 
 #---------------------------------------------------------------------
-# Headers:
-#   Alias: Mandatory it expands $NODE_ALIAS
-#   Name : A unique name for debug ($UUID will expand at creation time)
+# Headers: Automtically generated at the node creation
+#   Alias: alias of the node given by --alias at the creation or the basename of redpath
+#   Name : generated uuid
+#   Info: information of user/date
+#
+# below an header example
 #---------------------------------------------------------------------
-headers:
-    alias: coreos
-    name: $UUID
-    info: 'redpak root node config'
-
+# headers:
+#   alias: parent
+#   name: 77460e61-2dd7-4122-845f-4a644e01f73b
+#   info: Node created by rp-owner(localhost.localdomain) the 16-May-2022 May:29 (CEST)
 
 #---------------------------------------------------------------------
 # Config:
@@ -56,6 +58,13 @@ config:
     share_ipc: unset
     share_time: unset
 
+    # add/drop capabilities
+    # capabilities:
+    #   - cap: CAP_SHOWN
+    #     add: 1 # add capability
+    #   - cap: CAP_SHOWN
+    #     add: 0 # drop capability
+
     # Change HOSTNAME and move to prefere directory inside nspace
     hostname: $LEAF_ALIAS
     chdir: /home/$LEAF_ALIAS
@@ -64,16 +73,32 @@ config:
     die-with-parent: enabled
     new-session: unset
 
-#---------------------------------------------------------------------
-# Relocate: Relocate RPM in a rednode at installation time
-#   - default:
-#     + old='/'
-#     + new="$NODE_PATH"
-#
-#  Hopefull Default should do the job, otherwise you may provide your
-#  own list. Check 'rpm --location' for details.
-#---------------------------------------------------------------------
-
+    #---------------------------------------------------------------------
+    # cgroups v2:
+    # https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html
+    # cgroups:
+    #         cpuset:
+    #               cpus: 0-2
+    #               mems: 0
+    #               cpus_partition: member
+    #         mem:
+    #                 min: 10M
+    #                 low: 10M
+    #                 high: 521M
+    #                 max: 512M
+    #                 oom_group: 10
+    #                 swap_high: 1024M
+    #                 swap_max: 512M
+    #         cpu:
+    #                 max: 1000 1000
+    #                 weight: 200
+    #                 weight_nice: 10
+    #         io:
+    #               weight: 200
+    #               max: 8:0 rbps=2097152 wiops=120
+    #         pids:
+    #               max: 50
+    #---------------------------------------------------------------------
 
 #---------------------------------------------------------------------
 # Enviroment might be add or remove. Mode:
