@@ -33,17 +33,7 @@
 #include "lookup3.h"
 #include "redconf-merge.h"
 #include "redconf-utils.h"
-#include "redconf-hash.h"
-
-static const char *expandAlloc(const redNodeT *node, const char *input, int expand) {
-    if (!input)
-        return NULL;
-
-    if(expand)
-        return RedNodeStringExpand(node, NULL, input, NULL, NULL);
-    else
-        return strdup(input);
-}
+#include "redconf-hashmerge.h"
 
 // Only merge tags that should overloaded
 static int RedConfCopyConfTags(redConfTagT *source, redConfTagT *destination) {
@@ -114,114 +104,9 @@ redConfTagT *mergedConftags(const redNodeT *rootnode, int admin) {
 }
 
 /*************************************
- * MERGE EXPORTS *
- * **********************************/
-static const void *getDataExports(const redNodeT *node, int *count) {
-    *count = node->config->exports_count;
-    return (const void *)node->config->exports;
-}
-
-static int setDataExports(const redNodeT *node, const void *destdata, const void *srcdata, const char *hashkey, const char *warn, int expand) {
-    redConfExportPathT *export_expand = (redConfExportPathT*)destdata;
-    redConfExportPathT *export = (redConfExportPathT*)srcdata;
-
-    export_expand->mode = export->mode;
-    export_expand->mount = expandAlloc(node, export->mount, expand);
-    export_expand->info = strdup(node->redpath);
-    if(warn) export_expand->warn = strdup(warn);
-
-    //if not expand: free hashkey
-    if(!expand) {
-        free((char *)hashkey);
-        if(export->path)
-            export_expand->path = strdup(export->path);
-    } else {
-        export_expand->path = hashkey;
-    }
-
-    return 0;
-}
-
-static const char* getKeyExports(const redNodeT *node, const void *srcdata, int *ignore) {
-    redConfExportPathT *export = (redConfExportPathT*)srcdata;
-
-    /* if not leaf: ignore mode: */
-    if(node->childs->child && export->mode == RED_EXPORT_PRIVATE) {
-        *ignore = 1;
-        goto OnExit;
-    }
-
-    if(!export->path)
-        goto OnExit;
-
-    return RedNodeStringExpand (node, NULL, export->path, NULL, NULL);
-
-OnExit:
-    return NULL;
-}
-
-static int mergeExports(const redNodeT *rootnode, redNodeT *expandNode, int expand) {
-    int mergecount = -1;
-
-    redHashCbsT hashcbs = {
-        .getdata = getDataExports,
-        .getkey = getKeyExports,
-        .setdata = setDataExports,
-    };
-
-    expandNode->config->exports = (redConfExportPathT*)mergeData(rootnode, sizeof(redConfExportPathT), &mergecount, &hashcbs, 1, expand);
-    expandNode->config->exports_count = mergecount;
-
-    return 0;
-}
-
-/*************************************
- * MERGE CONFVARS *
- * **********************************/
-
-static const void *getDataConfVars(const redNodeT *node, int *count) {
-    *count = node->config->confvar_count;
-    return (const void *)node->config->confvar;
-}
-
-static int setDataConfVars(const redNodeT *node, const void *destdata, const void *srcdata, const char *hashkey, const char *warn, int expand) {
-    redConfVarT *confvar_expand = (redConfVarT*)destdata;
-    redConfVarT *confvar = (redConfVarT*)srcdata;
-
-    confvar_expand->key = hashkey;
-    confvar_expand->mode = confvar->mode;
-    if(confvar->value) confvar_expand->value = expandAlloc(node, confvar->value, expand);
-    confvar_expand->info = strdup(node->redpath);
-    if(warn) confvar_expand->warn = strdup(warn);
-
-    return 0;
-}
-
-static const char* getKeyConfVars(const redNodeT *node, const void *srcdata, int *ignore) {
-    redConfVarT *confvar = (redConfVarT*)srcdata;
-
-    return confvar->key ? strdup(confvar->key) : NULL;
-}
-
-static int mergeConfVars(const redNodeT *rootnode, redNodeT *expandNode, int expand) {
-    int mergecount = -1;
-
-    redHashCbsT hashcbs = {
-        .getdata = getDataConfVars,
-        .getkey = getKeyConfVars,
-        .setdata = setDataConfVars,
-    };
-
-    expandNode->config->confvar = (redConfVarT*)mergeData(rootnode, sizeof(redConfVarT), &mergecount, &hashcbs, 1, expand);
-    expandNode->config->confvar_count = mergecount;
-
-    return 0;
-}
-
-/*************************************
  * MAIN MERGE *
  * **********************************/
-redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand) {
+redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, int duplicate) {
 
     if (!rootNode) {
         for(rootNode = leaf; rootNode->ancestor; rootNode = rootNode->ancestor);
@@ -256,14 +141,20 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand) 
     mergedNode->config->conftag->chdir = expandAlloc(mergedNode, mergedNode->config->conftag->chdir, expand);
     mergedNode->config->conftag->umask = expandAlloc(mergedNode, mergedNode->config->conftag->umask, expand);
 
+    //capabilities
+    if(mergeCapabilities(rootNode, mergedNode->config->conftag, duplicate)) {
+        RedLog(REDLOG_ERROR, "Issue mergeCapabilities for %s", mergedNode->redpath);
+    }
+    mergedNode->config->conftag->umask = expandAlloc(mergedNode, mergedNode->config->conftag->umask, expand);
+
     //confvars
-    if(mergeConfVars(rootNode, mergedNode, expand)) {
+    if(mergeConfVars(rootNode, mergedNode, expand, duplicate)) {
         RedLog(REDLOG_ERROR, "Issue mergeConfVars for %s", mergedNode->redpath);
     }
 
 
     //exports
-    if(mergeExports(rootNode, mergedNode, expand)) {
+    if(mergeExports(rootNode, mergedNode, expand, duplicate)) {
         RedLog(REDLOG_ERROR, "Issue mergeExports for %s", mergedNode->redpath);
     }
 
@@ -278,7 +169,7 @@ const char *getMergeConfig(const char *redpath, size_t *len, int expand) {
     if (!redleaf)
         goto OnExit;
 
-    redNodeT *mergedNode = mergeNode(redleaf, NULL, expand);
+    redNodeT *mergedNode = mergeNode(redleaf, NULL, expand, 1);
     if (!mergedNode)
         goto OnExitFreeLeaf;
 

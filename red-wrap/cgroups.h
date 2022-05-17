@@ -15,7 +15,6 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* Documentation: https://github.com/tlsa/libcyaml/blob/master/docs/guide.md
 */
 
 #ifndef _CGROUPS_H_

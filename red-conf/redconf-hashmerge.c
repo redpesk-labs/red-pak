@@ -64,11 +64,11 @@ static int setDataExports(const void *destdata, redHashT *srchash, redHashT *ove
     redConfExportPathT *export_expand = (redConfExportPathT*)destdata;
     redConfExportPathT *export = (redConfExportPathT*)srchash->value;
 
-    if(overload)
+    if(overload) {
         warn = common_hashwarn(duplicate, srchash->key, srchash->node->redpath);
-
-    if (!duplicate)
-        goto ExitNoDuplicate;
+        if (!duplicate)
+            goto ExitNoDuplicate;
+    }
 
     export_expand->mode = export->mode;
     export_expand->mount = expandAlloc(srchash->node, export->mount, expand);
@@ -140,11 +140,11 @@ static int setDataConfVars(const void *destdata, redHashT *srchash, redHashT *ov
     redConfVarT *confvar_expand = (redConfVarT*)destdata;
     redConfVarT *confvar = (redConfVarT*)srchash->value;
 
-    if(overload)
+    if(overload) {
         warn = common_hashwarn(duplicate, srchash->key, srchash->node->redpath);
-
-    if (!duplicate)
-        goto ExitNoDuplicate;
+        if (!duplicate)
+            goto ExitNoDuplicate;
+    }
 
     confvar_expand->key = srchash->key;
     confvar_expand->mode = confvar->mode;
@@ -203,10 +203,10 @@ static int setDataCapabilities(const void *destdata, redHashT *srchash, redHashT
         } else if(!capoverload->add) {
                 warn = hashwarn(duplicate, "capability=%s is dropped by parent=%s", capsrc->cap, overload->node->redpath);
         }
-    }
+        if(!duplicate)
+            goto ExitNoDuplicate;
 
-    if(!duplicate)
-        goto ExitNoDuplicate;
+    }
 
     capdest->cap = strdup(capsrc->cap);
     capdest->add = capsrc->add;
@@ -223,7 +223,7 @@ static const char* getKeyCapabilities(const redNodeT *node, const void *srcdata,
     return cap->cap;
 }
 
-int mergeCapabilities(const redNodeT *rootnode, redNodeT *expandNode, int duplicate) {
+int mergeCapabilities(const redNodeT *rootnode, redConfTagT *mergedconftag, int duplicate) {
     int count;
 
     redHashCbsT hashcbs = {
@@ -232,8 +232,8 @@ int mergeCapabilities(const redNodeT *rootnode, redNodeT *expandNode, int duplic
         .setdata = setDataCapabilities,
     };
 
-    expandNode->config->conftag->capabilities = (redConfCapT*)mergeData(rootnode, sizeof(redConfCapT), &count, &hashcbs, 1, 0);
-    expandNode->config->conftag->capabilities_count = count;
+    mergedconftag->capabilities = (redConfCapT*)mergeData(rootnode, sizeof(redConfCapT), &count, &hashcbs, duplicate, 0);
+    mergedconftag->capabilities_count = count;
 
     return 0;
 }

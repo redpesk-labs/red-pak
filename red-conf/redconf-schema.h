@@ -137,6 +137,13 @@
     extern const cyaml_strval_t redConfOptStrings[];
 
     typedef struct {
+        const char *cap;
+        int add;
+        const char *info;
+        const char *warn;
+    } redConfCapT;
+
+    typedef struct {
         const char *rpmdir;
         const char *persistdir;
         const char *cachedir;
@@ -159,6 +166,8 @@
         redConfOptFlagE share_net;
         redConfOptFlagE share_time;
         redConfCgroupT *cgroups;
+        redConfCapT *capabilities;
+        int capabilities_count;
         int verbose;
     } redConfTagT;
 

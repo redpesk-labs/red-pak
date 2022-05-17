@@ -714,6 +714,15 @@ OnErrorExit:
 
 }
 
+const char *expandAlloc(const redNodeT *node, const char *input, int expand) {
+    if (!input)
+        return NULL;
+
+    if(expand)
+        return RedNodeStringExpand(node, NULL, input, NULL, NULL);
+    else
+        return strdup(input);
+}
 
 // return file inode (use to check if two path are pointing on the same file)
 int RedConfGetInod (const char* path) {

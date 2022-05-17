@@ -227,7 +227,7 @@ int RedDumpNodePathMerge(const char* redpath, int expand) {
 
     //looking for redroot
     for (redroot = node; redroot->ancestor; redroot = redroot->ancestor);
-    mergedNode = mergeNode(node, redroot, expand);
+    mergedNode = mergeNode(node, redroot, expand, 1);
 
     RedLog(REDLOG_DEBUG, "redroot path:%s", redroot->redpath);
     ret = DumpGetConfig(mergedNode->config);

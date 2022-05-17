@@ -21,11 +21,20 @@
 
 #include "redconf-schema.h"
 
+// hash structure
+typedef struct {
+    const char *key;
+    const void *value;
+    const redNodeT *node;
+    struct cds_lfht_node lfht_node;
+} redHashT;
+
 //callback to get data pointer from node and count nb
 typedef const void *(*RedGetDataHash)(const redNodeT *node, int *count);
+//callback to get key for hash
 typedef const char *(*RedGetKeyHash)(const redNodeT *node, const void *srcdata, int *ignore);
-//callback to set data values and need to return hashkey, pwarn is the pointer address of warn
-typedef int (*RedSetDataHash)(const redNodeT *node, const void *destdata, const void *srcdata, const char *hashkey, const char *warn, int expand);
+//callback to set data values
+typedef int (*RedSetDataHash)(const void *destdata, redHashT *srchash, redHashT *overload, int expand, int duplicate);
 
 typedef struct {
     RedGetDataHash getdata;

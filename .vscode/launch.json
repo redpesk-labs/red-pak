@@ -61,7 +61,7 @@
 				"-vvv",
 				"mergeconfig",
 				"-r",
-				"/var/redpak/testtest/bisou",
+				"/var/redpak/testtest",
 			],
 			"stopAtEntry": true,
 			"envFile": "${workspaceFolder}/.env",

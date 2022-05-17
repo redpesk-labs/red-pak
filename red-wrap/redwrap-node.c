@@ -25,6 +25,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include "redconf-hashmerge.h"
 #include "redwrap.h"
 
 static int mkdir_p(const char *path, mode_t mode) {
@@ -334,5 +335,24 @@ int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const c
     return 0;
 
 OnErrorExit:
+    return 1;
+}
+
+int RedSetCapabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount) {
+    redConfCapT *cap;
+
+    if(mergeCapabilities(rootnode, mergedConfTags, 0)) {
+        RedLog(REDLOG_ERROR, "ISsue to merge capabilities");
+        goto Error;
+    }
+
+    for(int i = 0; i < mergedConfTags->capabilities_count; i++) {
+        cap = mergedConfTags->capabilities+i;
+        argval[(*argcount)++] = cap->add ? "--cap-add" : "--cap-drop";
+        argval[(*argcount)++] = cap->cap;
+    }
+
+    return 0;
+Error:
     return 1;
 }

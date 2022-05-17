@@ -149,6 +149,11 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
 
     mergedConfTags = mergedConftags(rootNode, cliarg->adminpath ? 1 : 0);
 
+    if (RedSetCapabilities(rootNode, mergedConfTags, argval, &argcount)) {
+        RedLog(REDLOG_ERROR, "Cannot set capabilities");
+        goto OnErrorExit;
+    }
+
     //set cgroups
     if (isCgroups) {
         RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");

@@ -59,5 +59,6 @@ typedef struct {
 rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage);
 int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs,  int lastleaf, const char *argval[], int *argcount);
 int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount);
+int RedSetCapabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount);
 
 #endif

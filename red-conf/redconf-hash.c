@@ -32,11 +32,6 @@
 //hash function
 #include "lookup3.h"
 
-typedef struct {
-    const char *key;
-    struct cds_lfht_node lfht_node;
-} redHashT;
-
 static int destroyHashExport(struct cds_lfht *ht) {
     int err;
 	struct cds_lfht_iter iter;	/* For iteration on hash table */
@@ -60,7 +55,7 @@ static int hashmatch(struct cds_lfht_node *ht_node, const void *_key) {
     return !strncmp(key, hnode->key, sizeof(key)*strlen(key));
 }
 
-static int add_hash(struct cds_lfht *ht, const char *hashkey, char *warn, size_t warnlen, const char *info, int append_duplicate) {
+static int add_hash(struct cds_lfht *ht, redHashT *value, redHashT **hoverload) {
     struct cds_lfht_iter iter;	/* For iteration on hash table */
     struct cds_lfht_node *lookup_node; /* For checking if key already present */
     redHashT *hnode = NULL;  /* New Entry Hash table */
@@ -68,20 +63,16 @@ static int add_hash(struct cds_lfht *ht, const char *hashkey, char *warn, size_t
     size_t bytes; /* size in bytes of string */
 
     //get hash from string path
-    bytes = strlen(hashkey);
-    hash = hashlittle(hashkey, bytes, 0);
+    bytes = strlen(value->key);
+    hash = hashlittle(value->key, bytes, 0);
 
     //looking if path already in hash table
-    cds_lfht_lookup(ht, hash, hashmatch, hashkey, &iter);
+    cds_lfht_lookup(ht, hash, hashmatch, value->key, &iter);
     lookup_node = cds_lfht_iter_get_node(&iter);
     if(lookup_node) {
-        RedLog(REDLOG_WARNING, "hashkey=%s is overload by %s", hashkey, info);
+        redHashT *hnodeoverload = caa_container_of(lookup_node, redHashT, lfht_node);
 
-        // do not append in hash
-        if(!append_duplicate)
-            goto Exit;
-
-        snprintf(warn, warnlen, "value is overload by %s", info);
+        *hoverload = hnodeoverload;
     }
 
 
@@ -92,12 +83,14 @@ static int add_hash(struct cds_lfht *ht, const char *hashkey, char *warn, size_t
         goto Exit;
     }
 	memset(hnode, 0, sizeof(*hnode));
-    hnode->key = hashkey;
+    hnode->key = value->key;
+    hnode->value = value->value;
+    hnode->node = value->node;
 
     //add entry to hash table
     cds_lfht_node_init(&hnode->lfht_node);
     cds_lfht_add(ht, hash, &hnode->lfht_node);
-    RedLog(REDLOG_TRACE, "append hash=%lu sizeof=%d -%s-", hash, bytes, hashkey);
+    RedLog(REDLOG_TRACE, "append hash=%lu sizeof=%d -%s-", hash, bytes, value->key);
 
     return 0;
 Exit:
@@ -119,13 +112,13 @@ OnErrorExit:
     return 1;
 }
 
-void * mergeData(const redNodeT* rootnode, size_t dataLen, int *mergecount, redHashCbsT *hashcbs, int append_duplicate, int expand) {
+void *mergeData(const redNodeT* rootnode, size_t dataLen, int *mergecount, redHashCbsT *hashcbs, int duplicate, int expand) {
     int offset = 0, count = 0, ignore = 0;
     struct cds_lfht *ht = NULL;	/* Hash table */
-    const void *data;
-    void *destdata = NULL;
-    char warn[RED_MAXPATHLEN] = {0};
-    const char *hashkey;
+    const char *hashkey; /* key to hash */
+    const void *data, *itdata; // data and iterator on source data
+    void *destdata = NULL, *itdestdata; // data and iterator on destination data
+    redHashT *overload = NULL; //value stored in hash table if overloaded
 
     //allocate hash_table
     ht = cds_lfht_new(1, 1, 0, CDS_LFHT_AUTO_RESIZE | CDS_LFHT_ACCOUNTING, NULL);
@@ -137,32 +130,42 @@ void * mergeData(const redNodeT* rootnode, size_t dataLen, int *mergecount, redH
     // fill hash table
     for (const redNodeT *node = rootnode; node; node = node->childs->child) {
         data = hashcbs->getdata(node, &count);
+        if (count == 0)
+            continue;
 
         /* realloc at the nb of data: will be reajusted at the loop exit */
         if(allocdata(&destdata, offset + count, dataLen)) goto OnError;
 
         RedLog(REDLOG_TRACE, "redpath %s", node->redpath);
 
-        const void *itdata;
-        void *itdestdata;
         for (int i = 0; i < count; i++) {
+            overload = NULL; //reset overload value
+
             itdata = data + i * dataLen;
             itdestdata = destdata + offset * dataLen;
 	        memset(itdestdata, 0, dataLen);
 
-            ignore = 0;
+            ignore = 0; //reset ignore
+            // get key to hash
             hashkey = hashcbs->getkey(node, itdata, &ignore);
 
-            if(ignore)
+            if(!hashkey || ignore)
                 continue;
 
-            if(hashkey && add_hash(ht, hashkey, warn, sizeof(warn), node->redpath, append_duplicate)) {
+            redHashT value = {
+                .key = hashkey,
+                .node = node,
+                .value = itdata,
+            };
+
+            if(add_hash(ht, &value, &overload)) {
                 free((char *)hashkey);
-                continue;
+                goto OnError;
             }
 
-            if(hashcbs->setdata(node, itdestdata, itdata, hashkey, strlen(warn) > 0 ? warn : NULL, expand)) {
-                RedLog(REDLOG_ERROR, "Issue set data");
+            if(hashcbs->setdata(itdestdata, &value, overload, expand, duplicate)) {
+                RedLog(REDLOG_WARNING, "No data set for hashkey=%s redpath=%s", hashkey, node->redpath);
+                continue;
             }
 
             offset += 1;
