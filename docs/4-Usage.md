@@ -1,6 +1,8 @@
 # Usage
 
-## Presirequites
+## Presirequites on redpesk OS
+
+Please have a look to [link_name]({% chapter_link quickstart.boot-a-redpesk-image %}) to boot a redpesk image.
 
 ```bash
 # su root

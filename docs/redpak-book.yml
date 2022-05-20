@@ -16,3 +16,7 @@ books:
       name: Configuration
     - url: 4-Usage.md
       name: Usage Guide
+    - url: 5-Config-yaml-files-good-practices.md
+      name: Config yaml files good practices
+    - url: 6-Troubleshooting.md
+      name: Troubleshooting
