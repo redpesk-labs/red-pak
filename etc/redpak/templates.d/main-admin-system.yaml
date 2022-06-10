@@ -98,9 +98,6 @@ exports:
   mount: $NODE_PATH/var/cache/dnf
   path: $NODE_PATH/var/cache/dnf
 - mode: Restricted
-  mount: $NODE_PATH/var/lib/rpm/
-  path: $NODE_PATH/var/lib/rpm/
-- mode: Restricted
   mount: $NODE_PATH/etc/redpack.yaml
   path: $NODE_PATH/etc/redpack.yaml
 - mode: Restricted

@@ -20,10 +20,10 @@
 #
 # below an header example
 #---------------------------------------------------------------------
-# headers:
-#   alias: parent
-#   name: 77460e61-2dd7-4122-845f-4a644e01f73b
-#   info: Node created by rp-owner(localhost.localdomain) the 16-May-2022 May:29 (CEST)
+headers:
+  alias: parent
+  name: 77460e61-2dd7-4122-845f-4a644e01f73b
+  info: Node created by rp-owner(localhost.localdomain) the 16-May-2022 May:29 (CEST)
 
 #---------------------------------------------------------------------
 # Config:
