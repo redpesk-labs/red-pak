@@ -564,7 +564,7 @@ static int RedGetDefault(const char *envkey, RedConfDefaultsT *defaults, const r
     char envval[MAX_CYAML_FORMAT_STR] = {0};
     for (int idx=0; defaults[idx].label; idx++) {
         if (!strcmp (envkey, defaults[idx].label)) {
-            (*(RedGetDefaultCbT)defaults[idx].callback) (defaults[idx].label, (void*)node, defaults[idx].handle, envval);
+            (*(RedGetDefaultCbT)defaults[idx].callback) (defaults[idx].label, (void*)node, defaults[idx].handle, envval, MAX_CYAML_FORMAT_STR);
             break;
         }
     }

@@ -99,7 +99,7 @@ typedef enum {
     REDDEFLT_CB
 } RedConfDefaultE;
 
-typedef char*(*RedGetDefaultCbT)(const char *label, void *ctx, void*handle, char *output);
+typedef char*(*RedGetDefaultCbT)(const char *label, void *ctx, void*handle, char *output, size_t size);
 
 typedef struct {
     const char *label;
