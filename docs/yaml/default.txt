@@ -23,6 +23,7 @@ config:
 
     # 0=quiet, 1=info 2=debug
     verbose: 1
+    share_net: enabled
 
 environ:
 
@@ -30,9 +31,19 @@ environ:
     value: /run/user/$UID
     mode: Default
 
+  # systemd socket check pid match
+  - mode: Default
+    key: LISTEN_PID
+    value: 2
+
 # mounted paths not starting by '/' are prefixed by node effective path
 # mounting points are automatically prefixed by node 'alias' from 'header'
 exports:
+
+  # afb-binder install dir
+  - mode: Private
+    mount: /var/local
+    path: $NODE_PATH/var/local
 
  # provide a private permanent storage (i.e. to symlink home)
   - mount: /nodes/_private

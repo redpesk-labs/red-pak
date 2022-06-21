@@ -142,6 +142,26 @@ environ:
 # Export section from all rednode family cummulate
 #---------------------------------------------------------------------
 exports:
+  # systemd notify
+  - mode: RestrictedFile
+    mount: /run/systemd/notify
+    path: /run/systemd/notify
+
+  # afb-binder sockets
+  - mode: Public
+    mount: /run/platform
+    path: /run/platform
+
+  # afb-binder sockets
+  - mode: Public
+    mount: /run/user/$UID
+    path: /run/user/$UID
+
+  # afb-binder workdir
+  - mode: Public
+    mount: /home/$UID/app-data
+    path: /home/$UID/app-data
+
 
   # mount /usr/lib + /usr/bin in node '/' in order to keep /usr free for node hosted RPM
   - mount: /lib64

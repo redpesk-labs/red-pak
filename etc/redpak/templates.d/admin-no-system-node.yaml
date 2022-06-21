@@ -50,6 +50,11 @@ headers:
 #
 # Environement section from all rednode family cummulate
 #---------------------------------------------------------------------
+environ:
+# automatic binding install
+- mode: Default
+  key: AFMPKG_REDPAKID
+  value: $LEAF_NAME
 
 
 #---------------------------------------------------------------------
@@ -86,13 +91,13 @@ exports:
   mount: /etc/dnf/dnf.conf
   path: /etc/dnf/dnf.conf
 - mode: Restricted
-  mount: /usr/lib64/rpm-plugins/redpak.so
-  path: /usr/lib64/rpm-plugins/redpak.so
+  mount: /usr/lib64/rpm-plugins
+  path: /usr/lib64/rpm-plugins
 - mode: Restricted
   mount: /sbin
   path: /sbin
 - mount: /etc/dnf/vars/releasever
-  path: (source /etc/os-release; echo \$VERSION)
+  path: (source /etc/os-release; echo $VERSION_CODENAME)
   mode: Execfd
 - mode: Public #common cachedir between nodes
   mount: $NODE_PATH/var/cache/dnf
