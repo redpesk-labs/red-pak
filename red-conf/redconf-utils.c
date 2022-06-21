@@ -621,7 +621,7 @@ OnErrorExit:
     return 1;
 }
 
-int RedConfAppendEnvKey (char *outputS, int *idxOut, int maxlen, const char *inputS,  RedConfDefaultsT *defaults, const char* prefix, const char *trailler) {
+int RedConfAppendEnvKey (const redNodeT *node, char *outputS, int *idxOut, int maxlen, const char *inputS,  RedConfDefaultsT *defaults, const char* prefix, const char *trailler) {
     int err;
 
     if (!defaults) defaults=nodeConfigDefaults;
@@ -641,7 +641,7 @@ int RedConfAppendEnvKey (char *outputS, int *idxOut, int maxlen, const char *inp
             outputS[(*idxOut)++] = inputS[idxIn];
 
         } else {
-            err = RedConfGetEnvKey (NULL, defaults, &idxIn, inputS, idxOut, outputS, maxlen);
+            err = RedConfGetEnvKey (node, defaults, &idxIn, inputS, idxOut, outputS, maxlen);
             if (err) goto OnErrorExit;
         }
     }
