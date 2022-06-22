@@ -225,7 +225,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
         argval[argcount++]=subargv[idx];
     }
 
-    if (cliarg->verboseopts) {
+    if (1) {
         printf("\n#### OPTIONS ####\n");
         for (int idx=1; idx < argcount; idx++) {
             printf (" %s", argval[idx]);
