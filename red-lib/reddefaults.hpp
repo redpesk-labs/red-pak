@@ -24,8 +24,8 @@
 
 namespace redlib {
 	const std::map<std::string, std::string> REDDEFAULTS {
-    		{"redpak_MAIN", "/home/devel/installredpak/etc/redpak/main.yaml"},
-    		{"redpak_TMPL", "/home/devel/installredpak/etc/redpak/templates.d"},
+    		{"redpak_MAIN", "/home/devel/redpakinstall/etc/redpak/main.yaml"},
+    		{"redpak_TMPL", "/home/devel/redpakinstall/etc/redpak/templates.d"},
     		{"REDNODE_CONF", "$NODE_PATH/etc/redpack.yaml"},
     		{"REDNODE_STATUS", "$NODE_PATH/.rednode.yaml"},
     		{"REDNODE_VARDIR", "$NODE_PATH/var/lib/rpm"},

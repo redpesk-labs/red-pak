@@ -225,13 +225,13 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
         argval[argcount++]=subargv[idx];
     }
 
-    if (1) {
-        printf("\n#### OPTIONS ####\n");
-        for (int idx=1; idx < argcount; idx++) {
-            printf (" %s", argval[idx]);
-        }
-        printf ("\n###################\n");
-    }
+    //if (1) {
+    //    printf("\n#### OPTIONS ####\n");
+    //    for (int idx=1; idx < argcount; idx++) {
+    //        printf (" %s", argval[idx]);
+    //    }
+    //    printf ("\n###################\n");
+    //}
 
 
     int pipe_fd[2];

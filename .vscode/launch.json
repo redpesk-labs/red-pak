@@ -60,6 +60,7 @@
 			"args": [
 				"-vvv",
 				"mergeconfig",
+				"-e",
 				"-r",
 				"/var/redpak/testtest",
 			],
@@ -87,6 +88,32 @@
 				"tree",
 				"-r",
 				"/var/redpak",
+			],
+			"stopAtEntry": true,
+			"envFile": "${workspaceFolder}/.env",
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-gdb-set follow-fork-mode parent",
+					"ignoreFailures": false
+				}
+			],
+			"miDebuggerPath": "/usr/bin/gdb"
+		},
+		{
+			"name": "redwrap-dnf-instally",
+			"type": "cppdbg",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"program": "${workspaceFolder}/build/red-wrap/redwrap-dnf",
+			"args": [
+				"--redpath",
+				"/var/redpak/testtest",
+				"install",
+				"-y",
+				"strace",
 			],
 			"stopAtEntry": true,
 			"envFile": "${workspaceFolder}/.env",
