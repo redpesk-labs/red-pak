@@ -4,25 +4,27 @@ The purpose of this part is to give advices to write a config yaml file to
 configure your nodes within the hierarchical view.
 
 There are 4 parts in node config, and default yaml templates
-can be seen here: [Configuration]({% chapter_link redpak.configuration %})
+can be seen here: [Configuration]({% chapter_link redpak.configuration %}) chapter.
 
 Note that a node is totally manageable through the yaml config files and
 so directly represents the dynamic node behavior.
 
-* [redconf tool](#redconf-tool)
-* [Special variables](#config-special-variables)
-  * [Example](#example)
-    * [Parent point of view](#first-case-from-the-parent-point-of-view)
-    * [Child point of view](#second-case-from-the-child-point-of-view)
-* [Header part](#headers-part)
-* [Config part](#config-part)
-  * [namespaces](#namespaces)
-  * [capabilities](#capabilities)
-  * [cgroups](#cgroups)
-* [Export part](#export-part)
-  * [modes](#export-modes)
-  * [hierarchical constraints](#hierarchical-contraints)
-* [Environ part](#environ-part)
+- [Config yaml file good practices](#config-yaml-file-good-practices)
+  - [Redconf tool](#redconf-tool)
+  - [Config special variables](#config-special-variables)
+    - [Example](#example)
+      - [First case from the parent point of view](#first-case-from-the-parent-point-of-view)
+      - [Second case from the child point of view](#second-case-from-the-child-point-of-view)
+  - [Headers part](#headers-part)
+  - [Config part](#config-part)
+    - [Namespaces](#namespaces)
+    - [Capabilities](#capabilities)
+    - [Cgroups](#cgroups)
+  - [Export part](#export-part)
+    - [Export modes](#export-modes)
+    - [Export hierarchical constraints](#export-hierarchical-constraints)
+  - [Environ part](#environ-part)
+    - [Environ hierarchical constraints](#environ-hierarchical-constraints)
 
 ## Redconf tool
 
@@ -34,19 +36,18 @@ See [link_name]({% chapter_link redpak.usage-guide %}) section for more informat
 
 ## Config special variables
 
-There are some particular variables used by red-pak that defined proper red-pak features.
+There are some particular variables used by redpak that defined proper redpak features.
 
-* `LEAF_ALIAS` : the leaf/current node alias (e.g. child1)
-* `LEAF_PATH`: the leaf/current node path (/var/redpak/parent/child1)
-* `NODE_ALIAS`: this is the alias of the node: matching node alias from config file (e.g. /var/redpak)
-* `NODE_PATH`: this is the path of the node: matching node path from config file (e.g. /var/redpak)
+- `LEAF_ALIAS` : the leaf/current node alias (e.g. child1)
+- `LEAF_PATH`: the leaf/current node path (/var/redpak/parent/child1)
+- `NODE_ALIAS`: this is the alias of the node: matching node alias from config file (e.g. /var/redpak)
+- `NODE_PATH`: this is the path of the node: matching node path from config file (e.g. /var/redpak)
 
 There are defined in config file as environment variables.
 
 ### Example
 
 Here an example of nodes with a parent(/var/redpak/parent) and a child(var/redpak/parent/child).
-
 
 A part of the yaml config parent node:
 
@@ -104,7 +105,6 @@ redconf mergeconfig -r /var/redpak/parent
   mode: Restricted
 ```
 
-
 #### Second case from the child point of view
 
 Have a look at the expanded variable:
@@ -161,32 +161,32 @@ You can see example in default yaml file.
 The config part defined constraints and mandatory values of the nodes.
 
 Some values are cumulated as the `path` of `ldpath` other are overloaded by children,
-typacally some proper value of a node as `hostname`.
+typically some proper value of a node as `hostname`.
 
 Eventually, some values cannot be overloaded, they defined security constraints as namespace values.
 
 Here, the different constraint behavior is explained within the node hierarchy.
 
-* [namespaces](#namespaces)
-* [capabilities](#capabilities)
-* [cgroups](#cgroups)
+- [namespaces](#namespaces)
+- [capabilities](#capabilities)
+- [cgroups](#cgroups)
 
 ### Namespaces
 
 redpak handles all linux namespaces, see man documentation: [https://man7.org/linux/man-pages/man7/namespaces.7.html](https://man7.org/linux/man-pages/man7/namespaces.7.html)
 
-* share_user
-* share_cgroup
-* share_net
-* share_pid
-* share_ipc
-* share_time
+- share_user
+- share_cgroup
+- share_net
+- share_pid
+- share_ipc
+- share_time
 
 There are 3 states for these values:
 
-* `disabled` : means that a new namespace is created and none of the children can share it
-* `enabled` : means that the namespace is shared and children are allowed to disable it
-* `unset` : means that the disabled/enabled is authorize in children (default is disabled: meaning that if all nodes in the family is `unset` the namespace is disabled)
+- `disabled` : means that a new namespace is created and none of the children can share it
+- `enabled` : means that the namespace is shared and children are allowed to disable it
+- `unset` : means that the disabled/enabled is authorize in children (default is disabled: meaning that if all nodes in the family is `unset` the namespace is disabled)
 
 ### Capabilities
 
@@ -209,7 +209,7 @@ If a capability is added by a parent, a child can drop it.
 link to troubleshooting
 
 Cgroup for redpak only works in v2 version.
-All of the elements of redpak config file respects kernel definitions, please have a look at https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html.
+All of the elements of redpak config file respects kernel definitions, please have a look at [https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html).
 
 Cgroups already have a hierarchical behavior and so, for now there are no static ways to detect errors with cgroups.
 
@@ -229,14 +229,12 @@ In main cases, a export is defined by a yaml map of 3 elements like below:
   mode: Public # the mode
 ```
 
-* [modes](#export-modes)
-* [hierarchical constraints](#hierarchical-contraints)
+- [modes](#export-modes)
+- [hierarchical constraints](#export-hierarchical-constraints)
 
 ### Export modes
 
-
 Below the list of the different export modes in config file and with the hierarchical view:
-
 
 | Mode | description | where | path
 |-|-|-|-|
@@ -257,9 +255,9 @@ Below the list of the different export modes in config file and with the hierarc
 | `Devfs` | **new dev on `mount`** | current node/children | no |
 | `Lock` | **take a lock on `mount`** | current node/children | no |
 
-### Hierarchical contraints
+### Export hierarchical constraints
 
-The hierarchical contraints for exports are quite simple. All redundant mounts are ignored by red-pak. That is to say, a child cannot mount anything at the same destination.
+The hierarchical constraints for exports are quite simple. All redundant mounts are ignored by redpak. That is to say, a child cannot mount anything at the same destination.
 
 Thus, a child should never have a same destination mount path in its configuration. `redconf mergeconfig` can help to check such information. See [link_name]({% chapter_link redpak.usage-guide %}) for more detail.
 
@@ -313,9 +311,9 @@ Here below the different modes:
 - Execfd: User bash command STDOUT as var value
 - Remove: Skim existing environment
 
-### Hierarchical constraints
+### Environ hierarchical constraints
 
-The contraints are similar to export contraints, a environment variable cannot be overload by a child.
+The constraints are similar to export constraints, a environment variable cannot be overload by a child.
 
 ```yaml
 #  parent

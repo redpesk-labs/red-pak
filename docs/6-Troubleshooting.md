@@ -46,11 +46,11 @@ A temporary way to test it, is to append the missing ones at each level, for exa
 echo "+cpuset +cpu +memory +io +pids" > cgroup.subtree_control
 ```
 
-After you can check that in clild, you have them in controlles
+After you can check that in child, you have them in controllers
 
 ```bash
 # in child
-cat cgroup.contollers
+cat cgroup.controllers
 ```
 
 ### Issue writing into controllers

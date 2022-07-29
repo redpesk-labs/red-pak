@@ -1,48 +1,46 @@
 # Concept
 
-# Specfication Illustration
+## Specification Illustration
 
 ![redpak concept](images/concept.svg "redpak concept")
 
-## Control tools
+### Control tools
 
-- green part: provide control toos that offer linux and used in most of the container
-- yellow part: represents the storage on disk that is used by the container in order to share ressources with the system and also with parents. Indeed, redpak has a representation of a tree type parent-child.
+- green part: provide control tools that offer linux and used in most of the container
+- yellow part: represents the storage on disk that is used by the container in order to share resources with the system and also with parents. Indeed, redpak has a representation of a tree type parent-child.
 - package manager: install/update/remove atomic by node
 
-# Hierarchy
+## Hierarchy
 
 ![redpak hierarchy](images/hierarchy.svg "redpak hierarchy")
 
-## Tree structure
+### Tree structure
 
-Redpak has a tree structure of type parent-child
+redpak has a tree structure of type parent-child
 where each element is called a **node** or **rednode**
 and can be a container.
 
-## Gather ressources
+### Gather resources
 
 The idea is to gather resources between different containers
 running different type of applications.
 
-This scheme represents an example of a possible organisation
+This scheme represents an example of a possible organization
 of containers.
 Different platforms are provides as redpesk or AGL
 with different profiles inside like IVI or HTML5.
 It also means that several versions of
 a same library can be shared between brothers for example.
 
-## Inherit security constraints: Russian Doll
+### Inherit security constraints: Russian Doll
 
 Another idea is to inherit from security constraints from parents,
 indeed redpak defines that each child cannot bypass its parent constraints.
 In fact, redpak can be seen as a behavior of russian doll.
 
-
-# Rednodes
+## Rednodes
 
 ![redpak nodes](images/nodes.svg "redpak nodes")
-
 
 A rednode is an element of the hierarchy,
 on this example, there are platform, profile, project nodes.
@@ -54,8 +52,7 @@ directories.
 
 And all this is entirely configurable with config yaml files.
 
-
-# Rpm databases
+## Rpm databases
 
 ![redpak rpm databases](images/rpmdatabases.svg "redpak rpm databases")
 
@@ -78,7 +75,7 @@ for example:
 redwrap-dnf --redpath /var/redpak/<MYNODE> install <MYPKG>
 ```
 
-# Performance
+## Performance
 
 ![redpak performance](images/performance.svg "redpak performance")
 
@@ -95,7 +92,7 @@ command and this is the difference you see on the table.
 the starting time is very interesting for embedded and redpak was also meant
 to do so, so it is satisfying
 
-The second mesurement is about the memory usage
+The second measurement is about the memory usage
 
 for that, Each container launches multiple processes. For each of them, the amount of used memory of their processes has been added up to
 get the total used memory by the engine of the container. The memory consumption was given by the `ps auxc` command.
@@ -103,9 +100,9 @@ get the total used memory by the engine of the container. The memory consumption
 The memory usage is quite similar to lxc so it is quite good, but there some points to be careful, each level adds some times and memory
 (these tests were done at the first level).
 
-Some other feature like execfd mount mode can be very greedy so it really depends on configuration too, for these mesureament it was done with the default configuration.:w
+Some other feature like execfd mount mode can be very greedy so it really depends on configuration too, for these measurement it was done with the default configuration.:w
 
-# Conclusion
+## Conclusion
 
 REDPAK is designed to match constraints of embedded world, by sharing resources with not only systems but also parents.
 It is also meant to be totally manageable with rpm packages.

@@ -17,10 +17,10 @@ Below, there is the template of yaml configuration file
 
 <iframe src="yaml/main-system.txt" width="100%" height="800"/>
 
-## Yaml defaut configuration
+## Yaml default configuration
 
 <iframe src="yaml/default.txt" width="100%" height="500"/>
 
-## Good Practises
+## Good Practices
 
 To see good practices to write yaml config node file see [Goog practices]({% chapter_link redpak.config-yaml-files-good-practices %})
