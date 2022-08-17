@@ -81,24 +81,28 @@
     } redConfCgroupT;
 
     typedef enum {
-        RED_EXPORT_PRIVATE=0,
-        RED_EXPORT_RESTRICTED,
-        RED_EXPORT_PRIVATE_RESTRICTED,
-        RED_EXPORT_PUBLIC,
-        RED_EXPORT_PRIVATE_FILE,
-        RED_EXPORT_RESTRICTED_FILE,
-        RED_EXPORT_PUBLIC_FILE,
-        RED_EXPORT_ANONYMOUS,
-        RED_EXPORT_SYMLINK,
-        RED_EXPORT_EXECFD,
-        RED_EXPORT_DEFLT,
-        RED_EXPORT_DEVFS,
-        RED_EXPORT_TMPFS,
-        RED_EXPORT_MQUEFS,
-        RED_EXPORT_PROCFS,
-        RED_EXPORT_LOCK,
+        RED_EXPORT_PRIVATE              = 1 << 0,
+        RED_EXPORT_RESTRICTED           = 1 << 1,
+        RED_EXPORT_PRIVATE_RESTRICTED   = 1 << 2,
+        RED_EXPORT_PUBLIC               = 1 << 3,
+        RED_EXPORT_PRIVATE_FILE         = 1 << 4,
+        RED_EXPORT_RESTRICTED_FILE      = 1 << 5,
+        RED_EXPORT_PUBLIC_FILE          = 1 << 6,
+        RED_EXPORT_ANONYMOUS            = 1 << 7,
+        RED_EXPORT_SYMLINK              = 1 << 8,
+        RED_EXPORT_EXECFD               = 1 << 9,
+        RED_EXPORT_DEFLT                = 1 << 10,
+        RED_EXPORT_DEVFS                = 1 << 11,
+        RED_EXPORT_TMPFS                = 1 << 12,
+        RED_EXPORT_MQUEFS               = 1 << 13,
+        RED_EXPORT_PROCFS               = 1 << 14,
+        RED_EXPORT_LOCK                 = 1 << 15,
     } redExportFlagE;
     extern const cyaml_strval_t exportFlagStrings[];
+
+    static const unsigned int RED_EXPORT_PRIVATES = RED_EXPORT_PRIVATE | RED_EXPORT_PRIVATE_FILE;
+    static const unsigned int RED_EXPORT_FILES = RED_EXPORT_PRIVATE_FILE | RED_EXPORT_RESTRICTED_FILE | RED_EXPORT_PUBLIC_FILE;
+    static const unsigned int RED_EXPORT_DIRS = RED_EXPORT_PRIVATE | RED_EXPORT_RESTRICTED | RED_EXPORT_PUBLIC;
 
     typedef enum {
         RED_CONFVAR_DEFLT=0,

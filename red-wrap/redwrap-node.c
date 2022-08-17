@@ -85,7 +85,7 @@ static int RwrapCreateDir(const char *path, redConfigT *configN, int forcemod) {
         }
     }
     if (err) {
-        RedLog(REDLOG_ERROR, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", configN->headers->alias, path, strerror(errno));
+        RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", configN->headers->alias, path, strerror(errno));
         return err;
     }
     return 0;
@@ -120,73 +120,45 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         // if mouting path is not privide let's duplicate mount
         if (!path) path=mount;
-        switch (mode) {
-        case RED_EXPORT_PRIVATE_FILE:
-            if (lastleaf) {
-                expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-                if (expandpath && (stat(path, &status) >= 0))
-                    RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
-                else
-                    RedLog(REDLOG_WARNING, "*** Node [%s] export path=%s Missing file, not mount for now", configN->headers->alias, expandpath);
-            }
-            break;
-        case RED_EXPORT_PRIVATE:
-            // on export if we are in terminal lead node
-            if (lastleaf) {
-                expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-                RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
-                if (expandpath) {
-                    if (RwrapCreateDir(expandpath, configN, cliargs->forcemod) < 0)
-                        goto OnErrorExit;
-                }
-            }
-            break;
+        // if private and not last leaf: ignore
+        if (mode & RED_EXPORT_PRIVATES && !lastleaf)
+            continue;
 
-        case RED_EXPORT_PUBLIC_FILE:
-            expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-            if (!expandpath && (stat(path, &status) >= 0))
-                RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
-            else
-                RedLog(REDLOG_WARNING, "*** Node [%s] export path=%s Missing file, not mount for now", configN->headers->alias, expandpath);
-            break;
-        case RED_EXPORT_PUBLIC:
-            expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-            RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
-            if (expandpath) {
-                if (RwrapCreateDir(expandpath, configN, cliargs->forcemod) < 0)
-                    goto OnErrorExit;
+        expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
+
+        // if directory: check/try to create it in forcemod else ignore
+        if (mode & RED_EXPORT_DIRS) {
+            if (RwrapCreateDir(expandpath, configN, cliargs->forcemod))
+                continue;
+        }
+        // if file: check file exists
+        else if (mode & RED_EXPORT_FILES) {
+            if (stat(expandpath, &status) >= 0) {
+                RedLog(REDLOG_WARNING,
+                       "*** Node [%s] export path=%s Missing file, not mount for now(error=%s)",
+                       configN->headers->alias, expandpath, strerror(errno));
+                continue;
             }
+        }
+
+        switch (mode) {
+
+        case RED_EXPORT_PRIVATE:
+        case RED_EXPORT_PUBLIC:
+        case RED_EXPORT_PRIVATE_FILE:
+        case RED_EXPORT_PUBLIC_FILE:
+            RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
             break;
 
         case RED_EXPORT_RESTRICTED_FILE:
-            expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-            if (expandpath && (stat(path, &status) >= 0))
-                RwrapMountModeArgval(node, mount, "--ro-bind", expandpath, argval, argcount);
-            else
-                RedLog(REDLOG_WARNING, "*** Node [%s] export path=%s Missing file, not mount for now", configN->headers->alias, expandpath);
-            break;
         case RED_EXPORT_RESTRICTED:
-            expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-            RwrapMountModeArgval(node, mount, "--ro-bind", expandpath, argval, argcount);
-            if (expandpath) {
-                if (RwrapCreateDir(expandpath, configN, cliargs->forcemod) < 0)
-                    goto OnErrorExit;
-            }
-            break;
-
         case RED_EXPORT_PRIVATE_RESTRICTED:
-            // on export in ro if we are in terminal lead node
-            if (lastleaf) {
-                expandpath = RedNodeStringExpand (node, NULL, path, NULL, NULL);
-                argval[(*argcount)++]="--ro-bind";
-                argval[(*argcount)++]=expandpath;
-                argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
-            }
+            RwrapMountModeArgval(node, mount, "--ro-bind", expandpath, argval, argcount);
             break;
 
         case RED_EXPORT_SYMLINK:
             argval[(*argcount)++]="--symlink";
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, path, NULL, NULL);
+            argval[(*argcount)++]=expandpath;
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
 
@@ -199,7 +171,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         case RED_EXPORT_DEFLT:
             argval[(*argcount)++]="--file";
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, path, NULL, NULL);
+            argval[(*argcount)++]=expandpath;
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
 
@@ -225,12 +197,12 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         case RED_EXPORT_MQUEFS:
             argval[(*argcount)++]="--mqueue";
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, path, NULL, NULL);
+            argval[(*argcount)++]=expandpath;
             break;
 
         case RED_EXPORT_LOCK:
             argval[(*argcount)++]="--lock-file";
-            argval[(*argcount)++]= RedNodeStringExpand (node, NULL, path, NULL, NULL);
+            argval[(*argcount)++]= expandpath;
             break;
 
         default:
