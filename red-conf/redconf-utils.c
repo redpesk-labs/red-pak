@@ -161,7 +161,7 @@ redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int verbose) {
     // check redpath is a readable directory
     error= stat(redpath, &statinfo);
     if (error || !S_ISDIR(statinfo.st_mode)) {
-        RedLog(REDLOG_ERROR, "Not a readable directory redpath=%s", redpath);
+        RedLog(REDLOG_ERROR, "Not a readable directory redpath=%s error=%s", redpath, strerror(errno));
         goto OnErrorExit;
     }
 
