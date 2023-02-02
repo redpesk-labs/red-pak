@@ -23,4 +23,4 @@ Below, there is the template of yaml configuration file
 
 ## Good Practices
 
-To see good practices to write yaml config node file see [Goog practices]({% chapter_link redpak.config-yaml-files-good-practices %})
+To see good practices to write yaml config node file see [Good practices]({% chapter_link redpak.config-yaml-files-good-practices %})
