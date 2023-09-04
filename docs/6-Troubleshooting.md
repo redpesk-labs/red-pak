@@ -33,6 +33,8 @@ If you don't have right to create a sub cgroup into your current parent cgroup, 
 You can try to start one with:
 
 ```bash
+# rp-owner
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus
 systemd-run --user --pty -p "Delegate=yes"  bash
 ```
 
