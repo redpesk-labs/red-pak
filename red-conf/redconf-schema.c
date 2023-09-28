@@ -163,6 +163,7 @@ static const cyaml_schema_field_t EnvTagSchema[] = {
     CYAML_FIELD_STRING_PTR("umask", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, umask, 0, CYAML_UNLIMITED),
     CYAML_FIELD_INT("verbose", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, verbose),
     CYAML_FIELD_INT("maxage", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, maxage),
+    CYAML_FIELD_INT("map-root-user", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, maprootuser),
     CYAML_FIELD_BOOL("gpgcheck", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, gpgcheck),
     CYAML_FIELD_BOOL("inherit", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, inherit),
     CYAML_FIELD_BOOL("unsafe", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, unsafe),

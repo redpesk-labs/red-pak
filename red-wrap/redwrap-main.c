@@ -74,16 +74,18 @@ Error:
     return err;
 }
 
-static int setuidgidmap(int pid) {
+static int setuidgidmap(int pid, int maprootuser) {
     const int MAP_BUF_SIZE = 100;
     char map_path[PATH_MAX];
     char map_buf[MAP_BUF_SIZE];
     int uid = getuid();
     int gid = getgid();
+    int uid_to_map = maprootuser ? 0 : uid;
+    int gid_to_map = maprootuser ? 0 : gid;
 
     /* set uid map */
     snprintf(map_path, PATH_MAX, "/proc/%d/uid_map", pid);
-    snprintf(map_buf, MAP_BUF_SIZE, "%d %d 1", uid, uid);
+    snprintf(map_buf, MAP_BUF_SIZE, "%d %d 1", uid_to_map, uid);
     if(setmap(map_path, map_buf))
         goto Error;
 
@@ -95,7 +97,7 @@ static int setuidgidmap(int pid) {
 
     /* set gid map */
     snprintf(map_path, PATH_MAX, "/proc/%d/gid_map", pid);
-    snprintf(map_buf, MAP_BUF_SIZE, "%d %d 1", gid, gid);
+    snprintf(map_buf, MAP_BUF_SIZE, "%d %d 1", gid_to_map, gid);
     if(setmap(map_path, map_buf))
         goto Error;
 
@@ -263,7 +265,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
         }
         return 0;
     }
-    setuidgidmap(pid);
+    setuidgidmap(pid, mergedConfTags->maprootuser);
     /* signal child that uid/gid maps are set */
     close(pipe_fd[1]);
     int returnStatus;

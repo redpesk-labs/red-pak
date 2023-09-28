@@ -50,6 +50,7 @@ static int RedConfCopyConfTags(redConfTagT *source, redConfTagT *destination) {
     if (source->diewithparent) destination->diewithparent = source->diewithparent;
     if (source->newsession) destination->newsession = source->newsession;
     if (source->umask)  destination->umask = source->umask;
+    if (source->maprootuser)  destination->maprootuser = source->maprootuser;
 
     if(destination->share_all != RED_CONF_OPT_DISABLED) destination->share_all = source->share_all;
     if(destination->share_user != RED_CONF_OPT_DISABLED) destination->share_user = source->share_user;
