@@ -111,7 +111,7 @@ environ:
 #---------------------------------------------------------------------
 exports:
   # systemd notify
-  - mode: RestrictedFile
+  - mode: Public
     mount: /run/systemd/notify
     path: /run/systemd/notify
 
