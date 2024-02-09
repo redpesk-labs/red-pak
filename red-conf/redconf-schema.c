@@ -179,6 +179,7 @@ static const cyaml_schema_field_t EnvTagSchema[] = {
     CYAML_FIELD_MAPPING_PTR("cgroups", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, cgroups, CgroupsSchema),
     CYAML_FIELD_STRING_PTR("hostname", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, hostname, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("chdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, chdir, 0, CYAML_UNLIMITED),
+    CYAML_FIELD_STRING_PTR("cgrouproot", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, cgrouproot, 0, CYAML_UNLIMITED),
     CYAML_FIELD_SEQUENCE("capabilities", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, capabilities, &CapabilitiesSchema, 0, CYAML_UNLIMITED),
     CYAML_FIELD_END
 };

@@ -89,7 +89,7 @@ OnErrorExit:
     return -1;
 }
 
-static void replaceSlashDash(const char *source, char *dest) {
+void replaceSlashDash(const char *source, char *dest) {
     int i;
     char *tmp_source = (char *)source;
     if(tmp_source[0] == '/')
@@ -105,7 +105,6 @@ static void replaceSlashDash(const char *source, char *dest) {
 
 static int get_parent_cgroup(char *cgroup_parent) {
 	int count, cgProcFd;
-	size_t size_cgroup_parent;
     char buf[PATH_MAX];
 
 	//get current cgroup
@@ -119,73 +118,140 @@ static int get_parent_cgroup(char *cgroup_parent) {
 	count = read(cgProcFd, (void *)buf, 3);
 	if (count != 3) {
         RedLog(REDLOG_ERROR, "Cannot read 3 first characters count=%d buf=%s", count, buf);
-		goto OnErrorExit;
+		goto OnErrorCloseExit;
     }
 
     count = read(cgProcFd, (void *)buf, PATH_MAX);
     if (count <= 0 ) {
         RedLog(REDLOG_ERROR, "[/proc/self/cgroup] cannot read current cgroup error=%s", strerror(errno));
-        goto OnErrorExit;
+        goto OnErrorCloseExit;
     }
 
 	if (count == PATH_MAX) {
 		RedLog(REDLOG_ERROR, "[proc-cgroups-too-long] /proc/self/cgroup has a too long path cannot read");
-		goto OnErrorExit;
+		goto OnErrorCloseExit;
 	}
+
     // last character should be \n
     buf[count-1] = '\0';
 
-    //add 4 because of /..
-	size_cgroup_parent = strlen(CGROUPS_MOUNT_POINT) + strlen(buf) + 4;
-    snprintf(cgroup_parent, size_cgroup_parent, "%s%s/..", CGROUPS_MOUNT_POINT, buf);
+    snprintf(cgroup_parent, PATH_MAX, "%s%s", CGROUPS_MOUNT_POINT, buf);
+
+    //check if cgroup is matching CGROUPS_ROOT_LEAF_NAME and so return parent/..
+    int off = strlen(buf) - strlen(CGROUPS_ROOT_LEAF_NAME);
+    if (off >= 0 && !strcmp(buf+off, CGROUPS_ROOT_LEAF_NAME))
+        strncat(cgroup_parent, "/..", PATH_MAX);
+
+    close(cgProcFd);
 	return 0;
 
+OnErrorCloseExit:
+    close(cgProcFd);
 OnErrorExit:
 	return -1;
 }
 
+static int moveProcstoLeaf(int parentFd) {
+    int procsFd, parentLeafFd = 0, count;
+    char buf[20];
+    char pid[10];
 
-int cgroups (redConfCgroupT *cgroups, const char *cgroup_name) {
+    procsFd = openat(parentFd, "cgroup.procs", O_RDONLY);
+    if (procsFd < 0) {
+        RedLog(REDLOG_ERROR, "[cgroups-procs-not-found] error=%s", strerror(errno));
+        goto OnErrorExit;
+    }
+
+    int j=0;
+    do {
+        count = read(procsFd, (void *)buf, 2);
+        if (count < 0 ) {
+            RedLog(REDLOG_ERROR, "[cgroups-procs] cannot read current cgroup.procs error=%s", strerror(errno));
+            goto OnErrorCloseExit;
+        }
+
+        for (int i = 0; i < count; i++) {
+            if (buf[i] != '\n') {
+                pid[j] = buf[i];
+                j++;
+            }
+            else {
+                pid[j] = '\0';
+                if (!parentLeafFd) {
+                    //create leaf cgroup for moving process pids
+                    parentLeafFd = openCreateCgroupFromDir(parentFd, CGROUPS_ROOT_LEAF_NAME);
+                    if(parentLeafFd < 0) {
+                        goto OnErrorCloseExit;
+                    }
+                }
+
+                //move process
+                if (utilsFileAddControl("cgroup.procs", parentLeafFd, "cgroup.procs", pid)) {
+                    RedLog(REDLOG_ERROR, "Cannot switch process pids %d to node cgroup error=%s", pid, strerror(errno));
+                    goto OnErrorCloseExit2;
+                }
+                j = 0;
+            }
+        }
+    } while(count > 0);
+
+
+    close(procsFd);
+    return 0;
+
+OnErrorCloseExit2:
+    close(parentLeafFd);
+OnErrorCloseExit:
+    close(procsFd);
+OnErrorExit:
+	return -1;
+}
+
+int cgroups (redConfCgroupT *cgroups, const char *cgroup_name, char *cgroup_parent) {
     int err, cgRootFd, subgroupFd = 0, subgroupNodeFd;
     char pid[1000];
-    char cgroup_parent[PATH_MAX];
-    char *cgroup_name_unshlash;
-
-	//remove / from cgroup name
-    cgroup_name_unshlash = (char *)alloca(strlen(cgroup_name));
-    replaceSlashDash(cgroup_name, cgroup_name_unshlash);
 
 	// get current parent cgroup
-	if (get_parent_cgroup(cgroup_parent) < 0) {
-		goto OnErrorExit;
-	}
+    if (strlen(cgroup_parent) == 0) {
+	    if (get_parent_cgroup(cgroup_parent) < 0) {
+	    	goto OnErrorExit;
+	    }
+    }
 
-    RedLog(REDLOG_DEBUG, "[cgroup=%s]: cgroup_parent=%s\n", cgroup_name_unshlash, cgroup_parent);
+    RedLog(REDLOG_DEBUG, "[cgroup=%s]: cgroup_parent=%s", cgroup_name, cgroup_parent);
 
     // get fd parent cgroup
     cgRootFd = open(cgroup_parent, O_DIRECTORY);
     if (cgRootFd <= 0) {
-        RedLog(REDLOG_ERROR, "[cgroups-not-found] cgroup='%s' error=%s", cgroup_name, cgroup_name, strerror(errno));
+        RedLog(REDLOG_ERROR, "[cgroups-not-found] cgroup_parent=%s error=%s", cgroup_parent, strerror(errno));
         goto OnErrorExit;
     }
 
     // get/create cgroup subgroup
-    subgroupFd = openCreateCgroupFromDir(cgRootFd, cgroup_name_unshlash);
+    subgroupFd = openCreateCgroupFromDir(cgRootFd, cgroup_name);
     if (subgroupFd < 0)
-        goto OnErrorExit;
-
+        goto OnErrorClose1Exit;
 
     // get/create cgroup leaf for current node
     subgroupNodeFd = openCreateCgroupFromDir(subgroupFd , "node");
     if (subgroupNodeFd < 0)
-        goto OnErrorExit;
+        goto OnErrorClose2Exit;
+
+    // move all process into cgroups leaf
+    // see the no internal process contraint
+    // https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#no-internal-process-constraint
+    err = moveProcstoLeaf(cgRootFd);
+    if (err) {
+        RedLog(REDLOG_ERROR, "Cannot move all pids from cgroup_parent=%s to leaf error=%s", cgroup_parent, strerror(errno));
+        goto OnErrorCloseExit;
+    }
 
     //switch current process to node leaf cgroup
     sprintf(pid, "%d", (int)getpid());
     err = utilsFileAddControl(cgroup_name, subgroupNodeFd, "cgroup.procs", pid);
     if (err) {
-        RedLog(REDLOG_ERROR, "Cannot switch current process %d to node cgroup error=%s", pid, strerror(errno));
-        goto OnErrorExit;
+        RedLog(REDLOG_ERROR, "Cannot switch current process %s to node cgroup error=%s", pid, strerror(errno));
+        goto OnErrorCloseExit;
     }
 
     // delegate controllers in parent cgroup
@@ -193,6 +259,8 @@ int cgroups (redConfCgroupT *cgroups, const char *cgroup_name) {
     if (err) {
         RedLog(REDLOG_WARNING, "[cgroups-set-failed] node='%s' cgroups='%s' error=%s", cgroup_name, cgroup_name, strerror(errno));
     }
+
+    RedLog(REDLOG_DEBUG, "[cgroups]: create cgroup from parent %s cgroup=%s", cgroup_parent, cgroup_name);
 
     if (!cgroups)
         goto OnSuccessExit;
@@ -234,20 +302,25 @@ OnSuccessExit:
     close(subgroupNodeFd);
     return 0;
 
+OnErrorCloseExit:
+    close(subgroupNodeFd);
+OnErrorClose2Exit:
+    close(subgroupFd);
+OnErrorClose1Exit:
+    close(cgRootFd);
 OnErrorExit:
     RedLog(REDLOG_ERROR,
-        "\n[CGROUP ERROR]: cgroup error can be caused from several causes\n"
+        "\n[CGROUP ERROR]: cgroup error can be caused from several causes:\n"
         "First you need to have rights to create cgroup into parent directory=%s\n"
+        "or to move the process into created cgroup\n"
         "if you don't, maybe it is because your not in an user session,\n"
         "or because some controllers are not delegate to children\n"
         "for that you can try: \n"
         "'systemd-run --user --pty -p \"Delegate=yes\"  bash'\n"
         "if it still fails, check %s/cgroup.controllers and %s/cgroup.subtree_control\n"
+        "See redpak documentation troubleshooting: https://docs.redpesk.bzh/docs/en/master/redpesk-os/redpak/6-Troubleshooting.html\n"
         "For controller issues see: https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
         cgroup_parent, cgroup_parent, cgroup_parent
         );
-    close(cgRootFd);
-    close(subgroupFd);
-    close(subgroupNodeFd);
     return -1;
 } // end

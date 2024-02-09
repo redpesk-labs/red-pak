@@ -51,6 +51,7 @@ static int RedConfCopyConfTags(redConfTagT *source, redConfTagT *destination) {
     if (source->newsession) destination->newsession = source->newsession;
     if (source->umask)  destination->umask = source->umask;
     if (source->maprootuser)  destination->maprootuser = source->maprootuser;
+    if (source->cgrouproot) destination->cgrouproot = source->cgrouproot;
 
     if(destination->share_all != RED_CONF_OPT_DISABLED) destination->share_all = source->share_all;
     if(destination->share_user != RED_CONF_OPT_DISABLED) destination->share_user = source->share_user;
@@ -141,6 +142,7 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, 
     mergedNode->config->conftag->hostname = expandAlloc(mergedNode, mergedNode->config->conftag->hostname, expand);
     mergedNode->config->conftag->chdir = expandAlloc(mergedNode, mergedNode->config->conftag->chdir, expand);
     mergedNode->config->conftag->umask = expandAlloc(mergedNode, mergedNode->config->conftag->umask, expand);
+    mergedNode->config->conftag->cgrouproot = expandAlloc(mergedNode, mergedNode->config->conftag->cgrouproot, expand);
 
     //capabilities
     if(mergeCapabilities(rootNode, mergedNode->config->conftag, duplicate)) {

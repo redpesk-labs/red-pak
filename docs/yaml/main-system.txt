@@ -72,6 +72,7 @@ config:
     # nspace command control
     die-with-parent: enabled
     new-session: unset
+    cgrouproot: /sys/fs/cgroup/user.slice/user-$UID.slice/user@$UID.service
 
     #---------------------------------------------------------------------
     # cgroups v2:

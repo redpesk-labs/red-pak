@@ -106,6 +106,31 @@ Error:
     return -1;
 }
 
+static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
+    char cgroupParent[PATH_MAX] = {0};
+    char *cgroup_name;
+
+    if (mergedConfTags->cgrouproot) {
+        mergedConfTags->cgrouproot = RedNodeStringExpand (rootNode, NULL, mergedConfTags->cgrouproot, NULL, NULL);
+        strncpy(cgroupParent, mergedConfTags->cgrouproot, PATH_MAX);
+    }
+
+    RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
+    for (redNodeT *node=rootNode; node != NULL; node=node->childs->child) {
+	    //remove / from cgroup name
+        char *cgroup_name = (char *)alloca(strlen(node->status->realpath));
+        replaceSlashDash(node->status->realpath, cgroup_name);
+
+        if (cgroups(node->config->conftag->cgroups, cgroup_name, cgroupParent))
+            break;
+
+        //set next cgroup parent
+        strncat(cgroupParent, "/", PATH_MAX);
+        strncat(cgroupParent, cgroup_name, PATH_MAX);
+    }
+    return 0;
+}
+
 int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     if (cliarg->verbose)
         SetLogLevel(REDLOG_DEBUG);
@@ -156,13 +181,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
         goto OnErrorExit;
     }
 
-    //set cgroups
-    if (isCgroups) {
-        RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
-        for (redNodeT *node=rootNode; node != NULL; node=node->childs->child) {
-            cgroups(node->config->conftag->cgroups, node->status->realpath);
-        }
-    }
+    if (isCgroups) setcgroups(mergedConfTags, rootNode);
 
     // add commulated LD_PATH_LIBRARY & PATH
     argval[argcount++]="--setenv";

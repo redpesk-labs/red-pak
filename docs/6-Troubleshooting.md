@@ -1,5 +1,21 @@
 # Troubleshooting
 
+## Systemd Notify
+
+If you want to use systemd to start your node and be notified, you can use
+`NotifyAccess=all`, it will accept notifications from a different pid than the one
+launched by the unit.
+
+### notify vs cgroup
+
+When systemd daemon receives a message through the socket, it searches the
+unit matching the cgroup of the process, so if you use cgroup with redpak,
+redpak cgroup should be a child of the systemd unit cgroup.
+
+For that, you can just remove the `cgrouproot` option in config files.
+
+see [https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#NotifyAccess=](https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#NotifyAccess=)
+
 ## Smack
 
 ### Labels with vim
@@ -57,4 +73,7 @@ cat cgroup.controllers
 
 ### Issue writing into controllers
 
-All of the elements of redpak config file respects kernel definitions, please have a look at https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html.
+All of the elements of redpak config file respects kernel definitions, please have a look at
+[https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html).
+
+

@@ -156,6 +156,7 @@
         const char *hostname;
         const char *umask;
         const char *chdir;
+        const char *cgrouproot;
         unsigned int gpgcheck;
         unsigned int inherit;
         unsigned int unsafe;

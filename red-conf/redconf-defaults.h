@@ -82,6 +82,10 @@
 #define CGROUPS_MOUNT_POINT "/sys/fs/cgroup"
 #endif
 
+#ifndef CGROUPS_ROOT_LEAF_NAME
+#define CGROUPS_ROOT_LEAF_NAME "redpak-root-leaf"
+#endif
+
 typedef enum  {
     REDLOG_EMERGENCY = 0,
     REDLOG_ALERT = 1,

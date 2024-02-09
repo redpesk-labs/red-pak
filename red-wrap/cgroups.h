@@ -22,6 +22,7 @@
 
 #include "redconf-schema.h"
 
-int cgroups (redConfCgroupT *cgroups, const char *cgroup_name);
+void replaceSlashDash(const char *source, char *dest);
+int cgroups (redConfCgroupT *cgroups, const char *cgroup_name, char *cgroup_parent);
 
 #endif //_CGROUPS_H_
