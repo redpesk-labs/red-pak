@@ -540,7 +540,7 @@ static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const 
                     command_res_size = strlen(command_res);
 
                     //copy command res to output
-                    strncpy(outputS+(*idxOut), command_res, command_res_size);
+                    strncpy(outputS+(*idxOut), command_res, command_res_size + 1);
                     *idxOut += command_res_size;
                     idxIn += 2 + command_size; //2: because 2 parenthesis
                 }

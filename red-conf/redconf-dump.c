@@ -17,6 +17,7 @@
 *
 */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <libgen.h>
@@ -147,9 +148,10 @@ int RedDumpRoot(redNodeT *node, const char* prefix, int verbose, int last) {
     const char *s_transition_prefix = "\U00002502";
     const char *s_link = "\U00002500\U00002500";
     char subprefix[RED_MAXPATHLEN];
-    char node_basename[RED_MAXPATHLEN];
+    char node_basename[RED_MAXPATHLEN + 1];
 
-    strncpy(node_basename, node->redpath, sizeof(node_basename));
+    strncpy(node_basename, node->redpath, sizeof(node_basename) - 1);
+    node_basename[sizeof(node_basename) - 1] = 0;
     //subprefix for children depends on last
     (void)snprintf(subprefix, sizeof(subprefix), "  %s%s ", prefix, last ? " " : s_transition_prefix);
 
@@ -176,8 +178,9 @@ int RedDumpTree(const char *redrootpath, int verbose) {
         goto OnErrorExit;
     }
 
-    char node_dirname[RED_MAXPATHLEN];
-    strncpy(node_dirname, redroot->redpath, sizeof(node_dirname));
+    char node_dirname[RED_MAXPATHLEN + 1];
+    strncpy(node_dirname, redroot->redpath, sizeof(node_dirname) - 1);
+    node_dirname[sizeof(node_dirname) - 1] = 0;
 
     //print root path
     printf("%s\n", dirname(node_dirname));

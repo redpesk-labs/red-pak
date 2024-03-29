@@ -26,7 +26,7 @@
 
 #include "redconf.h"
 
-static const char *undef = "#undef";
+static const char undef[] = "#undef";
 
 static char*GetUuidString(const char *label, void *ctx, void*handle, char *output, size_t size) {
     uuid_t binuuid;
@@ -65,14 +65,14 @@ static char*GetPid(const char *label, void *ctx,  void*handle, char *output, siz
 
 static char * GetEnviron(const char *label, void *ctx, void*handle, char *output, size_t size) {
     const char*key= handle;
-    char*value;
+    const char*value;
 
     value= getenv(label);
     if (!value) {
         if (key) {
             value=(char *)key;
         } else {
-            value="#undef";
+            value=undef;
         }
     }
     strncpy(output, value, size);
@@ -108,7 +108,7 @@ static char*GetNodeInfo(const char *label, void *ctx, void*handle, char *output,
             break;
     }
 
-    if (!value) value = "#undef";
+    if (!value) value = undef;
     strncpy(output, value, size);
 
     return output;

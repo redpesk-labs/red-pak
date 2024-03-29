@@ -73,7 +73,7 @@ void RedNode::addOptions(libdnf::cli::ArgumentParser::Group *global_options) {
     auto rpmverbosity_opt = arg_parser->add_new_named_arg("rpmverbosity");
     rpmverbosity_opt->set_long_name("rpmverbosity");
     rpmverbosity_opt->set_has_value(true);
-    rpmverbosity_opt->set_short_description(fmt::format("rpmverbosity level: 0 to {}", RPMLOG_DEBUG));
+    rpmverbosity_opt->set_short_description(fmt::format("rpmverbosity level: 0 to {}", (int)RPMLOG_DEBUG));
     rpmverbosity_opt->link_value(&rpmverbosity);
     global_options->register_argument(rpmverbosity_opt);
 }
