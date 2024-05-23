@@ -36,4 +36,4 @@ PROJECT_TARGET_ADD(redconf-py)
   target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../red-conf ${_Python3_INCLUDE_DIR})
 
   # final install destination for sharelib
-  install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${Python3_SITELIB_PREFIXED})
+  install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${Python3_SITEARCH})

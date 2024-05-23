@@ -17,16 +17,4 @@
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-set(Python3_SITELIB_PREFIXED ${Python3_SITELIB})
-# prepend CMAKE_INSTALL_PREFIX if not present
-execute_process(
-    COMMAND ${Python3_EXECUTABLE} -c
-        "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(prefix='', plat_specific=True,standard_lib=False))"
-    
-    OUTPUT_VARIABLE Python3_SITELIB_PREFIXED
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-string(PREPEND Python3_SITELIB_PREFIXED "${CMAKE_INSTALL_PREFIX}/")
-message(STATUS "Python3_SITELIB prepend with CMAKE_INSTALL_PREFIX = ${Python3_SITELIB_PREFIXED}")
-
 ADD_SUBDIRECTORY (redconf-py)
