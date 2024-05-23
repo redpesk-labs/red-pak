@@ -20,6 +20,8 @@
 // generated corresponding environment variables LD_PATh, PATH, ...
 // generate all sharing and mouting point
 // exec bwrap
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -31,7 +33,7 @@
 #include <limits.h>
 #include <sys/wait.h>
 
-#define _GNU_SOURCE
+#include <sched.h>
 #include <linux/sched.h>
 #include <sys/syscall.h>
 
