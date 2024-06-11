@@ -42,7 +42,6 @@ static struct option options[] = {
     {"force"  , no_argument      , 0,  'f' },
     {"unsafe" , no_argument      , 0,  'u' },
     {"help"   , no_argument      , 0,  '?' },
-    {"--"     , no_argument      , 0,  '-' },
     {0,         0,                 0,  0 }
 };
 
@@ -91,10 +90,6 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 
             case 'u':
                 config->unsafe=1;
-                break;
-
-            case '-':
-                done=1;
                 break;
 
             default:
