@@ -46,12 +46,14 @@ static struct option options[] = {
     {0,         0,                 0,  0 }
 };
 
+static const char short_options[] = "a::b:c:fm:p:r:uv::?";
+
 rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
     rWrapConfigT *config = calloc (1, sizeof(rWrapConfigT));
      int index;
 
     for (int done=0; !done;) {
-        int option = getopt_long(argc, argv, "vp:m:", options, &index);
+        int option = getopt_long(argc, argv, short_options, options, &index);
 
         if (option == -1) {
             config->index= optind;
