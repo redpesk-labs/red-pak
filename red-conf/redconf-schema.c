@@ -132,11 +132,11 @@ static const cyaml_schema_field_t CgroupsPids[] = {
 };
 
 static const cyaml_schema_field_t CgroupsSchema[] = {
-    CYAML_FIELD_MAPPING_PTR("cpuset", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT, cpuset, (const struct cyaml_schema_field *)&CgroupsCpuSet),
-    CYAML_FIELD_MAPPING_PTR("mem", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , mem, (const struct cyaml_schema_field *)&CgroupsMem),
-    CYAML_FIELD_MAPPING_PTR("cpu", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , cpu, (const struct cyaml_schema_field *)&CgroupsCpu),
-    CYAML_FIELD_MAPPING_PTR("io", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , io, (const struct cyaml_schema_field *)&CgroupsIo),
-    CYAML_FIELD_MAPPING_PTR("pids", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , pids, (const struct cyaml_schema_field *)&CgroupsPids),
+    CYAML_FIELD_MAPPING_PTR("cpuset", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT, cpuset, CgroupsCpuSet),
+    CYAML_FIELD_MAPPING_PTR("mem", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , mem, CgroupsMem),
+    CYAML_FIELD_MAPPING_PTR("cpu", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , cpu, CgroupsCpu),
+    CYAML_FIELD_MAPPING_PTR("io", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , io, CgroupsIo),
+    CYAML_FIELD_MAPPING_PTR("pids", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCgroupT , pids, CgroupsPids),
     CYAML_FIELD_END
 };
 /**** end cgroup ****/
