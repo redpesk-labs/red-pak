@@ -154,7 +154,7 @@ static const cyaml_schema_value_t CapabilitiesSchema= {CYAML_VALUE_MAPPING(CYAML
 /**** end capabilities ****/
 
 /* config main part */
-static const cyaml_schema_field_t EnvTagSchema[] = {
+static const cyaml_schema_field_t ConfigSchema[] = {
     CYAML_FIELD_STRING_PTR("persistdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, persistdir, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("rpmdir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, rpmdir, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("cachedir", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, cachedir, 0, CYAML_UNLIMITED),
@@ -262,18 +262,18 @@ static const cyaml_schema_value_t EnvVarSchema= {CYAML_VALUE_MAPPING(CYAML_FLAG_
 *****************************************************************************************************************/
 
 // First wlevel config structure (id, export, acl, status)
-static const cyaml_schema_field_t RedConfigSchema[] = {
+static const cyaml_schema_field_t TopLevelSchema[] = {
     CYAML_FIELD_MAPPING_PTR("headers", CYFLAG_PTR|CYFLAG_CASE, redConfigT , headers, HeaderSchema),
     CYAML_FIELD_SEQUENCE("exports", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , exports, &ExportSchema, 0, CYAML_UNLIMITED),
     CYAML_FIELD_SEQUENCE("relocations", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , relocations, &RelocsSchema, 0, CYAML_UNLIMITED),
     CYAML_FIELD_SEQUENCE("environ", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , confvar, &EnvVarSchema, 0, CYAML_UNLIMITED),
-    CYAML_FIELD_MAPPING_PTR("config", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , conftag, EnvTagSchema),
+    CYAML_FIELD_MAPPING_PTR("config", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , conftag, ConfigSchema),
     CYAML_FIELD_END
 };
 
 // Top wlevel schema entry point must be a unique CYAML_VALUE_MAPPING
-static const cyaml_schema_value_t ConfTopSchema = {
-    CYAML_VALUE_MAPPING(CYFLAG_PTR|CYFLAG_CASE, redConfigT, RedConfigSchema),
+static const cyaml_schema_value_t RedPakConfigSchema = {
+    CYAML_VALUE_MAPPING(CYFLAG_PTR|CYFLAG_CASE, redConfigT, TopLevelSchema),
 };
 
 /****************************************************************************************************************
@@ -384,7 +384,7 @@ Exit:
 }
 
 int RedSaveConfig (const char* filepath, redConfigT *config, int warning ) {
-    int errcode = SchemaSave(filepath, &ConfTopSchema, (void*)config, 0);
+    int errcode = SchemaSave(filepath, &RedPakConfigSchema, (void*)config, 0);
     return errcode;
 }
 
@@ -396,17 +396,17 @@ int RedSaveStatus (const char* filepath, redStatusT *status, int warning ) {
 redConfigT* RedLoadConfig (const char* filepath, int warning) {
     RedLog(REDLOG_DEBUG, "load config from %s", filepath);
     redConfigT *config;
-    int errcode= SchemaLoad (filepath, &ConfTopSchema, (void**)&config, warning);
+    int errcode= SchemaLoad (filepath, &RedPakConfigSchema, (void**)&config, warning);
     if (errcode) return NULL;
     return config;
 }
 
 int RedGetConfig(char **output, size_t *len, redConfigT *config) {
-    return SchemaGet(output, len, &ConfTopSchema, config, 0);
+    return SchemaGet(output, len, &RedPakConfigSchema, config, 0);
 }
 
 int RedFreeConfig(redConfigT *config, int wlevel) {
-    return SchemaFree(&ConfTopSchema, (cyaml_data_t *)config, 0);
+    return SchemaFree(&RedPakConfigSchema, (cyaml_data_t *)config, 0);
 }
 
 redStatusT* RedLoadStatus (const char* filepath, int warning) {
