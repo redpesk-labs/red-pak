@@ -25,7 +25,7 @@ where one *rednode*, called the *child*, is setup on top of one other
 *rednode*, called the *parent*, in a such way that restriction of
 parents always apply to children.
 
-REDPAK is integrated in the package manager of redpesk OS to enable
+REDPAK is integrated with a package manager in redpesk OS to enable
 adding, removing and updating packages in *rednodes*. The nested
 hierarchy of *rednodes* forbids to install in children a package
 already installed in a parent.

@@ -252,7 +252,7 @@ Valid mode for environ entries are:
 | "Default" | required | the variable is set with the value after expansion |
 | "Execfd"  | required | the value is a shell command, the variable is set with the output file  of that command |
 
-It is an error is the mode is not one of the above value.
+It is an error if the mode is not one of the above value.
 
 ### Valid relocations sequence
 
@@ -260,6 +260,7 @@ It is an error is the mode is not one of the above value.
 
 The main entry *relocations* must be a valid sequence of valid relocation entries.
 
+TODO: check if it is really used
 
 ### Valid relocation entries
 
@@ -273,6 +274,8 @@ Valid relocation entries are maps with the entries described below:
 | *new* | mandatory | string | value depending on the mode             |
 
 TODO: check processing of letter's case
+
+TODO: check if it is really used
 
 ### Valid exports sequence
 
@@ -372,6 +375,8 @@ entries, all are optional:
 The type EDU is an enumeration, so a string, with 3 possible values:
 "enable", "disable", "unset".
 
+TODO: check if some values are really used (persistdir, rpmdir, cachedir, ...)
+
 TODO: review where strings are for paths
 
 TODO: validation of paths? umask? ...
@@ -386,7 +391,7 @@ TODO: check if new-session, die-with-parent are boolean or not
 
 TODO: what to do of the mix between kebab (like new-session) case and snake case (like share_all)
 
-TODO: EDU mostly is on/off but unset has some meaning to, it compensate the lack of unset feature of libcyaml
+TODO: EDU mostly is on/off but unset has some meaning too (it means let the children the possibility to on/off themselves), it compensate the lack of unset feature of libcyaml
 
 ### Valid cgroups map
 
@@ -401,7 +406,7 @@ the below entries, all are optional:
 | mem    | mem    | memory limitations
 | cpu    | cpu    | CPU limitations
 | io     | io     | I/O limitations
-| pids   | pids   | 
+| pids   | pids   | pids limitations
 
 ### Valid cpuset map of cgroups
 
