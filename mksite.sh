@@ -4,4 +4,4 @@ CDPATH=
 cd $(dirname $0)
 mkdir -p site
 mk-mat.sh --html > site/TRACABILITY.html
-mk-site.sh $* -o site QA -T "redpesk-core/sec-lsm-manager main index" -S index-order
+mk-site.sh $* -o site QA -T "redpesk-labs/red-pak main index" -S index-order
