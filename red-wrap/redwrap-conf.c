@@ -42,16 +42,17 @@ static struct option options[] = {
     {"force"  , no_argument      , 0,  'f' },
     {"unsafe" , no_argument      , 0,  'u' },
     {"help"   , no_argument      , 0,  '?' },
-    {"--"     , no_argument      , 0,  '-' },
     {0,         0,                 0,  0 }
 };
+
+static const char short_options[] = "a::b:c:fm:p:r:uv::?";
 
 rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
     rWrapConfigT *config = calloc (1, sizeof(rWrapConfigT));
      int index;
 
     for (int done=0; !done;) {
-        int option = getopt_long(argc, argv, "vp:m:", options, &index);
+        int option = getopt_long(argc, argv, short_options, options, &index);
 
         if (option == -1) {
             config->index= optind;
@@ -89,10 +90,6 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 
             case 'u':
                 config->unsafe=1;
-                break;
-
-            case '-':
-                done=1;
                 break;
 
             default:
