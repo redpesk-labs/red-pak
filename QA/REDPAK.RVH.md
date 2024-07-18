@@ -18,9 +18,9 @@ date of a not achieved review
 ------------------------------------------------------------
   ID      Reviewer             Date*     Reviewed documents
 ------ ------------------- ------------ --------------------
-IREV1  Fulup Ar Foll       (2024-06-20) @REDPAK.HRQ
+IREV1  Stéphane Desneux     2024-07-18  @REDPAK.HRQ
        Clément Bénier                   @REDPAK.OVE
-       Stéphane Desneux                 @REDPAK.CNF
+                                        @REDPAK.CNF
  
 ------------------------------------------------------------
 
