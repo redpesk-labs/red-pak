@@ -86,10 +86,6 @@ static const struct red_cmd *_find_redmicrodnf_cmd (int argc, char *argv[], int 
     return NULL;
 }
 
-static void redmicrodnfhelp(void) {
-
-}
-
 static int _exec_redmicrodnf(int argc, char *argv[]) {
     int argcount = 0;
     char *subargv[MAX_BWRAP_ARGS];

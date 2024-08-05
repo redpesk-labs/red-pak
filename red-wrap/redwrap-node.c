@@ -248,9 +248,6 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
     }
     return 0;
-
-OnErrorExit:
-    return 1;
 }
 
 int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {

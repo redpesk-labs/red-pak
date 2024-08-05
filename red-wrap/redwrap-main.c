@@ -110,7 +110,6 @@ Error:
 
 static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
     char cgroupParent[PATH_MAX] = {0};
-    char *cgroup_name;
 
     if (mergedConfTags->cgrouproot) {
         mergedConfTags->cgrouproot = RedNodeStringExpand (rootNode, NULL, mergedConfTags->cgrouproot, NULL, NULL);
@@ -127,8 +126,8 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
             break;
 
         //set next cgroup parent
-        strncat(cgroupParent, "/", PATH_MAX);
-        strncat(cgroupParent, cgroup_name, PATH_MAX);
+        strncat(cgroupParent, "/", PATH_MAX - 1 - strlen("/") - strlen(cgroupParent));
+        strncat(cgroupParent, cgroup_name, PATH_MAX - 1 - strlen(cgroup_name) - strlen(cgroupParent));
     }
     return 0;
 }

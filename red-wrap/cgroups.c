@@ -103,9 +103,9 @@ void replaceSlashDash(const char *source, char *dest) {
     dest[i] = '\0';
 }
 
-static int get_parent_cgroup(char *cgroup_parent) {
+static int get_parent_cgroup(char cgroup_parent[PATH_MAX]) {
     int count, cgProcFd;
-    char buf[PATH_MAX];
+    char buf[PATH_MAX + 1 - strlen(CGROUPS_MOUNT_POINT)];
 
     //get current cgroup
     cgProcFd = open("/proc/self/cgroup", O_RDONLY);
@@ -121,13 +121,13 @@ static int get_parent_cgroup(char *cgroup_parent) {
         goto OnErrorCloseExit;
     }
 
-    count = read(cgProcFd, (void *)buf, PATH_MAX);
+    count = read(cgProcFd, (void *)buf, sizeof buf);
     if (count <= 0 ) {
         RedLog(REDLOG_ERROR, "[/proc/self/cgroup] cannot read current cgroup error=%s", strerror(errno));
         goto OnErrorCloseExit;
     }
 
-    if (count == PATH_MAX) {
+    if (count == sizeof buf) {
         RedLog(REDLOG_ERROR, "[proc-cgroups-too-long] /proc/self/cgroup has a too long path cannot read");
         goto OnErrorCloseExit;
     }
@@ -136,11 +136,12 @@ static int get_parent_cgroup(char *cgroup_parent) {
     buf[count-1] = '\0';
 
     snprintf(cgroup_parent, PATH_MAX, "%s%s", CGROUPS_MOUNT_POINT, buf);
+    cgroup_parent[PATH_MAX - 1] = 0;
 
     //check if cgroup is matching CGROUPS_ROOT_LEAF_NAME and so return parent/..
     int off = strlen(buf) - strlen(CGROUPS_ROOT_LEAF_NAME);
     if (off >= 0 && !strcmp(buf+off, CGROUPS_ROOT_LEAF_NAME))
-        strncat(cgroup_parent, "/..", PATH_MAX);
+        strncat(cgroup_parent, "/..", PATH_MAX - 1 - strlen("/..") - strlen(cgroup_parent));
 
     close(cgProcFd);
     return 0;
@@ -207,7 +208,7 @@ OnErrorExit:
     return -1;
 }
 
-int cgroups (redConfCgroupT *cgroups, const char *cgroup_name, char *cgroup_parent) {
+int cgroups (redConfCgroupT *cgroups, const char *cgroup_name, char cgroup_parent[PATH_MAX]) {
     int err, cgRootFd, subgroupFd = 0, subgroupNodeFd;
     char pid[1000];
 
