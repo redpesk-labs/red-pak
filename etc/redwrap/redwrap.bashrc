@@ -6,15 +6,15 @@ _redwrap()
     _init_completion -n = || return
 
     case $cur in
-		--bwrap=*|--redpath=*)
+        --bwrap=*|--redpath=*)
             cur=${cur#*=}
-			if [ -z "$cur" ]; then
-			    #Default path to use if cur is empty
-				cur="."
-			fi
-			_filedir -d
-			return
-			;;
+            if [ -z "$cur" ]; then
+                #Default path to use if cur is empty
+                cur="."
+            fi
+            _filedir -d
+            return
+            ;;
     esac
 
     _expand || return

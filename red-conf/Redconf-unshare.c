@@ -27,5 +27,5 @@ void try_become_root(void) {
         unshared = 1;
     }
     rpmlog(RPMLOG_DEBUG, "user ns: %d original user %d:%d current %d:%d\n",
-	    unshared, uid, gid, getuid(), getgid());
+        unshared, uid, gid, getuid(), getgid());
 }

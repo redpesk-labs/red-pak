@@ -104,21 +104,21 @@ void replaceSlashDash(const char *source, char *dest) {
 }
 
 static int get_parent_cgroup(char *cgroup_parent) {
-	int count, cgProcFd;
+    int count, cgProcFd;
     char buf[PATH_MAX];
 
-	//get current cgroup
+    //get current cgroup
     cgProcFd = open("/proc/self/cgroup", O_RDONLY);
     if (cgProcFd <= 0) {
         RedLog(REDLOG_ERROR, "[proc-cgroups-not-found] /proc/self/cgroup error=%s", strerror(errno));
         goto OnErrorExit;
     }
 
-	//read 3 first characters to ignore them
-	count = read(cgProcFd, (void *)buf, 3);
-	if (count != 3) {
+    //read 3 first characters to ignore them
+    count = read(cgProcFd, (void *)buf, 3);
+    if (count != 3) {
         RedLog(REDLOG_ERROR, "Cannot read 3 first characters count=%d buf=%s", count, buf);
-		goto OnErrorCloseExit;
+        goto OnErrorCloseExit;
     }
 
     count = read(cgProcFd, (void *)buf, PATH_MAX);
@@ -127,10 +127,10 @@ static int get_parent_cgroup(char *cgroup_parent) {
         goto OnErrorCloseExit;
     }
 
-	if (count == PATH_MAX) {
-		RedLog(REDLOG_ERROR, "[proc-cgroups-too-long] /proc/self/cgroup has a too long path cannot read");
-		goto OnErrorCloseExit;
-	}
+    if (count == PATH_MAX) {
+        RedLog(REDLOG_ERROR, "[proc-cgroups-too-long] /proc/self/cgroup has a too long path cannot read");
+        goto OnErrorCloseExit;
+    }
 
     // last character should be \n
     buf[count-1] = '\0';
@@ -143,12 +143,12 @@ static int get_parent_cgroup(char *cgroup_parent) {
         strncat(cgroup_parent, "/..", PATH_MAX);
 
     close(cgProcFd);
-	return 0;
+    return 0;
 
 OnErrorCloseExit:
     close(cgProcFd);
 OnErrorExit:
-	return -1;
+    return -1;
 }
 
 static int moveProcstoLeaf(int parentFd) {
@@ -204,18 +204,18 @@ OnErrorCloseExit2:
 OnErrorCloseExit:
     close(procsFd);
 OnErrorExit:
-	return -1;
+    return -1;
 }
 
 int cgroups (redConfCgroupT *cgroups, const char *cgroup_name, char *cgroup_parent) {
     int err, cgRootFd, subgroupFd = 0, subgroupNodeFd;
     char pid[1000];
 
-	// get current parent cgroup
+    // get current parent cgroup
     if (strlen(cgroup_parent) == 0) {
-	    if (get_parent_cgroup(cgroup_parent) < 0) {
-	    	goto OnErrorExit;
-	    }
+        if (get_parent_cgroup(cgroup_parent) < 0) {
+            goto OnErrorExit;
+        }
     }
 
     RedLog(REDLOG_DEBUG, "[cgroup=%s]: cgroup_parent=%s", cgroup_name, cgroup_parent);

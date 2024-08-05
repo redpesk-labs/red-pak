@@ -119,7 +119,7 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
 
     RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
     for (redNodeT *node=rootNode; node != NULL; node=node->childs->child) {
-	    //remove / from cgroup name
+        //remove / from cgroup name
         char *cgroup_name = (char *)alloca(strlen(node->status->realpath));
         replaceSlashDash(node->status->realpath, cgroup_name);
 

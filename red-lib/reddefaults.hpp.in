@@ -23,18 +23,18 @@
 #include <string>
 
 namespace redlib {
-	const std::map<std::string, std::string> REDDEFAULTS {
-    		{"redpak_MAIN", "@CMAKE_INSTALL_PREFIX@/etc/redpak/main.yaml"},
-    		{"redpak_TMPL", "@CMAKE_INSTALL_PREFIX@/etc/redpak/templates.d"},
-    		{"REDNODE_CONF", "$NODE_PATH/etc/redpack.yaml"},
-    		{"REDNODE_STATUS", "$NODE_PATH/.rednode.yaml"},
-    		{"REDNODE_VARDIR", "$NODE_PATH/var/lib/rpm"},
-    		{"REDNODE_LOCK", "$NODE_PATH/.rpm.lock"},
-    		{"LOGNAME", "Unknown"},
-    		{"HOSTNAME", "localhost"},
-    		{"PERSISTDIR", "$redpak_HOME/var/lib/dnf"},
-    		{"REDNODE_REPODIR", "$NODE_PATH/etc/yum.repos.d"}
-	};
+    const std::map<std::string, std::string> REDDEFAULTS {
+        {"redpak_MAIN",     "@CMAKE_INSTALL_PREFIX@/etc/redpak/main.yaml"},
+        {"redpak_TMPL",     "@CMAKE_INSTALL_PREFIX@/etc/redpak/templates.d"},
+        {"REDNODE_CONF",    "$NODE_PATH/etc/redpack.yaml"},
+        {"REDNODE_STATUS",  "$NODE_PATH/.rednode.yaml"},
+        {"REDNODE_VARDIR",  "$NODE_PATH/var/lib/rpm"},
+        {"REDNODE_LOCK",    "$NODE_PATH/.rpm.lock"},
+        {"LOGNAME",         "Unknown"},
+        {"HOSTNAME",        "localhost"},
+        {"PERSISTDIR",      "$redpak_HOME/var/lib/dnf"},
+        {"REDNODE_REPODIR", "$NODE_PATH/etc/yum.repos.d"}
+    };
 }
 
 #endif

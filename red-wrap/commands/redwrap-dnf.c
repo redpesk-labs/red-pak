@@ -20,5 +20,5 @@
 #include "redwrap-cmd.h"
 
 int main (int argc, char *argv[]) {
-	return redwrap_dnf_cmd_exec(argc, argv);
+    return redwrap_dnf_cmd_exec(argc, argv);
 }

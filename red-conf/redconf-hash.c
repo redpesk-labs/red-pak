@@ -21,9 +21,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <urcu.h>		/* RCU flavor */
-#include <urcu/rculfhash.h>	/* RCU Lock-free hash table */
-#include <urcu/compiler.h>	/* For CAA_ARRAY_SIZE */
+#include <urcu.h>        /* RCU flavor */
+#include <urcu/rculfhash.h>    /* RCU Lock-free hash table */
+#include <urcu/compiler.h>    /* For CAA_ARRAY_SIZE */
 
 #include "redconf-hash.h"
 #include "redconf-utils.h"
@@ -34,13 +34,13 @@
 
 static int destroyHashExport(struct cds_lfht *ht) {
     int err;
-	struct cds_lfht_iter iter;	/* For iteration on hash table */
+    struct cds_lfht_iter iter;    /* For iteration on hash table */
     redHashT *hnode;
 
-	cds_lfht_for_each_entry(ht, &iter, hnode, lfht_node) {
+    cds_lfht_for_each_entry(ht, &iter, hnode, lfht_node) {
         cds_lfht_del(ht, &hnode->lfht_node);
         free(hnode);
-	}
+    }
 
     err = cds_lfht_destroy(ht, NULL);
     if(err)
@@ -56,7 +56,7 @@ static int hashmatch(struct cds_lfht_node *ht_node, const void *_key) {
 }
 
 static int add_hash(struct cds_lfht *ht, redHashT *value, redHashT **hoverload) {
-    struct cds_lfht_iter iter;	/* For iteration on hash table */
+    struct cds_lfht_iter iter;    /* For iteration on hash table */
     struct cds_lfht_node *lookup_node; /* For checking if key already present */
     redHashT *hnode = NULL;  /* New Entry Hash table */
     unsigned long hash; /* hash number of string entry */
@@ -82,7 +82,7 @@ static int add_hash(struct cds_lfht *ht, redHashT *value, redHashT **hoverload) 
         RedLog(REDLOG_ERROR, "Issue allocate hnode");
         goto Exit;
     }
-	memset(hnode, 0, sizeof(*hnode));
+    memset(hnode, 0, sizeof(*hnode));
     hnode->key = value->key;
     hnode->value = value->value;
     hnode->node = value->node;
@@ -114,7 +114,7 @@ OnErrorExit:
 
 void *mergeData(const redNodeT* rootnode, size_t dataLen, int *mergecount, redHashCbsT *hashcbs, int duplicate, int expand) {
     int offset = 0, count = 0, ignore = 0;
-    struct cds_lfht *ht = NULL;	/* Hash table */
+    struct cds_lfht *ht = NULL;    /* Hash table */
     const char *hashkey; /* key to hash */
     const void *data, *itdata; // data and iterator on source data
     void *destdata = NULL, *itdestdata; // data and iterator on destination data
@@ -143,7 +143,7 @@ void *mergeData(const redNodeT* rootnode, size_t dataLen, int *mergecount, redHa
 
             itdata = data + i * dataLen;
             itdestdata = destdata + offset * dataLen;
-	        memset(itdestdata, 0, dataLen);
+            memset(itdestdata, 0, dataLen);
 
             ignore = 0; //reset ignore
             // get key to hash

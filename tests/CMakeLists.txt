@@ -23,7 +23,7 @@ PROJECT_TARGET_ADD(checks)
     target_compile_options(${TARGET_NAME} PUBLIC -DREDMICRODNF_CMD="${REDMICRODNF_ABS}")
     target_compile_options(${TARGET_NAME} PUBLIC -DTEMPLATES_DIR="${CMAKE_SOURCE_DIR}/etc/redpak/templates.d")
 
-	target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../red-wrap ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
+    target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../red-wrap ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
     target_link_libraries(${TARGET_NAME} libredconf libredwrap ${CHECK_LIBRARIES} pthread)
     add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME} WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/Testing)
 

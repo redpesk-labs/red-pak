@@ -24,12 +24,12 @@ PROJECT_TARGET_ADD(libredconf)
   add_library(${TARGET_NAME} SHARED ${CSOURCES} redconf.h)
 
   SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
-		PREFIX ""
-		LABELS "LIBRARY"
-		OUTPUT_NAME ${TARGET_NAME}
+        PREFIX ""
+        LABELS "LIBRARY"
+        OUTPUT_NAME ${TARGET_NAME}
     LINKER_LANGUAGE C
-	  PUBLIC_HEADER "${CHEADERS}"
-	)
+      PUBLIC_HEADER "${CHEADERS}"
+    )
   pkg_search_module(RPM REQUIRED redrpm rpm)
   pkg_search_module(URCU REQUIRED liburcu)
   pkg_search_module(URCUCDS REQUIRED liburcu-cds)

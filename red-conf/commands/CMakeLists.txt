@@ -17,10 +17,10 @@
 ##########################################################################
 
 PROJECT_TARGET_ADD(redconf)
-  	file(GLOB CSOURCES [a-z]*.c )
-  	file(GLOB CHEADERS [a-z]*.h )
+      file(GLOB CSOURCES [a-z]*.c )
+      file(GLOB CHEADERS [a-z]*.h )
 
-  	add_executable(${TARGET_NAME} ${CSOURCES})
-	target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-  	target_link_libraries(${TARGET_NAME} libredconf)
-	install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+      add_executable(${TARGET_NAME} ${CSOURCES})
+    target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+      target_link_libraries(${TARGET_NAME} libredconf)
+    install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})

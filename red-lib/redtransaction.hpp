@@ -26,10 +26,10 @@ namespace redlib {
 
 class RedTransaction: public libdnf::base::Transaction {
 public:
-	RedTransaction(libdnf::base::Transaction transaction): libdnf::base::Transaction(transaction) {}
-	std::vector<libdnf::base::TransactionPackage> & get_transaction_packages();	
+    RedTransaction(libdnf::base::Transaction transaction): libdnf::base::Transaction(transaction) {}
+    std::vector<libdnf::base::TransactionPackage> & get_transaction_packages();
 private:
-	std::vector<libdnf::base::TransactionPackage> transaction_packages;
+    std::vector<libdnf::base::TransactionPackage> transaction_packages;
 };
 
 } //namespace redlib

@@ -67,7 +67,7 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 
             case 'v':
                 config->verbose++;
-                  if (optarg)	config->verbose = atoi(optarg);
+                  if (optarg)    config->verbose = atoi(optarg);
                 break;
 
             case 'c':

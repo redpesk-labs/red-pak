@@ -39,78 +39,78 @@ namespace redlib {
 class RedNode
 {
 public:
-	RedNode(libdnf::cli::ArgumentParser *arg_parser, libdnf::Base &base): arg_parser(arg_parser), base(base) {}
-	RedNode(std::filesystem::path installrootnode, std::filesystem::path redpath, libdnf::Base &base):
+    RedNode(libdnf::cli::ArgumentParser *arg_parser, libdnf::Base &base): arg_parser(arg_parser), base(base) {}
+    RedNode(std::filesystem::path installrootnode, std::filesystem::path redpath, libdnf::Base &base):
         installrootnode(installrootnode), redpath(redpath), base(base) {}
 
-	void addOptions(libdnf::cli::ArgumentParser::Group *global_options);
-	void configure();
-	void install(libdnf::rpm::PackageSack & package_sack);
-	void createRedNode(const std::string & alias, bool update, const std::string & tmplate, const std::string & tmplateadmin, bool no_system_node);
-	 std::vector<libdnf::base::TransactionPackage> checkTransactionPkgs(libdnf::base::Transaction & transaction);
+    void addOptions(libdnf::cli::ArgumentParser::Group *global_options);
+    void configure();
+    void install(libdnf::rpm::PackageSack & package_sack);
+    void createRedNode(const std::string & alias, bool update, const std::string & tmplate, const std::string & tmplateadmin, bool no_system_node);
+     std::vector<libdnf::base::TransactionPackage> checkTransactionPkgs(libdnf::base::Transaction & transaction);
 
-	bool isRedpath(bool strict = true) const;
-	const std::filesystem::path &getRedpath() const { return redpath; }
+    bool isRedpath(bool strict = true) const;
+    const std::filesystem::path &getRedpath() const { return redpath; }
 
 private:
-	/* default template names */
-	inline static const std::string tmplDefault = "default";
-	inline static const std::string tmplAdmin = "admin";
-	inline static const std::string tmplDefaultNoSystemNode = "default-no-system-node";
-	inline static const std::string tmplAdminNoSystemNode = "admin-no-system-node";
-	inline static const std::string tmplSystem = "main-system";
-	inline static const std::string tmplSystemAdmin = "main-admin-system";
+    /* default template names */
+    inline static const std::string tmplDefault = "default";
+    inline static const std::string tmplAdmin = "admin";
+    inline static const std::string tmplDefaultNoSystemNode = "default-no-system-node";
+    inline static const std::string tmplAdminNoSystemNode = "admin-no-system-node";
+    inline static const std::string tmplSystem = "main-system";
+    inline static const std::string tmplSystemAdmin = "main-admin-system";
 
     /* node members */
-	bool strictmode{false};
-	bool isnode{false};
-	int verbose{0};
+    bool strictmode{false};
+    bool isnode{false};
+    int verbose{0};
     std::filesystem::path installrootnode{"/"};
-	std::filesystem::path redpath;
+    std::filesystem::path redpath;
 
-	/* dnf objects */
-	libdnf::cli::ArgumentParser *arg_parser{nullptr};
-	libdnf::Base &base;
-	libdnf::LogRouter & logger{*base.get_logger()};
+    /* dnf objects */
+    libdnf::cli::ArgumentParser *arg_parser{nullptr};
+    libdnf::Base &base;
+    libdnf::LogRouter & logger{*base.get_logger()};
 
-	/* parser options */
+    /* parser options */
     libdnf::OptionPath redpathOpt{nullptr};
     libdnf::OptionPath installRootNodeOpt{"/"};
     libdnf::OptionBool forcenode{false};
     libdnf::OptionNumber<std::int32_t> rpmverbosity{2};
 
     /* redconf pointers */
-	std::unique_ptr<redNodeT> node{nullptr};
-	std::unique_ptr<redConfigT> config{nullptr};
-	std::unique_ptr<redConfigT> configadmin{nullptr};
+    std::unique_ptr<redNodeT> node{nullptr};
+    std::unique_ptr<redConfigT> config{nullptr};
+    std::unique_ptr<redConfigT> configadmin{nullptr};
 
-	static void throw_error(std::string msg) { throw std::runtime_error(msg); }
+    static void throw_error(std::string msg) { throw std::runtime_error(msg); }
 
-	static void get_uuid(char * uuid_str);
-	static std::filesystem::path confpath();
-	static void date(char *today, std::size_t size);
-	static long unsigned int timestamp();
-	static void checkdir(const std::string & label, const std::filesystem::path & dirpath, bool create);
+    static void get_uuid(char * uuid_str);
+    static std::filesystem::path confpath();
+    static void date(char *today, std::size_t size);
+    static long unsigned int timestamp();
+    static void checkdir(const std::string & label, const std::filesystem::path & dirpath, bool create);
 
-	void scanNode();
-	void setPersistDir();
-	void setGpgCheck();
-	void setCacheDir();
-	void appendFamilyDb(libdnf::rpm::PackageSack & package_sack);
+    void scanNode();
+    void setPersistDir();
+    void setGpgCheck();
+    void setCacheDir();
+    void appendFamilyDb(libdnf::rpm::PackageSack & package_sack);
 
-	void getMain();
-	void getConf();
-	bool hasConf();
-	void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
-	bool checkInNodeDataBase(std::string name);
-	void rednode_status();
-	void rednode_template(const std::string & alias, const std::string & tmplname,
-						  const std::string & tmpladmin, bool update);
-	void reloadConfig(const std::string & tmplname, std::unique_ptr<redConfigT> & redconfig);
-	void createRedNodePath(const std::string & alias, bool update,
-						   const std::string & tmplate, const std::string & tmplateadmin);
+    void getMain();
+    void getConf();
+    bool hasConf();
+    void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
+    bool checkInNodeDataBase(std::string name);
+    void rednode_status();
+    void rednode_template(const std::string & alias, const std::string & tmplname,
+                          const std::string & tmpladmin, bool update);
+    void reloadConfig(const std::string & tmplname, std::unique_ptr<redConfigT> & redconfig);
+    void createRedNodePath(const std::string & alias, bool update,
+                           const std::string & tmplate, const std::string & tmplateadmin);
 
-	void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);
+    void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);
 };
 }
 

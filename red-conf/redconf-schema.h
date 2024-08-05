@@ -24,7 +24,7 @@
 #include <sys/types.h>
 #include <cyaml/cyaml.h>
 
-#include <urcu/rculfhash.h>	/* RCU Lock-free hash table */
+#include <urcu/rculfhash.h>    /* RCU Lock-free hash table */
 
 // ---- RedConfig Schema for ${redpath}/etc/redpack.yaml ----
     typedef struct {

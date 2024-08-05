@@ -113,9 +113,9 @@ char *RedPutEnv (const char*key, const char*value) {
     size_t length = sizeof(char)*(strlen(key) + strlen(value) + 2);
     char *envval = malloc(length);
 
-	snprintf(envval, length, "%s=%s", key, value);
+    snprintf(envval, length, "%s=%s", key, value);
     RedLog(REDLOG_INFO, "set environment variable %s", envval);
-	putenv(envval);
+    putenv(envval);
     return envval;
 }
 

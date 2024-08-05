@@ -5,17 +5,17 @@
 #include "../redconf.h"
 
 typedef struct {
-	const char* cmd;
+    const char* cmd;
     int sub_argc;
-	char **sub_argv;
+    char **sub_argv;
     int verbose;
-	int yaml;
-	int logyaml;
+    int yaml;
+    int logyaml;
 } rGlobalConfigT;
 
 typedef struct {
-	struct option option;
-	const char *desc;
+    struct option option;
+    const char *desc;
 } rOption;
 
 void usageOptions(const rOption *options);

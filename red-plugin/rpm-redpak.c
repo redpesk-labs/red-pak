@@ -19,5 +19,5 @@ static rpmRC redpak_scriptlet_pre(rpmPlugin plugin, const char *s_name,
 }
 
 struct rpmPluginHooks_s redpak_hooks = {
-	.scriptlet_pre = redpak_scriptlet_pre,
+    .scriptlet_pre = redpak_scriptlet_pre,
 };

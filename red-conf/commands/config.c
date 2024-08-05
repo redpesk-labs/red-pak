@@ -26,63 +26,63 @@
  **************************************/
 
 typedef struct {
-	const char *redpath;
+    const char *redpath;
 } rConfigConfigT;
 
 static rOption cOptions[] = {
-	{{"redpath", required_argument, 0,  'r' }, "path to the node"},
-	{{"help"   , no_argument      , 0,  'h' }, "print this help"},
-	{{0, 0, 0}, 0}
+    {{"redpath", required_argument, 0,  'r' }, "path to the node"},
+    {{"help"   , no_argument      , 0,  'h' }, "print this help"},
+    {{0, 0, 0}, 0}
 };
 
 static void configUsage(const rOption *options) {
-	printf("Usage command config: redconf [OPTION]... [config]... [OPTION]...\n"
-	);
-	usageOptions(options);
-	exit(1);
+    printf("Usage command config: redconf [OPTION]... [config]... [OPTION]...\n"
+    );
+    usageOptions(options);
+    exit(1);
 }
 
 static int parseConfigArgs(int argc, char * argv[], rConfigConfigT *cConfig) {
-	struct option longOpts[sizeof(struct option) * sizeof(cOptions) / sizeof(rOption)];
-	setLongOptions(cOptions, longOpts);
+    struct option longOpts[sizeof(struct option) * sizeof(cOptions) / sizeof(rOption)];
+    setLongOptions(cOptions, longOpts);
 
-	while(1) {
-	   	int option = getopt_long(argc, argv, "r:h", longOpts, NULL);
-		if(option == -1)
-			break;
+    while(1) {
+           int option = getopt_long(argc, argv, "r:h", longOpts, NULL);
+        if(option == -1)
+            break;
 
-		// option return short option even when long option is given
-  		switch (option) {
-			case 'r':
-				cConfig->redpath = optarg;
-				break;
-			case 'h':
-				configUsage(cOptions);
-			case '?': //error getopt_long
-				goto OnErrorExit;
-			default:
-				configUsage(cOptions);
-				break;
-		}
-	}
-	return 0;
+        // option return short option even when long option is given
+          switch (option) {
+            case 'r':
+                cConfig->redpath = optarg;
+                break;
+            case 'h':
+                configUsage(cOptions);
+            case '?': //error getopt_long
+                goto OnErrorExit;
+            default:
+                configUsage(cOptions);
+                break;
+        }
+    }
+    return 0;
 OnErrorExit:
-	return -1;
+    return -1;
 }
 
 /* main config sub command */
 int config(const rGlobalConfigT * gConfig) {
-	int err;
+    int err;
 
-	rConfigConfigT cConfig = {0};
-	if(parseConfigArgs(gConfig->sub_argc, gConfig->sub_argv, &cConfig) < 0)
-		goto OnErrorExit;
+    rConfigConfigT cConfig = {0};
+    if(parseConfigArgs(gConfig->sub_argc, gConfig->sub_argv, &cConfig) < 0)
+        goto OnErrorExit;
 
 
     RedLog(REDLOG_DEBUG, "[config]: redpath=%s", cConfig.redpath);
-	err = RedDumpFamilyNodePath(cConfig.redpath, gConfig->yaml, gConfig->verbose);
+    err = RedDumpFamilyNodePath(cConfig.redpath, gConfig->yaml, gConfig->verbose);
 
-	return err;
+    return err;
 OnErrorExit:
-	return -1;
+    return -1;
 }

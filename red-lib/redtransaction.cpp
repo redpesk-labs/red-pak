@@ -21,9 +21,9 @@
 namespace redlib {
 
 std::vector<libdnf::base::TransactionPackage> & RedTransaction::get_transaction_packages() {
-	if (transaction_packages.empty())
-		transaction_packages = libdnf::base::Transaction::get_transaction_packages();
-	return transaction_packages;
+    if (transaction_packages.empty())
+        transaction_packages = libdnf::base::Transaction::get_transaction_packages();
+    return transaction_packages;
 }
 
 } //namespace redlib

@@ -16,19 +16,16 @@
 # limitations under the License.
 ##########################################################################
 
-PROJECT (redpak C CXX)
-set(PROJECT_VERSION "0.1")
-set(PROJECT_PRETTY_NAME "redpak Lightweigh Containers for embedded critical systems")
-set(PROJECT_DESCRIPTION "Allow to split rootfs in a hierarchie of dependencies")
-set(PROJECT_URL "https://github.com/iotbzh/redpak-dnf")
-set(PROJECT_AUTHOR "Fulup, Ar Foll")
-set(PROJECT_AUTHOR_MAIL "fulup@iot.bzh")
-set(PROJECT_LICENSE "Apache-V2")
-set(PROJECT_ALIAS "redpak")
+CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
+
+PROJECT(redpak
+    VERSION "0.1"
+    DESCRIPTION "redpak is a lightweight container solution for embedded critical systems"
+    HOMEPAGE_URL "https://github.com/redpesk-labs/red-pak"
+    LANGUAGES C CXX)
 
 # Default version requirements
 # -------------------------------
-CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 set (PYTHON_VERSION 3)
 
 # possible options
@@ -38,7 +35,6 @@ option(WITHOUT_TESTS    "Avoid compiling tests"     OFF)
 set(REDMICRODNF         "/usr/bin/redmicrodnf"      CACHE STRING "redmicrodnf path")
 
 include(GNUInstallDirs)
-
 find_package(PkgConfig REQUIRED)
 
 # External Packages requirements
@@ -49,9 +45,6 @@ set (PKG_REQUIRED_LIST
     libcyaml
     uuid
 )
-
-# use search module to be compatible in native mode
-find_package(PkgConfig REQUIRED)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake/redpak.cmake)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake")

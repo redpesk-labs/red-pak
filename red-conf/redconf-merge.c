@@ -95,9 +95,9 @@ redConfTagT *mergedConftags(const redNodeT *rootnode, int admin) {
     //assume admin overload everything exepted node specific
     if (admin) {
         for (const redNodeT *node=rootnode; node != NULL; node=node->ancestor) {
-	        if (!node->confadmin->conftag) {
+            if (!node->confadmin->conftag) {
                 RedLog(REDLOG_INFO, "no admin conftag for %s", node->redpath);
-		        continue;
+                continue;
             }
             (void) RedConfCopyConfTags(node->confadmin->conftag, mergedConfTags);
         }

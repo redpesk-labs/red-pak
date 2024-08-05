@@ -26,23 +26,23 @@ PROJECT_TARGET_ADD(libredwrap)
     add_library(${TARGET_NAME} SHARED ${CSOURCES})
 
     # compile + link depencencies
-	pkg_search_module(RPM REQUIRED redrpm rpm)
+    pkg_search_module(RPM REQUIRED redrpm rpm)
     SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
-		PREFIX ""
-		LABELS "LIBRARY"
-		OUTPUT_NAME ${TARGET_NAME}
+        PREFIX ""
+        LABELS "LIBRARY"
+        OUTPUT_NAME ${TARGET_NAME}
         LINKER_LANGUAGE C
-	    PUBLIC_HEADER "${CHEADERS}"
-	)
+        PUBLIC_HEADER "${CHEADERS}"
+    )
 
-	target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
+    target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
     target_link_libraries(${TARGET_NAME} libredconf ${RPM_LIBRARIES})
     install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
 
 foreach(CMD redwrap redwrap-dnf)
     PROJECT_TARGET_ADD(${CMD})
         add_executable(${CMD} commands/${CMD}.c)
-	    target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
+        target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
         target_link_libraries(${TARGET_NAME} libredwrap)
-	    install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+        install(TARGETS ${TARGET_NAME} DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 endforeach()

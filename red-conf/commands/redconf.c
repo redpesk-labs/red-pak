@@ -29,10 +29,10 @@ static const rCommandT commands[] = {
 const RedLogLevelE verbose_default = REDLOG_WARNING;
 
 static const rOption globalOptions[] = {
-    {{"verbose", 	optional_argument, (int *)&verbose_default, 'v'}, "increase verbosity to info"},
-    {{"yaml", 		no_argument     , 	0,  					'y'}, "yaml output"},
-    {{"log-yaml", 	required_argument, 	0, 					    'l'}, "yaml parse log level (max=4)"},
-    {{"help"   , 	no_argument      , 	0,  				    'h'}, "print this help"},
+    {{"verbose",    optional_argument, (int *)&verbose_default, 'v'}, "increase verbosity to info"},
+    {{"yaml",       no_argument      ,     0,                   'y'}, "yaml output"},
+    {{"log-yaml",   required_argument,     0,                   'l'}, "yaml parse log level (max=4)"},
+    {{"help",       no_argument      ,     0,                   'h'}, "print this help"},
     {{0, 0, 0}, 0}
 };
 
@@ -40,9 +40,9 @@ static const char SHORTOPTS[] = "v::hyl:";
 
 static void globalUsage(const rOption *options) {
     printf("Usage: redconf [OPTION]... [COMMAND]... [OPTION]...\n"
-            "redpak configuration commands\n"
-            "\n"
-            "Commands:\n"
+           "redpak configuration commands\n"
+           "\n"
+           "Commands:\n"
     );
     for (const rCommandT *cmd = commands; cmd->cmd; cmd++)
         printf("\t%s\t\t%s\n", cmd->cmd_name, cmd->desc);

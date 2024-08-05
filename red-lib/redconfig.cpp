@@ -169,13 +169,13 @@ void RedNode::setCacheDir() {
     const char *cachedir = NULL;
     for (redNodeT *ancestor_node=node.get(); ancestor_node != NULL; ancestor_node=ancestor_node->ancestor) {
         if(ancestor_node->config->conftag->cachedir) {
-        cachedir = ancestor_node->config->conftag->cachedir;
-        break;
-    }
+            cachedir = ancestor_node->config->conftag->cachedir;
+            break;
+        }
     }
 
     if(!cachedir) {
-    throw_error(fmt::format("No cachedir in conftag for node: {}", node->redpath));
+        throw_error(fmt::format("No cachedir in conftag for node: {}", node->redpath));
     }
     base.get_config().cachedir().set(libdnf::Option::Priority::RUNTIME, cachedir);
 }

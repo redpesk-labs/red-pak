@@ -316,7 +316,7 @@ static int SchemaSave (const char* filepath, const cyaml_schema_value_t *topsche
     if (!yconf) return (-1);
 
     errcode = cyaml_save_file(filepath, yconf, topschema, config, 0);
-	if (errcode != CYAML_OK) {
+    if (errcode != CYAML_OK) {
         // when error reparse with higger level of debug to make visible errors
         if (wlevel <= 1)
             errcode = SchemaSave (filepath, topschema, config, 2);
@@ -336,7 +336,7 @@ static int SchemaLoad (const char* filepath, const cyaml_schema_value_t *topsche
 
     errcode = cyaml_load_file(filepath, yconf, topschema, config, 0);
 
-	if (errcode != CYAML_OK) {
+    if (errcode != CYAML_OK) {
         // when error reparse with higger level of debug to make visible errors
         if (wlevel <= 1)
             errcode = SchemaLoad (filepath, topschema, config, 2);
