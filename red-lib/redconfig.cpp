@@ -139,10 +139,10 @@ void RedNode::getConf() {
     }
 
     node =  std::unique_ptr<redNodeT>(RedNodesScan(redpath.c_str(), 0));
-    config = std::unique_ptr<redConfigT>(node.get()->config);
     if (!node.get()) {
         throw_error("Issue RedNodeScan");
     }
+    config = std::unique_ptr<redConfigT>(node.get()->config);
 }
 
 // get main /etc/repack/main.yaml and set umask default value
