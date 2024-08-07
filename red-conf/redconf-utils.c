@@ -481,15 +481,12 @@ void freeRedRoot(redNodeT *redroot) {
 }
 
 // Return current UTC time in ms
-unsigned long RedUtcGetTimeMs () {
+unsigned long RedUtcGetTimeMs() {
     struct timeval tp;
-    unsigned long epocms;
 
     // get UTC time
     gettimeofday(&tp, NULL);
-    epocms = tp.tv_sec * 1000 + tp.tv_usec / 1000;
-
-    return (epocms);
+    return (unsigned long)(tp.tv_sec * 1000 + tp.tv_usec / 1000);
 }
 
 static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, int *idxOut, char *outputS) {
