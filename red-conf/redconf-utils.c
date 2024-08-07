@@ -30,6 +30,9 @@
 #include <search.h>
 #include <ftw.h>
 #include <errno.h>
+#include <time.h>
+
+#include <uuid/uuid.h>
 
 #include "redconf.h"
 #include "redconf-utils.h"
@@ -91,6 +94,24 @@ void redlog(RedLogLevelE level, const char *file, int line, const char *format, 
         fprintf(stderr,"\n"COLOR_RESET);
     }
     va_end(args);
+}
+
+/* make the current date in today. return 0 in case of error else the length of the text */
+int getDateOfToday(char *today, size_t size)
+{
+    struct tm tm;
+    time_t t = time(NULL);
+    return strftime(today, size, "%d-%b-%Y %H:%M (%Z)", localtime_r(&t, &tm));
+}
+
+/* make a fresh random UUID */
+void getFreshUUID(char *uuid, size_t size)
+{
+    uuid_t u;
+    char uu[UUID_STR_LEN];
+    uuid_generate(u);
+    uuid_unparse_lower(u, uu);
+    strncpy(uuid, uu, size);
 }
 
 static int remove_cb(const char *path, const struct stat *s, int flag, struct FTW *ftw)

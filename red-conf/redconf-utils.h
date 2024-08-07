@@ -43,6 +43,14 @@
 #include "redconf-schema.h"
 #include "redconf-defaults.h"
 
+
+/* make the current date in today. return 0 in case of error else the length of the text */
+extern int getDateOfToday(char *today, size_t size);
+
+/* make a fresh random UUID */
+#define RED_UUID_STR_LEN 37
+extern void getFreshUUID(char *uuid, size_t size);
+
 int remove_directories(const char *path);
 unsigned long RedUtcGetTimeMs ();
 
