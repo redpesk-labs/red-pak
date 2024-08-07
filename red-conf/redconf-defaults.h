@@ -98,11 +98,6 @@ typedef enum  {
     REDLOG_TRACE = 8
 } RedLogLevelE;
 
-typedef enum {
-    REDDEFLT_STR,
-    REDDEFLT_CB
-} RedConfDefaultE;
-
 typedef char*(*RedGetDefaultCbT)(const char *label, void *ctx, void*handle, char *output, size_t size);
 
 typedef struct {

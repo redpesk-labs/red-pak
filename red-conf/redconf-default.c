@@ -117,7 +117,6 @@ OnErrorExit:
     return GetEnviron(label, ctx, handle, output, size);
 }
 
-// Warning: REDDEFLT_CB will get its return free
 RedConfDefaultsT nodeConfigDefaults[]= {
     // static strings
     {"NODE_PREFIX"    , GetEnviron, (void*)NODE_PREFIX},
