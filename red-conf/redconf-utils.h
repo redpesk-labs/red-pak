@@ -63,6 +63,7 @@ mode_t RedSetUmask (redConfTagT *conftag);
 
 // callback type definition
 typedef void(*RedLogCbT) (RedLogLevelE level, const char *format, ...);
+void RedLogRegister (RedLogCbT *redlogcb);
 
 //void redlog (RedLogLevelE level, const char *file, const char *line, const char *format, ...);
 void redlog (RedLogLevelE level, const char *file, int line, const char *format, ...);
