@@ -86,7 +86,7 @@ void redlog(RedLogLevelE level, const char *file, int line, const char *format, 
         (*redLogRegisteredCb) (level, format, args);
     } else {
         fprintf(stderr, "%s ", debugPrefixFormat[level].str);
-        vfprintf (stderr, format, args);
+        vfprintf(stderr, format, args);
         fprintf(stderr, "\t[%s:%d] ", file, line);
         fprintf(stderr,"\n"COLOR_RESET);
     }
@@ -107,16 +107,6 @@ static int remove_cb(const char *path, const struct stat *s, int flag, struct FT
 int remove_directories(const char *path)
 {
     return nftw(path, remove_cb, 64, FTW_DEPTH | FTW_PHYS);
-}
-
-char *RedPutEnv (const char*key, const char*value) {
-    size_t length = sizeof(char)*(strlen(key) + strlen(value) + 2);
-    char *envval = malloc(length);
-
-    snprintf(envval, length, "%s=%s", key, value);
-    RedLog(REDLOG_INFO, "set environment variable %s", envval);
-    putenv(envval);
-    return envval;
 }
 
 static int PopDownRedpath (char *redpath) {
