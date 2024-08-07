@@ -21,27 +21,17 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <uuid/uuid.h>
-#include <time.h>
-
 #include "redconf.h"
 
 static const char undef[] = "#undef";
 
 static char*GetUuidString(const char *label, void *ctx, void*handle, char *output, size_t size) {
-    uuid_t binuuid;
-
-    uuid_generate_random(binuuid);
-    uuid_unparse_lower(binuuid, output);
-
+    getFreshUUID(output, size);
     return output;
 }
 
 static char*GetDateString(const char *label, void *ctx,  void*handle, char *output, size_t size) {
-    time_t now= time(NULL);
-    struct tm *time= localtime(&now);
-
-    strftime (output, size, "%d-%b-%Y %h:%M (%Z)",time);
+    getDateOfToday(output, size);
     return output;
 }
 
