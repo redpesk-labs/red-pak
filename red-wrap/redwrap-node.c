@@ -288,7 +288,7 @@ int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const c
         }
 
         // check node was not moved from one family to an other
-        if (RedConfGetInod(node->redpath) != RedConfGetInod(statusN->realpath)) {
+        if (!RedConfIsSameFile(node->redpath, statusN->realpath)) {
             RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] was moved [require 'dnf red-update' or --force] nodepath=%s", configN->headers->alias, statusN->realpath);
             goto OnErrorExit;
         }

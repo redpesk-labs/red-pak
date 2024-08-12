@@ -732,17 +732,13 @@ const char *expandAlloc(const redNodeT *node, const char *input, int expand) {
         return strdup(input);
 }
 
-// return file inode (use to check if two path are pointing on the same file)
-int RedConfGetInod (const char* path) {
-    struct stat fstat;
-    int status;
-    status = stat (path, &fstat);
-    if (status <0) goto OnErrorExit;
-
-    return (fstat.st_ino);
-
-OnErrorExit:
-    return -1;
+/* see redconf-utils.h */
+int RedConfIsSameFile(const char* path1, const char* path2) {
+    struct stat st1, st2;
+    return stat(path1, &st1) == 0
+        && stat(path2, &st2) == 0
+        && st1.st_ino == st2.st_ino
+        && st1.st_dev == st2.st_dev;
 }
 
 

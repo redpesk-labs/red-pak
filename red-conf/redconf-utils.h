@@ -80,7 +80,16 @@ void redlog (RedLogLevelE level, const char *file, int line, const char *format,
 #define RedLog(REDLOGLEVEL,REDLOGFORMAT,...) redlog((REDLOGLEVEL),__FILE__,__LINE__,(REDLOGFORMAT),##__VA_ARGS__)
 
 void SetLogLevel(RedLogLevelE level);
-int RedConfGetInod (const char* path);
+
+/**
+ * Checks if path1 and path2 are refering or not to the same file.
+ *
+ * @param path1 path to one file
+ * @param path2 path to the other file
+ *
+ * @return 1 when paths are referring the same file or 0 otherwise
+ */
+extern int RedConfIsSameFile(const char* path1, const char* path2);
 
 /* Exec Cmd */
 int MemFdExecCmd (const char* mount, const char* command);
