@@ -104,7 +104,7 @@ static char*GetNodeInfo(const char *label, void *ctx, void*handle, char *output,
     return output;
 
 OnErrorExit:
-    return GetEnviron(label, ctx, handle, output, size);
+    return GetEnviron(label, ctx, NULL, output, size);
 }
 
 RedConfDefaultsT nodeConfigDefaults[]= {
