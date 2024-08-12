@@ -22,7 +22,6 @@
 
 #include <unistd.h>
 #include <sys/types.h>
-#include <cyaml/cyaml.h>
 
 // ---- RedConfig Schema for ${redpath}/etc/redpack.yaml ----
     typedef struct {
@@ -96,7 +95,6 @@
         RED_EXPORT_PROCFS               = 1 << 14,
         RED_EXPORT_LOCK                 = 1 << 15,
     } redExportFlagE;
-    extern const cyaml_strval_t exportFlagStrings[];
 
     static const unsigned int RED_EXPORT_PRIVATES = RED_EXPORT_PRIVATE | RED_EXPORT_PRIVATE_FILE;
     static const unsigned int RED_EXPORT_FILES = RED_EXPORT_PRIVATE_FILE | RED_EXPORT_RESTRICTED_FILE | RED_EXPORT_PUBLIC_FILE;
@@ -108,7 +106,6 @@
         RED_CONFVAR_EXECFD,
         RED_CONFVAR_REMOVE,
     } redVarEnvFlagE;
-    extern const cyaml_strval_t redVarEnvStrings[];
 
     typedef struct {
         const char *mount;
@@ -136,7 +133,6 @@
        RED_CONF_OPT_DISABLED = 1,
        RED_CONF_OPT_ENABLED = 2,
     } redConfOptFlagE;
-    extern const cyaml_strval_t redConfOptStrings[];
 
     typedef struct {
         const char *cap;
@@ -195,7 +191,6 @@
         RED_STATUS_UNKNOWN,
         RED_STATUS_ERROR,
     } redStatusFlagE;
-    extern const cyaml_strval_t statusFlagStrings[];
 
     typedef struct {
         redStatusFlagE state;
@@ -253,5 +248,10 @@ int RedFreeConfig(redConfigT *config, int wlevel);
 int RedFreeStatus(redStatusT *status, int wlevel);
 
 int setLogYaml(int level);
+
+extern const char *getExportFlagString(redExportFlagE value);
+extern const char *getRedVarEnvString(redVarEnvFlagE value);
+extern const char *getRedConfOptString(redConfOptFlagE value);
+extern const char *getStatusFlagString(redStatusFlagE value);
 
 #endif // _REDCONFIG_INCLUDE_

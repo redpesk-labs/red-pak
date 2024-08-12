@@ -21,8 +21,7 @@
 
 #include "redconf-schema.h"
 
-//#include <rpm/RedLog.h>
-//#include "redconf.h"
+#include <cyaml/cyaml.h>
 
 #include "redconf-log.h"
 
@@ -91,7 +90,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
 * --- CONFIG SECTION --- *
 *****************************************************************************************************************/
 
-const cyaml_strval_t redConfOptStrings[] ={
+static const cyaml_strval_t redConfOptStrings[] ={
    {"Unset"  , RED_CONF_OPT_UNSET},
    {"Enabled", RED_CONF_OPT_ENABLED},
    {"Disabled",RED_CONF_OPT_DISABLED},
@@ -193,7 +192,7 @@ static const cyaml_schema_field_t ConfigSchema[] = {
 * --- EXPORT SECTION --- *
 *****************************************************************************************************************/
 
-const cyaml_strval_t exportFlagStrings[] = {
+static const cyaml_strval_t exportFlagStrings[] = {
     { "Restricted",     RED_EXPORT_RESTRICTED},
     { "Public",         RED_EXPORT_PUBLIC},
     { "Private",        RED_EXPORT_PRIVATE},
@@ -212,7 +211,7 @@ const cyaml_strval_t exportFlagStrings[] = {
     { "Lock"     ,      RED_EXPORT_LOCK},
 };
 
-const cyaml_strval_t redVarEnvStrings[] = {
+static const cyaml_strval_t redVarEnvStrings[] = {
     {"Static",   RED_CONFVAR_STATIC},
     {"Execfd",   RED_CONFVAR_EXECFD},
     {"Default",  RED_CONFVAR_DEFLT},
@@ -289,7 +288,7 @@ static const cyaml_schema_value_t RedPakConfigSchema = {
 * --- STATUS SCHEMA --- .rednode.yaml file --- *
 *****************************************************************************************************************/
 
-const cyaml_strval_t statusFlagStrings[] = {
+static const cyaml_strval_t statusFlagStrings[] = {
     { "Disable", RED_STATUS_DISABLE},
     { "Enable",  RED_STATUS_ENABLE},
     { "Unknown", RED_STATUS_UNKNOWN},
@@ -430,3 +429,22 @@ int setLogYaml(int level) {
     return 0;
 }
 
+static const char *getStrOfEnum(int64_t val, const cyaml_strval_t *array, size_t count) {
+    while (count > 0)
+        if (array[--count].val == val)
+            return array[count].str;
+    return "???unknown-enumeration???";
+}
+
+const char *getExportFlagString(redExportFlagE value) {
+    return getStrOfEnum(value, exportFlagStrings, sizeof exportFlagStrings / sizeof *exportFlagStrings);
+}
+const char *getRedVarEnvString(redVarEnvFlagE value) {
+    return getStrOfEnum(value, redVarEnvStrings, sizeof redVarEnvStrings / sizeof *redVarEnvStrings);
+}
+const char *getRedConfOptString(redConfOptFlagE value) {
+    return getStrOfEnum(value, redConfOptStrings, sizeof redConfOptStrings / sizeof *redConfOptStrings);
+}
+const char *getStatusFlagString(redStatusFlagE value) {
+    return getStrOfEnum(value, statusFlagStrings, sizeof statusFlagStrings / sizeof *statusFlagStrings);
+}

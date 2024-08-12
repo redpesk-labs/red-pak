@@ -31,7 +31,7 @@
 
 void RedDumpStatusHandle (redStatusT *status) {
    // retrieve label attach to state flag
-    const char* flag = statusFlagStrings[status->state].str;
+    const char* flag = getStatusFlagString(status->state);
 
     printf ("---\n");
     printf ("  state=%s'\n", flag);
@@ -66,19 +66,19 @@ void RedDumpConftag(redConfTagT *conftag) {
     printf("\tverbose: %d\n", conftag->verbose);
     printf("\tdiewithparent: %d\n", conftag->diewithparent);
     printf("\tumask: %s\n", conftag->umask);
-    printf("\tnewsession: %s\n", redConfOptStrings[conftag->newsession].str);
-    printf("\tshare_all: %s\n",  redConfOptStrings[conftag->share_all].str);
-    printf("\tshare_user: %s\n", redConfOptStrings[conftag->share_user].str);
-    printf("\tshare_cgroup: %s\n", redConfOptStrings[conftag->share_cgroup].str);
-    printf("\tshare_ipc: %s\n", redConfOptStrings[conftag->share_ipc].str);
-    printf("\tshare_pid: %s\n", redConfOptStrings[conftag->share_pid].str);
-    printf("\tshare_net: %s\n", redConfOptStrings[conftag->share_net].str);
-    printf("\tshare_time: %s\n", redConfOptStrings[conftag->share_time].str);
+    printf("\tnewsession: %s\n", getRedConfOptString(conftag->newsession));
+    printf("\tshare_all: %s\n",  getRedConfOptString(conftag->share_all));
+    printf("\tshare_user: %s\n", getRedConfOptString(conftag->share_user));
+    printf("\tshare_cgroup: %s\n", getRedConfOptString(conftag->share_cgroup));
+    printf("\tshare_ipc: %s\n", getRedConfOptString(conftag->share_ipc));
+    printf("\tshare_pid: %s\n", getRedConfOptString(conftag->share_pid));
+    printf("\tshare_net: %s\n", getRedConfOptString(conftag->share_net));
+    printf("\tshare_time: %s\n", getRedConfOptString(conftag->share_time));
     //printf("cgroups=%s\n", conftag->cgroups);
 }
 
 static void RedDumpExport(redConfExportPathT *export, int idx) {
-    printf ("  - [%d] mode:  %s\n", idx, exportFlagStrings[export->mode].str);
+    printf ("  - [%d] mode:  %s\n", idx, getExportFlagString(export->mode));
     printf ("         mount: %s\n", export->mount);
     printf ("         path:  %s\n", export->path);
 }
