@@ -26,7 +26,7 @@
 
 #include "redconf-defaults.h"
 #include "redconf-log.h"
-#include "redconf-utils.h"
+#include "redconf-node.h"
 #include "redconf-merge.h"
 
 void RedDumpStatusHandle (redStatusT *status) {

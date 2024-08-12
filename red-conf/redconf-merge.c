@@ -27,6 +27,8 @@
 #include "lookup3.h"
 #include "redconf-log.h"
 #include "redconf-defaults.h"
+#include "redconf-expand.h"
+#include "redconf-node.h"
 #include "redconf-utils.h"
 #include "redconf-hashmerge.h"
 

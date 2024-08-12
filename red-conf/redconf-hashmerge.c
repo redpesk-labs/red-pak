@@ -25,7 +25,7 @@
 
 #include "redconf-log.h"
 #include "redconf-hash.h"
-#include "redconf-utils.h"
+#include "redconf-expand.h"
 
 
 static char *hashwarn(int alloc, const char *format, ...) {

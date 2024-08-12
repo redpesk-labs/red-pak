@@ -28,6 +28,8 @@
 #include "redconf-schema.h"
 #include "redconf-dump.h"
 #include "redconf-utils.h"
+#include "redconf-expand.h"
+#include "redconf-node.h"
 #include "redconf-merge.h"
 
 
