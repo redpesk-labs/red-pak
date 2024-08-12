@@ -18,15 +18,12 @@
 
 #define _GNU_SOURCE
 
+#include "redconf-hash.h"
+
 #include <string.h>
 #include <stdlib.h>
 
-#include <urcu.h>        /* RCU flavor */
-#include <urcu/rculfhash.h>    /* RCU Lock-free hash table */
-#include <urcu/compiler.h>    /* For CAA_ARRAY_SIZE */
-
-#include "redconf-hash.h"
-#include "redconf-utils.h"
+#include "redconf-log.h"
 #include "redconf-defaults.h"
 
 //hash function

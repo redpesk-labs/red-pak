@@ -19,6 +19,10 @@
 #ifndef _RED_CONF_HASH_INCLUDE_
 #define _RED_CONF_HASH_INCLUDE_
 
+#include <urcu.h>             /* RCU flavor */
+#include <urcu/rculfhash.h>   /* RCU Lock-free hash table */
+#include <urcu/compiler.h>    /* For CAA_ARRAY_SIZE */
+
 #include "redconf-schema.h"
 
 // hash structure
@@ -43,6 +47,6 @@ typedef struct {
 } redHashCbsT;
 
 //merge data with hash table
-void * mergeData(const redNodeT* rootnode, size_t dataLen, int *mergecount, redHashCbsT *hashcbs, int append_duplicate, int expand);
+void *mergeData(const redNodeT* rootnode, size_t dataLen, int *mergecount, redHashCbsT *hashcbs, int append_duplicate, int expand);
 
 #endif

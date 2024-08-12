@@ -16,14 +16,17 @@
 *
 */
 
+#include "redconf-hashmerge.h"
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <string.h>
 
+#include "redconf-log.h"
 #include "redconf-hash.h"
 #include "redconf-utils.h"
 
-#include "redconf-hashmerge.h"
 
 static char *hashwarn(int alloc, const char *format, ...) {
     char *res = NULL;

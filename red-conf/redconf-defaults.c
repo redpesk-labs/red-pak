@@ -15,13 +15,17 @@
 * limitations under the License.
 *
 */
+
+#include "redconf-defaults.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 
-#include "redconf.h"
+#include "redconf-schema.h"
+#include "redconf-utils.h"
 
 static const char undef[] = "#undef";
 

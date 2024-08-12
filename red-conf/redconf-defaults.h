@@ -19,6 +19,7 @@
 #ifndef _RED_DEFAULTS_INCLUDE_
 #define _RED_DEFAULTS_INCLUDE_
 
+#include <stddef.h>
 
 // set some reasonnable defaults
 #ifndef RED_MAXPATHLEN
@@ -85,18 +86,6 @@
 #ifndef CGROUPS_ROOT_LEAF_NAME
 #define CGROUPS_ROOT_LEAF_NAME "redpak-root-leaf"
 #endif
-
-typedef enum  {
-    REDLOG_EMERGENCY = 0,
-    REDLOG_ALERT = 1,
-    REDLOG_CRITICAL = 2,
-    REDLOG_ERROR = 3,
-    REDLOG_WARNING = 4,
-    REDLOG_NOTICE = 5,
-    REDLOG_INFO = 6,
-    REDLOG_DEBUG = 7,
-    REDLOG_TRACE = 8
-} RedLogLevelE;
 
 typedef char*(*RedGetDefaultCbT)(const char *label, void *ctx, void*handle, char *output, size_t size);
 

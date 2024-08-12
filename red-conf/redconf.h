@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include "redconf-defaults.h"
+#include "redconf-log.h"
 #include "redconf-schema.h"
 #include "redconf-dump.h"
 #include "redconf-utils.h"

@@ -19,19 +19,14 @@
 
 #define _GNU_SOURCE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <string.h>
-#include <dirent.h>
-#include <libgen.h>
-#include <search.h>
+#include "redconf-merge.h"
 
+#include <stdlib.h>
+#include <string.h>
 
 #include "lookup3.h"
-#include "redconf-merge.h"
+#include "redconf-log.h"
+#include "redconf-defaults.h"
 #include "redconf-utils.h"
 #include "redconf-hashmerge.h"
 

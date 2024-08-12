@@ -18,8 +18,13 @@
 * Documentation: https://github.com/tlsa/libcyaml/blob/master/docs/guide.md
 */
 #define _GNU_SOURCE
-#include <rpm/rpmlog.h>
-#include "redconf.h"
+
+#include "redconf-schema.h"
+
+//#include <rpm/RedLog.h>
+//#include "redconf.h"
+
+#include "redconf-log.h"
 
 // shorten schema line lenght
 #define CYFLAG_PTR  CYAML_FLAG_POINTER
@@ -76,7 +81,7 @@ static const cyaml_config_t *yconfGet (int wlevel) {
         wlevel = LOGYAML;
 
     if (wlevel > maxLevel) {
-        rpmlog(REDLOG_ERROR, "Fail yconf verbosity wlevel too high val=%d max=%d", wlevel, maxLevel);
+        RedLog(REDLOG_ERROR, "Fail yconf verbosity wlevel too high val=%d max=%d", wlevel, maxLevel);
         return NULL;
     }
     return yconft[wlevel];
@@ -321,7 +326,7 @@ static int SchemaSave (const char* filepath, const cyaml_schema_value_t *topsche
         if (wlevel <= 1)
             errcode = SchemaSave (filepath, topschema, config, 2);
         else
-            rpmlog(REDLOG_ERROR, "Fail to save yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
+            RedLog(REDLOG_ERROR, "Fail to save yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
     }
 
     return errcode;
@@ -341,7 +346,7 @@ static int SchemaLoad (const char* filepath, const cyaml_schema_value_t *topsche
         if (wlevel <= 1)
             errcode = SchemaLoad (filepath, topschema, config, 2);
         else
-            rpmlog(REDLOG_ERROR, "Fail to reading yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
+            RedLog(REDLOG_ERROR, "Fail to reading yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
     }
 
     return errcode;
@@ -424,3 +429,4 @@ int setLogYaml(int level) {
     LOGYAML = level;
     return 0;
 }
+

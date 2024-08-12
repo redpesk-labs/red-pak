@@ -28,7 +28,7 @@
 #include <limits.h>
 
 #include "cgroups.h"
-#include "redconf-utils.h"
+#include "redconf-log.h"
 #include "redconf-defaults.h"
 
 //https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html

@@ -17,12 +17,15 @@
 *
 */
 
-#include <stdlib.h>
+#include "redconf-dump.h"
+
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <libgen.h>
 
-#include "redconf-dump.h"
+#include "redconf-defaults.h"
+#include "redconf-log.h"
 #include "redconf-utils.h"
 #include "redconf-merge.h"
 

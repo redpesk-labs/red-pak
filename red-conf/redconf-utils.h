@@ -43,7 +43,6 @@
 #include "redconf-schema.h"
 #include "redconf-defaults.h"
 
-
 /* make the current date in today. return 0 in case of error else the length of the text */
 extern int getDateOfToday(char *today, size_t size);
 
@@ -68,18 +67,6 @@ int RedConfAppendEnvKey (const redNodeT *node, char *outputS, int *idxOut, int m
 const char *expandAlloc(const redNodeT *node, const char *input, int expand);
 
 mode_t RedSetUmask (redConfTagT *conftag);
-
-// callback type definition
-typedef void(*RedLogCbT) (RedLogLevelE level, const char *format, ...);
-void RedLogRegister (RedLogCbT *redlogcb);
-
-//void redlog (RedLogLevelE level, const char *file, const char *line, const char *format, ...);
-void redlog (RedLogLevelE level, const char *file, int line, const char *format, ...);
-
-//#define RedLog(REDLOGLEVEL, REDLOGFORMAT, ...) _redlog((REDLOGLEVEL), __FILE__, __LINE__, (REDLOGFORMAT), __VA_ARGS__)
-#define RedLog(REDLOGLEVEL,REDLOGFORMAT,...) redlog((REDLOGLEVEL),__FILE__,__LINE__,(REDLOGFORMAT),##__VA_ARGS__)
-
-void SetLogLevel(RedLogLevelE level);
 
 /**
  * Checks if path1 and path2 are refering or not to the same file.
