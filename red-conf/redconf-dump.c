@@ -59,22 +59,22 @@ OnErrorExit:
 
 void RedDumpConftag(redConfTagT *conftag) {
     printf ("config:\n");
-    printf("\tcachedir: %s\n", conftag->cachedir);
-    printf("\thostname: %s\n", conftag->hostname);
-    printf("\tchdir: %s\n", conftag->chdir);
-    printf("\tumask: %s\n", conftag->umask);
-    printf("\tverbose: %d\n", conftag->verbose);
-    printf("\tdiewithparent: %d\n", conftag->diewithparent);
-    printf("\tumask: %s\n", conftag->umask);
-    printf("\tnewsession: %s\n", getRedConfOptString(conftag->newsession));
-    printf("\tshare_all: %s\n",  getRedConfOptString(conftag->share_all));
-    printf("\tshare_user: %s\n", getRedConfOptString(conftag->share_user));
-    printf("\tshare_cgroup: %s\n", getRedConfOptString(conftag->share_cgroup));
-    printf("\tshare_ipc: %s\n", getRedConfOptString(conftag->share_ipc));
-    printf("\tshare_pid: %s\n", getRedConfOptString(conftag->share_pid));
-    printf("\tshare_net: %s\n", getRedConfOptString(conftag->share_net));
-    printf("\tshare_time: %s\n", getRedConfOptString(conftag->share_time));
-    //printf("cgroups=%s\n", conftag->cgroups);
+    printf("\tcachedir: %s\n", conftag == NULL ? "" : conftag->cachedir);
+    printf("\thostname: %s\n", conftag == NULL ? "" : conftag->hostname);
+    printf("\tchdir: %s\n", conftag == NULL ? "" : conftag->chdir);
+    printf("\tumask: %s\n", conftag == NULL ? "" : conftag->umask);
+    printf("\tverbose: %d\n", conftag == NULL ? 0 : conftag->verbose);
+    printf("\tdiewithparent: %d\n", conftag == NULL ? 0 : conftag->diewithparent);
+    printf("\tumask: %s\n", conftag == NULL ? "" : conftag->umask);
+    printf("\tnewsession: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->newsession));
+    printf("\tshare_all: %s\n",  conftag == NULL ? "" : getRedConfOptString(conftag->share_all));
+    printf("\tshare_user: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_user));
+    printf("\tshare_cgroup: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_cgroup));
+    printf("\tshare_ipc: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_ipc));
+    printf("\tshare_pid: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_pid));
+    printf("\tshare_net: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_net));
+    printf("\tshare_time: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_time));
+    //printf("\tcgroups: %s\n", conftag == NULL ? "" : conftag->cgroups);
 }
 
 static void RedDumpExport(redConfExportPathT *export, int idx) {
