@@ -79,7 +79,6 @@ OnErrorExit:
 //get mergedConftags from hierarchy
 redConfTagT *mergedConftags(const redNodeT *rootnode, int admin) {
     redConfTagT *mergedConfTags = calloc(1, sizeof(redConfTagT));
-    memset(mergedConfTags, 0, sizeof(redConfTagT));
 
     for (const redNodeT *node=rootnode; node; node=node->childs->child) {
         (void) RedConfCopyConfTags(node->config->conftag, mergedConfTags);
@@ -111,16 +110,14 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, 
         for(rootNode = leaf; rootNode->ancestor; rootNode = rootNode->ancestor);
     }
 
-    redNodeT *mergedNode = malloc(sizeof(redNodeT));
-    memset(mergedNode, 0, sizeof(redNodeT));
+    redNodeT *mergedNode = calloc(1, sizeof(redNodeT));
     mergedNode->redpath = strdup(leaf->redpath);
 
     //config
-    mergedNode->config =  malloc(sizeof(redConfigT));
-    memset(mergedNode->config, 0, sizeof(redConfigT));
+    mergedNode->config =  calloc(1, sizeof(redConfigT));
+    mergedNode->config->headers = calloc(1, sizeof(redConfHeaderT));
 
     //headers
-    mergedNode->config->headers = malloc(sizeof(redConfHeaderT));
     mergedNode->config->headers->alias = strdup(leaf->config->headers->alias);
     mergedNode->config->headers->name = strdup(leaf->config->headers->name);
     mergedNode->config->headers->info = strdup(leaf->config->headers->info);

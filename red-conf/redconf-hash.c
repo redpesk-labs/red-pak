@@ -74,12 +74,11 @@ static int add_hash(struct cds_lfht *ht, redHashT *value, redHashT **hoverload) 
 
 
     //allocate hash entry
-    hnode = malloc(sizeof(*hnode));
+    hnode = calloc(1, sizeof(*hnode));
     if (!hnode) {
         RedLog(REDLOG_ERROR, "Issue allocate hnode");
         goto Exit;
     }
-    memset(hnode, 0, sizeof(*hnode));
     hnode->key = value->key;
     hnode->value = value->value;
     hnode->node = value->node;
