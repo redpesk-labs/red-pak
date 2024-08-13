@@ -20,7 +20,7 @@
 #ifndef _RED_CONF_MERGE_INCLUDE_
 #define _RED_CONF_MERGE_INCLUDE_
 
-#include "redconf-schema.h"
+#include "redconf-node.h"
 
 
 // mergeSpecfialConfVar

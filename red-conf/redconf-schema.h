@@ -191,44 +191,6 @@
         const char *info;
     } redStatusT;
 
-// ---- Family tree structure ----
-typedef enum {
-    RED_NODE_CONFIG_OK,
-    RED_NODE_CONFIG_FX,
-    RED_NODE_CONFIG_MISSING,
-}  redNodeYamlE;
-
-typedef struct redChildNodeS{
-    struct redNodeS* child;
-    struct redChildNodeS* brother;
-} redChildNodeT;
-
-typedef struct {
-    char *leafalias;
-    char *leafname;
-    char *leafpath;
-} redEnvValT;
-
-// --- Redpath Node Directory Hierarchy (from leaf to root)
-typedef struct redNodeS{
-    redStatusT *status;
-    redConfigT *config;
-    redConfigT *confadmin;
-    struct redNodeS *ancestor;
-    redChildNodeT *childs;
-    const char *redpath;
-    redEnvValT env;
-} redNodeT;
-
-// ---- Special confvar
-typedef struct {
-    char *ldpathString;
-    unsigned int ldpathIdx;
-    char *pathString;
-    unsigned int pathIdx;
-
-} dataNodeT;
-
 redStatusT* RedLoadStatus (const char* filepath, int warning);
 redConfigT* RedLoadConfig (const char* filepath, int warning);
 int RedSaveStatus (const char* filepath, redStatusT *status, int warning);

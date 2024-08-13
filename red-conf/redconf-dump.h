@@ -22,6 +22,7 @@
 #define _RED_CONF_DUMP_INCLUDE_
 
 #include "redconf-schema.h"
+#include "redconf-node.h"
 
 void RedDumpConftag(redConfTagT *conftag);
 

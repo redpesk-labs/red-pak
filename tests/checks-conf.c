@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 
 #include "redconf-defaults.h"
-#include "redconf-schema.h"
+#include "redconf-node.h"
 
 
 

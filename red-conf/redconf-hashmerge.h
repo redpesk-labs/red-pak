@@ -20,7 +20,7 @@
 #ifndef _RED_CONF_MERGEHASH_INCLUDE_
 #define _RED_CONF_MERGEHASH_INCLUDE_
 
-#include "redconf-schema.h"
+#include "redconf-node.h"
 
 int mergeExports(const redNodeT *rootnode, redNodeT *expandNode, int expand, int duplicate);
 int mergeConfVars(const redNodeT *rootnode, redNodeT *expandNode, int expand, int duplicate);

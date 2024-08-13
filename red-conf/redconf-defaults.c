@@ -24,7 +24,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include "redconf-schema.h"
+#include "redconf-node.h"
 #include "redconf-utils.h"
 
 static const char undef[] = "#undef";

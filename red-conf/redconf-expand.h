@@ -19,7 +19,7 @@
 #define _RED_CONF_EXPAND_INCLUDE_
 
 #include "redconf-defaults.h"
-#include "redconf-schema.h"
+#include "redconf-node.h"
 
 const char * RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char*prefix, const char*trailler);
 const char *RedGetDefaultExpand(redNodeT *node, RedConfDefaultsT *defaults, const char* inputS);

@@ -23,7 +23,7 @@
 #include <urcu/rculfhash.h>   /* RCU Lock-free hash table */
 #include <urcu/compiler.h>    /* For CAA_ARRAY_SIZE */
 
-#include "redconf-schema.h"
+#include "redconf-node.h"
 
 // hash structure
 typedef struct {
