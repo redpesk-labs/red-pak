@@ -6,10 +6,47 @@
 #include <sys/wait.h>
 
 #include "redconf-defaults.h"
+#include "redconf-schema.h"
 #include "redconf-node.h"
+#include "redconf-dump.h"
+
+#ifndef TEMPLATES_DIR
+#define TEMPLATES_DIR "../etc/redpak/templates.d"
+#endif
+
+/*********************************************************************/
+/*********************************************************************
+
+SOME COMMONS
+
+*********************************************************************/
+/*********************************************************************/
+
+char tempname[50];
+
+void make_tempname()
+{
+    snprintf(tempname, sizeof tempname, "/tmp/==checks-conf+%d==", (int)getpid());
+}
+
+void remove_tempfile()
+{
+    make_tempname();
+    unlink(tempname);
+}
+
+/*********************************************************************/
+/*********************************************************************
+
+TEST CASE "defaults"
 
 
+These tests are checking that the expansions of predefined variables
+is correct and that the their default values are also correct.
 
+The name default comes from 'redconf-defaults.c'.
+
+*********************************************************************/
 /*********************************************************************/
 
 #define BUFFLEN 512
@@ -27,6 +64,8 @@ int call_conf_default(const char *key, char buffer[BUFFLEN], void *arg)
     return 1;
 }
 
+
+/* TEST expansion of of variable with (or not) default values */
 START_TEST(test_defaults_env)
 {
 
@@ -71,6 +110,8 @@ START_TEST(test_defaults_env)
     }
 }
 
+/* TEST expansion of process system variables
+   $UID, $GID, $PID */
 START_TEST(test_defaults_int)
 {
     char intval[BUFFLEN];
@@ -94,6 +135,8 @@ START_TEST(test_defaults_int)
 }
 
 
+/* TEST expansion of node related variables
+   $NODE_ALIAS, $NODE_NAME, $NODE_PATH, $NODE_INFO */
 START_TEST(test_defaults_for_node)
 {
 
@@ -145,6 +188,7 @@ START_TEST(test_defaults_for_node)
     }
 }
 
+/* TEST expansion of $UUID */
 START_TEST(test_defaults_uuid)
 {
     char buffer[BUFFLEN];
@@ -169,6 +213,7 @@ START_TEST(test_defaults_uuid)
 */
 }
 
+/* TEST expansion of $TODAY */
 START_TEST(test_defaults_today)
 {
     char m[BUFFLEN];
@@ -191,6 +236,84 @@ START_TEST(test_defaults_today)
 }
 
 /*********************************************************************/
+/*********************************************************************
+
+TEST CASE "schema"
+
+
+These tests are checking functions of 'redconf-schema.c'.
+
+*********************************************************************/
+/*********************************************************************/
+
+/* Helper function for testing functions
+   RedLoadConfig, RedDumpConfigHandle, RedSaveConfig, RedGetConfig and RedFreeConfig
+*/
+static void do_test_config(const char *path, int exists)
+{
+    int         rc;
+    FILE       *file;
+    redConfigT *config, *other_config;
+    char       *text,   *other_text;
+    size_t      length, other_length;
+
+    config = RedLoadConfig(path, 1);
+    if (!exists)
+        ck_assert_ptr_null(config);
+    else {
+        ck_assert_ptr_nonnull(config);
+
+        /* dump the config */
+        printf("\n\n\n**************** DUMP OF %s\n", path);
+        RedDumpConfigHandle(config);
+
+        /* get yaml of the config */
+        rc = RedGetConfig(&text, &length, config);
+        ck_assert_int_eq(rc, 0);
+        printf("\n\n\n**************** YAML OF %s\n%.*s\n", path, (int)length, text);
+
+        /* write the yaml */
+        file = fopen(tempname, "w");
+        ck_assert_ptr_nonnull(file);
+        rc = (int)fwrite(text, length, 1, file);
+        ck_assert_int_eq(rc, 1);
+        fclose(file);
+
+        /* read the written yaml */
+        other_config = RedLoadConfig(tempname, 1);
+        ck_assert_ptr_nonnull(config);
+
+        /* get yaml of the new read config */
+        rc = RedGetConfig(&other_text, &other_length, other_config);
+        ck_assert_int_eq(rc, 0);
+
+        /* compare the two yamls */
+        ck_assert(other_length == length);
+        ck_assert(0 == memcmp(other_text, text, length));
+
+        free(other_text);
+        RedFreeConfig(other_config, 1);
+        free(text);
+        RedFreeConfig(config, 1);
+    }
+}
+
+/* Test that RedLoadConfig works by loading the current templates */
+START_TEST(test_config)
+{
+    do_test_config(TEMPLATES_DIR "/" "admin-no-system-node.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "admin.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "default-no-system-node.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "default.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "main-admin-system.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "main-system.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "main-system.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "i-should-not-exists.yaml", 0);
+}
+}
+
+/*********************************************************************/
+
 
 static Suite *suite;
 static TCase *tcase;
@@ -219,6 +342,8 @@ int main(int ac, char **av)
                         addtest(test_defaults_for_node);
                         addtest(test_defaults_uuid);
                         addtest(test_defaults_today);
+		addtcasefix("schema", make_tempname, remove_tempfile);
+                        addtest(test_config);
 	return !!srun();
 }
 

@@ -191,17 +191,16 @@
         const char *info;
     } redStatusT;
 
-redStatusT* RedLoadStatus (const char* filepath, int warning);
-redConfigT* RedLoadConfig (const char* filepath, int warning);
-int RedSaveStatus (const char* filepath, redStatusT *status, int warning);
-int RedSaveConfig (const char* filepath, redConfigT *config, int warning);
+extern redConfigT* RedLoadConfig (const char* filepath, int warning);
+extern int RedSaveConfig (const char* filepath, redConfigT *config, int warning);
+extern int RedGetConfig(char **output, size_t *len, redConfigT *config);
+extern int RedFreeConfig(redConfigT *config, int wlevel);
 
-int RedGetConfig(char **output, size_t *len, redConfigT *config);
+extern redStatusT* RedLoadStatus (const char* filepath, int warning);
+extern int RedSaveStatus (const char* filepath, redStatusT *status, int warning);
+extern int RedFreeStatus(redStatusT *status, int wlevel);
 
-int RedFreeConfig(redConfigT *config, int wlevel);
-int RedFreeStatus(redStatusT *status, int wlevel);
-
-int setLogYaml(int level);
+extern int setLogYaml(int level);
 
 extern const char *getExportFlagString(redExportFlagE value);
 extern const char *getRedVarEnvString(redVarEnvFlagE value);
