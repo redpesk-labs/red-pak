@@ -30,13 +30,12 @@ PROJECT_TARGET_ADD(libredconf)
     LINKER_LANGUAGE C
       PUBLIC_HEADER "${CHEADERS}"
     )
-  pkg_search_module(RPM REQUIRED redrpm rpm)
   pkg_search_module(URCU REQUIRED liburcu)
   pkg_search_module(URCUCDS REQUIRED liburcu-cds)
 
   # compliation include path for library consuming modules
-  target_link_libraries(${TARGET_NAME} ${RPM_LIBRARIES} ${URCU_LIBRARIES} ${URCUCDS_LIBRARIES})
-  target_include_directories(${TARGET_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR} ${RPM_INCLUDE_DIRS}")
+  target_link_libraries(${TARGET_NAME} ${URCU_LIBRARIES} ${URCUCDS_LIBRARIES})
+  target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
   # final install destination for sharelib
   install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
