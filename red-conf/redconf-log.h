@@ -18,6 +18,8 @@
 #ifndef _RED_CONF_LOG_INCLUDE_
 #define _RED_CONF_LOG_INCLUDE_
 
+#include <stdarg.h>
+
 typedef enum  {
     REDLOG_EMERGENCY = 0,
     REDLOG_ALERT = 1,
@@ -31,7 +33,7 @@ typedef enum  {
 } RedLogLevelE;
 
 // callback type definition
-typedef void(*RedLogCbT) (RedLogLevelE level, const char *format, ...);
+typedef void (*RedLogCbT)(RedLogLevelE level, const char *format, va_list args);
 extern void RedLogRegister (RedLogCbT *redlogcb);
 
 /* set the global log level */

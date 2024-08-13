@@ -19,7 +19,6 @@
 
 #include "redconf-log.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 
 #define COLOR_REDPRINT "\033[0;31m"
