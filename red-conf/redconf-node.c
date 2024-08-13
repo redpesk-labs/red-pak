@@ -64,11 +64,6 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int verb
     int error;
     redNodeYamlE rc;
 
-    if (!pnode) {
-        RedLog(REDLOG_ERROR, "[load node %s]: pnode is null, aborting...", redpath);
-        goto OnErrorExit;
-    }
-
     // check redpath is a readable directory
     error= stat(redpath, &statinfo);
     if (error || !S_ISDIR(statinfo.st_mode)) {
