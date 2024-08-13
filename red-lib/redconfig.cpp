@@ -150,10 +150,7 @@ void RedNode::getMain() {
 
     getConf();
 
-    if (!node.get()->config->acl->umask)
-        umask(00077);
-    else
-        umask(node.get()->config->acl->umask);
+    RedSetUmask(node.get()->config->conftag);
 }
 
 void RedNode::setPersistDir() {

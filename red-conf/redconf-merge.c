@@ -119,14 +119,6 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, 
     mergedNode->config =  malloc(sizeof(redConfigT));
     memset(mergedNode->config, 0, sizeof(redConfigT));
 
-    //acl
-    if(leaf->config->acl) {
-        mergedNode->config->acl = malloc(sizeof(redConfAclT));
-        mergedNode->config->acl->gid_t = leaf->config->acl->gid_t;
-        mergedNode->config->acl->uid = leaf->config->acl->uid;
-        mergedNode->config->acl->umask = leaf->config->acl->umask;
-    }
-
     //headers
     mergedNode->config->headers = malloc(sizeof(redConfHeaderT));
     mergedNode->config->headers->alias = strdup(leaf->config->headers->alias);

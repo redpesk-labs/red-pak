@@ -20,8 +20,7 @@
 #ifndef _RED_CONF_SCHEMA_INCLUDE_
 #define _RED_CONF_SCHEMA_INCLUDE_
 
-#include <unistd.h>
-#include <sys/types.h>
+#include <stddef.h>
 
 // ---- RedConfig Schema for ${redpath}/etc/redpack.yaml ----
     typedef struct {
@@ -29,12 +28,6 @@
         const char *name;
         const char *info;
     } redConfHeaderT;
-
-    typedef struct {
-        uid_t uid;
-        gid_t gid_t;
-        mode_t umask;
-    } redConfAclT;
 
     typedef struct {
         const char *max;
@@ -172,7 +165,6 @@
     } redConfTagT;
 
     typedef struct {
-        redConfAclT *acl;
         redConfHeaderT *headers;
         redConfTagT  *conftag;
         redConfVarT *confvar;
