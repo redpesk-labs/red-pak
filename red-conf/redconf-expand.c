@@ -24,15 +24,13 @@
 #include "redconf-log.h"
 #include "redconf-utils.h"
 
-#ifndef MAX_CYAML_FORMAT_ENV
-#define MAX_CYAML_FORMAT_ENV 10
-#endif
 #ifndef MAX_CYAML_FORMAT_STR
 #define MAX_CYAML_FORMAT_STR 512
 #endif
 
+static int getEnvKey (const redNodeT *node, RedConfDefaultsT *defaults, int *idxIn, const char *inputS, int *idxOut, char *outputS, int maxlen);
 
-static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, int *idxOut, char *outputS) {
+static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, int *idxOut, char *outputS, int maxlen) {
     int count = 0;
     // search for a $within string input format
     for (int idxIn=0; inputS[idxIn] != '\0'; idxIn++) {
@@ -40,12 +38,11 @@ static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const 
 
         /* if escaped: iterate without adding \ */
         if (inputS[idxIn] == '\\' && inputS[idxIn+1] == '$') {
-            if (*idxOut == MAX_CYAML_FORMAT_STR)  goto OnErrorExit;
+            if (*idxOut == maxlen)  goto OnErrorExit;
             outputS[(*idxOut)++] = inputS[++idxIn];
         }
         /* ignore escape $=\$ */
         else if (inputS[idxIn] == '$' && (idxIn == 0 || inputS[idxIn - 1] != '\\')) {
-            if (count == MAX_CYAML_FORMAT_ENV) goto OnErrorExit;
 
             //check command to exec is $()
             if(inputS[idxIn + 1] == '(') {
@@ -60,26 +57,20 @@ static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const 
                 }
 
                 if (command_size > 0) {
-                    char command_res[100];
                     char command[command_size + 1];
-                    size_t command_res_size = 0;
 
                     strncpy(command, inputS+idxIn+2, command_size);
                     command[command_size] = '\0';
-                    if(ExecCmd(command, command, command_res, sizeof command_res, 1)) goto OnErrorExit;
-                    command_res_size = strlen(command_res);
+                    if(ExecCmd(command, command, &outputS[*idxOut], maxlen - *idxOut, 1)) goto OnErrorExit;
 
-                    //copy command res to output
-                    strncpy(outputS+(*idxOut), command_res, command_res_size + 1);
-                    *idxOut += command_res_size;
+                    *idxOut += strlen(&outputS[*idxOut]);
                     idxIn += 2 + command_size; //2: because 2 parenthesis
                 }
             } else {
-                if(RedConfGetEnvKey (node, defaults, &idxIn, inputS, idxOut, outputS, MAX_CYAML_FORMAT_STR)) goto OnErrorExit;
+                if(getEnvKey (node, defaults, &idxIn, inputS, idxOut, outputS, maxlen)) goto OnErrorExit;
             }
-            count ++;
         } else {
-            if (*idxOut == MAX_CYAML_FORMAT_STR)  goto OnErrorExit;
+            if (*idxOut == maxlen)  goto OnErrorExit;
             outputS[(*idxOut)++] = inputS[idxIn];
         }
     }
@@ -88,35 +79,20 @@ OnErrorExit:
     return 1;
 }
 
-
-static int RedGetDefault(const char *envkey, RedConfDefaultsT *defaults, const redNodeT * node, int *idxOut, char *outputS, int maxlen) {
-
-    char envval[MAX_CYAML_FORMAT_STR] = {0};
-    for (int idx=0; defaults[idx].label; idx++) {
-        if (!strcmp (envkey, defaults[idx].label)) {
-            (*(RedGetDefaultCbT)defaults[idx].callback) (defaults[idx].label, (void*)node, defaults[idx].handle, envval, MAX_CYAML_FORMAT_STR);
-            break;
+static int getDefault(const char *envkey, RedConfDefaultsT *defaults, const redNodeT *node, int *idxOut, char *outputS, int maxlen) {
+    char envval[MAX_CYAML_FORMAT_STR];
+    RedConfDefaultsT *iter = defaults ?: nodeConfigDefaults;
+    for (; iter->label ; iter++) {
+        if (!strcmp (envkey, iter->label)) {
+            iter->callback(iter->label, (void*)node, iter->handle, envval, MAX_CYAML_FORMAT_STR);
+            return stringExpand(node, defaults, envval, idxOut, outputS, maxlen);
         }
     }
-
-    //try to expand envkey
-    char envvalExp[MAX_CYAML_FORMAT_STR];
-    int idxOutExp = 0;
-    stringExpand(node, defaults, envval, &idxOutExp, envvalExp);
-    envvalExp[idxOutExp] = '\0';
-
-    for (int jdx=0; envvalExp[jdx] != '\0'; jdx++) {
-        if (*idxOut >= maxlen) goto OnErrorExit;
-        outputS[(*idxOut)++]= envvalExp[jdx];
-    }
-
     return 0;
-OnErrorExit:
-    return 1;
 }
 
 // Extract $KeyName and replace with $Key Env or default Value
-int RedConfGetEnvKey (const redNodeT *node, RedConfDefaultsT *defaults, int *idxIn, const char *inputS, int *idxOut, char *outputS, int maxlen) {
+static int getEnvKey (const redNodeT *node, RedConfDefaultsT *defaults, int *idxIn, const char *inputS, int *idxOut, char *outputS, int maxlen) {
     char envkey[64];
     char *envval;
 
@@ -135,7 +111,7 @@ int RedConfGetEnvKey (const redNodeT *node, RedConfDefaultsT *defaults, int *idx
     }
 
     // search for a default key
-    if(RedGetDefault(envkey, defaults, node, idxOut, outputS, maxlen)) goto OnErrorExit;
+    if(getDefault(envkey, defaults, node, idxOut, outputS, maxlen)) goto OnErrorExit;
 
     return 0;
 
@@ -151,10 +127,9 @@ OnErrorExit:
     return 1;
 }
 
+
 int RedConfAppendEnvKey (const redNodeT *node, char *outputS, int *idxOut, int maxlen, const char *inputS,  RedConfDefaultsT *defaults, const char* prefix, const char *trailler) {
     int err;
-
-    if (!defaults) defaults=nodeConfigDefaults;
 
     if (prefix) {
         for (int idx=0; prefix[idx]; idx++) {
@@ -171,7 +146,7 @@ int RedConfAppendEnvKey (const redNodeT *node, char *outputS, int *idxOut, int m
             outputS[(*idxOut)++] = inputS[idxIn];
 
         } else {
-            err = RedConfGetEnvKey (node, defaults, &idxIn, inputS, idxOut, outputS, maxlen);
+            err = getEnvKey (node, defaults, &idxIn, inputS, idxOut, outputS, maxlen);
             if (err) goto OnErrorExit;
         }
     }
@@ -196,9 +171,7 @@ char *RedGetDefaultExpand(const redNodeT *node, RedConfDefaultsT *defaults, cons
     int idxOut = 0;
     char outputS[MAX_CYAML_FORMAT_STR];
 
-    if (!defaults) defaults=nodeConfigDefaults;
-
-    if (RedGetDefault(inputS, defaults, node, &idxOut, outputS, MAX_CYAML_FORMAT_STR)) return NULL;
+    if (getDefault(inputS, defaults, node, &idxOut, outputS, MAX_CYAML_FORMAT_STR)) return NULL;
 
     // close the string
     outputS[idxOut]='\0';
@@ -211,8 +184,6 @@ char *RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, con
     int idxOut=0;
     char outputS[MAX_CYAML_FORMAT_STR] = {0};
 
-    if (!defaults) defaults=nodeConfigDefaults;
-
     if (prefix) {
         for (int idx=0; prefix[idx]; idx++) {
             if (idxOut == MAX_CYAML_FORMAT_STR) goto OnErrorExit;
@@ -221,7 +192,7 @@ char *RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, con
         }
     }
 
-    stringExpand(node, defaults, inputS, &idxOut, outputS);
+    stringExpand(node, defaults, inputS, &idxOut, outputS, MAX_CYAML_FORMAT_STR);
 
     // if we have a trailler add it now
     if (trailler) {
