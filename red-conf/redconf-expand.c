@@ -192,7 +192,7 @@ OnErrorExit:
     return 1;
 }
 
-const char *RedGetDefaultExpand(redNodeT *node, RedConfDefaultsT *defaults, const char* inputS) {
+char *RedGetDefaultExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS) {
     int idxOut = 0;
     char outputS[MAX_CYAML_FORMAT_STR];
 
@@ -207,7 +207,7 @@ const char *RedGetDefaultExpand(redNodeT *node, RedConfDefaultsT *defaults, cons
 }
 
 // Expand string with environnement variable
-const char *RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char* prefix, const char* trailler) {
+char *RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char* prefix, const char* trailler) {
     int idxOut=0;
     char outputS[MAX_CYAML_FORMAT_STR] = {0};
 
@@ -243,7 +243,7 @@ OnErrorExit:
     return NULL;
 }
 
-const char *expandAlloc(const redNodeT *node, const char *input, int expand) {
+char *expandAlloc(const redNodeT *node, const char *input, int expand) {
     if (!input)
         return NULL;
 
