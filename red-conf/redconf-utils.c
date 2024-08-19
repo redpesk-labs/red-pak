@@ -147,20 +147,23 @@ int ExecCmd (const char* mount, const char* command, char *res, size_t size, int
     int err = 0;
     int fd = MemFdExecCmd(mount, command, restricted);
 
-    ssize_t bytes = read(fd, res, size);
-    if (bytes <= 0) {
-        RedLog(REDLOG_WARNING, "Cannot read stdout of command %s", command);
-        err = 1;
-        goto Error;
-    } else if(bytes >= 100) {
-        RedLog(REDLOG_WARNING, "Cannot read entire stdout of command %s (max size is=%d)", command, size);
-        err = 2;
-        goto Error;
+    if (fd < 0)
+        err = 3;
+    else {
+        ssize_t bytes = read(fd, res, size);
+        if (bytes <= 0) {
+            RedLog(REDLOG_WARNING, "Cannot read stdout of command %s", command);
+            err = 1;
+        }
+        else if((size_t)bytes == size) {
+            RedLog(REDLOG_WARNING, "Cannot read entire stdout of command %s (max size is=%d)", command, (int)size);
+            err = 2;
+        }
+        else {
+            res[bytes] = '\0';
+        }
+        close(fd);
     }
 
-    res[bytes] = '\0';
-
-Error:
-    close(fd);
     return err;
 }
