@@ -110,37 +110,49 @@ int memfd_create (const char *__name, unsigned int __flags);
 
 // Exec a command in a memory buffer and return stdout result as FD
 int MemFdExecCmd (const char* mount, const char* command, int restricted) {
-    int fd = memfd_create (mount, 0);
-    if (fd <0) goto OnErrorExit;
 
-    int pid = fork();
-    if (pid != 0) {
-        // wait for child to finish
-        (void)wait(NULL);
-        lseek (fd, 0, SEEK_SET);
-        syncfs(fd);
-    } else {
+    int fd = memfd_create (mount, 0);
+    if (fd < 0) {
+        RedLog(REDLOG_ERROR, "Failed to exec command=%s", command);
+        return -1;
+    }
+
+    pid_t pid = fork();
+    if (pid == 0) {
         // redirect stdout to fd and exec command
         char *argv[5];
         int idx = 0;
-        argv[idx++]="bash";
+
+        argv[idx++] = "bash";
         if (restricted)
-            argv[idx++]="-r";
-        argv[idx++]="-c";
-        argv[idx++]=(char*)command;
-        argv[idx]=NULL;
+            argv[idx++] = "-r";
+        argv[idx++] = "-c";
+        argv[idx++] = (char*)command;
+        argv[idx] = NULL;
 
         dup2(fd, 1);
         close (fd);
         execv("/usr/bin/bash", argv);
-        fprintf (stderr, "hoops: red-wrap exec command return command=%s\n", command);
+        RedLog(REDLOG_ERROR, "Exec failure for command=%s", command);
+        _exit(1);
     }
 
-    return fd;
-
-OnErrorExit:
-    fprintf (stderr, "error: red-wrap Fail to exec command=%s\n", command);
-    return -1;
+    // wait for child to finish
+    for (;;) {
+        int status;
+        pid_t expid = waitpid(pid, &status, 0);
+        if (expid == pid) {
+            /* TODO: include status in processing */
+            lseek (fd, 0, SEEK_SET);
+            syncfs(fd);
+            return fd;
+        }
+        if (expid < 0 && errno != EINTR) {
+            close(fd);
+            RedLog(REDLOG_ERROR, "Failed to wait for command=%s", command);
+            return -1;
+        }
+    }
 }
 
 int ExecCmd (const char* mount, const char* command, char *res, size_t size, int restricted) {
