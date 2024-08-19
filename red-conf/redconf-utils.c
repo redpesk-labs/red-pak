@@ -109,7 +109,7 @@ mode_t RedSetUmask (redConfTagT *conftag) {
 int memfd_create (const char *__name, unsigned int __flags);
 
 // Exec a command in a memory buffer and return stdout result as FD
-int MemFdExecCmd (const char* mount, const char* command) {
+int MemFdExecCmd (const char* mount, const char* command, int restricted) {
     int fd = memfd_create (mount, 0);
     if (fd <0) goto OnErrorExit;
 
@@ -121,11 +121,14 @@ int MemFdExecCmd (const char* mount, const char* command) {
         syncfs(fd);
     } else {
         // redirect stdout to fd and exec command
-        char *argv[4];
-        argv[0]="bash";
-        argv[1]="-c";
-        argv[2]=(char*)command;
-        argv[3]=NULL;
+        char *argv[5];
+        int idx = 0;
+        argv[idx++]="bash";
+        if (restricted)
+            argv[idx++]="-r";
+        argv[idx++]="-c";
+        argv[idx++]=(char*)command;
+        argv[idx]=NULL;
 
         dup2(fd, 1);
         close (fd);
@@ -140,9 +143,9 @@ OnErrorExit:
     return -1;
 }
 
-int ExecCmd (const char* mount, const char* command, char *res, size_t size) {
+int ExecCmd (const char* mount, const char* command, char *res, size_t size, int restricted) {
     int err = 0;
-    int fd = MemFdExecCmd(mount, command);
+    int fd = MemFdExecCmd(mount, command, restricted);
 
     ssize_t bytes = read(fd, res, size);
     if (bytes <= 0) {

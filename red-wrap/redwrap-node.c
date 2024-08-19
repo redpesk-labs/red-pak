@@ -164,7 +164,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         case RED_EXPORT_EXECFD:
             argval[(*argcount)++]="--file";
-            snprintf(fdstr, sizeof(fdstr), "%d", MemFdExecCmd(mount, path));
+            snprintf(fdstr, sizeof(fdstr), "%d", MemFdExecCmd(mount, path, 1));
             argval[(*argcount)++]=strdup(fdstr);
             argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount, NULL, NULL);
             break;
@@ -227,7 +227,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         case RED_CONFVAR_EXECFD:
             argval[(*argcount)++]="--setenv";
             argval[(*argcount)++]=key;
-            snprintf(fdstr, sizeof(fdstr), "%d", MemFdExecCmd(key, value));
+            snprintf(fdstr, sizeof(fdstr), "%d", MemFdExecCmd(key, value, 1));
             argval[(*argcount)++]=strdup(fdstr);
             break;
 

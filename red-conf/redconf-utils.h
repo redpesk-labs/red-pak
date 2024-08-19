@@ -48,7 +48,7 @@ mode_t RedSetUmask (redConfTagT *conftag);
 extern int RedConfIsSameFile(const char* path1, const char* path2);
 
 /* Exec Cmd */
-int MemFdExecCmd (const char* mount, const char* command);
-int ExecCmd (const char* mount, const char* command, char *res, size_t size);
+int MemFdExecCmd (const char* mount, const char* command, int restricted);
+int ExecCmd (const char* mount, const char* command, char *res, size_t size, int restricted);
 
 #endif

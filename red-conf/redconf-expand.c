@@ -66,7 +66,7 @@ static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const 
 
                     strncpy(command, inputS+idxIn+2, command_size);
                     command[command_size] = '\0';
-                    if(ExecCmd(command, command, command_res, 100)) goto OnErrorExit;
+                    if(ExecCmd(command, command, command_res, sizeof command_res, 1)) goto OnErrorExit;
                     command_res_size = strlen(command_res);
 
                     //copy command res to output
