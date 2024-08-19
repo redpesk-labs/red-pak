@@ -31,7 +31,7 @@
 static int getEnvKey (const redNodeT *node, RedConfDefaultsT *defaults, int *idxIn, const char *inputS, int *idxOut, char *outputS, int maxlen);
 
 static int stringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, int *idxOut, char *outputS, int maxlen) {
-    int count = 0;
+
     // search for a $within string input format
     for (int idxIn=0; inputS[idxIn] != '\0'; idxIn++) {
 
@@ -94,37 +94,25 @@ static int getDefault(const char *envkey, RedConfDefaultsT *defaults, const redN
 // Extract $KeyName and replace with $Key Env or default Value
 static int getEnvKey (const redNodeT *node, RedConfDefaultsT *defaults, int *idxIn, const char *inputS, int *idxOut, char *outputS, int maxlen) {
     char envkey[64];
-    char *envval;
+    int idx0, idx, len;
 
-    // get envkey from $ to any 1st non alphanum character
-    for (int idx=0; inputS[*idxIn] != '\0'; idx++) {
+    /* initial $ is ignored */
+    idx0 = idx = 1 + *idxIn;
 
-        (*idxIn)++; // intial $ is ignored
-        if (inputS[*idxIn] >= '0' && inputS[*idxIn] <= 'z') {
-            if (idx == sizeof(envkey)) goto OnErrorExit;
-            envkey[idx]= inputS[*idxIn] & ~32; // move to uppercase
-        } else {
-            (*idxIn)--; // keep input separation character
-            envkey[idx]='\0';
-            break;
-        }
-    }
+    /* compute end of key */
+    while (inputS[idx] >= '0' && inputS[idx] <= 'z')
+        idx++;
+    *idxIn = idx - 1; /* because used in loops that increment it always !! CAUTION !! SUCKS !! */
+    len = idx - idx0;
+
+    /* copy the key with truncation */
+    if (len >= (int)sizeof envkey)
+        len = (int)sizeof envkey - 1;
+    memcpy(envkey, &inputS[idx0], len);
+    envkey[len] = 0;
 
     // search for a default key
-    if(getDefault(envkey, defaults, node, idxOut, outputS, maxlen)) goto OnErrorExit;
-
-    return 0;
-
-OnErrorExit:
-    envval="#UNKNOWN_KEY";
-    for (int jdx=0; envval[jdx]; jdx++) {
-        if (*idxOut >= maxlen) {
-            outputS[(*idxOut)-1] = '\0';
-            return 1;
-        }
-        outputS[(*idxOut)++]= envval[jdx];
-    }
-    return 1;
+    return getDefault(envkey, defaults, node, idxOut, outputS, maxlen);
 }
 
 
