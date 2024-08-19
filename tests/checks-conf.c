@@ -310,6 +310,79 @@ START_TEST(test_config)
     do_test_config(TEMPLATES_DIR "/" "main-system.yaml", 1);
     do_test_config(TEMPLATES_DIR "/" "i-should-not-exists.yaml", 0);
 }
+
+typedef struct { const char *str; unsigned val; } assoc_string_uint_t;
+
+const assoc_string_uint_t assoc_export[] = {
+    { "Restricted",     RED_EXPORT_RESTRICTED},
+    { "Public",         RED_EXPORT_PUBLIC},
+    { "Private",        RED_EXPORT_PRIVATE},
+    { "PrivateRestricted",        RED_EXPORT_PRIVATE_RESTRICTED},
+    { "RestrictedFile", RED_EXPORT_RESTRICTED_FILE},
+    { "PublicFile",     RED_EXPORT_PUBLIC_FILE},
+    { "PrivateFile",    RED_EXPORT_PRIVATE_FILE},
+    { "Anonymous",      RED_EXPORT_ANONYMOUS},
+    { "Symlink",        RED_EXPORT_SYMLINK},
+    { "Execfd" ,        RED_EXPORT_EXECFD},
+    { "Internal" ,      RED_EXPORT_DEFLT},
+    { "Tmpfs"    ,      RED_EXPORT_TMPFS},
+    { "Procfs"   ,      RED_EXPORT_PROCFS},
+    { "Mqueue"   ,      RED_EXPORT_MQUEFS},
+    { "Devfs"    ,      RED_EXPORT_DEVFS},
+    { "Lock"     ,      RED_EXPORT_LOCK},
+};
+
+const assoc_string_uint_t assoc_varenv[] = {
+    {"Static",   RED_CONFVAR_STATIC},
+    {"Execfd",   RED_CONFVAR_EXECFD},
+    {"Default",  RED_CONFVAR_DEFLT},
+    {"Remove",   RED_CONFVAR_REMOVE},
+};
+
+const assoc_string_uint_t assoc_confopt[] = {
+   {"Unset"  , RED_CONF_OPT_UNSET},
+   {"Enabled", RED_CONF_OPT_ENABLED},
+   {"Disabled",RED_CONF_OPT_DISABLED},
+};
+
+const assoc_string_uint_t assoc_status[] = {
+    { "Disable", RED_STATUS_DISABLE},
+    { "Enable",  RED_STATUS_ENABLE},
+    { "Unknown", RED_STATUS_UNKNOWN},
+    { "Error",   RED_STATUS_ERROR},
+};
+
+typedef const char *(*get_str_f)(unsigned);
+const struct {
+    get_str_f function;
+    const assoc_string_uint_t *assoc;
+    unsigned count;
+    }
+        assoc_testers[] =
+    {
+#define ITEM(fun, def) { (get_str_f)fun, def, (unsigned)(sizeof def / sizeof *def) }
+        ITEM(getExportFlagString, assoc_export),
+        ITEM(getRedVarEnvString, assoc_varenv),
+        ITEM(getRedConfOptString, assoc_confopt),
+        ITEM(getStatusFlagString, assoc_status)
+#undef ITEM
+    };
+
+
+START_TEST(test_schema_string)
+{
+    const assoc_string_uint_t *iter, *end;
+    get_str_f fun;
+    unsigned isec;
+    const unsigned nsec = (unsigned)(sizeof assoc_testers / sizeof *assoc_testers);
+
+    for (isec = 0 ; isec < nsec ; isec++) {
+        fun = assoc_testers[isec].function;
+        iter = assoc_testers[isec].assoc;
+        end = &iter[assoc_testers[isec].count];
+        for( ; iter != end ; iter++)
+            ck_assert_str_eq(iter->str, fun(iter->val));
+    }
 }
 
 /*********************************************************************/
@@ -344,6 +417,9 @@ int main(int ac, char **av)
                         addtest(test_defaults_today);
 		addtcasefix("schema", make_tempname, remove_tempfile);
                         addtest(test_config);
+                        //TODO: addtest(test_config_validation);
+                        //TODO: addtest(test_status);
+                        addtest(test_schema_string);
 	return !!srun();
 }
 
