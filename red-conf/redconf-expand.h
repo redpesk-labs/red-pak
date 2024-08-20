@@ -21,7 +21,7 @@
 #include "redconf-defaults.h"
 #include "redconf-node.h"
 
-char *RedNodeStringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char*prefix, const char*trailler);
+char *RedNodeStringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS);
 char *RedGetDefaultExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS);
 int RedConfAppendEnvKey(const redNodeT *node, char *outputS, int *idxOut, int maxlen, const char *inputS,  RedConfDefaultsT *defaults, const char* prefix, const char *trailler);
 

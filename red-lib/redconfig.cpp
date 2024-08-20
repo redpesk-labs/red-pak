@@ -154,7 +154,9 @@ void RedNode::getMain() {
 }
 
 void RedNode::setPersistDir() {
-    auto ex_persistdir = RedNodeStringExpand(node.get(), NULL, node.get()->config->conftag->persistdir, NULL, NULL);
+    if (!node.get()->config->conftag)
+        throw_error(fmt::format("No conftag so no persistDir in node {}", node->redpath));
+    auto ex_persistdir = RedNodeStringExpand(node.get(), NULL, node.get()->config->conftag->persistdir);
     base.get_config().persistdir().set(libdnf::Option::Priority::RUNTIME, ex_persistdir);
 }
 
@@ -294,7 +296,7 @@ void RedNode::rednode_template(const std::string & alias, const std::string & tm
 
     if(!update) {
         // set new headers
-        info = RedNodeStringExpand(NULL, NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY", NULL, NULL);
+        info = RedNodeStringExpand(NULL, NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY");
         if(config->headers->info) free((char *)config->headers->info);
         config->headers->info = info;
 

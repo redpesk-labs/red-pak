@@ -168,38 +168,18 @@ char *RedGetDefaultExpand(const redNodeT *node, RedConfDefaultsT *defaults, cons
 }
 
 // Expand string with environnement variable
-char *RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS, const char* prefix, const char* trailler) {
+char *RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS) {
     int idxOut=0;
     char outputS[MAX_CYAML_FORMAT_STR] = {0};
 
-    if (prefix) {
-        for (int idx=0; prefix[idx]; idx++) {
-            if (idxOut == MAX_CYAML_FORMAT_STR) goto OnErrorExit;
-            outputS[idxOut]=prefix[idx];
-            idxOut++;
-        }
-    }
-
-    stringExpand(node, defaults, inputS, &idxOut, outputS, MAX_CYAML_FORMAT_STR);
-
-    // if we have a trailler add it now
-    if (trailler) {
-        for (int idx=0; trailler[idx]; idx++) {
-            if (idxOut == MAX_CYAML_FORMAT_STR) goto OnErrorExit;
-            outputS[idxOut]=trailler[idx];
-            idxOut++;
-        }
-    }
+    if (stringExpand(node, defaults, inputS, &idxOut, outputS, MAX_CYAML_FORMAT_STR))
+        return NULL;;
 
     // close the string
     outputS[idxOut]='\0';
 
     // string is formated replace original with expanded value
     return strdup(outputS);
-
-OnErrorExit:
-    RedLog(REDLOG_ERROR, "Fail Expending cyaml entry=%s value=%s err=[Len or $ count]\n",node->config->headers->name, inputS);
-    return NULL;
 }
 
 char *expandAlloc(const redNodeT *node, const char *input, int expand) {
@@ -207,7 +187,7 @@ char *expandAlloc(const redNodeT *node, const char *input, int expand) {
         return NULL;
 
     if(expand)
-        return RedNodeStringExpand(node, NULL, input, NULL, NULL);
+        return RedNodeStringExpand(node, NULL, input);
     else
         return strdup(input);
 }

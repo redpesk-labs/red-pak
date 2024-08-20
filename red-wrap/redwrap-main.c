@@ -112,7 +112,7 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
     char cgroupParent[PATH_MAX] = {0};
 
     if (mergedConfTags->cgrouproot) {
-        mergedConfTags->cgrouproot = RedNodeStringExpand (rootNode, NULL, mergedConfTags->cgrouproot, NULL, NULL);
+        mergedConfTags->cgrouproot = RedNodeStringExpand (rootNode, NULL, mergedConfTags->cgrouproot);
         strncpy(cgroupParent, mergedConfTags->cgrouproot, PATH_MAX);
     }
 
@@ -198,12 +198,12 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
     if (mergedConfTags->hostname) {
         argval[argcount++]="--unshare-uts";
         argval[argcount++]="--hostname";
-        argval[argcount++]= RedNodeStringExpand (redtree, NULL, mergedConfTags->hostname, NULL, NULL);
+        argval[argcount++]= RedNodeStringExpand (redtree, NULL, mergedConfTags->hostname);
     }
 
     if (mergedConfTags->chdir) {
         argval[argcount++]="--chdir";
-        argval[argcount++]= RedNodeStringExpand (redtree, NULL, mergedConfTags->chdir, NULL, NULL);
+        argval[argcount++]= RedNodeStringExpand (redtree, NULL, mergedConfTags->chdir);
     }
 
     if (!(mergedConfTags->share_all & RED_CONF_OPT_ENABLED)) {

@@ -144,7 +144,7 @@ int RedUpdateStatus(redNodeT *node, int verbose) {
     (void)snprintf (nodepath, sizeof(nodepath), "%s/%s", node->redpath, REDNODE_STATUS);
 
     node->status->timestamp= RedUtcGetTimeMs();
-    node->status->info=RedNodeStringExpand (node, NULL, REDSTATUS_INFO, NULL, NULL);
+    node->status->info=RedNodeStringExpand (node, NULL, REDSTATUS_INFO);
 
     // Save update status
     error = RedSaveStatus (nodepath, node->status, verbose);
