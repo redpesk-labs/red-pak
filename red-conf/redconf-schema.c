@@ -405,7 +405,7 @@ redConfigT* RedLoadConfig (const char* filepath, int warning) {
     return config;
 }
 
-int RedGetConfig(char **output, size_t *len, redConfigT *config) {
+int RedGetConfigYAML(char **output, size_t *len, redConfigT *config) {
     return SchemaGet(output, len, &RedPakConfigSchema, config, 0);
 }
 

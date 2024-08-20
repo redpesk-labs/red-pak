@@ -247,7 +247,7 @@ These tests are checking functions of 'redconf-schema.c'.
 /*********************************************************************/
 
 /* Helper function for testing functions
-   RedLoadConfig, RedDumpConfigHandle, RedSaveConfig, RedGetConfig and RedFreeConfig
+   RedLoadConfig, RedDumpConfigHandle, RedSaveConfig, RedGetConfigYAML and RedFreeConfig
 */
 static void do_test_config(const char *path, int exists)
 {
@@ -268,7 +268,7 @@ static void do_test_config(const char *path, int exists)
         RedDumpConfigHandle(config);
 
         /* get yaml of the config */
-        rc = RedGetConfig(&text, &length, config);
+        rc = RedGetConfigYAML(&text, &length, config);
         ck_assert_int_eq(rc, 0);
         printf("\n\n\n**************** YAML OF %s\n%.*s\n", path, (int)length, text);
 
@@ -284,7 +284,7 @@ static void do_test_config(const char *path, int exists)
         ck_assert_ptr_nonnull(config);
 
         /* get yaml of the new read config */
-        rc = RedGetConfig(&other_text, &other_length, other_config);
+        rc = RedGetConfigYAML(&other_text, &other_length, other_config);
         ck_assert_int_eq(rc, 0);
 
         /* compare the two yamls */

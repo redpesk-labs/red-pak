@@ -165,7 +165,7 @@ const char *getMergeConfig(const char *redpath, size_t *len, int expand) {
     if (!mergedNode)
         goto OnExitFreeLeaf;
 
-    if(RedGetConfig(&output, len, mergedNode->config)) {
+    if(RedGetConfigYAML(&output, len, mergedNode->config)) {
         RedLog(REDLOG_ERROR, "Issue getting yaml string merged config");
     }
 
@@ -182,7 +182,7 @@ const char *getConfig(const char *redpath, size_t *len) {
     if (!redleaf)
         goto OnExit;
 
-    if(RedGetConfig(&output, len, redleaf->config)) {
+    if(RedGetConfigYAML(&output, len, redleaf->config)) {
         RedLog(REDLOG_ERROR, "Issue getting yaml string config");
     }
 
