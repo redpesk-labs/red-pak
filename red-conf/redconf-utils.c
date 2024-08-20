@@ -109,9 +109,9 @@ mode_t RedSetUmask (redConfTagT *conftag) {
 int memfd_create (const char *__name, unsigned int __flags);
 
 // Exec a command in a memory buffer and return stdout result as FD
-int MemFdExecCmd (const char* mount, const char* command, int restricted) {
+int MemFdExecCmd (const char* tag, const char* command, int restricted) {
 
-    int fd = memfd_create (mount, 0);
+    int fd = memfd_create (tag, 0);
     if (fd < 0) {
         RedLog(REDLOG_ERROR, "Failed to exec command=%s", command);
         return -1;
@@ -155,9 +155,9 @@ int MemFdExecCmd (const char* mount, const char* command, int restricted) {
     }
 }
 
-int ExecCmd (const char* mount, const char* command, char *res, size_t size, int restricted) {
+int ExecCmd (const char* tag, const char* command, char *res, size_t size, int restricted) {
     int err = 0;
-    int fd = MemFdExecCmd(mount, command, restricted);
+    int fd = MemFdExecCmd(tag, command, restricted);
 
     if (fd < 0)
         err = 3;

@@ -47,8 +47,35 @@ mode_t RedSetUmask (redConfTagT *conftag);
  */
 extern int RedConfIsSameFile(const char* path1, const char* path2);
 
-/* Exec Cmd */
-int MemFdExecCmd (const char* mount, const char* command, int restricted);
-int ExecCmd (const char* mount, const char* command, char *res, size_t size, int restricted);
+/**
+ * Executes the @ref command in a forked shell using "/usr/bin/bash -c 'command'"
+ * If @ref restricted is not zero the --restricted option is passed to the shell.
+ * Wait for the completion of the command and then returns a file descriptor that
+ * when read returns the output of the command.
+ *
+ * @param tag        a tag for debugging
+ * @param command    the command to be executed
+ * @param restricted a flag telling if the shell is restricted or not
+ *
+ * @return A negative value on error, or if positive or null, a file descriptor to be used
+ * for getting output of the command. The file decriptor, obviously, must be closed by the
+ * caller.
+ */
+extern int MemFdExecCmd(const char* tag, const char* command, int restricted);
+
+/**
+ * Executes the @ref command in a forked shell using "/usr/bin/bash -c 'command'"
+ * If @ref restricted is not zero the --restricted option is passed to the shell.
+ * Wait for the completion of the command and put its output in the given buffer.
+ *
+ * @param tag        a tag for debugging
+ * @param command    the command to be executed
+ * @param buffer     the buffer receiving the output of the command
+ * @param size       the length of @ref buffer in bytes
+ * @param restricted a flag telling if the shell is restricted or not
+ *
+ * @return 0 on success, 1 on read error, 2 on buffer overflow, 3 on command error.
+ */
+extern int ExecCmd(const char* tag, const char* command, char *buffer, size_t size, int restricted);
 
 #endif
