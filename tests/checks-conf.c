@@ -35,6 +35,18 @@ void remove_tempfile()
     unlink(tempname);
 }
 
+void write_tempfile(const char *text, size_t length)
+{
+    ssize_t rc;
+    FILE *file;
+
+    file = fopen(tempname, "w");
+    ck_assert_ptr_nonnull(file);
+    rc = fwrite(text, length ? length : strlen(text), 1, file);
+    ck_assert_int_eq(rc, 1);
+    fclose(file);
+}
+
 /*********************************************************************/
 /*********************************************************************
 
@@ -252,7 +264,6 @@ These tests are checking functions of 'redconf-schema.c'.
 static void do_test_config(const char *path, int exists)
 {
     int         rc;
-    FILE       *file;
     redConfigT *config, *other_config;
     char       *text,   *other_text;
     size_t      length, other_length;
@@ -273,11 +284,7 @@ static void do_test_config(const char *path, int exists)
         printf("\n\n\n**************** YAML OF %s\n%.*s\n", path, (int)length, text);
 
         /* write the yaml */
-        file = fopen(tempname, "w");
-        ck_assert_ptr_nonnull(file);
-        rc = (int)fwrite(text, length, 1, file);
-        ck_assert_int_eq(rc, 1);
-        fclose(file);
+        write_tempfile(text, length);
 
         /* read the written yaml */
         other_config = RedLoadConfig(tempname, 1);
