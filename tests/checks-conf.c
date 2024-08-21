@@ -6,6 +6,8 @@
 #include <sys/wait.h>
 
 #include "redconf-defaults.h"
+#include "redconf-utils.h"
+#include "redconf-expand.h"
 #include "redconf-schema.h"
 #include "redconf-node.h"
 #include "redconf-dump.h"
@@ -76,8 +78,7 @@ int call_conf_default(const char *key, char buffer[BUFFLEN], void *arg)
     return 1;
 }
 
-
-/* TEST expansion of of variable with (or not) default values */
+/* TEST expansion of variable with (or not) default values */
 START_TEST(test_defaults_env)
 {
 
@@ -250,6 +251,164 @@ START_TEST(test_defaults_today)
 /*********************************************************************/
 /*********************************************************************
 
+TEST CASE "expand"
+
+
+These tests are checking functions of 'redconf-expand.c'.
+
+*********************************************************************/
+/*********************************************************************/
+
+#define KEY_PREFIX         "NODE_PREFIX"
+#define KEY_MAIN           "redpak_MAIN"
+#define KEY_CONF           "REDNODE_CONF"
+#define KEY_NODE_ALIAS     "NODE_ALIAS"
+#define KEY_NODE_NAME      "NODE_NAME"
+#define KEY_NODE_PATH      "NODE_PATH"
+#define KEY_NODE_INFO      "NODE_INFO"
+
+#define VAL_NODE_ALIAS     "alias"
+#define VAL_NODE_NAME      "###name of $NODE_ALIAS###"
+#define VAL_NODE_PATH      "###ROOT/$NODE_ALIAS/here###"
+#define VAL_NODE_INFO      "###info of $NODE_NAME###"
+
+#define VAL_PREFIX         "(((PREFIX)))"
+
+#define EXP_PREFIX         VAL_PREFIX
+#define EXP_MAIN           VAL_PREFIX redpak_MAIN
+#define EXP_NODE_ALIAS     VAL_NODE_ALIAS
+#define EXP_NODE_NAME      "###name of "EXP_NODE_ALIAS"###"
+#define EXP_NODE_PATH      "###ROOT/"EXP_NODE_ALIAS"/here###"
+#define EXP_NODE_INFO      "###info of "EXP_NODE_NAME"###"
+#define EXP_CONF           EXP_NODE_PATH"/"REDNODE_CONF
+
+void test_exp_def(const char *key, const char *value, const redNodeT *node)
+{
+    static const char prefix[] = "<<<";
+    static const char suffix[] = ">>>";
+
+    char tbe_key[1000], tbe_val[1000], scratch[1000];
+    char *str;
+    int rc, len;
+
+    str = RedGetDefaultExpand(node, NULL, key);
+    printf("%s -> %s\n", key, str);
+    ck_assert_ptr_nonnull(str);
+    ck_assert_str_eq(str, value);
+    free(str);
+
+    sprintf(tbe_key, "{$%s}.{$%s}", key, key);
+    sprintf(tbe_val, "{%s}.{%s}", value, value);
+
+    str = RedNodeStringExpand(node, NULL, tbe_key);
+    printf("%s -> %s\n", tbe_key, str);
+    ck_assert_ptr_nonnull(str);
+    ck_assert_str_eq(str, tbe_val);
+    free(str);
+
+    sprintf(tbe_key, "{$%s}", key);
+    sprintf(tbe_val, "%s{%s}%s", prefix, value, suffix);
+
+    len = 0;
+    rc = RedConfAppendEnvKey(node, scratch, &len, 1000, tbe_key, NULL, prefix, suffix);
+    printf("%s -> %s\n", tbe_key, scratch);
+    ck_assert_int_eq(rc, 0);
+    ck_assert_int_eq(len, strlen(scratch));
+    ck_assert_str_eq(scratch, tbe_val);
+}
+
+void test_exp_def_env(const char *key, const char *value, const redNodeT *node)
+{
+    static const char envval[] = "+value+";
+    char *prv = getenv(key);
+
+    test_exp_def(key, value, node);
+    if (prv != NULL)
+        prv = strdup(prv);
+    setenv(key, envval, 1);
+    test_exp_def(key, envval, node);
+    if (prv == NULL)
+        unsetenv(key);
+    else {
+        setenv(key, prv, 1);
+        free(prv);
+    }
+}
+
+/* basic expansion test */
+START_TEST(test_expand)
+{
+    redNodeT node;
+    redConfigT config;
+    redConfHeaderT header;
+
+    memset(&node, 0, sizeof node);
+    memset(&config, 0, sizeof config);
+    node.config = &config;
+    config.headers = &header;
+    node.redpath = VAL_NODE_PATH;
+    header.alias = VAL_NODE_ALIAS;
+    header.name = VAL_NODE_NAME;
+    header.info = VAL_NODE_INFO;
+
+
+    setenv(KEY_PREFIX, VAL_PREFIX, 1);
+
+    test_exp_def_env(KEY_PREFIX, VAL_PREFIX, &node);
+
+    setenv(KEY_PREFIX, VAL_PREFIX, 1);
+
+    test_exp_def_env(KEY_MAIN, EXP_MAIN, &node);
+    test_exp_def(KEY_NODE_ALIAS, EXP_NODE_ALIAS, &node);
+    test_exp_def(KEY_NODE_NAME, EXP_NODE_NAME, &node);
+    test_exp_def(KEY_NODE_PATH, EXP_NODE_PATH, &node);
+    test_exp_def(KEY_NODE_INFO, EXP_NODE_INFO, &node);
+    test_exp_def_env(KEY_CONF, EXP_CONF, &node);
+}
+
+START_TEST(test_expand_cmd)
+{
+    char today[100];
+    char pattern[100];
+    char input[100];
+    char *output;
+    int rc;
+
+    /* get todays date and write it in temporary file */
+    rc = getDateOfToday(today, sizeof today);
+    ck_assert_int_ge(rc, 1);
+    write_tempfile(today, (size_t)rc);
+
+    /* create the pattern */
+    rc = snprintf(pattern, sizeof pattern, "****%s****", today);
+    ck_assert_int_ge(rc, 0);
+    ck_assert_int_lt(rc, (int)sizeof pattern);
+
+    /* create the input string to expand */
+    rc = snprintf(input, sizeof input, "****$(cat %s)****", tempname);
+    ck_assert_int_ge(rc, 0);
+    ck_assert_int_lt(rc, (int)sizeof input);
+
+    /* check not expanding */
+    output = expandAlloc(NULL, input, 0);
+    ck_assert_ptr_nonnull(output);
+    ck_assert_str_ne(output, pattern);
+    ck_assert_str_eq(output, input);
+    free(output);
+
+    /* check expanding */
+    output = expandAlloc(NULL, input, 1);
+    ck_assert_ptr_nonnull(output);
+    ck_assert_str_ne(output, input);
+    ck_assert_str_eq(output, pattern);
+    free(output);
+}
+
+
+
+/*********************************************************************/
+/*********************************************************************
+
 TEST CASE "schema"
 
 
@@ -416,17 +575,20 @@ int srun()
 int main(int ac, char **av)
 {
 	mksuite("checks-conf");
-		addtcase("defaults");
-			addtest(test_defaults_env);
-			addtest(test_defaults_int);
-                        addtest(test_defaults_for_node);
-                        addtest(test_defaults_uuid);
-                        addtest(test_defaults_today);
-		addtcasefix("schema", make_tempname, remove_tempfile);
-                        addtest(test_config);
-                        //TODO: addtest(test_config_validation);
-                        //TODO: addtest(test_status);
-                        addtest(test_schema_string);
+        addtcase("defaults");
+            addtest(test_defaults_env);
+            addtest(test_defaults_int);
+            addtest(test_defaults_for_node);
+            addtest(test_defaults_uuid);
+            addtest(test_defaults_today);
+        addtcasefix("expand", make_tempname, remove_tempfile);
+            addtest(test_expand);
+            addtest(test_expand_cmd);
+        addtcasefix("schema", make_tempname, remove_tempfile);
+            addtest(test_config);
+            //TODO: addtest(test_config_validation);
+            //TODO: addtest(test_status);
+            addtest(test_schema_string);
 	return !!srun();
 }
 
