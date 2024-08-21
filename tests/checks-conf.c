@@ -551,6 +551,79 @@ START_TEST(test_schema_string)
     }
 }
 
+static const char *statusFlagStrings[] = {
+    [RED_STATUS_DISABLE] = "Disable",
+    [RED_STATUS_ENABLE] = "Enable",
+    [RED_STATUS_UNKNOWN] = "Unknown",
+    [RED_STATUS_ERROR] = "Error"
+};
+
+
+void fwrite_status(const char *path, const char *info, const char *timestamp, const char *state, FILE *file)
+{
+    if (path)
+        fprintf(file, "realpath: %s\n", path);
+    if (info)
+        fprintf(file, "info: %s\n", info);
+    if (timestamp)
+        fprintf(file, "timestamp: %s\n", timestamp);
+    if (state)
+        fprintf(file, "state: %s\n", state);
+}
+
+void write_status(const char *path, const char *info, const char *timestamp, const char *state)
+{
+    FILE *file = fopen(tempname, "w");
+    ck_assert_ptr_nonnull(file);
+    fwrite_status(path, info, timestamp, state, file);
+    fclose(file);
+    printf("----\n");
+    fwrite_status(path, info, timestamp, state, stdout);
+}
+
+void do_test_status(int ok, const char *path, const char *info, const char *timestamp, const char *state)
+{
+    int rc;
+    redStatusT * status;
+    write_status(path, info, timestamp, state);
+    status = RedLoadStatus(tempname, 0);
+    if (!ok)
+        ck_assert_ptr_null(status);
+    else {
+        ck_assert_ptr_nonnull(status);
+        ck_assert_str_eq(status->realpath, path);
+        ck_assert_str_eq(statusFlagStrings[status->state], state);
+        ck_assert_int_eq(status->timestamp, atol(timestamp));
+        if (info)
+            ck_assert_str_eq(status->info, info);
+
+        rc = RedSaveStatus(tempname, status, 0);
+        ck_assert_int_eq(rc, 0);
+
+        RedFreeStatus(status, 0);
+
+        status = RedLoadStatus(tempname, 0);
+        ck_assert_ptr_nonnull(status);
+        ck_assert_str_eq(status->realpath, path);
+        ck_assert_str_eq(statusFlagStrings[status->state], state);
+        ck_assert_int_eq(status->timestamp, atol(timestamp));
+        if (info)
+            ck_assert_str_eq(status->info, info);
+
+        RedFreeStatus(status, 0);
+    }
+}
+
+START_TEST(test_status)
+{
+    do_test_status(1, "/a/path", "some info", "123456789", statusFlagStrings[RED_STATUS_ENABLE]);
+    do_test_status(1, "/a/path", NULL, "123456789", statusFlagStrings[RED_STATUS_ENABLE]);
+    do_test_status(0, NULL, NULL, "123456789", statusFlagStrings[RED_STATUS_ENABLE]);
+    do_test_status(0, "/a/path", NULL, NULL, statusFlagStrings[RED_STATUS_ENABLE]);
+    do_test_status(0, "/a/path", NULL, "123456789", NULL);
+    do_test_status(0, "/a/path", NULL, "alpha", statusFlagStrings[RED_STATUS_ENABLE]);
+}
+
 /*********************************************************************/
 
 
@@ -586,9 +659,9 @@ int main(int ac, char **av)
             addtest(test_expand_cmd);
         addtcasefix("schema", make_tempname, remove_tempfile);
             addtest(test_config);
-            //TODO: addtest(test_config_validation);
-            //TODO: addtest(test_status);
             addtest(test_schema_string);
+            //TODO: addtest(test_config_validation);
+            addtest(test_status);
 	return !!srun();
 }
 
