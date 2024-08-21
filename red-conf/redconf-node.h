@@ -75,8 +75,8 @@ typedef struct {
 
 } dataNodeT;
 
-redNodeT *RedNodesScan(const char* redpath, int verbose);
-redNodeT *RedNodesDownScan(const char* redroot, int verbose);
+redNodeT *RedNodesScan(const char* redpath, int admin, int verbose);
+redNodeT *RedNodesDownScan(const char* redroot, int admin, int verbose);
 int RedUpdateStatus(redNodeT *node, int verbose);
 
 void freeRedLeaf(redNodeT *redleaf);

@@ -138,7 +138,7 @@ void RedNode::getConf() {
         isnode = true;
     }
 
-    node =  std::unique_ptr<redNodeT>(RedNodesScan(redpath.c_str(), 0));
+    node =  std::unique_ptr<redNodeT>(RedNodesScan(redpath.c_str(), 0, 0));
     if (!node.get()) {
         throw_error("Issue RedNodeScan");
     }

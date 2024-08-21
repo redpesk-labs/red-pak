@@ -149,6 +149,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
         .pathString = pathString,
         .pathIdx = 0
     };
+    int admin = cliarg->adminpath ? 1 : 0;
 
     // start argument list with red-wrap command name
     argval[argcount++] = command_name;
@@ -156,7 +157,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
     // update verbose/redpath from cliarg
     const char *redpath = cliarg->redpath;
 
-    redNodeT *redtree = RedNodesScan(redpath, cliarg->verbose);
+    redNodeT *redtree = RedNodesScan(redpath, admin, cliarg->verbose);
     if (!redtree) {
         RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", redpath);
         goto OnErrorExit;
@@ -175,7 +176,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
             isCgroups = 1;
     }
 
-    mergedConfTags = mergedConftags(rootNode, cliarg->adminpath ? 1 : 0);
+    mergedConfTags = mergedConftags(rootNode);
 
     if (RedSetCapabilities(rootNode, mergedConfTags, argval, &argcount)) {
         RedLog(REDLOG_ERROR, "Cannot set capabilities");

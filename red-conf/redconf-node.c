@@ -58,7 +58,7 @@ OnExit:
 }
 
 // return 0 on success, 1 when for none redpak node and -1 when paring fail
-static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int verbose) {
+static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admin, int verbose) {
     char nodepath[RED_MAXPATHLEN];
     struct stat statinfo;
     int error;
@@ -98,16 +98,18 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int verb
         goto OnErrorFreeExit;
     }
 
-    // parse redpath node config admin file: if exists
-    (void)snprintf (nodepath, sizeof(nodepath), "%s/%s", redpath, REDNODE_ADMIN);
-    error= stat(nodepath, &statinfo);
-    if (error || !S_ISREG(statinfo.st_mode)) {
-        RedLog(REDLOG_DEBUG, "No admin config file=%s.!!!!", nodepath);
-    } else {
-        (*pnode)->confadmin = RedLoadConfig (nodepath, verbose);
-        if (!(*pnode)->confadmin) {
-            RedLog(REDLOG_ERROR, "Fail to parse redpak admin config [path=%s]", nodepath);
-            goto OnErrorFreeExit;
+    if (admin) {
+        // parse redpath node config admin file: if exists
+        (void)snprintf (nodepath, sizeof(nodepath), "%s/%s", redpath, REDNODE_ADMIN);
+        error= stat(nodepath, &statinfo);
+        if (error || !S_ISREG(statinfo.st_mode)) {
+            RedLog(REDLOG_DEBUG, "No admin config file=%s.!!!!", nodepath);
+        } else {
+            (*pnode)->confadmin = RedLoadConfig (nodepath, verbose);
+            if (!(*pnode)->confadmin) {
+                RedLog(REDLOG_ERROR, "Fail to parse redpak admin config [path=%s]", nodepath);
+                goto OnErrorFreeExit;
+            }
         }
     }
 
@@ -158,7 +160,7 @@ OnErrorExit:
 }
 
 // loop down within all redpath nodes from a given familly
-static int RedNodesDigToRoot(const char* redpath, redNodeT *childNode, int verbose) {
+static int RedNodesDigToRoot(const char* redpath, redNodeT *childNode, int admin, int verbose) {
     char nodepath[RED_MAXPATHLEN];
     strncpy(nodepath, redpath, RED_MAXPATHLEN);
     int index;
@@ -174,7 +176,7 @@ static int RedNodesDigToRoot(const char* redpath, redNodeT *childNode, int verbo
 
         // We have parent directories let's check if they are rednode compatible
         redNodeT *parentNode = NULL;
-        redNodeYamlE result= RedNodesLoad(nodepath, &parentNode, verbose);
+        redNodeYamlE result= RedNodesLoad(nodepath, &parentNode, admin, verbose);
 
         switch (result) {
             case RED_NODE_CONFIG_OK:
@@ -199,7 +201,7 @@ OnErrorExit:
     return 1;
 }
 
-static int RedChildrenNodesLoad(redNodeT *node, int verbose) {
+static int RedChildrenNodesLoad(redNodeT *node, int admin, int verbose) {
     int rc = 0;
     char child_nodepath[RED_MAXPATHLEN];
     struct dirent *de;
@@ -230,7 +232,7 @@ static int RedChildrenNodesLoad(redNodeT *node, int verbose) {
 
         // try to load child node, if it is not a node ignore
         redNodeT *childrenNode = NULL;
-        redNodeYamlE result = RedNodesLoad(child_nodepath, &childrenNode, verbose);
+        redNodeYamlE result = RedNodesLoad(child_nodepath, &childrenNode, admin, verbose);
         switch (result)
         {
             case RED_NODE_CONFIG_OK:
@@ -274,10 +276,10 @@ OnErrorExit:
 }
 
 // loop up within all redpath nodes from a given familly
-static int RedNodesDigToChilds(redNodeT *currentNode, int verbose) {
+static int RedNodesDigToChilds(redNodeT *currentNode, int admin, int verbose) {
 
     // load all children nodes
-    if (RedChildrenNodesLoad(currentNode, verbose))
+    if (RedChildrenNodesLoad(currentNode, admin, verbose))
         goto OnErrorExit;
 
     // if no grand children return
@@ -286,7 +288,7 @@ static int RedNodesDigToChilds(redNodeT *currentNode, int verbose) {
 
     // recursively load grand children nodes
     for (redChildNodeT *child_node = currentNode->childs; child_node && child_node->child; child_node = child_node->brother) {
-        if(RedNodesDigToChilds(child_node->child, verbose)) {
+        if(RedNodesDigToChilds(child_node->child, admin, verbose)) {
             RedLog(REDLOG_ERROR, "Fail to dig to childs from %s", currentNode->redpath);
             goto OnErrorExit;
         }
@@ -300,7 +302,7 @@ OnErrorExit:
 }
 
 // Read terminal redleaf and dig down directory hierarchie
-redNodeT *RedNodesScan(const char* redpath, int verbose) {
+redNodeT *RedNodesScan(const char* redpath, int admin, int verbose) {
 
     redNodeT *redleaf = NULL;
     int error;
@@ -308,14 +310,14 @@ redNodeT *RedNodesScan(const char* redpath, int verbose) {
 
 
     // allocate leaf terminal end node and search for redpak config
-    result = RedNodesLoad(redpath, &redleaf, verbose);
+    result = RedNodesLoad(redpath, &redleaf, admin, verbose);
     if (result != RED_NODE_CONFIG_OK) {
         RedLog(REDLOG_ERROR, "redpak terminal leaf config & status not found [path=%s]", redpath);
         goto OnErrorExit;
     }
 
     // dig redpath familly hierarchie
-    error= RedNodesDigToRoot (redpath, redleaf, verbose);
+    error= RedNodesDigToRoot (redpath, redleaf, admin, verbose);
     if (error) goto OnErrorFree;
 
     // set NODE_ALIAS in case some env var expand it.
@@ -331,7 +333,7 @@ OnErrorExit:
     return NULL;
 }
 
-redNodeT *RedNodesDownScan(const char* redroot, int verbose) {
+redNodeT *RedNodesDownScan(const char* redroot, int admin, int verbose) {
 
     int error;
     redNodeYamlE result;
@@ -339,7 +341,7 @@ redNodeT *RedNodesDownScan(const char* redroot, int verbose) {
 
     // allocate root node and search for redpak config
     redNodeT *redrootNode = NULL;
-    result = RedNodesLoad(redroot, &redrootNode, verbose);
+    result = RedNodesLoad(redroot, &redrootNode, admin, verbose);
     if (result != RED_NODE_CONFIG_OK) {
         RedLog(REDLOG_ERROR, "redpak redroot node config & status not found [path=%s]", redroot);
         goto OnErrorExit;
@@ -348,7 +350,7 @@ redNodeT *RedNodesDownScan(const char* redroot, int verbose) {
     RedLog(REDLOG_DEBUG, "redroot load redroot->redpath=%s", redrootNode->redpath);
 
     // dig down to child nodes
-    error = RedNodesDigToChilds (redrootNode, verbose);
+    error = RedNodesDigToChilds (redrootNode, admin, verbose);
     if (error) goto OnErrorExit;
 
     return redrootNode;

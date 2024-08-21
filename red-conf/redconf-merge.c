@@ -77,7 +77,7 @@ OnErrorExit:
 }
 
 //get mergedConftags from hierarchy
-redConfTagT *mergedConftags(const redNodeT *rootnode, int admin) {
+redConfTagT *mergedConftags(const redNodeT *rootnode) {
     redConfTagT *mergedConfTags = calloc(1, sizeof(redConfTagT));
 
     for (const redNodeT *node=rootnode; node; node=node->childs->child) {
@@ -89,14 +89,17 @@ redConfTagT *mergedConftags(const redNodeT *rootnode, int admin) {
     }
 
     //assume admin overload everything exepted node specific
-    if (admin) {
-        for (const redNodeT *node=rootnode; node != NULL; node=node->ancestor) {
-            if (!node->confadmin->conftag) {
-                RedLog(REDLOG_INFO, "no admin conftag for %s", node->redpath);
-                continue;
-            }
-            (void) RedConfCopyConfTags(node->confadmin->conftag, mergedConfTags);
+    for (const redNodeT *node=rootnode; node != NULL; node=node->ancestor) {
+        if (!node->confadmin) {
+            RedLog(REDLOG_DEBUG, "no admin config for %s", node->redpath);
+            continue;
         }
+
+        if (!node->confadmin->conftag) {
+            RedLog(REDLOG_INFO, "no admin conftag for %s", node->redpath);
+            continue;
+        }
+        (void) RedConfCopyConfTags(node->confadmin->conftag, mergedConfTags);
     }
     return mergedConfTags;
 }
@@ -123,7 +126,7 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, 
     mergedNode->config->headers->info = strdup(leaf->config->headers->info);
 
     //conftar
-    mergedNode->config->conftag = mergedConftags(rootNode, 0);
+    mergedNode->config->conftag = mergedConftags(rootNode);
     mergedNode->config->conftag->cachedir = expandAlloc(mergedNode, mergedNode->config->conftag->cachedir, expand);
     mergedNode->config->conftag->hostname = expandAlloc(mergedNode, mergedNode->config->conftag->hostname, expand);
     mergedNode->config->conftag->chdir = expandAlloc(mergedNode, mergedNode->config->conftag->chdir, expand);
@@ -154,7 +157,7 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, 
 
 const char *getMergeConfig(const char *redpath, size_t *len, int expand) {
     char *output = NULL;
-    redNodeT *redleaf = RedNodesScan(redpath, 0);
+    redNodeT *redleaf = RedNodesScan(redpath, 0, 0);
     if (!redleaf)
         goto OnExit;
 
@@ -175,7 +178,7 @@ OnExit:
 
 const char *getConfig(const char *redpath, size_t *len) {
     char *output = NULL;
-    redNodeT *redleaf = RedNodesScan(redpath, 0);
+    redNodeT *redleaf = RedNodesScan(redpath, 0, 0);
     if (!redleaf)
         goto OnExit;
 
