@@ -96,7 +96,7 @@ exports:
   mount: /sbin
   path: /sbin
 - mount: /etc/dnf/vars/releasever
-  path: (source /etc/os-release; echo $VERSION_CODENAME)
+  path: grep VERSION_CODENAME /etc/os-release|cut -d= -f2|tr -d '"'
   mode: Execfd
 - mode: Public #common cachedir between nodes
   mount: $NODE_PATH/var/cache/dnf
