@@ -61,26 +61,9 @@ static int PopDownRedpath (char *redpath) {
     return idx;
 }
 
-static int RedCheckSetStatusPath(const char *nodepath, char *statuspath, size_t size) {
-    struct stat statinfo;
-    int error;
-
-    // check look like a valide node
-    (void)snprintf (statuspath, size, "%s/%s", nodepath, REDNODE_STATUS);
-
-    error = stat(statuspath, &statinfo);
-    if (error || !S_ISREG(statinfo.st_mode)) {
-        goto OnExit;
-    }
-
-    return 0;
-OnExit:
-    return 1;
-}
-
 // return 0 on success, 1 when for none redpak node and -1 when paring fail
 static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admin, int verbose) {
-    char nodepath[RED_MAXPATHLEN];
+    char path[RED_MAXPATHLEN];
     struct stat statinfo;
     int error;
     redNodeYamlE rc;
@@ -92,8 +75,14 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admi
         goto OnErrorExit;
     }
 
-    // check redpath look like a valide node
-    if (RedCheckSetStatusPath(redpath, nodepath, sizeof(nodepath))) {
+    // check redpath look like a valid node
+    error = snprintf (path, sizeof(path), "%s/%s", redpath, REDNODE_STATUS);
+    if (error < 0 || (size_t)error >= sizeof(path)) {
+        RedLog(REDLOG_ERROR, "Fail to get status path [path=%s/%s]", redpath, REDNODE_STATUS);
+        goto OnErrorFreeExit;
+    }
+    error = stat(path, &statinfo);
+    if (error || !S_ISREG(statinfo.st_mode)) {
         rc=RED_NODE_CONFIG_MISSING;
         goto OnExit;
     }
@@ -105,30 +94,38 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admi
     }
 
     // parse redpath node status file
-    (*pnode)->status = RedLoadStatus (nodepath, verbose);
+    (*pnode)->status = RedLoadStatus (path, verbose);
     if (!(*pnode)->status) {
-        RedLog(REDLOG_ERROR, "Fail to parse redpak status [path=%s]", nodepath);
+        RedLog(REDLOG_ERROR, "Fail to parse redpak status [path=%s]", path);
         goto OnErrorFreeExit;
     }
 
     // parse redpath node config file
-    (void)snprintf (nodepath, sizeof(nodepath), "%s/%s", redpath, REDNODE_CONF);
-    (*pnode)->config = RedLoadConfig (nodepath, verbose);
+    error = snprintf (path, sizeof(path), "%s/%s", redpath, REDNODE_CONF);
+    if (error < 0 || (size_t)error >= sizeof(path)) {
+        RedLog(REDLOG_ERROR, "Fail to get config path [path=%s/%s]", redpath, REDNODE_CONF);
+        goto OnErrorFreeExit;
+    }
+    (*pnode)->config = RedLoadConfig (path, verbose);
     if (!(*pnode)->config) {
-        RedLog(REDLOG_ERROR, "Fail to parse redpak config [path=%s]", nodepath);
+        RedLog(REDLOG_ERROR, "Fail to parse redpak config [path=%s]", path);
         goto OnErrorFreeExit;
     }
 
     if (admin) {
         // parse redpath node config admin file: if exists
-        (void)snprintf (nodepath, sizeof(nodepath), "%s/%s", redpath, REDNODE_ADMIN);
-        error= stat(nodepath, &statinfo);
+        error = snprintf (path, sizeof(path), "%s/%s", redpath, REDNODE_ADMIN);
+        if (error < 0 || (size_t)error >= sizeof(path)) {
+            RedLog(REDLOG_ERROR, "Fail to get admin path [path=%s/%s]", redpath, REDNODE_ADMIN);
+            goto OnErrorFreeExit;
+        }
+        error= stat(path, &statinfo);
         if (error || !S_ISREG(statinfo.st_mode)) {
-            RedLog(REDLOG_DEBUG, "No admin config file=%s.!!!!", nodepath);
+            RedLog(REDLOG_DEBUG, "No admin config file=%s.!!!!", path);
         } else {
-            (*pnode)->confadmin = RedLoadConfig (nodepath, verbose);
+            (*pnode)->confadmin = RedLoadConfig (path, verbose);
             if (!(*pnode)->confadmin) {
-                RedLog(REDLOG_ERROR, "Fail to parse redpak admin config [path=%s]", nodepath);
+                RedLog(REDLOG_ERROR, "Fail to parse redpak admin config [path=%s]", path);
                 goto OnErrorFreeExit;
             }
         }
@@ -137,7 +134,7 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admi
     //allocate childs
     (*pnode)->childs = calloc(1, sizeof(redChildNodeT));
     if(!(*pnode)->childs) {
-        RedLog(REDLOG_ERROR, "Cannot allocatate childs for %s", nodepath);
+        RedLog(REDLOG_ERROR, "Cannot allocatate childs for %s", path);
         goto OnErrorFreeExit;
     }
     (*pnode)->childs->child = NULL;
