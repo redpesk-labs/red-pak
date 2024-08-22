@@ -37,14 +37,6 @@
 
 #include "redconf-schema.h"
 
-// ---- Family tree structure ----
-
-typedef struct {
-    char *leafalias;
-    char *leafname;
-    char *leafpath;
-} redEnvValT;
-
 // --- Redpath Node Directory Hierarchy (from leaf to root)
 typedef struct redNodeS{
     redStatusT *status;
@@ -54,7 +46,6 @@ typedef struct redNodeS{
     struct redNodeS *first_child;
     struct redNodeS *next_sibling;
     const char *redpath;
-    redEnvValT env;
 } redNodeT;
 
 /**
