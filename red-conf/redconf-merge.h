@@ -22,6 +22,14 @@
 
 #include "redconf-node.h"
 
+// ---- Special confvar
+typedef struct {
+    char *ldpathString;
+    unsigned int ldpathIdx;
+    char *pathString;
+    unsigned int pathIdx;
+
+} dataNodeT;
 
 // mergeSpecfialConfVar
 int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode);

@@ -38,11 +38,6 @@
 #include "redconf-schema.h"
 
 // ---- Family tree structure ----
-typedef enum {
-    RED_NODE_CONFIG_OK,
-    RED_NODE_CONFIG_FX,
-    RED_NODE_CONFIG_MISSING,
-}  redNodeYamlE;
 
 typedef struct redChildNodeS{
     struct redNodeS* child;
@@ -65,15 +60,6 @@ typedef struct redNodeS{
     const char *redpath;
     redEnvValT env;
 } redNodeT;
-
-// ---- Special confvar
-typedef struct {
-    char *ldpathString;
-    unsigned int ldpathIdx;
-    char *pathString;
-    unsigned int pathIdx;
-
-} dataNodeT;
 
 redNodeT *RedNodesScan(const char* redpath, int admin, int verbose);
 redNodeT *RedNodesDownScan(const char* redroot, int admin, int verbose);

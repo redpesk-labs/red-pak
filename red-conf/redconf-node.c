@@ -30,6 +30,12 @@
 #include "redconf-expand.h"
 #include "redconf-utils.h"
 
+typedef enum {
+    RED_NODE_CONFIG_OK,
+    RED_NODE_CONFIG_FX,
+    RED_NODE_CONFIG_MISSING,
+}  redNodeYamlE;
+
 static int PopDownRedpath (char *redpath) {
     int idx;
     // to get cleaner path remove trailing '/' if any
