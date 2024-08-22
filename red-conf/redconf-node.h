@@ -61,7 +61,18 @@ typedef struct redNodeS{
     redEnvValT env;
 } redNodeT;
 
+/**
+ * Read the node description from the file system files.
+ * The node is located at the directory @ref redpath.
+ *
+ * @param redpath location of the node
+ * @param admin   boolean telling if for administration or not
+ * @param verbose boolean telling if verbose output is required
+ *
+ * @return the node or NULL if something went wrong
+ */
 redNodeT *RedNodesScan(const char* redpath, int admin, int verbose);
+
 redNodeT *RedNodesDownScan(const char* redroot, int admin, int verbose);
 int RedUpdateStatus(redNodeT *node, int verbose);
 
