@@ -45,7 +45,7 @@ static void globalUsage(const rOption *options) {
            "Commands:\n"
     );
     for (const rCommandT *cmd = commands; cmd->cmd; cmd++)
-        printf("\t%s\t\t%s\n", cmd->cmd_name, cmd->desc);
+        printf("\t%-13s\t%s\n", cmd->cmd_name, cmd->desc);
 
     usageOptions(options);
     exit(1);
@@ -70,15 +70,15 @@ static int globalParseArgs(int argc, char *argv[], rGlobalConfigT *gConfig) {
             break;
         }
 
-           option = getopt_long(argc, argv, SHORTOPTS, longOpts, NULL);
+        option = getopt_long(argc, argv, SHORTOPTS, longOpts, NULL);
         if (option == -1) //no more options
-               break;
+            break;
 
         RedLogLevelE verbosity = REDLOG_INFO;
         printf("OPTOPT %c\n", optopt);
         // option return short option even when long option is given
-          switch (option) {
-              case 'v':
+        switch (option) {
+            case 'v':
                 if(optarg) {
                     size_t length = strlen(optarg);
                     if (!strncmp(optarg, "v", length)) {
@@ -91,7 +91,7 @@ static int globalParseArgs(int argc, char *argv[], rGlobalConfigT *gConfig) {
                 }
                 SetLogLevel(verbosity);
                 gConfig->verbose = 1;
-                  break;
+                break;
 
             case 'y':
                 gConfig->yaml = 1;

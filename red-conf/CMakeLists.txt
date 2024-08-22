@@ -27,8 +27,8 @@ PROJECT_TARGET_ADD(libredconf)
         PREFIX ""
         LABELS "LIBRARY"
         OUTPUT_NAME ${TARGET_NAME}
-    LINKER_LANGUAGE C
-      PUBLIC_HEADER "${CHEADERS}"
+        LINKER_LANGUAGE C
+        PUBLIC_HEADER "${CHEADERS}"
     )
   pkg_search_module(URCU REQUIRED liburcu)
   pkg_search_module(URCUCDS REQUIRED liburcu-cds)

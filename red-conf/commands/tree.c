@@ -47,12 +47,12 @@ static int parseTreeArgs(int argc, char * argv[], rTreeConfigT *treeConfig) {
     setLongOptions(treeOptions, longOpts);
 
     while(1) {
-           int option = getopt_long(argc, argv, "r:h", longOpts, NULL);
+        int option = getopt_long(argc, argv, "r:h", longOpts, NULL);
         if(option == -1)
             break;
 
         // option return short option even when long option is given
-          switch (option) {
+        switch (option) {
             case 'r':
                 treeConfig->redroot = optarg;
                 break;
