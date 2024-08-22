@@ -122,12 +122,14 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
         char *cgroup_name = (char *)alloca(strlen(node->status->realpath));
         replaceSlashDash(node->status->realpath, cgroup_name);
 
-        if (cgroups(node->config->conftag->cgroups, cgroup_name, cgroupParent))
-            break;
+        if (node->config->conftag) {
+            if (cgroups(node->config->conftag->cgroups, cgroup_name, cgroupParent))
+                break;
 
-        //set next cgroup parent
-        strncat(cgroupParent, "/", PATH_MAX - 1 - strlen("/") - strlen(cgroupParent));
-        strncat(cgroupParent, cgroup_name, PATH_MAX - 1 - strlen(cgroup_name) - strlen(cgroupParent));
+            //set next cgroup parent
+            strncat(cgroupParent, "/", PATH_MAX - 1 - strlen("/") - strlen(cgroupParent));
+            strncat(cgroupParent, cgroup_name, PATH_MAX - 1 - strlen(cgroup_name) - strlen(cgroupParent));
+        }
     }
     return 0;
 }
@@ -172,7 +174,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
         error = loadNode(node, cliarg, (node == redtree), &dataNode, &argcount, argval);
         if (error) goto OnErrorExit;
         rootNode = node;
-        if (node->config->conftag->cgroups)
+        if (node->config->conftag && node->config->conftag->cgroups)
             isCgroups = 1;
     }
 

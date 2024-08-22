@@ -280,7 +280,7 @@ int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const c
     }
 
     // if not in force mode do further sanity check
-    if (!(configN->conftag->unsafe || cliargs->unsafe)) {
+    if (!((configN->conftag && configN->conftag->unsafe) || cliargs->unsafe)) {
         // check it was updated in the future
         if (epocms < statusN->timestamp) {
             RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is older that it's parent [require 'dnf red-update' or --force] nodepath=%s", configN->headers->alias, node->redpath);
