@@ -17,7 +17,7 @@
 
 #define _GNU_SOURCE
 
-#define _GNU_SOURCE
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -92,14 +92,16 @@ int RedConfIsSameFile(const char* path1, const char* path2) {
         && st1.st_dev == st2.st_dev;
 }
 
-
 // if string is not null extract umask and apply
-mode_t RedSetUmask (redConfTagT *conftag) {
+mode_t RedSetUmask (const char *masktxt) {
     mode_t mask;
-    if (!conftag || !conftag->umask) {
-        mask= umask(0);
-    } else {
-        sscanf (conftag->umask, "%o", &mask);
+    if (!masktxt)
+        mask = umask(0);
+    else {
+        char *end;
+        mask = strtol(masktxt, &end, 8);
+        if (*end)
+            mask = umask(0);
     }
     // posix umask would need some helpers
     (void)umask(mask);

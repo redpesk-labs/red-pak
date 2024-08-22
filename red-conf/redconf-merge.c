@@ -84,7 +84,7 @@ redConfTagT *mergedConftags(const redNodeT *rootnode) {
         (void) RedConfCopyConfTags(node->config->conftag, mergedConfTags);
         if(!node->parent) { //system_node
             // update process default umask
-            RedSetUmask (mergedConfTags);
+            RedSetUmask (mergedConfTags ? mergedConfTags->umask : NULL);
         }
     }
 

@@ -23,8 +23,6 @@
 #include <stddef.h>
 #include <sys/types.h>
 
-#include "redconf-schema.h"
-
 /* make the current date in today. return 0 in case of error else the length of the text */
 extern int getDateOfToday(char *today, size_t size);
 
@@ -35,7 +33,7 @@ extern void getFreshUUID(char *uuid, size_t size);
 int remove_directories(const char *path);
 unsigned long RedUtcGetTimeMs ();
 
-mode_t RedSetUmask (redConfTagT *conftag);
+mode_t RedSetUmask (const char *masktxt);
 
 /**
  * Checks if path1 and path2 are refering or not to the same file.

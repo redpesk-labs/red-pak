@@ -150,7 +150,7 @@ void RedNode::getMain() {
 
     getConf();
 
-    RedSetUmask(node.get()->config->conftag);
+    RedSetUmask(node.get()->config->conftag ? node.get()->config->conftag->umask : nullptr);
 }
 
 void RedNode::setPersistDir() {
