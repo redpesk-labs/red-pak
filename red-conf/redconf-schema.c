@@ -345,7 +345,7 @@ static int SchemaLoad (const char* filepath, const cyaml_schema_value_t *topsche
         if (wlevel <= 1)
             errcode = SchemaLoad (filepath, topschema, config, 2);
         else
-            RedLog(REDLOG_ERROR, "Fail to reading yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
+            RedLog(REDLOG_ERROR, "Fail to read yaml config path=%s err=[%s]", filepath, cyaml_strerror(errcode));
     }
 
     return errcode;
