@@ -36,6 +36,21 @@ typedef enum {
     RED_NODE_CONFIG_MISSING,
 }  redNodeYamlE;
 
+/**
+ * Release the memory used by @ref node
+ */
+static void freeNode(redNodeT *node) {
+    if(node->status)
+        RedFreeStatus(node->status, 0);
+    if(node->config)
+        RedFreeConfig(node->config, 0);
+    if(node->confadmin)
+        RedFreeConfig(node->confadmin, 0);
+
+    free((char *)node->redpath);
+    free(node);
+}
+
 static int PopDownRedpath (char *redpath) {
     int idx;
     // to get cleaner path remove trailing '/' if any
@@ -135,7 +150,7 @@ OnExit:
     return rc;
 
 OnErrorFreeExit:
-    free(*pnode);
+    freeNode(*pnode);
 OnErrorExit:
     return RED_NODE_CONFIG_FX;
 }
@@ -363,18 +378,6 @@ redNodeT *RedNodesDownScan(const char* redroot, int admin, int verbose) {
 
 OnErrorExit:
     return NULL;
-}
-
-static void freeNode(redNodeT *node) {
-    if(node->status)
-        RedFreeStatus(node->status, 0);
-    if(node->config)
-        RedFreeConfig(node->config, 0);
-    if(node->confadmin)
-        RedFreeConfig(node->confadmin, 0);
-
-    free((char *)node->redpath);
-    free(node);
 }
 
 void freeRedLeaf(redNodeT *redleaf) {
