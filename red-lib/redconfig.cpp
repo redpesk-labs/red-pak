@@ -166,7 +166,7 @@ void RedNode::setGpgCheck() {
 
 void RedNode::setCacheDir() {
     const char *cachedir = NULL;
-    for (redNodeT *ancestor_node=node.get(); ancestor_node != NULL; ancestor_node=ancestor_node->ancestor) {
+    for (redNodeT *ancestor_node=node.get(); ancestor_node != NULL; ancestor_node=ancestor_node->parent) {
         if(ancestor_node->config->conftag && ancestor_node->config->conftag->cachedir) {
             cachedir = ancestor_node->config->conftag->cachedir;
             break;
@@ -209,11 +209,11 @@ void RedNode::appendFamilyDb(libdnf::rpm::PackageSack & package_sack) {
 
     // Scan redpath family nodes from terminal leaf to root node
     redNodeT * ancestor_node = node.get();
-    for (ancestor_node=node.get(); ancestor_node; ancestor_node=ancestor_node->ancestor) {
+    for (ancestor_node=node.get(); ancestor_node; ancestor_node=ancestor_node->parent) {
         registerNode(ancestor_node, package_sack);
 
         //no system node handle rpm system node
-        if (!ancestor_node->ancestor) {
+        if (!ancestor_node->parent) {
             std::string no_system_node_path(std::string(ancestor_node->redpath) + "/..");
             std::string no_system_node_path_var_lib_rpm(no_system_node_path + "/var/lib/rpm");
             if (std::filesystem::exists(no_system_node_path_var_lib_rpm)) {

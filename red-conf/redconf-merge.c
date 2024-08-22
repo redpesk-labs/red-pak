@@ -80,16 +80,16 @@ OnErrorExit:
 redConfTagT *mergedConftags(const redNodeT *rootnode) {
     redConfTagT *mergedConfTags = calloc(1, sizeof(redConfTagT));
 
-    for (const redNodeT *node=rootnode; node; node=node->childs->child) {
+    for (const redNodeT *node=rootnode; node; node=node->first_child) {
         (void) RedConfCopyConfTags(node->config->conftag, mergedConfTags);
-        if(!node->ancestor) { //system_node
+        if(!node->parent) { //system_node
             // update process default umask
             RedSetUmask (mergedConfTags);
         }
     }
 
     //assume admin overload everything exepted node specific
-    for (const redNodeT *node=rootnode; node != NULL; node=node->ancestor) {
+    for (const redNodeT *node=rootnode; node != NULL; node=node->parent) {
         if (!node->confadmin) {
             RedLog(REDLOG_DEBUG, "no admin config for %s", node->redpath);
             continue;
@@ -110,7 +110,7 @@ redConfTagT *mergedConftags(const redNodeT *rootnode) {
 redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, int duplicate) {
 
     if (!rootNode) {
-        for(rootNode = leaf; rootNode->ancestor; rootNode = rootNode->ancestor);
+        for(rootNode = leaf; rootNode->parent; rootNode = rootNode->parent);
     }
 
     redNodeT *mergedNode = calloc(1, sizeof(redNodeT));

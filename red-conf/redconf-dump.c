@@ -113,7 +113,7 @@ OnErrorExit:
 // Debug tool dump a redpak node family tree
 void RedDumpFamilyNodeHandle(redNodeT *familyTree, int yaml) {
 
-    for (redNodeT *node=familyTree; node != NULL; node=node->ancestor) {
+    for (redNodeT *node=familyTree; node != NULL; node=node->parent) {
         if(yaml) {
             char *output;
             size_t len;
@@ -162,8 +162,8 @@ int RedDumpRoot(redNodeT *node, const char* prefix, int verbose, int last) {
     printf( "%s  %s%s %s  (%s)\n", prefix, last ? s_last : s_transition, s_link, basename(node_basename), node->config->headers->alias);
 
     //handle children
-    for (redChildNodeT *childs = node->childs; childs && childs->child; childs = childs->brother) {
-        if(RedDumpRoot(childs->child, subprefix, verbose, childs->brother ? 0 : 1))
+    for (redNodeT *child = node->first_child; child ; child = child->next_sibling) {
+        if(RedDumpRoot(child, subprefix, verbose, child->next_sibling ? 0 : 1))
             goto OnErrorExit;
     }
 
@@ -232,7 +232,7 @@ int RedDumpNodePathMerge(const char* redpath, int expand) {
         goto OnErrorExit;
 
     //looking for redroot
-    for (redroot = node; redroot->ancestor; redroot = redroot->ancestor);
+    for (redroot = node; redroot->parent; redroot = redroot->parent);
     mergedNode = mergeNode(node, redroot, expand, 1);
 
     RedLog(REDLOG_DEBUG, "redroot path:%s", redroot->redpath);

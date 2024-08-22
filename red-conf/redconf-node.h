@@ -39,11 +39,6 @@
 
 // ---- Family tree structure ----
 
-typedef struct redChildNodeS{
-    struct redNodeS* child;
-    struct redChildNodeS* brother;
-} redChildNodeT;
-
 typedef struct {
     char *leafalias;
     char *leafname;
@@ -55,8 +50,9 @@ typedef struct redNodeS{
     redStatusT *status;
     redConfigT *config;
     redConfigT *confadmin;
-    struct redNodeS *ancestor;
-    redChildNodeT *childs;
+    struct redNodeS *parent;
+    struct redNodeS *first_child;
+    struct redNodeS *next_sibling;
     const char *redpath;
     redEnvValT env;
 } redNodeT;

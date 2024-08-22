@@ -131,15 +131,6 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admi
         }
     }
 
-    //allocate childs
-    (*pnode)->childs = calloc(1, sizeof(redChildNodeT));
-    if(!(*pnode)->childs) {
-        RedLog(REDLOG_ERROR, "Cannot allocatate childs for %s", path);
-        goto OnErrorFreeExit;
-    }
-    (*pnode)->childs->child = NULL;
-    (*pnode)->childs->brother = NULL;
-
     // keep a copy of effective redpath for sanity check purpose
     (*pnode)->redpath = strdup(redpath);
     rc = RED_NODE_CONFIG_OK;
@@ -188,7 +179,7 @@ static int RedNodesDigToRoot(const char* redpath, redNodeT *childNode, int admin
         // if we are not at root level dig down for ancestor node
         index = PopDownRedpath (nodepath);
         if (index <= 1) {
-            childNode->ancestor = NULL;
+            childNode->parent = NULL;
             break;
         }
 
@@ -198,10 +189,8 @@ static int RedNodesDigToRoot(const char* redpath, redNodeT *childNode, int admin
 
         switch (result) {
             case RED_NODE_CONFIG_OK:
-                childNode->ancestor = parentNode;
-                parentNode->childs->child = childNode;
-                parentNode->childs->brother = NULL;
-
+                childNode->parent = parentNode;
+                parentNode->first_child = childNode;
                 childNode = parentNode;
                 break;
             case  RED_NODE_CONFIG_MISSING:
@@ -268,22 +257,9 @@ static int RedChildrenNodesLoad(redNodeT *node, int admin, int verbose) {
         }
 
         //add node as ancestor for childrenNode
-        childrenNode->ancestor = node;
-
-        redChildNodeT *childs = NULL;
-        //if there are children: prepend a new one
-        if (node->childs->child) {
-            childs = calloc(1, sizeof(redChildNodeT));
-            if (!childs) {
-                RedLog(REDLOG_ERROR, "issue calloc childs for %s", child_nodepath);
-                rc = 3;
-                goto OnExit;
-            }
-            childs->brother = node->childs;
-            node->childs = childs;
-        }
-        node->childs->child = childrenNode;
-
+        childrenNode->parent = node;
+        childrenNode->next_sibling = node->first_child;
+        node->first_child = childrenNode;
     }
 
 OnExit:
@@ -300,19 +276,13 @@ static int RedNodesDigToChilds(redNodeT *currentNode, int admin, int verbose) {
     if (RedChildrenNodesLoad(currentNode, admin, verbose))
         goto OnErrorExit;
 
-    // if no grand children return
-    if (!currentNode->childs)
-        goto OnSuccessExit;
-
     // recursively load grand children nodes
-    for (redChildNodeT *child_node = currentNode->childs; child_node && child_node->child; child_node = child_node->brother) {
-        if(RedNodesDigToChilds(child_node->child, admin, verbose)) {
+    for (redNodeT *child_node = currentNode->first_child; child_node ; child_node = child_node->next_sibling) {
+        if(RedNodesDigToChilds(child_node, admin, verbose)) {
             RedLog(REDLOG_ERROR, "Fail to dig to childs from %s", currentNode->redpath);
             goto OnErrorExit;
         }
     }
-
-OnSuccessExit:
     return 0;
 
 OnErrorExit:
@@ -364,7 +334,7 @@ redNodeT *RedNodesDownScan(const char* redroot, int admin, int verbose) {
         RedLog(REDLOG_ERROR, "redpak redroot node config & status not found [path=%s]", redroot);
         goto OnErrorExit;
     }
-    redrootNode->ancestor = NULL;
+    redrootNode->parent = NULL;
     RedLog(REDLOG_DEBUG, "redroot load redroot->redpath=%s", redrootNode->redpath);
 
     // dig down to child nodes
@@ -385,21 +355,18 @@ void freeRedLeaf(redNodeT *redleaf) {
 
     redNodeT *node = redleaf, *nextnode;
     while(node) {
-        nextnode = node->ancestor;
-        free(node->childs);
+        nextnode = node->parent;
         freeNode(node);
         node = nextnode;
     }
 }
 
 void freeRedRoot(redNodeT *redroot) {
-    redChildNodeT *childs = redroot->childs, *nextchilds;
-    while(childs) {
-        nextchilds = childs->brother;
-        if(childs->child)
-            freeRedRoot(childs->child);
-        free(childs);
-        childs = nextchilds;
+    redNodeT *child = redroot->first_child, *nextchild;
+    while(child) {
+        nextchild = child->next_sibling;
+        freeRedRoot(child);
+        child = nextchild;
     }
     freeNode(redroot);
 }

@@ -97,7 +97,7 @@ static const char* getKeyExports(const redNodeT *node, const void *srcdata, int 
     redConfExportPathT *export = (redConfExportPathT*)srcdata;
 
     /* if not leaf: ignore mode: */
-    if(node->childs->child && export->mode == RED_EXPORT_PRIVATE) {
+    if(node->first_child && export->mode == RED_EXPORT_PRIVATE) {
         *ignore = 1;
         goto OnExit;
     }

@@ -124,7 +124,7 @@ void *mergeData(const redNodeT* rootnode, size_t dataLen, int *mergecount, redHa
     }
 
     // fill hash table
-    for (const redNodeT *node = rootnode; node; node = node->childs->child) {
+    for (const redNodeT *node = rootnode; node; node = node->first_child) {
         data = hashcbs->getdata(node, &count);
         if (count == 0)
             continue;

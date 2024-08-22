@@ -117,7 +117,7 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
     }
 
     RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
-    for (redNodeT *node=rootNode; node != NULL; node=node->childs->child) {
+    for (redNodeT *node=rootNode; node != NULL; node=node->first_child) {
         //remove / from cgroup name
         char *cgroup_name = (char *)alloca(strlen(node->status->realpath));
         replaceSlashDash(node->status->realpath, cgroup_name);
@@ -170,7 +170,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
     int isCgroups = 0;
 
     redNodeT *rootNode = NULL;
-    for (redNodeT *node=redtree; node != NULL; node=node->ancestor) {
+    for (redNodeT *node=redtree; node != NULL; node=node->parent) {
         error = loadNode(node, cliarg, (node == redtree), &dataNode, &argcount, argval);
         if (error) goto OnErrorExit;
         rootNode = node;
