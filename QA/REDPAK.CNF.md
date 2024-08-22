@@ -129,33 +129,33 @@ before being searched.
 The tag is used for evaluation of the replacement.
 The only valid tags are:
 
-| tag                 | type        | description                                                  |
-|---------------------|-------------|--------------------------------------------------------------|
-| NODE_PREFIX         | environment | ENVAL(NODE_PREFIX, )                                         |
-| redpak_MAIN     (*) | environment | ENVAL(redpak_MAIN, $NODE_PREFIX/etc/redpak/main.yaml)        |
-| redpak_TMPL     (*) | environment | ENVAL(redpak_TMPL, $NODE_PREFIX/etc/redpak/templates.d)      |
-| REDNODE_CONF        | environment | ENVAL(REDNODE_CONF, $NODE_PATH/etc/redpack.yaml)             |
-| REDNODE_ADMIN       | environment | ENVAL(REDNODE_ADMIN, $NODE_PATH//etc/redpak/main-admin.yaml) |
-| REDNODE_STATUS      | environment | ENVAL(REDNODE_STATUS, $NODE_PATH/.rednode.yaml)              |
-| REDNODE_VARDIR      | environment | ENVAL(REDNODE_VARDIR, $NODE_PATH/var/rpm/lib)                |
-| REDNODE_REPODIR     | environment | ENVAL(REDNODE_REPODIR, $NODE_PATH/etc/yum.repos.d)           |
-| REDNODE_LOCK        | environment | ENVAL(REDNODE_LOCK, $NODE_PATH/.rpm.lock)                    |
-| LOGNAME             | environment | ENVAL(LOGNAME, Unknown)                                      |
-| HOSTNAME            | environment | ENVAL(HOSTNAME, localhost)                                   |
-| CGROUPS_MOUNT_POINT | environment | ENVAL(CGROUPS_MOUNT_POINT, /sys/fs/cgroup)                   |
-| LEAF_ALIAS          | environment | ENVAL(LEAF_ALIAS, #undef)                                    |
-| LEAF_NAME           | environment | ENVAL(LEAF_NAME, #undef)                                     |
-| LEAF_PATH           | environment | ENVAL(LEAF_PATH, #undef)                                     |
-| PID                 | pid         | the PID                                                      |
-| UID                 | uid         | the UID                                                      |
-| GID                 | gid         | the GID                                                      |
-| TODAY               | date        | current date and hour                                        |
-| UUID                | uuid        | new UUID                                                     |
-| NODE_ALIAS          | automatic   | the node alias                                               |
-| NODE_NAME           | automatic   | the node name                                                |
-| NODE_PATH           | automatic   | the node path                                                |
-| NODE_INFO           | automatic   | the node info                                                |
-| REDPESK_VERSION     | environment | ENVAL(REDPESK_VERSION, agl-redpesk9)                         |
+| tag                   | type        | description                                                  |
+|-----------------------|-------------|--------------------------------------------------------------|
+| `NODE_PREFIX`         | environment | ENVAL(NODE_PREFIX, )                                         |
+| `redpak_MAIN`     (*) | environment | ENVAL(redpak_MAIN, $NODE_PREFIX/etc/redpak/main.yaml)        |
+| `redpak_TMPL`     (*) | environment | ENVAL(redpak_TMPL, $NODE_PREFIX/etc/redpak/templates.d)      |
+| `REDNODE_CONF`        | environment | ENVAL(REDNODE_CONF, $NODE_PATH/etc/redpack.yaml)             |
+| `REDNODE_ADMIN`       | environment | ENVAL(REDNODE_ADMIN, $NODE_PATH//etc/redpak/main-admin.yaml) |
+| `REDNODE_STATUS`      | environment | ENVAL(REDNODE_STATUS, $NODE_PATH/.rednode.yaml)              |
+| `REDNODE_VARDIR`      | environment | ENVAL(REDNODE_VARDIR, $NODE_PATH/var/rpm/lib)                |
+| `REDNODE_REPODIR`     | environment | ENVAL(REDNODE_REPODIR, $NODE_PATH/etc/yum.repos.d)           |
+| `REDNODE_LOCK`        | environment | ENVAL(REDNODE_LOCK, $NODE_PATH/.rpm.lock)                    |
+| `LOGNAME`             | environment | ENVAL(LOGNAME, Unknown)                                      |
+| `HOSTNAME`            | environment | ENVAL(HOSTNAME, localhost)                                   |
+| `CGROUPS_MOUNT_POINT` | environment | ENVAL(CGROUPS_MOUNT_POINT, /sys/fs/cgroup)                   |
+| `LEAF_ALIAS`          | environment | ENVAL(LEAF_ALIAS, #undef)                                    |
+| `LEAF_NAME`           | environment | ENVAL(LEAF_NAME, #undef)                                     |
+| `LEAF_PATH`           | environment | ENVAL(LEAF_PATH, #undef)                                     |
+| `PID`                 | pid         | the PID                                                      |
+| `UID`                 | uid         | the UID                                                      |
+| `GID`                 | gid         | the GID                                                      |
+| `TODAY`               | date        | current date and hour                                        |
+| `UUID`                | uuid        | new UUID                                                     |
+| `NODE_ALIAS`          | automatic   | the node alias                                               |
+| `NODE_NAME`           | automatic   | the node name                                                |
+| `NODE_PATH`           | automatic   | the node path                                                |
+| `NODE_INFO`           | automatic   | the node info                                                |
+| `REDPESK_VERSION`     | environment | ENVAL(REDPESK_VERSION, agl-redpesk9)                         |
 
 TODO: remove unexpected character from the accepted set
 
@@ -178,11 +178,11 @@ The content of the root map is:
 
 | name          | presence  | type     | description        |
 |---------------|-----------|----------|--------------------|
-| *headers*     | mandatory | map      | meta data          |
-| *config*      | optional  | map      | settings           |
-| *environ*     | optional  | sequence | exported variables |
-| *relocations* | optional  | sequence | renamed files      |
-| *exports*     | optional  | sequence | exported files     |
+| `headers`     | mandatory | map      | meta data          |
+| `config`      | optional  | map      | settings           |
+| `environ`     | optional  | sequence | exported variables |
+| `relocations` | optional  | sequence | renamed files      |
+| `exports`     | optional  | sequence | exported files     |
 
 It is an error if the *header* entry is absent.
 
@@ -194,9 +194,9 @@ The main entry *headers* must be a valid map with valid content as described bel
 
 | name          | presence  | type   | description             |
 |---------------|-----------|--------|-------------------------|
-| *alias*       | mandatory | string | name of the *rednode*   |
-| *name*        | optional  | string | ?                       |
-| *info*        | optional  | string | auto documentation text |
+| `alias`       | mandatory | string | name of the *rednode*   |
+| `name`        | optional  | string | ?                       |
+| `info`        | optional  | string | auto documentation text |
 
 It is an error if the *alias* entry is absent.
 
@@ -224,11 +224,11 @@ Valid environ entries are maps with the entries described below:
 
 | name          | presence  | type   | description                             |
 |---------------|-----------|--------|-----------------------------------------|
-| *mode*        | optional  | enum   | mode, default to "default"              |
-| *key*         | mandatory | string | name of the variable                    |
-| *value*       | depends   | string | value depending on the mode             |
-| *info*        | optional  | string | auto documentation text                 |
-| *warn*        | optional  | string | warning message on overwriting in child |
+| `mode`        | optional  | enum   | mode, default to "default"              |
+| `key`         | mandatory | string | name of the variable                    |
+| `value`       | depends   | string | value depending on the mode             |
+| `info`        | optional  | string | auto documentation text                 |
+| `warn`        | optional  | string | warning message on overwriting in child |
 
 
 It is an error if the *key* entry is absent.
@@ -247,10 +247,10 @@ Valid mode for environ entries are:
 
 | mode      | value    | description                             |
 |-----------|----------|-----------------------------------------|
-| "Remove"  | no       | value depending on the mode             |
-| "Static"  | required | the variable is set with the value      |
-| "Default" | required | the variable is set with the value after expansion |
-| "Execfd"  | required | the value is a shell command, the variable is set with the output file  of that command |
+| `Remove`  | no       | value depending on the mode             |
+| `Static`  | required | the variable is set with the value      |
+| `Default` | required | the variable is set with the value after expansion |
+| `Execfd`  | required | the value is a shell command, the variable is set with the output file  of that command |
 
 It is an error if the mode is not one of the above value.
 
@@ -270,8 +270,8 @@ Valid relocation entries are maps with the entries described below:
 
 | name  | presence  | type   | description                             |
 |-------|-----------|--------|-----------------------------------------|
-| *old* | mandatory | string | name of the variable                    |
-| *new* | mandatory | string | value depending on the mode             |
+| `old` | mandatory | string | name of the variable                    |
+| `new` | mandatory | string | value depending on the mode             |
 
 TODO: check processing of letter's case
 
@@ -292,11 +292,11 @@ Valid export entries are maps with the entries described below:
 
 | name    | presence  | type   | description                             |
 |---------|-----------|--------|-----------------------------------------|
-| *mode*  | mandatory | enum   | mode, default to "default"              |
-| *mount* | mandatory | string | name of the variable                    |
-| *path*  | depends   | string | value depending on the mode             |
-| *info*  | optional  | string | auto documentation text                 |
-| *warn*  | optional  | string | warning message on overwriting in child |
+| `mode`  | mandatory | enum   | mode, default to "default"              |
+| `mount` | mandatory | string | name of the variable                    |
+| `path`  | depends   | string | value depending on the mode             |
+| `info`  | optional  | string | auto documentation text                 |
+| `warn`  | optional  | string | warning message on overwriting in child |
 
 It is an error if the *mode* entry is absent.
 
@@ -315,22 +315,22 @@ Valid mode for export entries are:
 
 | mode                | path     | description                             |
 |---------------------|----------|-----------------------------------------|
-| "Restricted"        | optional | value depending on the mode             |
-| "Public"            | optional | the variable is set with the value      |
-| "Private"           | optional | the variable is set with the value      |
-| "PrivateRestricted" | optional | the variable is set with the value      |
-| "RestrictedFile"    | optional | the variable is set with the value      |
-| "PublicFile"        | optional | the variable is set with the value      |
-| "PrivateFile"       | optional | the variable is set with the value      |
-| "Anonymous"         | avoid    | the variable is set with the value      |
-| "Symlink"           | optional | the variable is set with the value      |
-| "Execfd"            | optional | the variable is set with the value      |
-| "Internal"          | optional | the variable is set with the value      |
-| "Tmpfs"             | avoid    | the variable is set with the value      |
-| "Procfs"            | avoid    | the variable is set with the value      |
-| "Mqueue"            | avoid    | the variable is set with the value      |
-| "Devfs"             | avoid    | the variable is set with the value      |
-| "Lock"              | avoid    | the variable is set with the value      |
+| `Restricted`        | optional | value depending on the mode             |
+| `Public`            | optional | the variable is set with the value      |
+| `Private`           | optional | the variable is set with the value      |
+| `PrivateRestricted` | optional | the variable is set with the value      |
+| `RestrictedFile`    | optional | the variable is set with the value      |
+| `PublicFile`        | optional | the variable is set with the value      |
+| `PrivateFile`       | optional | the variable is set with the value      |
+| `Anonymous`         | avoid    | the variable is set with the value      |
+| `Symlink`           | optional | the variable is set with the value      |
+| `Execfd`            | optional | the variable is set with the value      |
+| `Internal`          | optional | the variable is set with the value      |
+| `Tmpfs`             | avoid    | the variable is set with the value      |
+| `Procfs`            | avoid    | the variable is set with the value      |
+| `Mqueue`            | avoid    | the variable is set with the value      |
+| `Devfs`             | avoid    | the variable is set with the value      |
+| `Lock`              | avoid    | the variable is set with the value      |
 
 TODO: rules must be better set, atm mount is copied as path if path is missing
 but it not always coherent. Also here, avoid is using fact that path is expanded(mount)
@@ -343,34 +343,34 @@ but it not always coherent. Also here, avoid is using fact that path is expanded
 The main entry *config* must be a valid map containing any number of the below
 entries, all are optional:
 
-| name            | type     | description                                |
-|-----------------|----------|--------------------------------------------|
-| persistdir      | string   | (path) location of dnf database            |
-| rpmdir          | string   | (path) location of rpm database            |
-| cachedir        | string   | (path) location of dnf cache               |
-| path            | string   | (path list) program search path list       |
-| ldpath          | string   | (path list) library search path list       |
-| umask           | string   | octal umask value                          |
-| verbose         | int      | verbosity level                            |
-| maxage          | int      | ?                                          |
-| map-root-user   | int      | set user as root                           |
-| gpgcheck        | boolean  | check rpm signature and gpg                |
-| inherit         | boolean  | ?                                          |
-| unsafe          | boolean  | remove safety checks on date and inode     |
-| die-with-parent | EDU      | if enable terminate when parent terminates |
-| new-session     | EDU      | if enable create a new session             |
-| share_all       | EDU      | if enabled unshare all namespaces          |
-| share_user      | EDU      | if enabled unshare user namespaces         |
-| share_cgroup    | EDU      | if enabled unshare cgroup namespaces       |
-| share_net       | EDU      | if enabled unshare network namespaces      |
-| share_pid       | EDU      | if enabled unshare PID namespaces          |
-| share_ipc       | EDU      | if enabled unshare IPC namespaces          |
-| share_time      | EDU      | if enabled unshare UTS namespaces          |
-| cgroups         | map      | description of cgroups                     |
-| hostname        | string   | set the hostname                           |
-| chdir           | string   | set execution directory                    |
-| cgrouproot      | string   | controling cgroup root                     |
-| capabilities    | sequence | list of capability's entries               |
+| name              | type     | description                                |
+|-------------------|----------|--------------------------------------------|
+| `persistdir`      | string   | (path) location of dnf database            |
+| `rpmdir`          | string   | (path) location of rpm database            |
+| `cachedir`        | string   | (path) location of dnf cache               |
+| `path`            | string   | (path list) program search path list       |
+| `ldpath`          | string   | (path list) library search path list       |
+| `umask`           | string   | octal umask value                          |
+| `verbose`         | int      | verbosity level                            |
+| `maxage`          | int      | ?                                          |
+| `map`-root-user   | int      | set user as root                           |
+| `gpgcheck`        | boolean  | check rpm signature and gpg                |
+| `inherit`         | boolean  | ?                                          |
+| `unsafe`          | boolean  | remove safety checks on date and inode     |
+| `die`-with-parent | EDU      | if enable terminate when parent terminates |
+| `new`-session     | EDU      | if enable create a new session             |
+| `share_all`       | EDU      | if enabled unshare all namespaces          |
+| `share_user`      | EDU      | if enabled unshare user namespaces         |
+| `share_cgroup`    | EDU      | if enabled unshare cgroup namespaces       |
+| `share_net`       | EDU      | if enabled unshare network namespaces      |
+| `share_pid`       | EDU      | if enabled unshare PID namespaces          |
+| `share_ipc`       | EDU      | if enabled unshare IPC namespaces          |
+| `share_time`      | EDU      | if enabled unshare UTS namespaces          |
+| `cgroups`         | map      | description of cgroups                     |
+| `hostname`        | string   | set the hostname                           |
+| `chdir`           | string   | set execution directory                    |
+| `cgrouproot`      | string   | controling cgroup root                     |
+| `capabilities`    | sequence | list of capability's entries               |
 
 The type EDU is an enumeration, so a string, with 3 possible values:
 "enable", "disable", "unset".
@@ -400,13 +400,13 @@ TODO: EDU mostly is on/off but unset has some meaning too (it means let the chil
 Within main *config* map, the map *cgroups* must have
 the below entries, all are optional:
 
-| name   | type   | description                                |
-|--------|--------|--------------------------------------------|
-| cpuset | cpuset | CPU attributions
-| mem    | mem    | memory limitations
-| cpu    | cpu    | CPU limitations
-| io     | io     | I/O limitations
-| pids   | pids   | pids limitations
+| name     | type   | description                                |
+|----------|--------|--------------------------------------------|
+| `cpuset` | cpuset | CPU attributions
+| `mem`    | mem    | memory limitations
+| `cpu`    | cpu    | CPU limitations
+| `io`     | io     | I/O limitations
+| `pids`   | pids   | pids limitations
 
 ### Valid cpuset map of cgroups
 
