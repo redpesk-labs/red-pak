@@ -18,15 +18,16 @@ Here is a short introduction. For a more detailed overview
 see the document @REDPAK.OVE.
 
 Within REDPAK, the term *rednode* refers to a named execution
-environment defined by a configuration file.
+environment implementing security restrictions as defined by
+a configuration file.
 
 Within REDPAK, *rednodes* can be nested in a simple hierarchical way
 where one *rednode*, called the *child*, is setup on top of one other
 *rednode*, called the *parent*, in a such way that restriction of
-parents always apply to children.
+parents always apply to any of its direct or indirect children.
 
 REDPAK is integrated with a package manager in redpesk OS to enable
-adding, removing and updating packages in *rednodes*. The nested
+adding, removing and updating packages within *rednodes*. The nested
 hierarchy of *rednodes* forbids to install in children a package
 already installed in a parent.
 
