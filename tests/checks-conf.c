@@ -4,12 +4,14 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 
 #include "redconf-defaults.h"
 #include "redconf-utils.h"
 #include "redconf-expand.h"
 #include "redconf-schema.h"
 #include "redconf-node.h"
+#include "rednode-factory.h"
 #include "redconf-dump.h"
 
 #ifndef TEMPLATES_DIR
@@ -404,8 +406,6 @@ START_TEST(test_expand_cmd)
     free(output);
 }
 
-
-
 /*********************************************************************/
 /*********************************************************************
 
@@ -625,6 +625,127 @@ START_TEST(test_status)
 }
 
 /*********************************************************************/
+/*********************************************************************
+
+TEST CASE "factory"
+
+
+These tests are checking functions of 'rednode-factory.c'.
+
+*********************************************************************/
+/*********************************************************************/
+
+static char bigname[REDNODE_FACTORY_PATH_LEN + 20];
+
+static void init_bigname()
+{
+    memset(bigname, 'x', sizeof bigname - 1);
+    bigname[sizeof bigname - 1] = 0;
+}
+
+#define BIGNAME(len)      (&bigname[((len) < (sizeof bigname)) ? ((sizeof bigname) - (len)) : 0])
+
+#undef ROOT
+#define ROOT "/tmp/rednode-root"
+const
+struct factorydef
+{
+    const char *root;
+    const char *node;
+    const char *alias;
+    const char *normal;
+    const char *admin;
+    int update;
+    int issys;
+    rednode_factory_error_t expected;
+}
+    factories[] = 
+{
+#define TEST(root,node,alias,normal,admin,update,issys,expected) { root,node,alias,normal,admin,update,issys,expected }
+#define MKDIR(path) { NULL,NULL,NULL,path,NULL,0,0,0 }
+#define RMDIR(path) { NULL,NULL,NULL,NULL,path,0,0,0 }
+
+    RMDIR(ROOT),
+    TEST(BIGNAME(REDNODE_FACTORY_PATH_LEN), NULL, NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Root_Too_Long),
+    TEST("simple", NULL, NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Root_Not_Absolute),
+    TEST("/tmp", BIGNAME(REDNODE_FACTORY_PATH_LEN), NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Node_Too_Long),
+    TEST(NULL, "simple", NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Cleared),
+    TEST(NULL, NULL, "simple", NULL, NULL, 0, 0, RednodeFactory_Error_Cleared),
+    TEST("/tmp", NULL, NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Default_Alias_Empty),
+    TEST("/tmp", NULL, "alias", BIGNAME(REDNODE_FACTORY_PATH_LEN), NULL, 0, 0, RednodeFactory_Error_Config_Too_Long),
+    TEST("/tmp", NULL, "alias", "not-existing", NULL, 0, 0, RednodeFactory_Error_No_Config),
+    TEST("/tmp", NULL, "alias", NULL, "not-existing", 0, 0, RednodeFactory_Error_No_Config),
+    TEST("/tmp", NULL, "alias", tempname, NULL, 0, 0, RednodeFactory_Error_Loading_Config),
+    TEST("/tmp", NULL, "alias", NULL, tempname, 0, 0, RednodeFactory_Error_Loading_Config),
+    TEST(ROOT, "simple", NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Root_Not_Exist),
+    MKDIR(ROOT),
+    TEST(ROOT, "simple", NULL, NULL, NULL, 0, 0, RednodeFactory_OK),
+    TEST(ROOT, "simple/subsimple", NULL, NULL, NULL, 0, 0, RednodeFactory_OK),
+    RMDIR(ROOT),
+
+#undef TEST
+#undef MKDIR
+#undef RMDIR
+};
+
+
+START_TEST(test_factory)
+{
+    int rc;
+    const struct factorydef *iter = factories;
+    const struct factorydef *end = &factories[sizeof factories / sizeof *factories];
+
+    init_bigname();
+    write_tempfile("$%!?##\n", 0);
+    setenv("REDNODE_TEMPLATE_DIR", TEMPLATES_DIR, 1);
+    for (; iter != end ; iter++) {
+        if (iter->root != NULL || iter->node != NULL) {
+            rednode_factory_t factory;
+            rednode_factory_param_t params, *ppar;
+            rednode_factory_error_t rfs;
+
+            printf("\nchecking factory\n");
+            printf("    - root   %s\n", iter->root);
+            printf("    - node   %s\n", iter->node);
+            printf("    - alias  %s\n", iter->alias);
+            printf("    - normal %s\n", iter->normal);
+            printf("    - admin  %s\n", iter->admin);
+            printf("    - update %d\n", iter->update);
+            printf("    - issys  %d\n", iter->issys);
+            rfs = RednodeFactory_OK;
+            rednode_factory_clear(&factory);
+            if (iter->root != NULL)
+                rfs = rednode_factory_set_root(&factory, iter->root);
+            if (rfs == RednodeFactory_OK && iter->node != NULL)
+                rfs = rednode_factory_set_node(&factory, iter->node);
+            if (rfs == RednodeFactory_OK) {
+                if (iter->alias == NULL && iter->normal == NULL && iter->admin == NULL)
+                    ppar = NULL;
+                else {
+                    params.alias = iter->alias;
+                    params.normal = iter->normal;
+                    params.admin = iter->admin;
+                    ppar = &params;
+                }
+                rfs = rednode_factory_create_node(&factory, ppar, iter->update, iter->issys);
+            }
+            printf("    - expec  %d\n", iter->expected);
+            printf("    = got    %d\n", -rfs);
+            ck_assert_int_eq(-rfs, iter->expected);
+        }
+        else if (iter->normal != NULL) {
+            printf("\nchecking factory, create dir %s\n", iter->normal);
+            rc = mkdir(iter->normal, 0);
+            ck_assert_int_eq(rc, 0);
+        }
+        else if (iter->admin != NULL) {
+            printf("\nchecking factory, remove dir %s\n", iter->admin);
+            remove_directories(iter->admin);
+        }
+    }
+}
+
+/*********************************************************************/
 
 
 static Suite *suite;
@@ -662,6 +783,8 @@ int main(int ac, char **av)
             addtest(test_schema_string);
             //TODO: addtest(test_config_validation);
             addtest(test_status);
+        addtcasefix("factory", make_tempname, remove_tempfile);
+            addtest(test_factory);
 	return !!srun();
 }
 
