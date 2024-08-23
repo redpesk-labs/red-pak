@@ -76,4 +76,17 @@ extern int MemFdExecCmd(const char* tag, const char* command, int restricted);
  */
 extern int ExecCmd(const char* tag, const char* command, char *buffer, size_t size, int restricted);
 
+/**
+* Ensure that the given directory exists by on need creating it and any of its parent until base.
+* The given path is iteratively modified and restored. At end it is unmodified.
+*
+* @param path   the path
+* @param base   the base size (that must exist)
+* @param length the length of the directory to ensure
+* @param mode   mode of creation of directories (see mkdir, section 2)
+* @param existing_length receive the length of the already existing directories (can be NULL)
+* @return 0 on success or -1 on error
+*/
+extern int make_directories(const char *path, size_t base, size_t length, mode_t mode, size_t *existing_length);
+
 #endif

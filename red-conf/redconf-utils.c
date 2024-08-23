@@ -181,3 +181,63 @@ int ExecCmd (const char* tag, const char* command, char *res, size_t size, int r
 
     return err;
 }
+
+int make_directories(const char *path, size_t base, size_t length, mode_t mode, size_t *existing_length)
+{
+    int chk = 1, rc;
+    struct stat st;
+    size_t idx = base;
+    char tmp[length + 1];
+
+    /* check arguments */
+    if (idx > 0 && path[idx - 1] == '/')
+        idx--;
+    if (idx > length || (idx < length && path[idx] != '/')) {
+        errno = EINVAL;
+        return -1;
+    }
+    /* check base */
+    memcpy(tmp, path, idx);
+    tmp[idx] = 0;
+    rc = stat(tmp, &st);
+    if (rc < 0)
+        return rc;
+    if (rc == 0 && (st.st_mode & S_IFMT) != S_IFDIR) {
+        errno = ENOTDIR;
+        return -1;
+    }
+    if (existing_length != NULL)
+        *existing_length = idx;
+
+    /* avance remaining directories */
+    for ( ; ; ) {
+        while(idx < length && path[idx] == '/')
+            tmp[idx++] = '/';
+        if (idx == length)
+            return 0;
+        while(idx < length && path[idx] != '/') {
+            tmp[idx] = path[idx];
+            idx++;
+        }
+        tmp[idx] = 0;
+        if (chk) {
+            rc = stat(tmp, &st);
+            if (rc < 0)
+                chk = 0;
+            else if ((st.st_mode & S_IFMT) == S_IFDIR) {
+                if (existing_length != NULL)
+                    *existing_length = idx;
+            }
+            else {
+                errno = ENOTDIR;
+                return -1;
+            }
+        }
+        if (!chk) {
+            rc = mkdir(tmp, mode);
+            if (rc < 0)
+                return rc;
+        }
+    }
+}
+

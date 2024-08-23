@@ -80,35 +80,19 @@ static const char *get_status_subpath()
 static int create_directories(char path[REDNODE_FACTORY_PATH_LEN], size_t root_length, size_t length, size_t *existing_length)
 {
     int rc;
-    size_t pos;
     mode_t mode = 00755;
 
     /* check that root exists */
-    *existing_length = 0;
-    pos = root_length - 1;
-    if (pos > 0) {
-        path[pos] = 0;
+    if (root_length > 1) {
+        path[root_length - 1] = 0;
         rc = access(path, F_OK);
-        path[pos] = '/';
+        path[root_length - 1] = '/';
         if (rc != 0)
             return -RednodeFactory_Error_Root_Not_Exist;
     }
 
-    /* create the directories */
-    *existing_length = pos;
-    while (++pos < length) {
-        if (path[pos] == '/') {
-            path[pos] = 0;
-            rc = mkdir(path, mode);
-            path[pos] = '/';
-            if (rc < 0) {
-                if (errno != EEXIST)
-                    return -RednodeFactory_Error_MkDir;
-                *existing_length = pos;
-            }
-        }
-    }
-    return RednodeFactory_OK;
+    rc = make_directories(path, root_length, length, mode, existing_length);
+    return rc < 0 ? RednodeFactory_Error_MkDir : RednodeFactory_OK;
 }
 
 /* create the directory caontaining the given path */
