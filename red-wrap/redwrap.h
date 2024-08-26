@@ -24,17 +24,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-/*
- Log level is defined by syslog standard:
-       KERN_EMERG             0        System is unusable
-       KERN_ALERT             1        Action must be taken immediately
-       KERN_CRIT              2        Critical conditions
-       KERN_ERR               3        Error conditions
-       KERN_WARNING           4        Warning conditions
-       KERN_NOTICE            5        Normal but significant condition
-       KERN_INFO              6        Informational
-       KERN_DEBUG             7        Debug-level messages
-*/
 
 #ifndef BWRAP_CMD_PATH
 #define BWRAP_CMD_PATH "/usr/bin/bwrap"

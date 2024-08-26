@@ -138,7 +138,6 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
     if (cliarg->verbose)
         SetLogLevel(REDLOG_DEBUG);
 
-
     redConfTagT *mergedConfTags = NULL;
     int argcount=0;
     int error;

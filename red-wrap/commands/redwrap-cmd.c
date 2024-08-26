@@ -113,11 +113,9 @@ static int _exec_redmicrodnf(int argc, char *argv[]) {
     // Run in child process to dont stop the main runnning process
     int pid = fork();
     if (pid == 0) {
-        error = execv(REDMICRODNF_CMD_PATH, (char**) subargv);
-        if(error) {
-            fprintf(stderr, "Issue exec outnode command %s error:%s\n", REDMICRODNF_CMD_PATH, strerror(errno));
-            return 1;
-        }
+        execv(REDMICRODNF_CMD_PATH, (char**) subargv);
+        fprintf(stderr, "Issue exec outnode command %s error:%s\n", REDMICRODNF_CMD_PATH, strerror(errno));
+        return 1;
     }
     int returnStatus;
     waitpid(pid, &returnStatus, 0);

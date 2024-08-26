@@ -144,14 +144,12 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, 
         RedLog(REDLOG_ERROR, "Issue mergeConfVars for %s", mergedNode->redpath);
     }
 
-
     //exports
     if(mergeExports(rootNode, mergedNode, expand, duplicate)) {
         RedLog(REDLOG_ERROR, "Issue mergeExports for %s", mergedNode->redpath);
     }
 
     //relocations ignored
-
     return mergedNode;
 }
 

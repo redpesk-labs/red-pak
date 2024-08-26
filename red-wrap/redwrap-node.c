@@ -311,7 +311,7 @@ int RedSetCapabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, co
     redConfCapT *cap;
 
     if(mergeCapabilities(rootnode, mergedConfTags, 0)) {
-        RedLog(REDLOG_ERROR, "ISsue to merge capabilities");
+        RedLog(REDLOG_ERROR, "Issue to merge capabilities");
         goto Error;
     }
 

@@ -33,9 +33,9 @@ typedef struct {
 
 // mergeSpecfialConfVar
 int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode);
-//merge conftags from hierarchy
+// merge conftags from hierarchy
 redConfTagT *mergedConftags(const redNodeT *rootnode);
-//merge node from hierarchy: if rootNode=NULL rootNode is found
+// merge node from hierarchy: if rootNode=NULL rootNode is found
 redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, int duplicate);
 
 // yaml string get config
