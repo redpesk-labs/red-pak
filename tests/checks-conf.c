@@ -352,6 +352,7 @@ START_TEST(test_expand)
     memset(&config, 0, sizeof config);
     node.config = &config;
     config.headers = &header;
+    node.leaf = &node;
     node.redpath = VAL_NODE_PATH;
     header.alias = VAL_NODE_ALIAS;
     header.name = VAL_NODE_NAME;

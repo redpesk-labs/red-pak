@@ -169,15 +169,15 @@ OnErrorExit:
 }
 
 // loop down within all redpath nodes from a given familly
-static int RedNodesDigToRoot(const char* redpath, redNodeT *childNode, int admin, int verbose) {
+static int RedNodesDigToRoot(const char* redpath, redNodeT *leafNode, int admin, int verbose) {
+    redNodeT *childNode = leafNode;
     char nodepath[RED_MAXPATHLEN];
     strncpy(nodepath, redpath, RED_MAXPATHLEN);
-    int index;
 
     while (1) {
 
         // if we are not at root level dig down for ancestor node
-        index = PopDownRedpath (nodepath);
+        int index = PopDownRedpath (nodepath);
         if (index <= 1) {
             childNode->parent = NULL;
             break;
@@ -191,6 +191,7 @@ static int RedNodesDigToRoot(const char* redpath, redNodeT *childNode, int admin
             case RED_NODE_CONFIG_OK:
                 childNode->parent = parentNode;
                 parentNode->first_child = childNode;
+                parentNode->leaf = leafNode;
                 childNode = parentNode;
                 break;
             case  RED_NODE_CONFIG_MISSING:
@@ -305,7 +306,8 @@ redNodeT *RedNodesScan(const char* redpath, int admin, int verbose) {
     }
 
     // dig redpath familly hierarchie
-    error= RedNodesDigToRoot (redpath, redleaf, admin, verbose);
+    redleaf->leaf = redleaf;
+    error = RedNodesDigToRoot (redpath, redleaf, admin, verbose);
     if (error) goto OnErrorFree;
 
     // set NODE_ALIAS in case some env var expand it.

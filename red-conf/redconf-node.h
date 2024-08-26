@@ -38,15 +38,27 @@
 #include "redconf-schema.h"
 
 // --- Redpath Node Directory Hierarchy (from leaf to root)
-typedef struct redNodeS{
+
+/** structure recording a node */
+typedef struct redNodeS {
+    /** the status of the node */
     redStatusT *status;
+    /** the config of the node */
     redConfigT *config;
+    /** the admin config of the node or NULL */
     redConfigT *confadmin;
+    /** the parent of the node */
     struct redNodeS *parent;
+    /** the leaf when accurate or NULL */
+    struct redNodeS *leaf;
+    /** the first child of the node */
     struct redNodeS *first_child;
+    /** link to the next sibling for children of the parent */
     struct redNodeS *next_sibling;
+    /** path of the node */
     const char *redpath;
-} redNodeT;
+}
+    redNodeT;
 
 /**
  * Read the node description from the file system files.
