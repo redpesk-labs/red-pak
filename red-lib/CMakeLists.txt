@@ -19,8 +19,6 @@
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-configure_file(reddefaults.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/reddefaults.hpp)
-
 pkg_search_module(LIBDNF REQUIRED libdnf5 libdnf)
 pkg_search_module(LIBDNFCLI REQUIRED libdnf5-cli libdnf-cli)
 
