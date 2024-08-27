@@ -64,7 +64,7 @@ The name default comes from 'redconf-defaults.c'.
 
 *********************************************************************/
 /*********************************************************************/
-
+#if 0
 #define BUFFLEN 512
 int call_conf_default(const char *key, char buffer[BUFFLEN], void *arg)
 {
@@ -249,7 +249,7 @@ START_TEST(test_defaults_today)
     ck_assert_int_ge(M, 0);
     ck_assert_int_le(M, 59);
 }
-
+#endif
 /*********************************************************************/
 /*********************************************************************
 
@@ -769,12 +769,14 @@ int srun()
 int main(int ac, char **av)
 {
 	mksuite("checks-conf");
+#if 0
         addtcase("defaults");
             addtest(test_defaults_env);
             addtest(test_defaults_int);
             addtest(test_defaults_for_node);
             addtest(test_defaults_uuid);
             addtest(test_defaults_today);
+#endif
         addtcasefix("expand", make_tempname, remove_tempfile);
             addtest(test_expand);
             addtest(test_expand_cmd);

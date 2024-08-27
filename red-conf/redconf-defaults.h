@@ -87,14 +87,4 @@
 #define CGROUPS_ROOT_LEAF_NAME "redpak-root-leaf"
 #endif
 
-typedef char*(*RedGetDefaultCbT)(const char *label, void *ctx, void*handle, char *output, size_t size);
-
-typedef struct {
-    const char *label;
-    RedGetDefaultCbT callback;
-    void *handle;
-} RedConfDefaultsT;
-
-extern RedConfDefaultsT nodeConfigDefaults[];
-
 #endif

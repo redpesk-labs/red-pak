@@ -21,6 +21,9 @@
 #include "redconf-defaults.h"
 #include "redconf-node.h"
 
+typedef struct RedConfDefaultsS RedConfDefaultsT;
+
+
 /**
 * Returns a fresh allocated string being the expansion of the default @ref key.
 *
