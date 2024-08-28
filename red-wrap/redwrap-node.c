@@ -28,42 +28,6 @@
 #include "redconf-hashmerge.h"
 #include "redwrap.h"
 
-static int mkdir_p(const char *path, mode_t mode) {
-    size_t len = strlen(path);
-    if(len + 1 > RED_MAXPATHLEN) {
-        RedLog(REDLOG_ERROR, "size=%d of path %s is bigger the RED_MAXPATHLEN=%d", len, path, RED_MAXPATHLEN);
-        goto OnError;
-    }
-
-    int err;
-    char tmp[RED_MAXPATHLEN];
-    struct stat status;
-
-    for (int i = 0; i < len + 1; i++) {
-        tmp[i] = path[i];
-
-        /* if not / or not full path */
-        if(tmp[i] != '/' && i < len)
-            continue;
-
-        tmp[i+1] = '\0';
-        /* is directory exist */
-        err = stat(tmp, &status);
-        if(!err)
-            continue;
-
-        err = mkdir((const char *)tmp, mode);
-        if(err) {
-            RedLog(REDLOG_ERROR, "Cannot create %s (error=%s)", tmp, strerror(errno));
-            goto OnError;
-        }
-    }
-
-    return 0;
-OnError:
-    return 1;
-}
-
 /**
  * @brief Check if folder to mount exists, and try to create it if not
  *
@@ -75,14 +39,8 @@ OnError:
 static int RwrapCreateDir(const char *path, redConfigT *configN, int forcemod) {
     struct stat status;
     int err = stat(path, &status);
-    if (err) {
-        if (forcemod) {
-            //err = mkdir(path, 07777);
-            err = mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-            // try to recursively create directories
-            if(err)
-                err = mkdir_p(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-        }
+    if (err && forcemod) {
+        err = make_directories(path, 0, strlen(path), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
     }
     if (err) {
         RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", configN->headers->alias, path, strerror(errno));
