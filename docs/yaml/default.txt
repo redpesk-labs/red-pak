@@ -7,7 +7,7 @@ headers:
     alias: $NODE_ALIAS
 
     # name: identify siblings within a familly (mostly for debug)
-    name:  $NODE_UUID
+    name:  $UUID
 
     # info: any text that may help you to manage a node
     info:  "Node created by $LOGNAME($HOSTNAME) the $TODAY"

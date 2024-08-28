@@ -373,7 +373,7 @@ void RedNode::rednode_template(const std::string & alias, const std::string & tm
     get_uuid(uuid);
 
     setenv("NODE_ALIAS", alias.c_str(), true);
-    setenv("NODE_UUID", uuid, true);
+    setenv("NODE_NAME", uuid, true);
     setenv("TODAY", today, true);
 
     //save config file
