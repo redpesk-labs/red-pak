@@ -18,7 +18,6 @@
 #ifndef _RED_CONF_EXPAND_INCLUDE_
 #define _RED_CONF_EXPAND_INCLUDE_
 
-#include "redconf-defaults.h"
 #include "redconf-node.h"
 
 /**

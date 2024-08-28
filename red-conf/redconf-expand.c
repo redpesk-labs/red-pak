@@ -26,64 +26,78 @@
 #include <sys/types.h>
 
 #include "redconf-log.h"
+#include "redconf-defaults.h"
 #include "redconf-utils.h"
 
 #ifndef MAX_CYAML_FORMAT_STR
 #define MAX_CYAML_FORMAT_STR 512
 #endif
 
-typedef char*(*RedGetDefaultCbT)(const char *label, void *ctx, void*handle, char *output, size_t size);
 
-struct RedConfDefaultsS {
-    const char *label;
-    RedGetDefaultCbT callback;
-    void *handle;
+typedef struct vardef vardef_t;
+
+typedef int (*varcb_t)(const redNodeT *node, const vardef_t *vardef, char *output, size_t size);
+
+struct vardef {
+    const char *key;
+    varcb_t     callback;
+    const char *svalue;
+    int         ivalue;
 };
 
-static const char undef[] = "#undef";
-
-static char*GetUuidString(const char *label, void *ctx, void*handle, char *output, size_t size) {
+static int GetNewUUID(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    if (size < RED_UUID_STR_LEN)
+        return 1;
     getFreshUUID(output, size);
-    return output;
+    return 0;
 }
 
-static char*GetDateString(const char *label, void *ctx,  void*handle, char *output, size_t size) {
-    getDateOfToday(output, size);
-    return output;
+static int GetDateString(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    return !getDateOfToday(output, size);
 }
 
-static char*GetUid(const char *label, void *ctx, void*handle, char *output, size_t size) {
-    uid_t uid= getuid();
-    snprintf (output, size, "%u",uid);
-    return output;
+static int GetDecimal(long long unsigned value, char *output, size_t size) {
+    int rc = snprintf(output, size, "%llu", value);
+    return rc < 0 || (size_t)rc >= size;
+}
+static int GetUid(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    return GetDecimal((long long unsigned)getuid(), output, size);
 }
 
-static char*GetGid(const char *label, void *ctx, void*handle, char *output, size_t size) {
-    gid_t gid= getgid();
-    snprintf (output, size, "%d",gid);
-    return output;
+static int GetGid(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    return GetDecimal((long long unsigned)getgid(), output, size);
 }
 
-static char*GetPid(const char *label, void *ctx,  void*handle, char *output, size_t size) {
-    pid_t pid= getpid();
-    snprintf (output, size, "%d", pid);
-    return output;
+static int GetPid(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    return GetDecimal((long long unsigned)getpid(), output, size);
 }
 
-static char * GetEnviron(const char *label, void *ctx, void*handle, char *output, size_t size) {
-    const char*key= handle;
-    const char*value;
+static int PutString(const char *value, char *output, size_t size) {
+    size_t idx = 0;
+    while (idx < size && (output[idx] = value[idx]) != '\0')
+        idx++;
+    return idx >= size;
+}
 
-    value= secure_getenv(label);
-    if (!value) {
-        if (key) {
-            value=(char *)key;
-        } else {
-            value=undef;
-        }
-    }
-    strncpy(output, value, size);
-    return output;
+static int GetUndefined(const char *key, char *output, size_t size) {
+    static const char undef[] = "#undef:";
+    if (size < sizeof undef -1)
+        return 1;
+    memcpy(output, undef, sizeof undef - 1);
+    return PutString(key, &output[sizeof undef - 1], size - (sizeof undef - 1));
+}
+
+static int GetString(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    return PutString(vardef->svalue, output, size);
+}
+
+static int GetEnviron(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    const char *value = secure_getenv(vardef->key);
+    if (value == NULL)
+        value = vardef->svalue;
+    if (value == NULL)
+        return GetUndefined(vardef->key, output, size);
+    return PutString(value, output, size);
 }
 
 typedef enum {
@@ -93,69 +107,73 @@ typedef enum {
     REDNODE_INFO_INFO,
 } RednodeInfoE;
 
-static char*GetNodeInfo(const char *label, void *ctx, void*handle, char *output, size_t size) {
-    redNodeT *node =ctx;
-    const char*value;
-    if (!node) goto OnErrorExit;
+static int GetThisNodeInfo(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    const char *value = NULL;
 
-    switch ((RednodeInfoE)handle) {
-        case REDNODE_INFO_ALIAS:
-            value= node->config->headers->alias;
-            break;
-        case REDNODE_INFO_NAME:
-            value= node->config->headers->name;
-            break;
-        case REDNODE_INFO_PATH:
-            value= node->redpath;
-            break;
-        case REDNODE_INFO_INFO:
-            value= node->config->headers->info;
-            break;
-        default:
-            break;
+    switch (vardef->ivalue) {
+    case REDNODE_INFO_ALIAS:
+        if (node && node->config && node->config->headers)
+            value = node->config->headers->alias;
+        break;
+    case REDNODE_INFO_NAME:
+        if (node && node->config && node->config->headers)
+            value = node->config->headers->name;
+        break;
+    case REDNODE_INFO_PATH:
+        if (node)
+            value = node->redpath;
+        break;
+    case REDNODE_INFO_INFO:
+        if (node && node->config && node->config->headers)
+            value = node->config->headers->info;
+        break;
+    default:
+        break;
     }
 
-    if (!value) value = undef;
-    strncpy(output, value, size);
+    if (value == NULL)
+        return GetUndefined(vardef->key, output, size);
 
-    return output;
-
-OnErrorExit:
-    return GetEnviron(label, ctx, NULL, output, size);
+    return PutString(value, output, size);
 }
 
-static RedConfDefaultsT nodeConfigDefaults[] = {
+static int GetNodeInfo(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    return GetThisNodeInfo(node, vardef, output, size);
+}
+
+static int GetLeafInfo(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    return GetThisNodeInfo(node->leaf ?: node, vardef, output, size);
+}
+
+static const vardef_t vardefs[] = {
     // static strings
-    {"NODE_PREFIX"    , GetEnviron, (void*)NODE_PREFIX},
-    {"redpak_MAIN"    , GetEnviron, (void*)"$NODE_PREFIX"redpak_MAIN},
-    {"redpak_TMPL"    , GetEnviron, (void*)"$NODE_PREFIX"redpak_TMPL},
-    {"REDNODE_CONF"   , GetEnviron, (void*)"$NODE_PATH/"REDNODE_CONF},
-    {"REDNODE_ADMIN"  , GetEnviron, (void*)"$NODE_PATH/"REDNODE_ADMIN},
-    {"REDNODE_STATUS" , GetEnviron, (void*)"$NODE_PATH/"REDNODE_STATUS},
-    {"REDNODE_VARDIR" , GetEnviron, (void*)"$NODE_PATH/"REDNODE_VARDIR},
-    {"REDNODE_REPODIR", GetEnviron, (void*)"$NODE_PATH/"REDNODE_REPODIR},
-    {"REDNODE_LOCK"   , GetEnviron, (void*)"$NODE_PATH/"REDNODE_LOCK},
-    {"LOGNAME"        , GetEnviron, (void*)"Unknown"},
-    {"HOSTNAME"       , GetEnviron, (void*)"localhost"},
-    {"CGROUPS_MOUNT_POINT", GetEnviron, (void*)CGROUPS_MOUNT_POINT},
-    {"LEAF_ALIAS"     , GetEnviron, NULL},
-    {"LEAF_NAME"      , GetEnviron, NULL},
-    {"LEAF_PATH"      , GetEnviron, NULL},
-
-    {"PID"            , GetPid, NULL},
-    {"UID"            , GetUid, NULL},
-    {"GID"            , GetGid, NULL},
-    {"TODAY"          , GetDateString, NULL},
-    {"UUID"           , GetUuidString, NULL},
-
-    {"NODE_ALIAS"     , GetNodeInfo, (void*) REDNODE_INFO_ALIAS},
-    {"NODE_NAME"      , GetNodeInfo, (void*) REDNODE_INFO_NAME},
-    {"NODE_PATH"      , GetNodeInfo, (void*) REDNODE_INFO_PATH},
-    {"NODE_INFO"      , GetNodeInfo, (void*) REDNODE_INFO_INFO},
-
-    {"REDPESK_VERSION", GetEnviron, REDPESK_DFLT_VERSION},
-
-    {NULL} /* sentinel */
+    { "NODE_PREFIX"    , GetEnviron,  NODE_PREFIX, 0 },
+    { "redpak_MAIN"    , GetEnviron,  "$NODE_PREFIX"redpak_MAIN, 0 },
+    { "redpak_TMPL"    , GetEnviron,  "$NODE_PREFIX"redpak_TMPL, 0 },
+    { "REDNODE_CONF"   , GetString,   "$NODE_PATH/"REDNODE_CONF, 0 },
+    { "REDNODE_ADMIN"  , GetString,   "$NODE_PATH/"REDNODE_ADMIN, 0 },
+    { "REDNODE_STATUS" , GetString,   "$NODE_PATH/"REDNODE_STATUS, 0 },
+    { "REDNODE_VARDIR" , GetString,   "$NODE_PATH/"REDNODE_VARDIR, 0 },
+    { "REDNODE_REPODIR", GetString,   "$NODE_PATH/"REDNODE_REPODIR, 0 },
+    { "REDNODE_LOCK"   , GetString,   "$NODE_PATH/"REDNODE_LOCK, 0 },
+    { "USER"           , GetEnviron,  "Unknown", 0 },
+    { "LOGNAME"        , GetEnviron,  "Unknown", 0 },
+    { "HOSTNAME"       , GetEnviron,  "localhost", 0 },
+    { "CGROUPS_MOUNT_POINT", GetEnviron, CGROUPS_MOUNT_POINT, 0 },
+    { "PID"            , GetPid,      NULL, 0 },
+    { "UID"            , GetUid,      NULL, 0 },
+    { "GID"            , GetGid,      NULL, 0 },
+    { "TODAY"          , GetDateString, NULL, 0 },
+    { "UUID"           , GetNewUUID,  NULL, 0 },
+    { "NODE_ALIAS"     , GetNodeInfo, NULL, REDNODE_INFO_ALIAS },
+    { "NODE_NAME"      , GetNodeInfo, NULL, REDNODE_INFO_NAME },
+    { "NODE_PATH"      , GetNodeInfo, NULL, REDNODE_INFO_PATH },
+    { "NODE_INFO"      , GetNodeInfo, NULL, REDNODE_INFO_INFO },
+    { "LEAF_ALIAS"     , GetLeafInfo, NULL, REDNODE_INFO_ALIAS },
+    { "LEAF_NAME"      , GetLeafInfo, NULL, REDNODE_INFO_NAME },
+    { "LEAF_PATH"      , GetLeafInfo, NULL, REDNODE_INFO_PATH },
+    { "LEAF_INFO"      , GetLeafInfo, NULL, REDNODE_INFO_INFO },
+    { "REDPESK_VERSION", GetEnviron,  REDPESK_DFLT_VERSION, 0 }
 };
 
 
@@ -194,13 +212,15 @@ static int getDefault(const redNodeT *node,
                         int *idxOut, char *outputS, int maxlen) {
 
     /* serach the key in defaults */
-    RedConfDefaultsT *iter = defaults ?: nodeConfigDefaults;
-    for (; iter->label ; iter++) {
-        if (!memcmp (key, iter->label, (size_t)keylen) && !iter->label[keylen]) {
+    const vardef_t *iter = vardefs;
+    const vardef_t *end = &vardefs[sizeof vardefs / sizeof *vardefs];
+    for (; iter != end ; iter++) {
+        if (!memcmp (key, iter->key, (size_t)keylen) && !iter->key[keylen]) {
             /* get its value in local buffer */
             char value[MAX_CYAML_FORMAT_STR];
-            iter->callback(iter->label, (void*)node, iter->handle, value, sizeof value);
+            int rc = iter->callback(node, iter, value, sizeof value);
             /* recursive expansion of found value in outputS */
+            return rc != 0 ? rc : defaultsExpand(node, value, idxOut, outputS, maxlen, 0);
             return defaultsExpand(node, value, idxOut, outputS, maxlen, 0);
         }
     }

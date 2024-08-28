@@ -268,6 +268,10 @@ These tests are checking functions of 'redconf-expand.c'.
 #define KEY_NODE_NAME      "NODE_NAME"
 #define KEY_NODE_PATH      "NODE_PATH"
 #define KEY_NODE_INFO      "NODE_INFO"
+#define KEY_LEAF_ALIAS     "LEAF_ALIAS"
+#define KEY_LEAF_NAME      "LEAF_NAME"
+#define KEY_LEAF_PATH      "LEAF_PATH"
+#define KEY_LEAF_INFO      "LEAF_INFO"
 
 #define VAL_NODE_ALIAS     "alias"
 #define VAL_NODE_NAME      "###name of $NODE_ALIAS###"
@@ -370,7 +374,11 @@ START_TEST(test_expand)
     test_exp_def(KEY_NODE_NAME, EXP_NODE_NAME, &node);
     test_exp_def(KEY_NODE_PATH, EXP_NODE_PATH, &node);
     test_exp_def(KEY_NODE_INFO, EXP_NODE_INFO, &node);
-    test_exp_def_env(KEY_CONF, EXP_CONF, &node);
+    test_exp_def(KEY_LEAF_ALIAS, EXP_NODE_ALIAS, &node);
+    test_exp_def(KEY_LEAF_NAME, EXP_NODE_NAME, &node);
+    test_exp_def(KEY_LEAF_PATH, EXP_NODE_PATH, &node);
+    test_exp_def(KEY_LEAF_INFO, EXP_NODE_INFO, &node);
+    test_exp_def(KEY_CONF, EXP_CONF, &node);
 }
 
 START_TEST(test_expand_cmd)

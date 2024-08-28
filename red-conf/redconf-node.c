@@ -27,6 +27,7 @@
 #include <errno.h>
 
 #include "redconf-log.h"
+#include "redconf-defaults.h"
 #include "redconf-expand.h"
 #include "redconf-utils.h"
 
@@ -310,11 +311,6 @@ redNodeT *RedNodesScan(const char* redpath, int admin, int verbose) {
     error = RedNodesDigToRoot (redpath, redleaf, admin, verbose);
     if (error) goto OnErrorFree;
 
-    // set NODE_ALIAS in case some env var expand it.
-    setenv("LEAF_ALIAS", redleaf->config->headers->alias, 1);
-    setenv("LEAF_NAME", redleaf->config->headers->name, 1);
-    setenv("LEAF_PATH", redleaf->status->realpath, 1);
-
     return redleaf;
 
 OnErrorFree:
@@ -349,12 +345,8 @@ OnErrorExit:
     return NULL;
 }
 
-void freeRedLeaf(redNodeT *redleaf) {
-    //unset env values
-    unsetenv("LEAF_ALIAS");
-    unsetenv("LEAF_NAME");
-    unsetenv("LEAF_PATH");
 
+void freeRedLeaf(redNodeT *redleaf) {
     redNodeT *node = redleaf, *nextnode;
     while(node) {
         nextnode = node->parent;
