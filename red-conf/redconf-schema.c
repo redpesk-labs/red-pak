@@ -313,7 +313,7 @@ static const cyaml_schema_value_t StatusTopSchema = {
 * SCHEMA FUNCTIONS *
 *****************************************************************************************************************/
 
-static int SchemaSave (const char* filepath, const cyaml_schema_value_t *topschema, void *config, int wlevel) {
+static int SchemaSave (const char* filepath, const cyaml_schema_value_t *topschema, const void *config, int wlevel) {
     int errcode=0;
 
     const cyaml_config_t *yconf = yconfGet (wlevel);
@@ -351,7 +351,7 @@ static int SchemaLoad (const char* filepath, const cyaml_schema_value_t *topsche
     return errcode;
 }
 
-static int SchemaGet(char **output, size_t *len, const cyaml_schema_value_t *topschema, cyaml_data_t *data, int wlevel) {
+static int SchemaGet(char **output, size_t *len, const cyaml_schema_value_t *topschema, const cyaml_data_t *data, int wlevel) {
     int errcode = 0;
     // select parsing log wlevel
     const cyaml_config_t *yconf = yconfGet (wlevel);
@@ -387,12 +387,12 @@ Exit:
     return errcode;
 }
 
-int RedSaveConfig (const char* filepath, redConfigT *config, int warning ) {
+int RedSaveConfig (const char* filepath, const redConfigT *config, int warning ) {
     int errcode = SchemaSave(filepath, &RedPakConfigSchema, (void*)config, 0);
     return errcode;
 }
 
-int RedSaveStatus (const char* filepath, redStatusT *status, int warning ) {
+int RedSaveStatus (const char* filepath, const redStatusT *status, int warning ) {
     int errcode = SchemaSave(filepath, &StatusTopSchema, (void*)status, 0);
     return errcode;
 }
@@ -405,7 +405,7 @@ redConfigT* RedLoadConfig (const char* filepath, int warning) {
     return config;
 }
 
-int RedGetConfigYAML(char **output, size_t *len, redConfigT *config) {
+int RedGetConfigYAML(char **output, size_t *len, const redConfigT *config) {
     return SchemaGet(output, len, &RedPakConfigSchema, config, 0);
 }
 

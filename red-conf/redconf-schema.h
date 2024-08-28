@@ -191,13 +191,20 @@
         const char *info;
     } redStatusT;
 
+/** Load the configuration file of path 'filepath'
+ *
+ * @param filepath path of the file to load
+ * @param warning  ?
+ *
+ * @return the config or NULL on error
+ */
 extern redConfigT* RedLoadConfig (const char* filepath, int warning);
-extern int RedSaveConfig (const char* filepath, redConfigT *config, int warning);
-extern int RedGetConfigYAML(char **output, size_t *len, redConfigT *config);
+extern int RedSaveConfig (const char* filepath, const redConfigT *config, int warning);
+extern int RedGetConfigYAML(char **output, size_t *len, const redConfigT *config);
 extern int RedFreeConfig(redConfigT *config, int wlevel);
 
 extern redStatusT* RedLoadStatus (const char* filepath, int warning);
-extern int RedSaveStatus (const char* filepath, redStatusT *status, int warning);
+extern int RedSaveStatus (const char* filepath, const redStatusT *status, int warning);
 extern int RedFreeStatus(redStatusT *status, int wlevel);
 
 extern int setLogYaml(int level);
