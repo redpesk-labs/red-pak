@@ -12,7 +12,7 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- */
+*/
 
 #ifndef REDLIB_REDNODEFACTORY_HPP
 #define REDLIB_REDNODEFACTORY_HPP
@@ -27,49 +27,65 @@ extern "C" {
 
 namespace redlib {
 
+/**
+* @brief tiny class wrapping calls to rednode-factory C module
+*/
 class RedNodeFactory
 {
 public:
 
     using Status = rednode_factory_error_t;
 
+    /// default builder
     RedNodeFactory() noexcept;
 
+    /// clear or reset current instance
     void clear() noexcept;
 
+    /// get current status, true if no error, false if error reported
+    operator bool() const noexcept { return status_ == RednodeFactory_OK; };
+
+    /// get current status
     Status status() const noexcept { return status_; };
+
+    /// get string of the current status
     const char *statusText() const noexcept { return rednode_factory_error_text(status_); };
 
+    /// set the root directory
     bool setRootDir(const char *rootdir, size_t length) noexcept;
     bool setRootDir(const char *rootdir) noexcept;
     bool setRootDir(const std::string &rootdir) noexcept;
     bool setRootDir(const std::filesystem::path &rootdir) noexcept;
 
+    /// set the node directory
     bool setNodeDir(const char *nodedir, size_t length) noexcept;
     bool setNodeDir(const char *nodedir) noexcept;
     bool setNodeDir(const std::string &nodedir) noexcept;
     bool setNodeDir(const std::filesystem::path &nodedir) noexcept;
 
+    /// create the node
     bool createRedNode(bool no_system_node = true) noexcept;
     bool createRedNode(const char *alias, const char *tmplate = NULL, const char *tmplateadmin = NULL, bool no_system_node = true) noexcept;
     bool createRedNode(const std::string &alias, const std::string &tmplate, const std::string & tmplateadmin, bool no_system_node = true) noexcept;
 
+    /// update the node
     bool updateRedNode(bool no_system_node = true) noexcept;
     bool updateRedNode(const char *alias, const char *tmplate = NULL, const char *tmplateadmin = NULL, bool no_system_node = true) noexcept;
     bool updateRedNode(const std::string &alias, const std::string &tmplate, const std::string & tmplateadmin, bool no_system_node = true) noexcept;
 
+    /// create or update the node
     bool process(const char *alias = NULL, const char *tmplate = NULL, const char *tmplateadmin = NULL, bool no_system_node = true, bool update = false) noexcept;
     bool process(const std::string &alias, const std::string &tmplate, const std::string & tmplateadmin, bool no_system_node = true, bool update = false) noexcept;
 
 private:
 
-    // set the return status
+    /// set the return status
     bool x_(int status) noexcept;
 
-    // last status
+    /// last status
     Status status_ {RednodeFactory_OK};
 
-    // factory object
+    /// factory object
     rednode_factory_t factory_;
 };
 
@@ -89,7 +105,8 @@ void RedNodeFactory::clear() noexcept
 inline
 bool RedNodeFactory::x_(int status) noexcept
 {
-    return (status_ = (Status)-status) == RednodeFactory_OK;
+    status_ = (Status)-status;
+    return status_ == RednodeFactory_OK;
 }
 
 inline

@@ -410,6 +410,7 @@ int rednode_factory_create_node(
     if (params->alias && params->alias[0])
         locparam.alias = params->alias; /* alias as set in params */
     else {
+        /* alias isn't set, compute it from directory name */
         if (rfab->node_length == rfab->root_length || rfab->node_length < off + 1)
             return -RednodeFactory_Error_Default_Alias_Empty;
         localias = strndup(&rfab->path[off + 1], rfab->node_length - off - 1);
