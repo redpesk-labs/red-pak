@@ -281,7 +281,7 @@ int cgroups (redConfCgroupT *cgroups, const char *cgroup_name, char cgroup_paren
     }
 
     if (cgroups->mem) {
-        // https://facebookmicrosites.github.io/cgroup2/docs/cpu-controller.html
+        // https://facebookmicrosites.github.io/cgroup2/docs/memory-controller.html
         if (cgroups->mem->min)   err =+ utilsFileAddControl (cgroup_name, subgroupFd, "memory.min", cgroups->mem->min);
         if (cgroups->mem->max)   err =+ utilsFileAddControl (cgroup_name, subgroupFd, "memory.max", cgroups->mem->max);
         if (cgroups->mem->high) err =+ utilsFileAddControl (cgroup_name, subgroupFd, "memory.high", cgroups->mem->high);
