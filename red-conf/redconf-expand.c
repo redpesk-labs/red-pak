@@ -159,7 +159,7 @@ static RedConfDefaultsT nodeConfigDefaults[] = {
 };
 
 
-static int defaultsExpand(const redNodeT *node, RedConfDefaultsT *defaults,
+static int defaultsExpand(const redNodeT *node,
                         const char* inputS, int *idxOut, char *outputS, int maxlen,
                         int withcmd);
 
@@ -189,8 +189,9 @@ static int defaultsExpand(const redNodeT *node, RedConfDefaultsT *defaults,
 * @return 0 on success, 1 if the bounds of the output buffer are reached, meaning
 * that expansion process isn't complete.
 */
-static int getDefault(const char *key, int keylen, RedConfDefaultsT *defaults,
-                        const redNodeT *node, int *idxOut, char *outputS, int maxlen) {
+static int getDefault(const redNodeT *node,
+                        const char *key, int keylen,
+                        int *idxOut, char *outputS, int maxlen) {
 
     /* serach the key in defaults */
     RedConfDefaultsT *iter = defaults ?: nodeConfigDefaults;
@@ -200,7 +201,7 @@ static int getDefault(const char *key, int keylen, RedConfDefaultsT *defaults,
             char value[MAX_CYAML_FORMAT_STR];
             iter->callback(iter->label, (void*)node, iter->handle, value, sizeof value);
             /* recursive expansion of found value in outputS */
-            return defaultsExpand(node, defaults, value, idxOut, outputS, maxlen, 0);
+            return defaultsExpand(node, value, idxOut, outputS, maxlen, 0);
         }
     }
     return 0;
@@ -263,7 +264,7 @@ static int computeKeyLength(const char *inputS) {
 * @return 0 on success, 1 if the bounds of the output buffer are reached, meaning
 * that expansion process isn't complete.
 */
-static int defaultsExpand(const redNodeT *node, RedConfDefaultsT *defaults,
+static int defaultsExpand(const redNodeT *node,
                         const char* inputS, int *idxOut, char *outputS, int maxlen,
                         int withcmd) {
 
@@ -295,7 +296,7 @@ static int defaultsExpand(const redNodeT *node, RedConfDefaultsT *defaults,
                 pre_command[keylen - 2] = 0;
 
                 /* commands can contains substitution (with or without commands?) */
-                if (defaultsExpand(node, defaults, pre_command, &lencmd, command, sizeof command, 0))
+                if (defaultsExpand(node, pre_command, &lencmd, command, sizeof command, 0))
                     goto OnErrorExit;
                 command[lencmd] = '\0';
 
@@ -309,7 +310,7 @@ static int defaultsExpand(const redNodeT *node, RedConfDefaultsT *defaults,
             else {
     
                 /* default expansion */
-                if (getDefault(key, keylen, defaults, node, idxOut, outputS, maxlen))
+                if (getDefault(node, key, keylen, idxOut, outputS, maxlen))
                     goto OnErrorExit;
             }
         } else {
@@ -324,9 +325,9 @@ OnErrorExit:
 }
 
 /* see redconf-expand.h */
-int RedConfAppendEnvKey (const redNodeT *node, char *outputS, int *idxOut, int maxlen,
-                            const char *inputS,  RedConfDefaultsT *defaults,
-                            const char* prefix, const char *suffix) {
+int RedConfAppendEnvKey (const redNodeT *node,
+                            char *outputS, int *idxOut, int maxlen,
+                            const char *inputS, const char* prefix, const char *suffix) {
 
     int idx, idxout0, idxout1, idxout2;
 
@@ -342,7 +343,7 @@ int RedConfAppendEnvKey (const redNodeT *node, char *outputS, int *idxOut, int m
 
     /* expand the middle */
     idxout1 = *idxOut;
-    if (defaultsExpand(node, defaults, inputS, idxOut, outputS, maxlen, 0))
+    if (defaultsExpand(node, inputS, idxOut, outputS, maxlen, 0))
         goto OnErrorExit;
 
     /* copy the suffix */
@@ -372,22 +373,22 @@ OnErrorExit:
 }
 
 /* see redconf-expand.h */
-char *RedGetDefaultExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* key) {
+char *RedGetDefaultExpand(const redNodeT *node, const char* key) {
     int idxOut = 0;
     char outputS[MAX_CYAML_FORMAT_STR];
 
-    if (getDefault(key, (int)strlen(key), defaults, node, &idxOut, outputS, MAX_CYAML_FORMAT_STR))
+    if (getDefault(node, key, (int)strlen(key), &idxOut, outputS, MAX_CYAML_FORMAT_STR))
         return NULL;
 
     return strndup(outputS, (size_t)idxOut);
 }
 
 /* see redconf-expand.h */
-char *RedNodeStringExpand (const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS) {
+char *RedNodeStringExpand (const redNodeT *node, const char* inputS) {
     int idxOut = 0;
     char outputS[MAX_CYAML_FORMAT_STR];
 
-    if (defaultsExpand(node, defaults, inputS, &idxOut, outputS, MAX_CYAML_FORMAT_STR, 1))
+    if (defaultsExpand(node, inputS, &idxOut, outputS, MAX_CYAML_FORMAT_STR, 1))
         return NULL;;
 
     return strndup(outputS, (size_t)idxOut);
@@ -401,6 +402,6 @@ char *expandAlloc(const redNodeT *node, const char *input, int expand) {
     if(!expand)
         return strdup(input);
 
-    return RedNodeStringExpand(node, NULL, input);
+    return RedNodeStringExpand(node, input);
 }
 

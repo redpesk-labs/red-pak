@@ -156,7 +156,7 @@ void RedNode::getMain() {
 void RedNode::setPersistDir() {
     if (!node.get()->config->conftag)
         throw_error(fmt::format("No conftag so no persistDir in node {}", node->redpath));
-    auto ex_persistdir = RedNodeStringExpand(node.get(), NULL, node.get()->config->conftag->persistdir);
+    auto ex_persistdir = RedNodeStringExpand(node.get(), node.get()->config->conftag->persistdir);
     base.get_config().persistdir().set(libdnf::Option::Priority::RUNTIME, ex_persistdir);
 }
 
@@ -233,7 +233,7 @@ void RedNode::get_uuid(char * uuid_str) {
 
 void RedNode::saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig) {
 
-    std::unique_ptr<const char> confpath_ptr(RedGetDefaultExpand(NULL, NULL, var_rednode.c_str()));
+    std::unique_ptr<const char> confpath_ptr(RedGetDefaultExpand(NULL, var_rednode.c_str()));
     if (!confpath_ptr.get())
         throw_error(fmt::format("Cannot find path to {} variable", var_rednode));
 
@@ -257,7 +257,7 @@ void RedNode::date(char *today, std::size_t size) {
 }
 
 void RedNode::reloadConfig(const std::string & tmplname, std::unique_ptr<redConfigT> & redconfig) {
-    std::unique_ptr<const char> tmpldir(RedGetDefaultExpand(NULL, NULL, "redpak_TMPL"));
+    std::unique_ptr<const char> tmpldir(RedGetDefaultExpand(NULL, "redpak_TMPL"));
     std::filesystem::path tmplpath(tmplname);
 
     if (tmplname.substr(tmplname.length() - 5).compare(".yaml"))
@@ -296,7 +296,7 @@ void RedNode::rednode_template(const std::string & alias, const std::string & tm
 
     if(!update) {
         // set new headers
-        info = RedNodeStringExpand(NULL, NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY");
+        info = RedNodeStringExpand(NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY");
         if(config->headers->info) free((char *)config->headers->info);
         config->headers->info = info;
 
@@ -324,7 +324,7 @@ void RedNode::rednode_status() {
     char today[100];
     date(today, sizeof(today));
 
-    std::unique_ptr<const char> rednode_status_ptr(RedGetDefaultExpand(NULL, NULL, "REDNODE_STATUS"));
+    std::unique_ptr<const char> rednode_status_ptr(RedGetDefaultExpand(NULL, "REDNODE_STATUS"));
     std::filesystem::path rednode_status_path(installrootnode / std::filesystem::path(rednode_status_ptr.get()).relative_path());
 
     std::string info = fmt::format("created by red-manager the {}", today);

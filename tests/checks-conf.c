@@ -291,9 +291,9 @@ void test_exp_def(const char *key, const char *value, const redNodeT *node)
 
     char tbe_key[1000], tbe_val[1000], scratch[1000];
     char *str;
-    int rc, len;
+    int rc, len, len2;
 
-    str = RedGetDefaultExpand(node, NULL, key);
+    str = RedGetDefaultExpand(node, key);
     printf("%s -> %s\n", key, str);
     ck_assert_ptr_nonnull(str);
     ck_assert_str_eq(str, value);
@@ -302,7 +302,7 @@ void test_exp_def(const char *key, const char *value, const redNodeT *node)
     sprintf(tbe_key, "{$%s}.{$%s}", key, key);
     sprintf(tbe_val, "{%s}.{%s}", value, value);
 
-    str = RedNodeStringExpand(node, NULL, tbe_key);
+    str = RedNodeStringExpand(node, tbe_key);
     printf("%s -> %s\n", tbe_key, str);
     ck_assert_ptr_nonnull(str);
     ck_assert_str_eq(str, tbe_val);
@@ -312,11 +312,15 @@ void test_exp_def(const char *key, const char *value, const redNodeT *node)
     sprintf(tbe_val, "%s{%s}%s", prefix, value, suffix);
 
     len = 0;
-    rc = RedConfAppendEnvKey(node, scratch, &len, 1000, tbe_key, NULL, prefix, suffix);
+    rc = RedConfAppendEnvKey(node, scratch, &len, 1000, tbe_key, prefix, suffix);
     printf("%s -> %s\n", tbe_key, scratch);
     ck_assert_int_eq(rc, 0);
     ck_assert_int_eq(len, strlen(scratch));
     ck_assert_str_eq(scratch, tbe_val);
+
+    len2 = 0;
+    rc = RedConfAppendEnvKey(node, scratch, &len2, len, tbe_key, prefix, suffix);
+    ck_assert_int_ne(rc, 0);
 }
 
 void test_exp_def_env(const char *key, const char *value, const redNodeT *node)

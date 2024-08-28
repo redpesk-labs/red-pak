@@ -21,32 +21,23 @@
 #include "redconf-defaults.h"
 #include "redconf-node.h"
 
-typedef struct RedConfDefaultsS RedConfDefaultsT;
-
-
 /**
-* Returns a fresh allocated string being the expansion of the default @ref key.
-*
-* Expansion of defaults is using default definitions given by @ref defaults
-* (that can be NULL for default defaults) and the context given by @ref node.
+* Returns a fresh allocated string being the expansion of @ref key
+* in the context of @ref node.
 *
 * @param node     the node to use for contextual expansion
-* @param defaults the definition of the defaults (or NULL for defult defaults)
 * @param key      the default key to expand (without $)
 *
 * @return return the default expansion of @ref key or
 *         return NULL when (1) allocation failed or (2) expansion is too large
 *         or (3) expansion reached errors.
 */
-extern char *RedGetDefaultExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* key);
+extern char *RedGetDefaultExpand(const redNodeT *node, const char* key);
 
 /**
 * This function expands in the buffer @ref outputS, of @ref maxlen length
-* and indexed by *@ref idxOut, the "default values" of the keys expansions
-* specified in @ref inputS.
-*
-* Expansion of defaults is using default definitions given by @ref defaults
-* (that can be NULL for default defaults) and the context given by @ref node.
+* and indexed by *@ref idxOut, the  expansion of @ref keys specified in
+* @ref inputS in the context of @ref node.
 *
 * On termination, *@ref idxOut is updated and a trailing zero is appended.
 *
@@ -62,42 +53,37 @@ extern char *RedGetDefaultExpand(const redNodeT *node, RedConfDefaultsT *default
 * @param idxOut   pointer to the integer index in @ref outputS
 * @param maxlen   length of the output string buffer
 * @param inputS   the string to expand (cannot be NULL)
-* @param defaults the definition of the defaults (or NULL for defult defaults)
 * @param prefix   if not NULL a prepended string
 * @param suffix   if not NULL an appended string
 *
 * @return 0 in case of success or 1 in case of too large expansion.
 */
-extern int RedConfAppendEnvKey(const redNodeT *node, char *outputS, int *idxOut, int maxlen,
-                                const char *inputS,  RedConfDefaultsT *defaults,
-                                const char* prefix, const char *suffix);
+extern int RedConfAppendEnvKey(const redNodeT *node,
+                                char *outputS, int *idxOut, int maxlen,
+                                const char *inputS, const char* prefix, const char *suffix);
 
 /**
 * Returns a fresh allocated string being the expansion of the input
-* string @ref inputS.
-*
-* Expansion of defaults is using default definitions given by @ref defaults
-* (that can be NULL for default defaults) and the context given by @ref node.
+* string @ref inputS in the context of @ref node.
 *
 * Expansion of commands $(...) are allowed by this function.
 *
 * @param node     the node to use for contextual expansion
-* @param defaults the definition of the defaults (or NULL for defult defaults)
 * @param inputS   the string to expand (cannot be NULL)
 *
 * @return return the default expansion of @ref key or
 *         return NULL when (1) allocation failed or (2) expansion is too large
 *         or (3) expansion reached errors.
 */
-extern char *RedNodeStringExpand(const redNodeT *node, RedConfDefaultsT *defaults, const char* inputS);
+extern char *RedNodeStringExpand(const redNodeT *node, const char* inputS);
 
 /**
 * Returns a fresh allocated string being the copy of the input
 * string @ref input.
 *
 * When @ref expand is not zero, the variables are expanded using the
-* function @ref RedNodeStringExpand, the default defaults and
-* the context given by @ref node.
+* function @ref RedNodeStringExpand and the context given by @ref node
+*.
 *
 * @param node   the node to use for contextual expansion
 * @param input  the string to copy and/or expand (can be NULL)

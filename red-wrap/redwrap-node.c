@@ -104,7 +104,7 @@ static int RwrapCreateDir(const char *path, redConfigT *configN, int forcemod) {
 static void RwrapMountModeArgval(redNodeT *node, const char *mount, const char *bindMode, const char *expandpath, const char *argval[], int *argcount) {
     argval[(*argcount)++]=bindMode;
     argval[(*argcount)++]=expandpath;
-    argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount);
+    argval[(*argcount)++]=RedNodeStringExpand (node, mount);
 }
 
 static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
@@ -124,7 +124,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         if (mode & RED_EXPORT_PRIVATES && !lastleaf)
             continue;
 
-        expandpath = RedNodeStringExpand (node, NULL, path);
+        expandpath = RedNodeStringExpand (node, path);
 
         // if directory: check/try to create it in forcemod else ignore
         if (mode & RED_EXPORT_DIRS) {
@@ -159,40 +159,40 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         case RED_EXPORT_SYMLINK:
             argval[(*argcount)++]="--symlink";
             argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount);
+            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_EXECFD:
             argval[(*argcount)++]="--file";
             snprintf(fdstr, sizeof(fdstr), "%d", MemFdExecCmd(mount, path, 1));
             argval[(*argcount)++]=strdup(fdstr);
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount);
+            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_DEFLT:
             argval[(*argcount)++]="--file";
             argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount);
+            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_ANONYMOUS:
             argval[(*argcount)++]="--dir";
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount);
+            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_TMPFS:
             argval[(*argcount)++]="--tmpfs";
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount);
+            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_DEVFS:
             argval[(*argcount)++]="--dev";
-            if (mount) argval[(*argcount)++]=RedNodeStringExpand (node, NULL, mount);
+            if (mount) argval[(*argcount)++]=RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_PROCFS:
             argval[(*argcount)++]="--proc";
-            if (mount) argval[(*argcount)++]= RedNodeStringExpand (node, NULL, mount);
+            if (mount) argval[(*argcount)++]= RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_MQUEFS:
@@ -234,7 +234,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         case RED_CONFVAR_DEFLT:
             argval[(*argcount)++]="--setenv";
             argval[(*argcount)++]=key;
-            argval[(*argcount)++]=RedNodeStringExpand (node, NULL, value);
+            argval[(*argcount)++]=RedNodeStringExpand (node, value);
             break;
 
         case RED_CONFVAR_REMOVE:

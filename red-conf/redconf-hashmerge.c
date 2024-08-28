@@ -105,7 +105,7 @@ static const char* getKeyExports(const redNodeT *node, const void *srcdata, int 
     if(!export->path)
         goto OnExit;
 
-    return RedNodeStringExpand (node, NULL, export->path);
+    return RedNodeStringExpand (node, export->path);
 
 OnExit:
     return NULL;

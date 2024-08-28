@@ -258,7 +258,7 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
     /* creation of specific headers */
     if(!update) {
         /* create/copy specific values */
-        char *info = (char*)RedNodeStringExpand(NULL, NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY");
+        char *info = (char*)RedNodeStringExpand(NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY");
         char *name = strdup(uuid);
         char *alias = strdup(params->alias);
 
