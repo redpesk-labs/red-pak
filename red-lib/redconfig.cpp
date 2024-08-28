@@ -284,6 +284,32 @@ std::vector<libdnf::base::TransactionPackage> RedNode::checkTransactionPkgs(libd
 
 }
 
+#if !LEGACY_REDCONFIG
+void RedNode::createRedNode(const std::string & alias, bool update, const std::string & tmplate, const std::string & tmplateadmin, bool no_system_node) {
+    isRedpath(true);
+    RedNodeFactory factory;
+
+    bool okay = factory.setRootDir(installrootnode)
+             && factory.setNodeDir(redpath)
+             && factory.process(alias, tmplate, tmplateadmin, no_system_node, update);
+    if (!okay)
+        throw_error(fmt::format("Cannot create {sys}node: {error}.\n"
+                                "   - root={root}\n"
+                                "   - redpath={redpath}\n"
+                                "   - alias={alias}\n"
+                                "   - update={update}\n"
+                                "   - tmplate={tmplate}\n"
+                                "   - tmplateadmin={tmplateadmin}",
+                    fmt::arg("sys",     no_system_node ? "" : "system "),
+                    fmt::arg("error",   factory.statusText()),
+                    fmt::arg("root",    installrootnode.native()),
+                    fmt::arg("redpath", redpath.native()),
+                    fmt::arg("alias",   alias),
+                    fmt::arg("update",  update),
+                    fmt::arg("tmplate", tmplate),
+                    fmt::arg("tmplateadmin", tmplateadmin)));
+}
+#else
 void RedNode::get_uuid(char * uuid_str) {
     uuid_t u;
     uuid_generate(u);
@@ -434,5 +460,6 @@ void RedNode::createRedNode(const std::string & alias, bool update, const std::s
 
     createRedNodePath(real_alias, update, *tpl, *tpladmin);
 }
+#endif
 
 } //end namespace

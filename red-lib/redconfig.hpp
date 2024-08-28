@@ -101,6 +101,7 @@ private:
 
     void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);
 
+#if !LEGACY_REDCONFIG
     static void get_uuid(char * uuid_str);
     void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
     static void date(char *today, std::size_t size);
@@ -113,6 +114,7 @@ private:
                            const std::string & tmplate, const std::string & tmplateadmin);
     RedNode(std::filesystem::path installrootnode, std::filesystem::path redpath, libdnf::Base &base):
         installrootnode(installrootnode), redpath(redpath), base(base) {}
+#endif
 
 };
 }
