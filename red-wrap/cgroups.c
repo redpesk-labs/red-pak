@@ -89,18 +89,14 @@ OnErrorExit:
     return -1;
 }
 
+// copy source to dest replacing any / by -
 void replaceSlashDash(const char *source, char *dest) {
-    int i;
-    char *tmp_source = (char *)source;
-    if(tmp_source[0] == '/')
-        tmp_source++;
-    // replace / by - in parent name
-    for (i = 0; tmp_source[i]; i++) {
-        dest[i] = tmp_source[i];
-        if (tmp_source[i] == '/')
-            dest[i] = '-';
+    char c = *source;
+    while (c) {
+        *dest++ = c == '/' ? '-' : c;
+        c = *++source;
     }
-    dest[i] = '\0';
+    *dest = c;
 }
 
 static int get_parent_cgroup(char cgroup_parent[PATH_MAX]) {
