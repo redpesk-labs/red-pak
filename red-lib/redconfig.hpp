@@ -33,6 +33,7 @@ extern "C" {
 #include "redconf.h"
 }
 
+#include "rednodefactory.hpp"
 
 namespace redlib {
 
@@ -40,8 +41,6 @@ class RedNode
 {
 public:
     RedNode(libdnf::cli::ArgumentParser *arg_parser, libdnf::Base &base): arg_parser(arg_parser), base(base) {}
-    RedNode(std::filesystem::path installrootnode, std::filesystem::path redpath, libdnf::Base &base):
-        installrootnode(installrootnode), redpath(redpath), base(base) {}
 
     void addOptions(libdnf::cli::ArgumentParser::Group *global_options);
     void configure();
@@ -86,10 +85,7 @@ private:
 
     static void throw_error(std::string msg) { throw std::runtime_error(msg); }
 
-    static void get_uuid(char * uuid_str);
     static std::filesystem::path confpath();
-    static void date(char *today, std::size_t size);
-    static long unsigned int timestamp();
     static void checkdir(const std::string & label, const std::filesystem::path & dirpath, bool create);
 
     void scanNode();
@@ -101,16 +97,23 @@ private:
     void getMain();
     void getConf();
     bool hasConf();
-    void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
     bool checkInNodeDataBase(std::string name);
-    void rednode_status();
-    void rednode_template(const std::string & alias, const std::string & tmplname,
-                          const std::string & tmpladmin, bool update);
-    void reloadConfig(const std::string & tmplname, std::unique_ptr<redConfigT> & redconfig);
-    void createRedNodePath(const std::string & alias, bool update,
-                           const std::string & tmplate, const std::string & tmplateadmin);
 
     void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);
+
+    static void get_uuid(char * uuid_str);
+    void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
+    static void date(char *today, std::size_t size);
+    void reloadConfig(const std::string & tmplname, std::unique_ptr<redConfigT> & redconfig);
+    void rednode_template(const std::string & alias, const std::string & tmplname,
+                          const std::string & tmpladmin, bool update);
+    static long unsigned int timestamp();
+    void rednode_status();
+    void createRedNodePath(const std::string & alias, bool update,
+                           const std::string & tmplate, const std::string & tmplateadmin);
+    RedNode(std::filesystem::path installrootnode, std::filesystem::path redpath, libdnf::Base &base):
+        installrootnode(installrootnode), redpath(redpath), base(base) {}
+
 };
 }
 

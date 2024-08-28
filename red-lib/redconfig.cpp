@@ -225,6 +225,65 @@ void RedNode::appendFamilyDb(libdnf::rpm::PackageSack & package_sack) {
 
 }
 
+void RedNode::install(libdnf::rpm::PackageSack & package_sack) {
+    isRedpath(true);
+
+    scanNode();
+    setPersistDir();
+    setGpgCheck();
+    setCacheDir();
+
+    checkdir("redpath", redpath, false);
+    checkdir("dnf persistdir", base.get_config().persistdir().get_value(), false);
+    appendFamilyDb(package_sack);
+}
+
+bool RedNode::checkInNodeDataBase(std::string name) {
+    bool present = false;
+    Pool * pool = pool_create();
+    pool_set_rootdir(pool, redpath.c_str());
+    Repo * repo = repo_create(pool, "redpak");
+    int flagsrpm = REPO_REUSE_REPODATA | RPM_ADD_WITH_HDRID | REPO_USE_ROOTDIR;
+    repo_add_rpmdb(repo, nullptr, flagsrpm);
+    void *rpmstate;
+    Queue q;
+
+    queue_init(&q);
+    rpmstate = rpm_state_create(pool, redpath.c_str());
+    rpm_installedrpmdbids(rpmstate, "Name", name.c_str(), &q);
+    if (q.count)
+        present = true;
+    rpm_state_free(rpmstate);
+    queue_free(&q);
+    pool_free(pool);
+    return present;
+}
+
+std::vector<libdnf::base::TransactionPackage> RedNode::checkTransactionPkgs(libdnf::base::Transaction & transaction) {
+    std::string log_pkgs;
+
+    auto tpkgs = transaction.get_transaction_packages();
+    for (auto tpkg = tpkgs.begin(); tpkg != tpkgs.end(); tpkg++) {
+        auto rpmdbid = tpkg->get_package().get_rpmdbid();
+        if (rpmdbid == 0) //not installed
+            continue;
+
+        if (!checkInNodeDataBase(tpkg->get_package().get_name())) {
+            log_pkgs += fmt::format(" {}", tpkg->get_package().get_full_nevra());
+            tpkgs.erase(tpkg--);
+            tpkgs.erase(tpkg--);
+        }
+    }
+
+    if(!log_pkgs.empty()) {
+        std::cout << fmt::format("Cannot installed/upgrade because rpms already presents in parent nodes:\n{}\n", log_pkgs);
+        if(!forcenode.get_value())
+            throw_error("Aborting... (Use --forcenode to force the installation in the node");
+    }
+    return tpkgs;
+
+}
+
 void RedNode::get_uuid(char * uuid_str) {
     uuid_t u;
     uuid_generate(u);
@@ -374,65 +433,6 @@ void RedNode::createRedNode(const std::string & alias, bool update, const std::s
     }
 
     createRedNodePath(real_alias, update, *tpl, *tpladmin);
-}
-
-void RedNode::install(libdnf::rpm::PackageSack & package_sack) {
-    isRedpath(true);
-
-    scanNode();
-    setPersistDir();
-    setGpgCheck();
-    setCacheDir();
-
-    checkdir("redpath", redpath, false);
-    checkdir("dnf persistdir", base.get_config().persistdir().get_value(), false);
-    appendFamilyDb(package_sack);
-}
-
-bool RedNode::checkInNodeDataBase(std::string name) {
-    bool present = false;
-    Pool * pool = pool_create();
-    pool_set_rootdir(pool, redpath.c_str());
-    Repo * repo = repo_create(pool, "redpak");
-    int flagsrpm = REPO_REUSE_REPODATA | RPM_ADD_WITH_HDRID | REPO_USE_ROOTDIR;
-    repo_add_rpmdb(repo, nullptr, flagsrpm);
-    void *rpmstate;
-    Queue q;
-
-    queue_init(&q);
-    rpmstate = rpm_state_create(pool, redpath.c_str());
-    rpm_installedrpmdbids(rpmstate, "Name", name.c_str(), &q);
-    if (q.count)
-        present = true;
-    rpm_state_free(rpmstate);
-    queue_free(&q);
-    pool_free(pool);
-    return present;
-}
-
-std::vector<libdnf::base::TransactionPackage> RedNode::checkTransactionPkgs(libdnf::base::Transaction & transaction) {
-    std::string log_pkgs;
-
-    auto tpkgs = transaction.get_transaction_packages();
-    for (auto tpkg = tpkgs.begin(); tpkg != tpkgs.end(); tpkg++) {
-        auto rpmdbid = tpkg->get_package().get_rpmdbid();
-        if (rpmdbid == 0) //not installed
-            continue;
-
-        if (!checkInNodeDataBase(tpkg->get_package().get_name())) {
-            log_pkgs += fmt::format(" {}", tpkg->get_package().get_full_nevra());
-            tpkgs.erase(tpkg--);
-            tpkgs.erase(tpkg--);
-        }
-    }
-
-    if(!log_pkgs.empty()) {
-        std::cout << fmt::format("Cannot installed/upgrade because rpms already presents in parent nodes:\n{}\n", log_pkgs);
-        if(!forcenode.get_value())
-            throw_error("Aborting... (Use --forcenode to force the installation in the node");
-    }
-    return tpkgs;
-
 }
 
 } //end namespace
