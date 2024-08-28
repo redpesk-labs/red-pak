@@ -33,7 +33,7 @@ PROJECT_TARGET_ADD(red-lib)
         LABELS "LIBRARY"
         OUTPUT_NAME redlib
         LINKER_LANGUAGE CXX
-    PUBLIC_HEADER "${CXXHEADERS}"
+        PUBLIC_HEADER "${CXXHEADERS}"
     )
 
     target_include_directories(${TARGET_NAME} PUBLIC
