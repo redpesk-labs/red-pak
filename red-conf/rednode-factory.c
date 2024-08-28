@@ -50,6 +50,29 @@ static const char deftemplate_AdminNoSystemNode[]   = "admin-no-system-node";
 static const char deftemplate_System[]              = "main-system";
 static const char deftemplate_SystemAdmin[]         = "main-admin-system";
 
+/* error code */
+static const char *text_of_errors[] =
+{
+    [RednodeFactory_OK]                         = "No error",
+    [RednodeFactory_Error_Cleared]              = "Factory cleared",
+    [RednodeFactory_Error_Allocation]           = "Out of memory",
+    [RednodeFactory_Error_Root_Too_Long]        = "Root path too long",
+    [RednodeFactory_Error_Root_Not_Absolute]    = "Root path isn't absolute",
+    [RednodeFactory_Error_Root_Not_Exist]       = "Root path isn't existing",
+    [RednodeFactory_Error_Node_Too_Long]        = "Node path too long",
+    [RednodeFactory_Error_Default_Alias_Empty]  = "Default alias is empty",
+    [RednodeFactory_Error_MkDir]                = "Can't create directories",
+    [RednodeFactory_Error_FmtDate]              = "Can't create current date",
+    [RednodeFactory_Error_TemplateDir_Too_Long] = "Template path too long",
+    [RednodeFactory_Error_Config_Too_Long]      = "Config path too long",
+    [RednodeFactory_Error_No_Config]            = "No configuration file",
+    [RednodeFactory_Error_Loading_Config]       = "Can't load configuration file",
+    [RednodeFactory_Error_Config_Exist]         = "Configuration file already existing",
+    [RednodeFactory_Error_Storing_Config]       = "Can't store configuration file",
+    [RednodeFactory_Error_Path_Too_Long]        = "Path is too long",
+    [RednodeFactory_Error_Storing_Status]       = "Can't store status file"
+};
+
 static const char *get_default_item(const char *defvalue, const char *varname)
 {
     const char *value = varname ? secure_getenv(varname) : NULL;
@@ -288,6 +311,15 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
 /** PUBLIC PART                                                                 **/
 /*********************************************************************************/
 /*********************************************************************************/
+
+/* see rednode-factory.h */
+const char *rednode_factory_error_text(rednode_factory_error_t error)
+{
+    const char *result = NULL;
+    if (error >= 0 && error < (sizeof text_of_errors / sizeof *text_of_errors))
+        result = text_of_errors[error];
+    return result != NULL ? result : "Unexpected error";
+}
 
 /* see rednode-factory.h */
 void rednode_factory_clear(rednode_factory_t *rfab)

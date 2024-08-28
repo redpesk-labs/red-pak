@@ -77,6 +77,15 @@ typedef struct rednode_factory_param_s rednode_factory_param_t;
 typedef enum   rednode_factory_error_e rednode_factory_error_t;
 
 /**
+ * Get text of the error report
+ *
+ * @param error error code
+ *
+ * @return the string corresponding to the given error code
+ */
+extern const char *rednode_factory_error_text(rednode_factory_error_t error);
+
+/**
  * Clears the rednode factory @ref rfab
  *
  * @param rfab pointer to the rednode factory to clear
