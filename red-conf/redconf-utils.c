@@ -45,14 +45,14 @@ int getDateOfToday(char *today, size_t size)
 {
     struct tm tm;
     time_t t = time(NULL);
-    return strftime(today, size, "%d-%b-%Y %H:%M (%Z)", localtime_r(&t, &tm));
+    return (int)strftime(today, size, "%d-%b-%Y %H:%M (%Z)", localtime_r(&t, &tm));
 }
 
 /* make a fresh random UUID */
 void getFreshUUID(char *uuid, size_t size)
 {
     uuid_t u;
-    char uu[UUID_STR_LEN];
+    char uu[RED_UUID_STR_LEN];
     uuid_generate(u);
     uuid_unparse_lower(u, uu);
     strncpy(uuid, uu, size);
