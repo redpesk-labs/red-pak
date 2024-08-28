@@ -345,14 +345,11 @@ OnErrorExit:
     return NULL;
 }
 
-
 void freeRedLeaf(redNodeT *redleaf) {
-    redNodeT *node = redleaf, *nextnode;
-    while(node) {
-        nextnode = node->parent;
-        freeNode(node);
-        node = nextnode;
-    }
+    redNodeT *node = redleaf;
+    while (node->parent != NULL)
+        node = node->parent;
+    freeRedRoot(node);
 }
 
 void freeRedRoot(redNodeT *redroot) {
