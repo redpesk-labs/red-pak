@@ -34,10 +34,10 @@ void RedDumpStatusHandle (redStatusT *status) {
     const char* flag = getStatusFlagString(status->state);
 
     printf ("---\n");
-    printf ("  state=%s'\n", flag);
-    printf ("  realpath=%s'\n", status->realpath);
+    printf ("  state=%s\n", flag);
+    printf ("  realpath=%s\n", status->realpath);
     printf ("  timestamp=%ld'\n", status->timestamp);
-    printf ("  info=%s'\n", status->info);
+    printf ("  info=%s\n", status->info);
     printf ("---\n\n");
 }
 
