@@ -75,6 +75,16 @@ redNodeT *RedNodesScan(const char* redpath, int admin, int verbose);
 redNodeT *RedNodesDownScan(const char* redroot, int admin, int verbose);
 int RedUpdateStatus(redNodeT *node, int verbose);
 
+/**
+ * Add to environment the variables related to the given node
+ */
+void RedNodeEnvSet(const redNodeT *node);
+
+/**
+ * Remove from environment any variables related nodes
+ */
+void RedNodeEnvUnset();
+
 void freeRedLeaf(redNodeT *redleaf);
 void freeRedRoot(redNodeT *redroot);
 

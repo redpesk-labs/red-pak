@@ -366,3 +366,28 @@ void freeRedRoot(redNodeT *redroot) {
     }
 }
 
+void RedNodeEnvSet(const redNodeT *node)
+{
+    const redNodeT *leaf = node->leaf ?: node;
+    setenv("NODE_ALIAS", node->config->headers->alias, 1);
+    setenv("NODE_NAME",  node->config->headers->name, 1);
+    setenv("NODE_PATH",  node->redpath, 1);
+    setenv("NODE_INFO",  node->config->headers->info, 1);
+    setenv("LEAF_ALIAS", leaf->config->headers->alias, 1);
+    setenv("LEAF_NAME",  leaf->config->headers->name, 1);
+    setenv("LEAF_PATH",  leaf->redpath, 1);
+    setenv("LEAF_INFO",  leaf->config->headers->info, 1);
+}
+
+void RedNodeEnvUnset()
+{
+    unsetenv("NODE_ALIAS");
+    unsetenv("NODE_NAME");
+    unsetenv("NODE_PATH");
+    unsetenv("NODE_INFO");
+    unsetenv("LEAF_ALIAS");
+    unsetenv("LEAF_NAME");
+    unsetenv("LEAF_PATH");
+    unsetenv("LEAF_INFO");
+}
+
