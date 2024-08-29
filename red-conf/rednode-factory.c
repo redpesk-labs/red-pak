@@ -389,7 +389,7 @@ int rednode_factory_create_node(
             bool is_system
 ) {
     int status, rc;
-    size_t off;
+    size_t off, len;
     rednode_factory_param_t locparam;
     char *localias = NULL;
 
@@ -398,7 +398,11 @@ int rednode_factory_create_node(
         return -RednodeFactory_Error_Cleared;
 
     /* get offset of the parent */
-    for (off = rfab->node_length ; off && rfab->path[--off] != '/' ;);
+    len = rfab->node_length;
+    while (len && rfab->path[len - 1] == '/')
+        len--;
+    for (off = len ; off && rfab->path[off - 1] != '/' ; off--);
+    len -= off;
 
     /* setup default params if none was given */
     if (params == NULL) {
@@ -411,9 +415,9 @@ int rednode_factory_create_node(
         locparam.alias = params->alias; /* alias as set in params */
     else {
         /* alias isn't set, compute it from directory name */
-        if (rfab->node_length == rfab->root_length || rfab->node_length < off + 1)
+        if (rfab->node_length == rfab->root_length || len == 0)
             return -RednodeFactory_Error_Default_Alias_Empty;
-        localias = strndup(&rfab->path[off + 1], rfab->node_length - off - 1);
+        localias = strndup(&rfab->path[off], len);
         if (localias == NULL)
             return -RednodeFactory_Error_Allocation;
         locparam.alias = localias;
