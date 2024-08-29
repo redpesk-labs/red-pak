@@ -15,19 +15,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ##########################################################################
-PROJECT_TARGET_ADD(red-plugin)
-    MESSAGE(STATUS "Creating rpm plugin for redpak")
 
-    pkg_search_module(RPM REQUIRED redrpm rpm)
 
-    add_library(${TARGET_NAME} SHARED rpm-redpak.c)
-    set_target_properties(${TARGET_NAME} PROPERTIES
-        PREFIX ""
-        LABELS "LIBRARY"
-        OUTPUT_NAME "redpak"
-        )
+message(STATUS "Creating rpm plugin for redpak")
 
-    target_include_directories(${TARGET_NAME} PUBLIC ${RPM_INCLUDE_DIRS})
-    target_link_libraries(${TARGET_NAME} LINK_PUBLIC ${RPM_LIBRARIES})
+pkg_search_module(RPM REQUIRED redrpm rpm)
 
-    install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/rpm-plugins)
+add_library(
+    redpak-rpm-plugin
+        SHARED
+            rpm-redpak.c
+)
+set_target_properties(
+    redpak-rpm-plugin
+        PROPERTIES
+            PREFIX ""
+            OUTPUT_NAME "redpak"
+)
+
+target_include_directories(
+    redpak-rpm-plugin
+        PUBLIC
+            ${RPM_INCLUDE_DIRS}
+)
+
+target_link_libraries(
+    redpak-rpm-plugin
+        PRIVATE
+            ${RPM_LIBRARIES}
+)
+
+install(
+    TARGETS redpak-rpm-plugin
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/rpm-plugins
+)

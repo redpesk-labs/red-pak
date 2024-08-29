@@ -1,7 +1,5 @@
 ###########################################################################
-# Copyright 2020 IoT.bzh
-#
-# author: Fulup Ar Foll <fulup@iot.bzh>
+# Copyright 2022 IoT.bzh
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +14,27 @@
 # limitations under the License.
 ##########################################################################
 
+add_executable(
+    redwrap
+        redwrap.c
+)
+target_link_libraries(
+    redwrap
+        PRIVATE
+            libredwrap
+)
 
-INSTALL (FILES "redwrap.bashrc" DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/bash_completion.d/ RENAME "redwrap")
+add_executable(
+    redwrap-dnf
+        redwrap-dnf.c
+)
+target_link_libraries(
+    redwrap-dnf
+        PRIVATE
+            libredwrap
+)
 
+install(
+    TARGETS redwrap redwrap-dnf
+        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+)

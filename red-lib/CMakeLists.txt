@@ -22,24 +22,50 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 pkg_search_module(LIBDNF REQUIRED libdnf5 libdnf)
 pkg_search_module(LIBDNFCLI REQUIRED libdnf5-cli libdnf-cli)
 
-PROJECT_TARGET_ADD(red-lib)
+set(
+    SOURCES
+        redconfig.cpp
+        redtransaction.cpp
+)
 
-    file(GLOB CXXSOURCES [a-z]*.cpp)
-    file(GLOB CXXHEADERS [a-z]*.hpp)
+set(
+    HEADERS
+        redconfig.hpp
+        redtransaction.hpp
+)
 
-    add_library(${TARGET_NAME} SHARED ${CXXSOURCES})
+add_library(
+    redlib
+        SHARED
+            ${SOURCES}
+)
 
-    SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
-        LABELS "LIBRARY"
-        OUTPUT_NAME redlib
-        LINKER_LANGUAGE CXX
-        PUBLIC_HEADER "${CXXHEADERS}"
-    )
+set_target_properties(
+    redlib
+        PROPERTIES
+            PUBLIC_HEADER "${HEADERS}"
+)
 
-    target_include_directories(${TARGET_NAME} PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf
-        ${LIBDNF_INCLUDE_DIRS} ${LIBDNFCLI_INCLUDE_DIRS} ${RPM_INCLUDE_DIRS}
-    )
-    target_link_libraries(${TARGET_NAME} libredconf ${LIBDNF_LIBRARIES} ${LIBDNFCLI_LIBRARIES} ${RPM_LIBRARIES})
+target_include_directories(
+    redlib
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}
+            ${CMAKE_SOURCE_DIR}/red-conf
+            ${LIBDNF_INCLUDE_DIRS}
+            ${LIBDNFCLI_INCLUDE_DIRS}
+            ${RPM_INCLUDE_DIRS}
+)
 
-    install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+target_link_libraries(
+    redlib
+        PRIVATE
+            libredconf
+            ${LIBDNF_LIBRARIES}
+            ${LIBDNFCLI_LIBRARIES}
+            ${RPM_LIBRARIES}
+)
+
+install(
+    TARGETS redlib
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})

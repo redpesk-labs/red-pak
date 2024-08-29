@@ -1,6 +1,5 @@
 ###########################################################################
 #* Copyright (C) 2022 "IoT.bzh"
-#* Clément Bénier <clement.benier@iot.bzh>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +14,4 @@
 # limitations under the License.
 ##########################################################################
 
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-
-ADD_SUBDIRECTORY (redconf-py)
+add_subdirectory(redconf-py)

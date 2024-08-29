@@ -24,43 +24,47 @@ PROJECT(redpak
     HOMEPAGE_URL "https://github.com/redpesk-labs/red-pak"
     LANGUAGES C CXX)
 
-# Default version requirements
-# -------------------------------
-set (PYTHON_VERSION 3)
-
 # possible options
-# -------------------------------
+# ----------------
 option(WITHOUT_TESTS    "Avoid compiling tests"     OFF)
 
 set(REDMICRODNF         "/usr/bin/redmicrodnf"      CACHE STRING "redmicrodnf path")
+set(PYTHON_VERSION       3)
 
+# commons
+# -------
 include(GNUInstallDirs)
 find_package(PkgConfig REQUIRED)
+#include(FindPkgConfig)
+#include(CMakeCXXInformation)
 
-# External Packages requirements
-# ------------------------------
-set (PKG_REQUIRED_LIST
-    python${PYTHON_VERSION}
-    yaml-0.1
-    libcyaml
-    uuid
+add_compile_options(
+    "-Wall"
+    "-Werror=format-security"
+    "-fexceptions"
+    "-fstack-protector-strong"
+    "-grecord-gcc-switches"
+    "-fasynchronous-unwind-tables"
+    "-fstack-clash-protection"
 )
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake/redpak.cmake)
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/etc/cmake")
+add_compile_definitions(
+    redpak_MAIN="${CMAKE_INSTALL_FULL_SYSCONFDIR}/redpak/main.yaml"
+    REDPACK_VERSION="${PROJECT_VERSION}"
+)
 
-enable_testing()
 
 # add sub directories
-ADD_SUBDIRECTORY (etc)
-ADD_SUBDIRECTORY (red-conf)
-ADD_SUBDIRECTORY (red-wrap)
-ADD_SUBDIRECTORY (red-lib)
-ADD_SUBDIRECTORY (red-plugin)
+add_subdirectory(etc)
+add_subdirectory(red-conf)
+add_subdirectory(red-wrap)
+add_subdirectory(red-lib)
+add_subdirectory(red-plugin)
+add_subdirectory(python)
 if(NOT WITHOUT_TESTS)
-    ADD_SUBDIRECTORY (tests)
+    enable_testing()
+    add_subdirectory(tests)
 endif()
-ADD_SUBDIRECTORY (python)
 
 # add pkgconfig file
 configure_file("red-pak.pc.in" ${CMAKE_CURRENT_BINARY_DIR}/red-pak.pc @ONLY)

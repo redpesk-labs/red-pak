@@ -1,8 +1,6 @@
 ###########################################################################
 # Copyright 2022 IoT.bzh
 #
-# author: Clément Bénier <clement.benier@iot.bzh>
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,7 +14,27 @@
 # limitations under the License.
 ##########################################################################
 
-add_executable(redconf redconf.c utils.c config.c mergeconfig.c tree.c)
-target_include_directories(redconf PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(redconf libredconf)
-install(TARGETS  DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
+add_executable(
+    redconf
+        config.c
+        mergeconfig.c
+        redconf.c
+        tree.c
+        utils.c
+)
+
+target_include_directories(
+    redconf
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(
+    redconf
+        PRIVATE
+            libredconf
+)
+
+install(
+    TARGETS redconf
+        DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
+)

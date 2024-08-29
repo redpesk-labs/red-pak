@@ -16,28 +16,91 @@
 # limitations under the License.
 ##########################################################################
 
-PROJECT_TARGET_ADD(libredconf)
+pkg_check_modules(libredconfreqs REQUIRED liburcu liburcu-cds yaml-0.1 libcyaml uuid)
 
-  file(GLOB CSOURCES [a-z]*.c )
-  file(GLOB CHEADERS [a-z]*.h )
+set(
+    SOURCES
+        lookup3.c
+        redconf-dump.c
+        redconf-expand.c
+        redconf-hash.c
+        redconf-hashmerge.c
+        redconf-log.c
+        redconf-merge.c
+        redconf-node.c
+        redconf-schema.c
+        redconf-utils.c
+        rednode-factory.c
+)
 
-  add_library(${TARGET_NAME} SHARED ${CSOURCES} redconf.h)
+set(
+    HEADERS
+        lookup3.h
+        redconf-defaults.h
+        redconf-dump.h
+        redconf-expand.h
+        redconf.h
+        redconf-hash.h
+        redconf-hashmerge.h
+        redconf-log.h
+        redconf-merge.h
+        redconf-node.h
+        redconf-schema.h
+        redconf-utils.h
+        rednode-factory.h
+)
 
-  SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
-        PREFIX ""
-        LABELS "LIBRARY"
-        OUTPUT_NAME ${TARGET_NAME}
-        LINKER_LANGUAGE C
-        PUBLIC_HEADER "${CHEADERS}"
-    )
-  pkg_search_module(URCU REQUIRED liburcu)
-  pkg_search_module(URCUCDS REQUIRED liburcu-cds)
+add_library(
+    libredconf
+        SHARED
+            ${SOURCES}
+)
 
-  # compliation include path for library consuming modules
-  target_link_libraries(${TARGET_NAME} ${URCU_LIBRARIES} ${URCUCDS_LIBRARIES})
-  target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(
+    libredconf
+        PROPERTIES
+            PREFIX ""
+            PUBLIC_HEADER "${HEADERS}"
+)
 
-  # final install destination for sharelib
-  install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+# compliation include path for library consuming modules
+target_compile_options(${${XPREFIX}_CFLAGS}
+    libredconf
+        PRIVATE
+            ${libredconfreqs_CFLAGS}
+)
 
-ADD_SUBDIRECTORY(commands)
+target_include_directories(
+    libredconf
+        PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}
+        PRIVATE
+            ${libredconfreqs_INCLUDE_DIRS}
+)
+
+target_link_options(
+    libredconf
+        PRIVATE
+            ${libredconfreqs_LDFLAGS}
+)
+
+target_link_directories(
+    libredconf
+        PRIVATE
+            ${libredconfreqs_LIBRARY_DIRS}
+)
+
+target_link_libraries(
+    libredconf
+        PRIVATE
+            ${libredconfreqs_LIBRARIES}
+)
+
+# final install destination for sharelib
+install(
+    TARGETS libredconf
+        LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
+)
+
+add_subdirectory(commands)

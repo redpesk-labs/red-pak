@@ -1,5 +1,5 @@
 
-find_package(Check REQUIRED)
+pkg_check_modules(CHECK REQUIRED check)
 
 include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
@@ -12,7 +12,7 @@ include(CheckTypeSize)
 
 # global test options
 add_compile_definitions(TEMPLATES_DIR="${CMAKE_SOURCE_DIR}/etc/redpak/templates.d")
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../red-wrap ${CMAKE_CURRENT_SOURCE_DIR}/../red-conf)
+include_directories(${CMAKE_SOURCE_DIR}/red-wrap ${CMAKE_SOURCE_DIR}/red-conf)
 link_libraries(libredconf libredwrap ${CHECK_LIBRARIES} pthread)
 
 # absolute path of redmicrodnf

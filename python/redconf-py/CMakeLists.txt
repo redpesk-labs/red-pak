@@ -15,25 +15,36 @@
 # limitations under the License.
 ##########################################################################
 
-PROJECT_TARGET_ADD(redconf-py)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-  file(GLOB CSOURCES [a-z]*.c )
-  file(GLOB CHEADERS [a-z]*.h )
+add_library(
+    redconf-py
+        SHARED
+            redconf-py.c
+)
 
-  add_library(${TARGET_NAME} SHARED ${CSOURCES})
+set_target_properties(
+    redconf-py
+        PROPERTIES
+            PREFIX ""
+            OUTPUT_NAME redconf
+)
 
+# compliation include path for library consuming modules
+target_link_libraries(
+    redconf-py
+        PRIVATE
+            libredconf
+)
+target_include_directories(
+    redconf-py
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/red-conf
+            ${_Python3_INCLUDE_DIR}
+)
 
-  SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES
-               PREFIX ""
-               LABELS "LIBRARY"
-               OUTPUT_NAME redconf
-    LINKER_LANGUAGE C
-       )
-
-
-  # compliation include path for library consuming modules
-  target_link_libraries(${TARGET_NAME} libredconf)
-  target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../red-conf ${_Python3_INCLUDE_DIR})
-
-  # final install destination for sharelib
-  install(TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${Python3_SITEARCH})
+# final install destination for sharelib
+install(
+    TARGETS redconf-py
+        LIBRARY DESTINATION ${Python3_SITEARCH}
+)
