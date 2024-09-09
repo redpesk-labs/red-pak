@@ -145,12 +145,12 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         case RED_EXPORT_DEVFS:
             argval[(*argcount)++]="--dev";
-            if (mount) argval[(*argcount)++]=RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_PROCFS:
             argval[(*argcount)++]="--proc";
-            if (mount) argval[(*argcount)++]= RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_MQUEFS:
