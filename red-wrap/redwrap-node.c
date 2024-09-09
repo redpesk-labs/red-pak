@@ -53,9 +53,9 @@ static int RwrapCreateDir(const char *path, redConfigT *configN, int forcemod) {
  * @brief Adding arguments for bwrap to mount path from system to node
  *
  * @param node          Node data
- * @param mount         System path to mount
+ * @param mount         System path to mount (destination)
  * @param bindMode      Mode of the bind "--bind" or "--ro-bind"
- * @param expandpath    Node path to mount
+ * @param expandpath    Node path to mount (source)
  * @param argval        List of arguments
  * @param argcount      Index and count args
  */
