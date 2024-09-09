@@ -792,7 +792,7 @@ int srun()
 	return nerr;
 }
 
-int main(int ac, char **av)
+int main(void)
 {
 	mksuite("checks-conf");
 #if 0

@@ -67,8 +67,10 @@ static void RwrapMountModeArgval(redNodeT *node, const char *mount, const char *
 
 static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
 
+    unsigned idx;
+
     // scan export directory
-    for (int idx=0; idx <configN->exports_count; idx++) {
+    for (idx=0; idx <configN->exports_count; idx++) {
         redExportFlagE mode= configN->exports[idx].mode;
         const char* mount= configN->exports[idx].mount;
         const char* path=configN->exports[idx].path;
@@ -169,7 +171,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
     }
 
     // scan export environment variables
-    for (int idx=0; idx < configN->confvar_count; idx++) {
+    for (idx=0; idx < configN->confvar_count; idx++) {
         redVarEnvFlagE mode= configN->confvar[idx].mode;
         const char* key= configN->confvar[idx].key;
         const char* value=configN->confvar[idx].value;

@@ -77,8 +77,8 @@ void RedDumpConftag(redConfTagT *conftag) {
     //printf("\tcgroups: %s\n", conftag == NULL ? "" : conftag->cgroups);
 }
 
-static void RedDumpExport(redConfExportPathT *export, int idx) {
-    printf ("  - [%d] mode:  %s\n", idx, getExportFlagString(export->mode));
+static void RedDumpExport(redConfExportPathT *export, unsigned idx) {
+    printf ("  - [%u] mode:  %s\n", idx, getExportFlagString(export->mode));
     printf ("         mount: %s\n", export->mount);
     printf ("         path:  %s\n", export->path);
 }
@@ -89,7 +89,7 @@ void RedDumpConfigHandle(redConfigT *config) {
     printf ("headers=> alias=%s name=%s info='%s'\n", config->headers->alias, config->headers->name, config->headers->info);
     RedDumpConftag(config->conftag);
     printf ("exports:\n");
-    for (int idx=0; idx < config->exports_count; idx++) {
+    for (unsigned idx=0; idx < config->exports_count; idx++) {
         RedDumpExport(config->exports+idx, idx);
     }
     printf ("---\n\n");

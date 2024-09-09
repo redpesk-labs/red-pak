@@ -56,7 +56,7 @@ static const rOption globalOptions[] = {
     {{"yaml",       no_argument      ,     0,                   'y'}, "yaml output"},
     {{"log-yaml",   required_argument,     0,                   'l'}, "yaml parse log level (max=4)"},
     {{"help",       no_argument      ,     0,                   'h'}, "print this help"},
-    {{0, 0, 0}, 0}
+    {{0, 0, 0, 0}, 0}
 };
 
 /*

@@ -162,6 +162,9 @@ ExitNoDuplicate:
 }
 
 static const char* getKeyConfVars(const redNodeT *node, const void *srcdata, int *ignore) {
+    (void)node;
+    (void)ignore;
+
     redConfVarT *confvar = (redConfVarT*)srcdata;
 
     return confvar->key ? strdup(confvar->key) : NULL;
@@ -196,6 +199,9 @@ static const void *getDataCapabilities(const redNodeT *node, int *count) {
 }
 
 static int setDataCapabilities(const void *destdata, redHashT *srchash, redHashT *overload, int expand, int duplicate) {
+
+    (void)expand;
+
     char *warn = NULL;
 
     redConfCapT *capdest = (redConfCapT*)destdata;
@@ -224,6 +230,8 @@ ExitNoDuplicate:
 }
 
 static const char* getKeyCapabilities(const redNodeT *node, const void *srcdata, int *ignore) {
+    (void)node;
+    (void)ignore;
     redConfCapT *cap = (redConfCapT*)srcdata;
     return cap->cap;
 }

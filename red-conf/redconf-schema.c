@@ -379,11 +379,13 @@ Exit:
 }
 
 int RedSaveConfig (const char* filepath, const redConfigT *config, int warning ) {
+    (void)warning;
     int errcode = SchemaSave(filepath, &RedPakConfigSchema, (void*)config, 0);
     return errcode;
 }
 
 int RedSaveStatus (const char* filepath, const redStatusT *status, int warning ) {
+    (void)warning;
     int errcode = SchemaSave(filepath, &StatusTopSchema, (void*)status, 0);
     return errcode;
 }
@@ -401,6 +403,7 @@ int RedGetConfigYAML(char **output, size_t *len, const redConfigT *config) {
 }
 
 int RedFreeConfig(redConfigT *config, int wlevel) {
+    (void)wlevel;
     return SchemaFree(&RedPakConfigSchema, (cyaml_data_t *)config, 0);
 }
 
@@ -412,6 +415,7 @@ redStatusT* RedLoadStatus (const char* filepath, int warning) {
 }
 
 int RedFreeStatus(redStatusT *status, int wlevel) {
+    (void)wlevel;
     return SchemaFree(&StatusTopSchema, (cyaml_data_t *)status, 0);
 }
 

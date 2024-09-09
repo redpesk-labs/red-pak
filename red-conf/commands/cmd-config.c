@@ -35,7 +35,7 @@ typedef struct {
 static rOption cOptions[] = {
     {{"redpath", required_argument, 0,  'r' }, "path to the node"},
     {{"help"   , no_argument      , 0,  'h' }, "print this help"},
-    {{0, 0, 0}, 0}
+    {{0, 0, 0, 0}, 0}
 };
 
 static void configUsage(const rOption *options, int exitcode) {

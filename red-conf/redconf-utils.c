@@ -60,6 +60,10 @@ void getFreshUUID(char *uuid, size_t size)
 
 static int remove_cb(const char *path, const struct stat *s, int flag, struct FTW *ftw)
 {
+    (void)s;
+    (void)flag;
+    (void)ftw;
+
     int err;
     err = remove(path);
 

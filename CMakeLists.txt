@@ -40,6 +40,7 @@ find_package(PkgConfig REQUIRED)
 
 add_compile_options(
     "-Wall"
+    "-Wextra"
     "-Werror=format-security"
     "-fexceptions"
     "-fstack-protector-strong"

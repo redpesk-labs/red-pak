@@ -103,6 +103,8 @@ static PyObject *mergeconfig(PyObject *self, PyObject *args) {
     FILE *fstderr;
     int error = 0;
 
+    (void)self;
+
     if(!PyArg_ParseTuple(args, "s", &redpath)) {
         goto OnExit;
     }
@@ -130,6 +132,8 @@ static PyObject *config(PyObject *self, PyObject *args) {
     PyObject *o = NULL;
     FILE *fstderr;
     int error = 0;
+
+    (void)self;
 
     if(!PyArg_ParseTuple(args, "s", &redpath)) {
         return NULL;
@@ -159,11 +163,15 @@ static PyMethodDef redconf_methods[] = {
 
 
 static struct PyModuleDef redconf_module = {
-    PyModuleDef_HEAD_INIT,
-    "redconf",
-    "Python interface for redconf",
-    -1,
-    redconf_methods
+    .m_base = PyModuleDef_HEAD_INIT,
+    .m_name = "redconf",
+    .m_doc = "Python interface for redconf",
+    .m_size = -1,
+    .m_methods = redconf_methods,
+    .m_slots = 0,
+    .m_traverse = 0,
+    .m_clear = 0,
+    .m_free = 0
 };
 
 PyMODINIT_FUNC

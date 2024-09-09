@@ -35,7 +35,7 @@ typedef struct {
 static const rOption treeOptions[] = {
     {{"redroot", required_argument, 0,  'r' }, "path to root nodes"},
     {{"help"   , no_argument      , 0,  'h' }, "print this help"},
-    {{0, 0, 0}, 0}
+    {{0, 0, 0, 0}, 0}
 };
 
 static void treeUsage(const rOption *options, int exitcode) {

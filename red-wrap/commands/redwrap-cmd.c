@@ -78,7 +78,7 @@ static const struct red_cmd *_find_redmicrodnf_cmd (int argc, char *argv[], int 
         if (argv[i][0] == '-')
             continue;
 
-        for (int j = 0; j < sizeof(redmicrodnf_commands)/sizeof(redmicrodnf_commands[0]); j++) {
+        for (unsigned j = 0; j < sizeof(redmicrodnf_commands)/sizeof(redmicrodnf_commands[0]); j++) {
             if(!strcmp(argv[i], redmicrodnf_commands[j].cmd)) {
                 *position = i;
                 return &redmicrodnf_commands[j];

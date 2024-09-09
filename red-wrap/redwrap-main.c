@@ -64,7 +64,7 @@ static int setmap(const char *map_path, const char *map_buf) {
         goto Error;
     }
 
-    if (write(fd, map_buf, strlen(map_buf)) != strlen(map_buf)) {
+    if (write(fd, map_buf, strlen(map_buf)) != (ssize_t)strlen(map_buf)) {
         fprintf(stderr, "ERROR: write %s: %s\n", map_buf, strerror(errno));
         err = 2;
         goto ErrorOpen;

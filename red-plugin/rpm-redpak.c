@@ -14,6 +14,9 @@
 static rpmRC redpak_scriptlet_pre(rpmPlugin plugin, const char *s_name,
                                      int type)
 {
+    (void)plugin;
+    (void)s_name;
+    (void)type;
     (void)chroot(".");
     return RPMRC_OK;
 }

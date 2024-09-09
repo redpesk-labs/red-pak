@@ -46,6 +46,8 @@ struct vardef {
 };
 
 static int GetNewUUID(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    (void)node;
+    (void)vardef;
     if (size < RED_UUID_STR_LEN)
         return 1;
     getFreshUUID(output, size);
@@ -53,6 +55,8 @@ static int GetNewUUID(const redNodeT *node, const vardef_t *vardef, char *output
 }
 
 static int GetDateString(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    (void)node;
+    (void)vardef;
     return !getDateOfToday(output, size);
 }
 
@@ -61,14 +65,20 @@ static int GetDecimal(long long unsigned value, char *output, size_t size) {
     return rc < 0 || (size_t)rc >= size;
 }
 static int GetUid(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    (void)node;
+    (void)vardef;
     return GetDecimal((long long unsigned)getuid(), output, size);
 }
 
 static int GetGid(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    (void)node;
+    (void)vardef;
     return GetDecimal((long long unsigned)getgid(), output, size);
 }
 
 static int GetPid(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    (void)node;
+    (void)vardef;
     return GetDecimal((long long unsigned)getpid(), output, size);
 }
 
@@ -88,10 +98,12 @@ static int GetUndefined(const char *key, char *output, size_t size) {
 }
 
 static int GetString(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    (void)node;
     return PutString(vardef->svalue, output, size);
 }
 
 static int GetEnviron(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    (void)node;
     const char *value = secure_getenv(vardef->key);
     if (value == NULL)
         value = vardef->svalue;

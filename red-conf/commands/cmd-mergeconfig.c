@@ -37,7 +37,7 @@ static rOption cOptions[] = {
     {{"redpath", required_argument, 0,  'r' }, "path to the node"},
     {{"expand",  no_argument,       0,  'e' }, "expand variables in config file"},
     {{"help"   , no_argument      , 0,  'h' }, "print this help"},
-    {{0, 0, 0}, 0}
+    {{0, 0, 0, 0}, 0}
 };
 
 static const char SHORTOPTS[] = "r:he";

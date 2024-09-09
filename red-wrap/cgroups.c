@@ -100,7 +100,8 @@ void replaceSlashDash(const char *source, char *dest) {
 }
 
 static int get_parent_cgroup(char cgroup_parent[PATH_MAX]) {
-    int count, cgProcFd;
+    int lenbuf, cgProcFd;
+    ssize_t count;
     char buf[PATH_MAX + 1 - strlen(CGROUPS_MOUNT_POINT)];
 
     //get current cgroup
@@ -110,10 +111,15 @@ static int get_parent_cgroup(char cgroup_parent[PATH_MAX]) {
         goto OnErrorExit;
     }
 
-    //read 3 first characters to ignore them
+    //read 3 first characters to ignore them, valid for cgroup2
     count = read(cgProcFd, (void *)buf, 3);
     if (count != 3) {
         RedLog(REDLOG_ERROR, "Cannot read 3 first characters count=%d buf=%s", count, buf);
+        goto OnErrorCloseExit;
+    }
+    //check cgroup2
+    if (buf[0] != '0' || buf[1] != ':' || buf[2] != ':') {
+        RedLog(REDLOG_ERROR, "expected CGROUPv2 not matching /proc/self/cgroup");
         goto OnErrorCloseExit;
     }
 
@@ -123,19 +129,19 @@ static int get_parent_cgroup(char cgroup_parent[PATH_MAX]) {
         goto OnErrorCloseExit;
     }
 
-    if (count == sizeof buf) {
-        RedLog(REDLOG_ERROR, "[proc-cgroups-too-long] /proc/self/cgroup has a too long path cannot read");
+    //search first \n
+    for (lenbuf = 0 ; lenbuf < (int)count && buf[lenbuf] != '\n' ; lenbuf++);
+    if (lenbuf == 0 || lenbuf == (int)sizeof buf) {
+        RedLog(REDLOG_ERROR, "[proc-cgroups-too-long] /proc/self/cgroup has a too %s path", lenbuf ? "long" : "short");
         goto OnErrorCloseExit;
     }
-
-    // last character should be \n
-    buf[count-1] = '\0';
+    buf[lenbuf] = '\0';
 
     snprintf(cgroup_parent, PATH_MAX, "%s%s", CGROUPS_MOUNT_POINT, buf);
     cgroup_parent[PATH_MAX - 1] = 0;
 
     //check if cgroup is matching CGROUPS_ROOT_LEAF_NAME and so return parent/..
-    int off = strlen(buf) - strlen(CGROUPS_ROOT_LEAF_NAME);
+    int off = lenbuf - strlen(CGROUPS_ROOT_LEAF_NAME);
     if (off >= 0 && !strcmp(buf+off, CGROUPS_ROOT_LEAF_NAME))
         strncat(cgroup_parent, "/..", PATH_MAX - 1 - strlen("/..") - strlen(cgroup_parent));
 
