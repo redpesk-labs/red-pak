@@ -155,12 +155,12 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         case RED_EXPORT_MQUEFS:
             argval[(*argcount)++]="--mqueue";
-            argval[(*argcount)++]=expandpath;
+            argval[(*argcount)++]= RedNodeStringExpand (node, mount);
             break;
 
         case RED_EXPORT_LOCK:
             argval[(*argcount)++]="--lock-file";
-            argval[(*argcount)++]= expandpath;
+            argval[(*argcount)++]= RedNodeStringExpand (node, mount);
             break;
 
         default:
