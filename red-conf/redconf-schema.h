@@ -109,11 +109,6 @@
     } redConfExportPathT;
 
     typedef struct {
-        const char *old;
-        const char *tnew;
-    } redConfRelocationT;
-
-    typedef struct {
         redVarEnvFlagE mode;
         const char *key;
         const char *value;
@@ -171,8 +166,6 @@
         unsigned int confvar_count;
         redConfExportPathT *exports;
         unsigned int exports_count;
-        redConfRelocationT *relocations;
-        unsigned int relocations_count;
     } redConfigT;
 
 

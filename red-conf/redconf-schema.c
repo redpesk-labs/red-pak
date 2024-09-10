@@ -229,13 +229,6 @@ static const cyaml_schema_field_t ExportEntry[] = {
 };
 
 // relocation old/new path
-static const cyaml_schema_field_t RelocationEntry[] = {
-    CYAML_FIELD_STRING_PTR("old", CYFLAG_PTR|CYFLAG_CASE, redConfRelocationT, old, 0, CYAML_UNLIMITED),
-    CYAML_FIELD_STRING_PTR("new", CYFLAG_PTR|CYFLAG_CASE, redConfRelocationT, tnew, 0, CYAML_UNLIMITED),
-    CYAML_FIELD_END
-};
-
-// relocation old/new path
 static const cyaml_schema_field_t EnvValEntry[] = {
     CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT|CYFLAG_OPT, redConfVarT, mode, redVarEnvStrings, CYAML_ARRAY_LEN(redVarEnvStrings)),
     CYAML_FIELD_STRING_PTR("key", CYFLAG_PTR|CYFLAG_CASE, redConfVarT, key, 0, CYAML_UNLIMITED),
@@ -246,7 +239,6 @@ static const cyaml_schema_field_t EnvValEntry[] = {
 };
 
 static const cyaml_schema_value_t ExportSchema= {CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT,redConfExportPathT, ExportEntry),};
-static const cyaml_schema_value_t RelocsSchema= {CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT,redConfRelocationT, RelocationEntry),};
 static const cyaml_schema_value_t EnvVarSchema= {CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT,redConfVarT, EnvValEntry),};
 
 /****************************************************************************************************************
@@ -269,7 +261,6 @@ static const cyaml_schema_value_t EnvVarSchema= {CYAML_VALUE_MAPPING(CYAML_FLAG_
 static const cyaml_schema_field_t TopLevelSchema[] = {
     CYAML_FIELD_MAPPING_PTR("headers", CYFLAG_PTR|CYFLAG_CASE, redConfigT , headers, HeaderSchema),
     CYAML_FIELD_SEQUENCE("exports", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , exports, &ExportSchema, 0, CYAML_UNLIMITED),
-    CYAML_FIELD_SEQUENCE("relocations", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , relocations, &RelocsSchema, 0, CYAML_UNLIMITED),
     CYAML_FIELD_SEQUENCE("environ", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , confvar, &EnvVarSchema, 0, CYAML_UNLIMITED),
     CYAML_FIELD_MAPPING_PTR("config", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , conftag, ConfigSchema),
     CYAML_FIELD_END
