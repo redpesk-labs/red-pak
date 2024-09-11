@@ -16,78 +16,74 @@
 *
 */
 
-#include <getopt.h>
+#include "cmd-config.h"
+
 #include <string.h>
 
-#include "mergeconfig.h"
+#include "options.h"
+
+#include "../redconf.h"
 
 /***************************************
- **** Mergeconfig sub command ****
+ **** Config sub command ****
  **************************************/
 
 typedef struct {
     const char *redpath;
-    int expand;
-} rMergeconfigConfigT;
+} rConfigConfigT;
 
 static rOption cOptions[] = {
     {{"redpath", required_argument, 0,  'r' }, "path to the node"},
-    {{"expand",  no_argument,       0,  'e' }, "expand variables in config file"},
     {{"help"   , no_argument      , 0,  'h' }, "print this help"},
     {{0, 0, 0}, 0}
 };
 
-static const char SHORTOPTS[] = "r:he";
-
-static void mergeconfigUsage(const rOption *options) {
-    printf("Usage command mergeconfig: redconf [OPTION]... [config]... [OPTION]...\n"
+static void configUsage(const rOption *options, int exitcode) {
+    printf("Usage: redconf config [OPTION]... [redpath]\n"
     );
     usageOptions(options);
-    exit(1);
+    exit(exitcode);
 }
 
-static int parseMergeconfigArgs(int argc, char * argv[], rMergeconfigConfigT *cConfig) {
+static int parseConfigArgs(int argc, char * argv[], rConfigConfigT *cConfig) {
     struct option longOpts[sizeof(struct option) * sizeof(cOptions) / sizeof(rOption)];
     setLongOptions(cOptions, longOpts);
 
     while(1) {
-           int option = getopt_long(argc, argv, SHORTOPTS, longOpts, NULL);
+        int option = getopt_long(argc, argv, "r:h", longOpts, NULL);
         if(option == -1)
             break;
 
         // option return short option even when long option is given
-          switch (option) {
+        switch (option) {
             case 'r':
                 cConfig->redpath = optarg;
                 break;
-            case 'e':
-                cConfig->expand = 1;
-                break;
             case 'h':
-                mergeconfigUsage(cOptions);
-            case '?': //error getopt_long
-                goto OnErrorExit;
+                configUsage(cOptions, 0);
+                break;
             default:
-                mergeconfigUsage(cOptions);
+                configUsage(cOptions, 1);
                 break;
         }
     }
+    if (optind + 1 == argc)
+        cConfig->redpath = argv[optind];
+    if (!cConfig->redpath)
+        cConfig->redpath = ".";
     return 0;
-OnErrorExit:
-    return -1;
 }
 
-/* main mergeconfig sub command */
-int mergeconfig(const rGlobalConfigT * gConfig) {
+/* main config sub command */
+int config(const rGlobalConfigT * gConfig) {
     int err;
 
-    rMergeconfigConfigT cConfig = {0};
-    if(parseMergeconfigArgs(gConfig->sub_argc, gConfig->sub_argv, &cConfig) < 0)
+    rConfigConfigT cConfig = {0};
+    if(parseConfigArgs(gConfig->sub_argc, gConfig->sub_argv, &cConfig) < 0)
         goto OnErrorExit;
 
-
-    RedLog(REDLOG_DEBUG, "[mergeconfig]: redpath=%s", cConfig.redpath);
-    err = RedDumpNodePathMerge(cConfig.redpath, cConfig.expand);
+    RedLog(REDLOG_DEBUG, "[config]: redpath=%s", cConfig.redpath);
+    err = RedDumpFamilyNodePath(cConfig.redpath, gConfig->yaml, gConfig->verbose);
 
     return err;
 OnErrorExit:

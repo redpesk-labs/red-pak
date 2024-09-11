@@ -1,6 +1,5 @@
 /*
 * Copyright (C) 2022 "IoT.bzh"
-* Author Clément Bénier <clement.benier@iot.bzh>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,11 +15,16 @@
 *
 */
 
-#ifndef _REDCONF_TREE_INCLUDE_
-#define _REDCONF_TREE_INCLUDE_
+#ifndef _REDCONFCMD_GLOBCONF_INCLUDE_
+#define _REDCONFCMD_GLOBCONF_INCLUDE_
 
-#include "utils.h"
-
-int tree(const rGlobalConfigT *gConfig);
+typedef struct {
+    const char* cmd;
+    int sub_argc;
+    char **sub_argv;
+    int verbose;
+    int yaml;
+    int logyaml;
+} rGlobalConfigT;
 
 #endif

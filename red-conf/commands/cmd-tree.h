@@ -1,5 +1,6 @@
 /*
 * Copyright (C) 2022 "IoT.bzh"
+* Author Clément Bénier <clement.benier@iot.bzh>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -15,27 +16,11 @@
 *
 */
 
-#ifndef _REDCONFCMD_UTILS_INCLUDE_
-#define _REDCONFCMD_UTILS_INCLUDE_
+#ifndef _REDCONF_TREE_INCLUDE_
+#define _REDCONF_TREE_INCLUDE_
 
-#include <getopt.h>
-#include "../redconf.h"
+#include "globconf.h"
 
-typedef struct {
-    const char* cmd;
-    int sub_argc;
-    char **sub_argv;
-    int verbose;
-    int yaml;
-    int logyaml;
-} rGlobalConfigT;
-
-typedef struct {
-    struct option option;
-    const char *desc;
-} rOption;
-
-void usageOptions(const rOption *options);
-void setLongOptions(const rOption opts[], struct option *longOpts);
+int tree(const rGlobalConfigT *gConfig);
 
 #endif

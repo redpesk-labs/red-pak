@@ -16,11 +16,13 @@
 *
 */
 
-#ifndef _REDCONFCMD_CONFIG_INCLUDE_
-#define _REDCONFCMD_CONFIG_INCLUDE_
 
-#include "utils.h"
+#ifndef _REDCONFCMD_MERGECONFIG_INCLUDE_
+#define _REDCONFCMD_MERGECONFIG_INCLUDE_
 
-int config(const rGlobalConfigT * gConfig);
+#include "globconf.h"
+
+int mergeconfig(const rGlobalConfigT * gConfig);
+
 
 #endif

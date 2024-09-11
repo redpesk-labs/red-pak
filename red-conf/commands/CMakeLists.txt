@@ -16,11 +16,11 @@
 
 add_executable(
     redconf
-        config.c
-        mergeconfig.c
+        cmd-config.c
+        cmd-mergeconfig.c
+        cmd-tree.c
+        options.c
         redconf.c
-        tree.c
-        utils.c
 )
 
 target_include_directories(

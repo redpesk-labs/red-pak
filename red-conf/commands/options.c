@@ -15,9 +15,10 @@
 *
 */
 
-#include <string.h>
+#include "options.h"
 
-#include "utils.h"
+#include <string.h>
+#include <stdio.h>
 
 void usageOptions(const rOption *options) {
     printf("\nOptions:\n");

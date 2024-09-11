@@ -16,10 +16,13 @@
 *
 */
 
-#include <getopt.h>
+#include "cmd-tree.h"
+
 #include <string.h>
 
-#include "tree.h"
+#include "options.h"
+
+#include "../redconf.h"
 
 /***************************************
  **** Tree sub command ****
@@ -35,11 +38,11 @@ static const rOption treeOptions[] = {
     {{0, 0, 0}, 0}
 };
 
-static void treeUsage(const rOption *options) {
-    printf("Usage command tree: redconf [OPTION]... [tree]... [OPTION]...\n"
+static void treeUsage(const rOption *options, int exitcode) {
+    printf("Usage: redconf tree [OPTION]... [redpath]\n"
     );
     usageOptions(options);
-    exit(1);
+    exit(exitcode);
 }
 
 static int parseTreeArgs(int argc, char * argv[], rTreeConfigT *treeConfig) {
@@ -57,17 +60,18 @@ static int parseTreeArgs(int argc, char * argv[], rTreeConfigT *treeConfig) {
                 treeConfig->redroot = optarg;
                 break;
             case 'h':
-                treeUsage(treeOptions);
-            case '?': //error getopt_long
-                goto OnErrorExit;
+                treeUsage(treeOptions, 0);
+                break;
             default:
-                treeUsage(treeOptions);
+                treeUsage(treeOptions, 1);
                 break;
         }
     }
+    if (optind + 1 == argc)
+        treeConfig->redroot = argv[optind];
+    if (!treeConfig->redroot)
+        treeConfig->redroot = ".";
     return 0;
-OnErrorExit:
-    return -1;
 }
 
 /* main tree sub command */

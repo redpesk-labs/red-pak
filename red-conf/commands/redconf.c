@@ -16,14 +16,18 @@
 */
 
 #include <string.h>
-
-#include "utils.h"
-#include "../redconf-defaults.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 //include subcommands
-#include "config.h"
-#include "mergeconfig.h"
-#include "tree.h"
+#include "cmd-config.h"
+#include "cmd-mergeconfig.h"
+#include "cmd-tree.h"
+#include "options.h"
+
+#include "../redconf.h"
+#include "../redconf-defaults.h"
+
 
 typedef struct {
     const char *cmd_name;
@@ -53,10 +57,14 @@ static const rOption globalOptions[] = {
     {{0, 0, 0}, 0}
 };
 
-static const char SHORTOPTS[] = "v::hyl:";
+/*
+* short options with a + at beginning for preserving order
+* and stopping at the first argument not being an option
+*/
+static const char SHORTOPTS[] = "+v::hyl:";
 
-static void globalUsage(const rOption *options) {
-    printf("Usage: redconf [OPTION]... [COMMAND]... [OPTION]...\n"
+static void globalUsage(const rOption *options, int exitcode) {
+    printf("Usage: redconf [OPTION]... COMMAND [OPTION]...\n"
            "redpak configuration commands\n"
            "\n"
            "Commands:\n"
@@ -65,37 +73,23 @@ static void globalUsage(const rOption *options) {
         printf("\t%-13s\t%s\n", cmd->cmd_name, cmd->desc);
 
     usageOptions(options);
-    exit(1);
+    exit(exitcode);
 }
 
 static int globalParseArgs(int argc, char *argv[], rGlobalConfigT *gConfig) {
-    int index = 1;
     int option;
+    RedLogLevelE verbosity;
     struct option longOpts [sizeof(struct option) * sizeof(globalOptions) / sizeof(globalOptions[0])];
+
     setLongOptions(globalOptions, longOpts);
-
+    optind = 1;
     while(1) {
-        //is it a command ?: if break
-        printf("index(=%d) < argc(=%d) && argv[index][0](=%s)\n", index, argc, argv[index]);
-        if (index < argc && argv[index][0] != '-') {
-            gConfig->cmd = argv[index];
-            gConfig->sub_argc = argc - index;
-            gConfig->sub_argv = argv + index;
-
-            //reset optind
-            optind = 1;
-            break;
-        }
-
         option = getopt_long(argc, argv, SHORTOPTS, longOpts, NULL);
-        if (option == -1) //no more options
-            break;
 
-        RedLogLevelE verbosity = REDLOG_INFO;
-        printf("OPTOPT %c\n", optopt);
         // option return short option even when long option is given
         switch (option) {
             case 'v':
+                verbosity = REDLOG_INFO;
                 if(optarg) {
                     size_t length = strlen(optarg);
                     if (!strncmp(optarg, "v", length)) {
@@ -118,49 +112,42 @@ static int globalParseArgs(int argc, char *argv[], rGlobalConfigT *gConfig) {
                 setLogYaml(atoi(optarg));
                 break;
 
-            case 'h': default:
-                globalUsage(globalOptions);
+            case 'h':
+                globalUsage(globalOptions, 0);
                 break;
-            case '?':
-                goto OnErrorExit;
-        }
 
-        //get next index command line
-        index = optind;
-        printf("OPTIND %d argv[optind]=%s optarg=%s\n", optind, argv[optind], optarg);
-        if(optarg) {
-            //if next arg = argv[optind] then bypass
-            if(!strncmp(optarg, argv[optind], strlen(optarg)))
-                index++;
-        }
+            default:
+                globalUsage(globalOptions, 1);
+                break;
 
+            case -1: //no more options
+                gConfig->cmd = argv[optind];
+                gConfig->sub_argc = argc - optind;
+                gConfig->sub_argv = argv + optind;
+                optind = 1;
+                return 0;
+        }
     }
-    return 0;
-
-OnErrorExit:
-    return -1;
 }
 
 int main (int argc, char *argv[]) {
     rGlobalConfigT gConfig = {0};
     if (globalParseArgs(argc, argv, &gConfig) < 0)
-        goto OnErrorExit;
+        return 1;
 
     //if no sub command issue
     if(!gConfig.cmd) {
         RedLog(REDLOG_ERROR, "No command options found\n");
-        globalUsage(globalOptions);
-        goto OnErrorExit;
     }
-
-    //call right sub command
-    for(const rCommandT *cmd = commands; cmd->cmd_name; cmd++) {
-        if (!strcmp(cmd->cmd_name, gConfig.cmd)) {
-            return cmd->cmd(&gConfig);
+    else {
+        //call right sub command
+        for(const rCommandT *cmd = commands; cmd->cmd_name; cmd++) {
+            if (!strcmp(cmd->cmd_name, gConfig.cmd)) {
+                return cmd->cmd(&gConfig);
+            }
         }
+        RedLog(REDLOG_ERROR, "Invalid command %s\n", gConfig.cmd);
     }
-
-OnErrorExit:
-    return -1;
-
+    globalUsage(globalOptions, 1);
+    return 1;
 }

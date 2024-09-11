@@ -1,6 +1,5 @@
 /*
 * Copyright (C) 2022 "IoT.bzh"
-* Author Clément Bénier <clement.benier@iot.bzh>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,13 +15,17 @@
 *
 */
 
+#ifndef _REDCONFCMD_OPTIONS_INCLUDE_
+#define _REDCONFCMD_OPTIONS_INCLUDE_
 
-#ifndef _REDCONFCMD_MERGECONFIG_INCLUDE_
-#define _REDCONFCMD_MERGECONFIG_INCLUDE_
+#include <getopt.h>
 
-#include "utils.h"
+typedef struct {
+    struct option option;
+    const char *desc;
+} rOption;
 
-int mergeconfig(const rGlobalConfigT * gConfig);
-
+void usageOptions(const rOption *options);
+void setLongOptions(const rOption opts[], struct option *longOpts);
 
 #endif
