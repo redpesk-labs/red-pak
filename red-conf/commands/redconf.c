@@ -143,7 +143,7 @@ int main (int argc, char *argv[]) {
         //call right sub command
         for(const rCommandT *cmd = commands; cmd->cmd_name; cmd++) {
             if (!strcmp(cmd->cmd_name, gConfig.cmd)) {
-                return cmd->cmd(&gConfig);
+                return cmd->cmd(&gConfig) < 0;
             }
         }
         RedLog(REDLOG_ERROR, "Invalid command %s\n", gConfig.cmd);

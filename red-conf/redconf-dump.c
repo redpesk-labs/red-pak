@@ -131,7 +131,6 @@ void RedDumpFamilyNodeHandle(redNodeT *familyTree, int yaml) {
 
 // Dump a redpath family node tree
 int RedDumpFamilyNodePath (const char* redpath, int yaml, int verbose) {
-    int ret = 0;
     redNodeT *familyTree = RedNodesScan(redpath, 0, verbose);
     if (!familyTree) {
         RedLog(REDLOG_ERROR, "Fail to scandown redpath family tree path=%s\n", redpath);
