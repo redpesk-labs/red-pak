@@ -346,19 +346,23 @@ OnErrorExit:
 }
 
 void freeRedLeaf(redNodeT *redleaf) {
-    redNodeT *node = redleaf;
-    while (node->parent != NULL)
-        node = node->parent;
-    freeRedRoot(node);
+    if (redleaf) {
+        redNodeT *node = redleaf;
+        while (node->parent != NULL)
+            node = node->parent;
+        freeRedRoot(node);
+    }
 }
 
 void freeRedRoot(redNodeT *redroot) {
-    redNodeT *child = redroot->first_child, *nextchild;
-    while(child) {
-        nextchild = child->next_sibling;
-        freeRedRoot(child);
-        child = nextchild;
+    if (redroot) {
+        redNodeT *child = redroot->first_child, *nextchild;
+        while(child) {
+            nextchild = child->next_sibling;
+            freeRedRoot(child);
+            child = nextchild;
+        }
+        freeNode(redroot);
     }
-    freeNode(redroot);
 }
 
