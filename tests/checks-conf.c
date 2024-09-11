@@ -124,6 +124,7 @@ START_TEST(test_defaults_env)
         ck_assert_str_eq(buffer, for_env[i].value ?: "#undef");
     }
 }
+END_TEST
 
 /* TEST expansion of process system variables
    $UID, $GID, $PID */
@@ -148,6 +149,7 @@ START_TEST(test_defaults_int)
     sprintf(intval, "%lu", (unsigned long)getpid());
     ck_assert_str_eq(buffer, intval);
 }
+END_TEST
 
 
 /* TEST expansion of node related variables
@@ -202,6 +204,7 @@ START_TEST(test_defaults_for_node)
         ck_assert_str_eq(buffer, for_node[i].value);
     }
 }
+END_TEST
 
 /* TEST expansion of $UUID */
 START_TEST(test_defaults_uuid)
@@ -227,6 +230,7 @@ START_TEST(test_defaults_uuid)
     012345678901234567890123456789012345
 */
 }
+END_TEST
 
 /* TEST expansion of $TODAY */
 START_TEST(test_defaults_today)
@@ -249,6 +253,8 @@ START_TEST(test_defaults_today)
     ck_assert_int_ge(M, 0);
     ck_assert_int_le(M, 59);
 }
+END_TEST
+
 #endif
 /*********************************************************************/
 /*********************************************************************
@@ -380,6 +386,8 @@ START_TEST(test_expand)
     test_exp_def(KEY_LEAF_INFO, EXP_NODE_INFO, &node);
     test_exp_def(KEY_CONF, EXP_CONF, &node);
 }
+END_TEST
+
 
 START_TEST(test_expand_cmd)
 {
@@ -418,6 +426,7 @@ START_TEST(test_expand_cmd)
     ck_assert_str_eq(output, pattern);
     free(output);
 }
+END_TEST
 
 /*********************************************************************/
 /*********************************************************************
@@ -489,6 +498,7 @@ START_TEST(test_config)
     do_test_config(TEMPLATES_DIR "/" "main-system.yaml", 1);
     do_test_config(TEMPLATES_DIR "/" "i-should-not-exists.yaml", 0);
 }
+END_TEST
 
 typedef struct { const char *str; unsigned val; } assoc_string_uint_t;
 
@@ -563,6 +573,7 @@ START_TEST(test_schema_string)
             ck_assert_str_eq(iter->str, fun(iter->val));
     }
 }
+END_TEST
 
 static const char *statusFlagStrings[] = {
     [RED_STATUS_DISABLE] = "Disable",
@@ -636,6 +647,7 @@ START_TEST(test_status)
     do_test_status(0, "/a/path", NULL, "123456789", NULL);
     do_test_status(0, "/a/path", NULL, "alpha", statusFlagStrings[RED_STATUS_ENABLE]);
 }
+END_TEST
 
 /*********************************************************************/
 /*********************************************************************
@@ -757,6 +769,7 @@ START_TEST(test_factory)
         }
     }
 }
+END_TEST
 
 /*********************************************************************/
 
