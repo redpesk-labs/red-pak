@@ -142,31 +142,30 @@ int RedDumpFamilyNodePath (const char* redpath, int yaml, int verbose) {
     return 0;
 }
 
-int RedDumpRoot(redNodeT *node, const char* prefix, int verbose, int last) {
-    const char *s_last = "\U00002514";
-    const char *s_transition = "\U0000251C";
-    const char *s_transition_prefix = "\U00002502";
-    const char *s_link = "\U00002500\U00002500";
+void RedDumpRoot(redNodeT *node, const char* prefix, int verbose, int last) {
+    static const char s_last[]   = "└──"; // "\U00002514\U00002500\U00002500";
+    static const char s_middle[] = "├──"; // "\U0000251C\U00002500\U00002500";
+    static const char s_next[]   = "│";   // "\U00002502";
     char subprefix[RED_MAXPATHLEN];
     char node_basename[RED_MAXPATHLEN + 1];
 
     strncpy(node_basename, node->redpath, sizeof(node_basename) - 1);
     node_basename[sizeof(node_basename) - 1] = 0;
-    //subprefix for children depends on last
-    (void)snprintf(subprefix, sizeof(subprefix), "  %s%s ", prefix, last ? " " : s_transition_prefix);
 
     //print current node
-    printf( "%s  %s%s %s  (%s)\n", prefix, last ? s_last : s_transition, s_link, basename(node_basename), node->config->headers->alias);
+    printf( "%s  %s %s  (%s)\n", prefix, last ? s_last : s_middle, basename(node_basename), node->config->headers->alias);
 
     //handle children
-    for (redNodeT *child = node->first_child; child ; child = child->next_sibling) {
-        if(RedDumpRoot(child, subprefix, verbose, child->next_sibling ? 0 : 1))
-            goto OnErrorExit;
-    }
+    redNodeT *child = node->first_child;
+    if (child) {
+        //subprefix for children depends on last
+        (void)snprintf(subprefix, sizeof(subprefix), "  %s%s ", prefix, last ? " " : s_next);
 
-    return 0;
-OnErrorExit:
-    return 1;
+        do {
+            RedDumpRoot(child, subprefix, verbose, child->next_sibling ? 0 : 1);
+            child = child->next_sibling;
+        } while(child);
+    }
 }
 
 int RedDumpTree(const char *redrootpath, int verbose) {
@@ -206,8 +205,7 @@ static int DumpGetConfig(redConfigT *config) {
         return -1;
     }
     printf("----CONFIG %ld\n",len);
-    for (int i = 0; i < len; i++)
-        printf("%c", output[i]);
+    printf("%.*s", (int)len, output);
     printf("----\n");
     free(output);
     return 0;
