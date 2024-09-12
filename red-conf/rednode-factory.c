@@ -291,8 +291,11 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
         if (status == RednodeFactory_OK)
             status = store_config(rfab, get_admin_conf_subpath(), admin_config, update);
         if (status == RednodeFactory_OK) {
+            char realpath[rfab->node_length];
+            memcpy(realpath, rfab->path, rfab->node_length - 1);
+            realpath[rfab->node_length - 1] = 0;
+            redstatus.realpath = realpath;
             redstatus.state = RED_STATUS_ENABLE;
-            redstatus.realpath = rfab->path;
             redstatus.timestamp = timestamp;
             redstatus.info = info;
             strcpy(stpcpy(info, "created by red-manager the "), today);
