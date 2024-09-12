@@ -17,6 +17,7 @@
 add_executable(
     redconf
         cmd-config.c
+        cmd-create.c
         cmd-mergeconfig.c
         cmd-tree.c
         options.c

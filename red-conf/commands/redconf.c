@@ -23,6 +23,7 @@
 #include "cmd-config.h"
 #include "cmd-mergeconfig.h"
 #include "cmd-tree.h"
+#include "cmd-create.h"
 #include "options.h"
 
 #include "../redconf.h"
@@ -44,6 +45,7 @@ static const rCommandT commands[] = {
     {"config", config, "get configuration files from nodes"},
     {"mergeconfig", mergeconfig, "get merge configuration files from nodes"},
     {"tree", tree, "get tree nodes"},
+    {"create", create, "creates a node"},
     {0, 0, 0}
 };
 
