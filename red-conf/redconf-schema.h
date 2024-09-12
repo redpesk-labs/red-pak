@@ -23,53 +23,95 @@
 #include <stddef.h>
 
 // ---- RedConfig Schema for ${redpath}/etc/redpack.yaml ----
+
+    /** structure for header of a rednode config */
     typedef struct {
+        /** alias */
         const char *alias;
+        /** name (an UUID) */
         const char *name;
+        /** some info about the node */
         const char *info;
-    } redConfHeaderT;
+    }
+    redConfHeaderT;
 
+    /** structure for memory's cgroup settings */
     typedef struct {
+        /** setting for cgroup-v2 memory.max */
         const char *max;
+        /** setting for cgroup-v2 memory.high */
         const char *high;
+        /** setting for cgroup-v2 memory.min */
         const char *min;
+        /** setting for cgroup-v2 memory.low */
         const char *low;
+        /** setting for cgroup-v2 memory.oom.group */
         const char *oom_group;
+        /** setting for cgroup-v2 memory.swap.high */
         const char *swap_high;
+        /** setting for cgroup-v2 memory.swap.max */
         const char *swap_max;
-    } redMemT;
+    }
+    redMemT;
 
+    /** structure for CPU's cgroup settings */
     typedef struct {
+        /** setting for cgroup-v2 cpu.weight */
         const char *weight;
+        /** setting for cgroup-v2 cpu.max */
         const char *max;
+        /** setting for cgroup-v2 cpu.weight.nice */
         const char *weight_nice;
-    } redCpuT;
+    }
+    redCpuT;
 
+    /** structure for IO's cgroup settings */
     typedef struct {
+        /** setting for cgroup-v2 io.cost.qos */
         const char *cost_qos;
+        /** setting for cgroup-v2 io.cost.model */
         const char *cost_model;
+        /** setting for cgroup-v2 io.weight */
         const char *weight;
+        /** setting for cgroup-v2 io.max */
         const char *max;
-    } redIoT;
+    }
+    redIoT;
 
+    /** structure for PID's cgroup settings */
     typedef struct {
+        /** setting for cgroup-v2 pids.max */
         const char *max;
-    } redPidsT;
+    }
+    redPidsT;
 
+    /** structure for cpuset's cgroup settings */
     typedef struct {
+        /** setting for cgroup-v2 cpuset.cpus */
         const char *cpus;
+        /** setting for cgroup-v2 cpuset.mems */
         const char *mems;
+        /** setting for cgroup-v2 cpuset.cpus.partition */
         const char *cpus_partition;
-    } redCpusetT;
+    }
+    redCpusetT;
 
+    /** structure for holding cgroup settings */
     typedef struct {
+        /** settings for cpuset */
         redCpusetT *cpuset;
+        /** settings for memory */
         redMemT *mem;
+        /** settings for CPU */
         redCpuT *cpu;
+        /** settings for IO */
         redIoT *io;
+        /** settings for PID */
         redPidsT *pids;
-    } redConfCgroupT;
+    }
+    redConfCgroupT;
 
+    /** definition of export modes as OR-able bits */
     typedef enum {
         RED_EXPORT_PRIVATE              = 1 << 0,
         RED_EXPORT_RESTRICTED           = 1 << 1,
@@ -87,100 +129,182 @@
         RED_EXPORT_MQUEFS               = 1 << 13,
         RED_EXPORT_PROCFS               = 1 << 14,
         RED_EXPORT_LOCK                 = 1 << 15,
-    } redExportFlagE;
+    }
+    redExportFlagE;
 
+    /** definition for querying if a mode is private */
     static const unsigned int RED_EXPORT_PRIVATES = RED_EXPORT_PRIVATE | RED_EXPORT_PRIVATE_FILE;
+
+    /** definition for querying if a mode is for file */
     static const unsigned int RED_EXPORT_FILES = RED_EXPORT_PRIVATE_FILE | RED_EXPORT_RESTRICTED_FILE | RED_EXPORT_PUBLIC_FILE;
+
+    /** definition for querying if a mode is for directory */
     static const unsigned int RED_EXPORT_DIRS = RED_EXPORT_PRIVATE | RED_EXPORT_RESTRICTED | RED_EXPORT_PUBLIC;
 
-    typedef enum {
-        RED_CONFVAR_DEFLT=0,
-        RED_CONFVAR_STATIC,
-        RED_CONFVAR_EXECFD,
-        RED_CONFVAR_REMOVE,
-    } redVarEnvFlagE;
-
+    /** structure describing a mounting */
     typedef struct {
+        /** destination path */
         const char *mount;
+        /** source path */
         const char *path;
+        /** mode */
         redExportFlagE mode;
+        /** documentation text */
         const char *info;
+        /** warning text to be prompted when overwrite is attempted */
         const char *warn;
-    } redConfExportPathT;
+    }
+    redConfExportPathT;
 
-    typedef struct {
-        redVarEnvFlagE mode;
-        const char *key;
-        const char *value;
-        const char *info;
-        const char *warn;
-    } redConfVarT;
-
+    /** definition of variable modes */
     typedef enum {
-       RED_CONF_OPT_UNSET = 0,
-       RED_CONF_OPT_DISABLED = 1,
-       RED_CONF_OPT_ENABLED = 2,
-    } redConfOptFlagE;
+        /** default mode: set value after expansion */
+        RED_CONFVAR_DEFLT=0,
+        /** static mode: set value without expansion */
+        RED_CONFVAR_STATIC,
+        /** exec mode: set value with result of execution of value as shell command */
+        RED_CONFVAR_EXECFD,
+        /** remove mode: unset the variable */
+        RED_CONFVAR_REMOVE,
+    }
+    redVarEnvFlagE;
 
+    /** structure describing a varible setting */
     typedef struct {
-        const char *cap;
-        int add;
+        /** setting mode of the variable */
+        redVarEnvFlagE mode;
+        /** name of the variable */
+        const char *key;
+        /** value of the variable, meaning depends of the mode */
+        const char *value;
+        /** some info about the variable */
         const char *info;
+        /** warning message on overwriting */
         const char *warn;
-    } redConfCapT;
+    }
+    redConfVarT;
 
+    /** tri-state value of options */
+    typedef enum {
+        /** the option is not set */
+        RED_CONF_OPT_UNSET = 0,
+        /** the option is set to disabled */
+        RED_CONF_OPT_DISABLED = 1,
+        /** the option is set to enabled */
+        RED_CONF_OPT_ENABLED = 2,
+    }
+    redConfOptFlagE;
+
+    /** structure describing capability setting */
     typedef struct {
+        /** name of the capability */
+        const char *cap;
+        /** value */
+        int add;
+        /** some info about the  capability */
+        const char *info;
+        /** warning message on overwriting */
+        const char *warn;
+    }
+    redConfCapT;
+
+    /** structure holding config values */
+    typedef struct {
+        /** directory of RPMs */
         const char *rpmdir;
+        /** directory of DNF database */
         const char *persistdir;
+        /** directory of DNF cache */
         const char *cachedir;
+        /** value of PATH */
         const char *path;
+        /** value of LD_LIBRARY_PATH */
         const char *ldpath;
+        /** hostname value, implies unshare UTS*/
         const char *hostname;
+        /** umask for file items creation */
         const char *umask;
+        /** directory of execution */
         const char *chdir;
+        /** root cgroup for the node */
         const char *cgrouproot;
+        /** require check of repository GPG key */
         unsigned int gpgcheck;
+        /** remove safety checks on date and inode */
         unsigned int unsafe;
+        /** set user as virtual root */
         unsigned int maprootuser;
+        /** should terminate when parent die? */
         redConfOptFlagE diewithparent;
+        /** should create a new session? */
         redConfOptFlagE newsession;
+        /** if enabled/disabled share/unshare every namespace by default */
         redConfOptFlagE share_all;
+        /** if enabled/disabled share/unshare user namespace */
         redConfOptFlagE share_user;
+        /** if enabled/disabled share/unshare cgroup namespace */
         redConfOptFlagE share_cgroup;
+        /** if enabled/disabled share/unshare ipc namespace */
         redConfOptFlagE share_ipc;
+        /** if enabled/disabled share/unshare pid namespace */
         redConfOptFlagE share_pid;
+        /** if enabled/disabled share/unshare net namespace */
         redConfOptFlagE share_net;
+        /** if enabled/disabled share/unshare time namespace */
         redConfOptFlagE share_time;
+        /** configuration of cgroups */
         redConfCgroupT *cgroups;
+        /** array of capability configurations */
         redConfCapT *capabilities;
-        int capabilities_count;
+        int capabilities_count; /**< count of capability configurations */
+        /**  */
         int verbose;
-    } redConfTagT;
+    }
+    redConfTagT;
 
+    /** structure recording full node config */
     typedef struct {
+        /** for section headers */
         redConfHeaderT *headers;
+        /** for section config */
         redConfTagT  *conftag;
+        /** for section environ */
         redConfVarT *confvar;
-        unsigned int confvar_count;
+        unsigned int confvar_count; /**< count of var entries in confvar */
+        /** for section exports */
         redConfExportPathT *exports;
-        unsigned int exports_count;
-    } redConfigT;
+        unsigned int exports_count; /**< count of export entries in exports */
+    }
+    redConfigT;
 
 
 // ---- RedStatus Schema for ${redpath}/.status
-    typedef enum {
-        RED_STATUS_DISABLE=0,
-        RED_STATUS_ENABLE,
-        RED_STATUS_UNKNOWN,
-        RED_STATUS_ERROR,
-    } redStatusFlagE;
 
+    /** status of a node */
+    typedef enum {
+        /** node is disabled */
+        RED_STATUS_DISABLE=0,
+        /** node is enabled */
+        RED_STATUS_ENABLE,
+        /** node has unknown status */
+        RED_STATUS_UNKNOWN,
+        /** node has error */
+        RED_STATUS_ERROR,
+    }
+    redStatusFlagE;
+
+    /** Structure recording status of a node */
     typedef struct {
+        /** state of the node */
         redStatusFlagE state;
+        /** path of the node */
         const char *realpath;
+        /** timestamp of the status in milliseconds since epoch */
         unsigned long timestamp;
+        /** some info about the state of the node */
         const char *info;
-    } redStatusT;
+    }
+    redStatusT;
 
 /** Load the configuration file of path 'filepath'
  *

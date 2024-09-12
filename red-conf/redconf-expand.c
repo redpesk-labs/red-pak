@@ -421,7 +421,7 @@ char *RedNodeStringExpand (const redNodeT *node, const char* inputS) {
     char outputS[MAX_CYAML_FORMAT_STR];
 
     if (defaultsExpand(node, inputS, &idxOut, outputS, MAX_CYAML_FORMAT_STR, 1))
-        return NULL;;
+        return NULL;
 
     return strndup(outputS, (size_t)idxOut);
 }
