@@ -134,6 +134,13 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
     return 0;
 }
 
+/* this function tests if sharing of (item) is disabled  */
+static bool unshares(redConfOptFlagE target, redConfOptFlagE all)
+{
+    return target == RED_CONF_OPT_DISABLED
+                || (target == RED_CONF_OPT_UNSET && all != RED_CONF_OPT_ENABLED);
+}
+
 int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     if (cliarg->verbose)
         SetLogLevel(REDLOG_DEBUG);
@@ -207,39 +214,28 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
         argval[argcount++]= RedNodeStringExpand (redtree, mergedConfTags->chdir);
     }
 
-    if (!(mergedConfTags->share_all & RED_CONF_OPT_ENABLED)) {
-        argval[argcount++]="--unshare-all";
-    }
-
-    if (!(mergedConfTags->share_user & RED_CONF_OPT_ENABLED)) {
+    if (unshares(mergedConfTags->share_user, mergedConfTags->share_all))
         argval[argcount++]="--unshare-user";
-    }
 
-    if (!(mergedConfTags->share_cgroup & RED_CONF_OPT_ENABLED)) {
+    if (unshares(mergedConfTags->share_cgroup, mergedConfTags->share_all))
         argval[argcount++]="--unshare-cgroup";
-    }
 
-    if (!(mergedConfTags->share_ipc & RED_CONF_OPT_ENABLED)) {
+    if (unshares(mergedConfTags->share_ipc, mergedConfTags->share_all))
         argval[argcount++]="--unshare-ipc";
-    }
 
-    if (!(mergedConfTags->share_pid & RED_CONF_OPT_ENABLED)) {
+    if (unshares(mergedConfTags->share_pid, mergedConfTags->share_all))
         argval[argcount++]="--unshare-pid";
-    }
 
-    if (mergedConfTags->share_net & RED_CONF_OPT_ENABLED) {
+    if (unshares(mergedConfTags->share_net, mergedConfTags->share_all))
         argval[argcount++]="--share-net";
-    } else {
+    else
         argval[argcount++]="--unshare-net";
-    }
 
-    if (mergedConfTags->diewithparent & RED_CONF_OPT_ENABLED) {
+    if (mergedConfTags->diewithparent & RED_CONF_OPT_ENABLED)
         argval[argcount++]="--die-with-parent";
-    }
 
-    if (mergedConfTags->newsession & RED_CONF_OPT_ENABLED) {
+    if (mergedConfTags->newsession & RED_CONF_OPT_ENABLED)
         argval[argcount++]="--new-session";
-    }
 
     // add remaining program to execute arguments
     for (int idx=0; idx < subargc; idx++ ) {
@@ -277,7 +273,7 @@ int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, ch
         close(pipe_fd[0]);
 
         /* unshare time ns */
-        if (!(mergedConfTags->share_time & RED_CONF_OPT_ENABLED))
+        if (unshares(mergedConfTags->share_time, mergedConfTags->share_all))
             unshare(CLONE_NEWTIME);
 
         argval[argcount]=NULL;
