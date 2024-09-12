@@ -60,10 +60,10 @@ static int parseConfigArgs(int argc, char * argv[], rConfigConfigT *cConfig) {
                 cConfig->redpath = optarg;
                 break;
             case 'h':
-                configUsage(cOptions, 0);
+                configUsage(cOptions, EXIT_SUCCESS);
                 break;
             default:
-                configUsage(cOptions, 1);
+                configUsage(cOptions, EXIT_FAILURE);
                 break;
         }
     }
@@ -76,16 +76,10 @@ static int parseConfigArgs(int argc, char * argv[], rConfigConfigT *cConfig) {
 
 /* main config sub command */
 int config(const rGlobalConfigT * gConfig) {
-    int err;
-
     rConfigConfigT cConfig = {0};
     if(parseConfigArgs(gConfig->sub_argc, gConfig->sub_argv, &cConfig) < 0)
-        goto OnErrorExit;
+        return -1;
 
     RedLog(REDLOG_DEBUG, "[config]: redpath=%s", cConfig.redpath);
-    err = RedDumpFamilyNodePath(cConfig.redpath, gConfig->yaml, gConfig->verbose);
-
-    return err;
-OnErrorExit:
-    return -1;
+    return RedDumpFamilyNodePath(cConfig.redpath, gConfig->yaml, gConfig->verbose);
 }

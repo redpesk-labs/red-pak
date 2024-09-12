@@ -60,10 +60,10 @@ static int parseTreeArgs(int argc, char * argv[], rTreeConfigT *treeConfig) {
                 treeConfig->redroot = optarg;
                 break;
             case 'h':
-                treeUsage(treeOptions, 0);
+                treeUsage(treeOptions, EXIT_SUCCESS);
                 break;
             default:
-                treeUsage(treeOptions, 1);
+                treeUsage(treeOptions, EXIT_FAILURE);
                 break;
         }
     }
@@ -76,17 +76,12 @@ static int parseTreeArgs(int argc, char * argv[], rTreeConfigT *treeConfig) {
 
 /* main tree sub command */
 int tree(const rGlobalConfigT *gConfig) {
-    int err;
 
     rTreeConfigT treeConfig = {0};
     if(parseTreeArgs(gConfig->sub_argc, gConfig->sub_argv, &treeConfig) < 0)
-        goto OnErrorExit;
+        return -1;
 
     RedLog(REDLOG_DEBUG, "option: redroot=%s", treeConfig.redroot);
 
-    err = RedDumpTree(treeConfig.redroot, 0);
-
-    return err;
-OnErrorExit:
-    return -1;
+    return RedDumpTree(treeConfig.redroot, 0);
 }

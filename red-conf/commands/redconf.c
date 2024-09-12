@@ -115,11 +115,11 @@ static int globalParseArgs(int argc, char *argv[], rGlobalConfigT *gConfig) {
                 break;
 
             case 'h':
-                globalUsage(globalOptions, 0);
+                globalUsage(globalOptions, EXIT_SUCCESS);
                 break;
 
             default:
-                globalUsage(globalOptions, 1);
+                globalUsage(globalOptions, EXIT_FAILURE);
                 break;
 
             case -1: //no more options
@@ -145,11 +145,11 @@ int main (int argc, char *argv[]) {
         //call right sub command
         for(const rCommandT *cmd = commands; cmd->cmd_name; cmd++) {
             if (!strcmp(cmd->cmd_name, gConfig.cmd)) {
-                return cmd->cmd(&gConfig) < 0;
+                return cmd->cmd(&gConfig) < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
             }
         }
         RedLog(REDLOG_ERROR, "Invalid command %s\n", gConfig.cmd);
     }
-    globalUsage(globalOptions, 1);
-    return 1;
+    globalUsage(globalOptions, EXIT_FAILURE);
+    return EXIT_FAILURE;
 }

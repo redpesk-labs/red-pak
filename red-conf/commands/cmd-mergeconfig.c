@@ -67,10 +67,10 @@ static int parseMergeconfigArgs(int argc, char * argv[], rMergeconfigConfigT *cC
                 cConfig->expand = 1;
                 break;
             case 'h':
-                mergeconfigUsage(cOptions, 0);
+                mergeconfigUsage(cOptions, EXIT_SUCCESS);
                 break;
             default:
-                mergeconfigUsage(cOptions, 1);
+                mergeconfigUsage(cOptions, EXIT_FAILURE);
                 break;
         }
     }
@@ -83,17 +83,12 @@ static int parseMergeconfigArgs(int argc, char * argv[], rMergeconfigConfigT *cC
 
 /* main mergeconfig sub command */
 int mergeconfig(const rGlobalConfigT * gConfig) {
-    int err;
 
     rMergeconfigConfigT cConfig = {0};
     if(parseMergeconfigArgs(gConfig->sub_argc, gConfig->sub_argv, &cConfig) < 0)
-        goto OnErrorExit;
+        return -1;
 
 
     RedLog(REDLOG_DEBUG, "[mergeconfig]: redpath=%s", cConfig.redpath);
-    err = RedDumpNodePathMerge(cConfig.redpath, cConfig.expand);
-
-    return err;
-OnErrorExit:
-    return -1;
+    return RedDumpNodePathMerge(cConfig.redpath, cConfig.expand);
 }
