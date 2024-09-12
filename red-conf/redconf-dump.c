@@ -134,14 +134,12 @@ int RedDumpFamilyNodePath (const char* redpath, int yaml, int verbose) {
     redNodeT *familyTree = RedNodesScan(redpath, 0, verbose);
     if (!familyTree) {
         RedLog(REDLOG_ERROR, "Fail to scandown redpath family tree path=%s\n", redpath);
-        goto OnErrorExit;
+        return -1;
     }
 
     RedDumpFamilyNodeHandle (familyTree, yaml);
-
-OnErrorExit:
     freeRedLeaf(familyTree);
-    return ret;
+    return 0;
 }
 
 int RedDumpRoot(redNodeT *node, const char* prefix, int verbose, int last) {
@@ -172,29 +170,22 @@ OnErrorExit:
 }
 
 int RedDumpTree(const char *redrootpath, int verbose) {
-    int ret = 0;
+    char node_dirname[RED_MAXPATHLEN + 1];
+
     redNodeT *redroot = RedNodesDownScan(redrootpath, 0, verbose);
     if (!redroot) {
         RedLog(REDLOG_ERROR, "Fail to scandown redroot family tree path=%s\n", redroot);
-        ret = 1;
-        goto OnErrorExit;
+        return -1;
     }
 
-    char node_dirname[RED_MAXPATHLEN + 1];
     strncpy(node_dirname, redroot->redpath, sizeof(node_dirname) - 1);
     node_dirname[sizeof(node_dirname) - 1] = 0;
 
     //print root path
     printf("%s\n", dirname(node_dirname));
-    if(RedDumpRoot(redroot, "", verbose, 1)) {
-        goto OnErrorFreeExit;
-        ret = 2;
-    }
-
-OnErrorFreeExit:
+    RedDumpRoot(redroot, "", verbose, 1);
     freeRedRoot(redroot);
-OnErrorExit:
-    return ret;
+    return 0;
 }
 
 /*
@@ -212,7 +203,7 @@ static int DumpGetConfig(redConfigT *config) {
     int ret = RedGetConfigYAML(&output, &len, config);
     if (ret){
         free(output);
-        return ret;
+        return -1;
     }
     printf("----CONFIG %ld\n",len);
     for (int i = 0; i < len; i++)
@@ -224,11 +215,11 @@ static int DumpGetConfig(redConfigT *config) {
 
 int RedDumpNodePathMerge(const char* redpath, int expand) {
     redNodeT *redroot, *mergedNode, *node;
-    int ret = 0;
+    int ret;
 
     node = RedNodesScan(redpath, 0, 0);
     if(!node)
-        goto OnErrorExit;
+        return -1;
 
     //looking for redroot
     for (redroot = node; redroot->parent; redroot = redroot->parent);
@@ -241,7 +232,4 @@ int RedDumpNodePathMerge(const char* redpath, int expand) {
     freeRedLeaf(node);
 
     return ret;
-
-OnErrorExit:
-    return 1;
 }
