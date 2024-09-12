@@ -16,6 +16,7 @@
 - @REDPAK.IDX: **This index**
 - @REDPAK.OVE: **Overview of RED-PAK**
 - @REDPAK.HRQ: **High level requirements**
+- @REDPAK.DSG: **RED-PAK Software Design**
 - @REDPAK.CNF: **Rednode configuration**
 - @REDPAK.RVH: **Review history**
 
