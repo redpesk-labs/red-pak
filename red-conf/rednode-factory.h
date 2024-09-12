@@ -64,9 +64,9 @@ struct rednode_factory_param_s
 /* structure for creating red node */
 struct rednode_factory_s
 {
-    /* length of rootdir in path (including trailing slash) */
+    /* length of rootdir in path (including enforced trailing slash) */
     size_t root_length;
-    /* length of nodedir in path (including trailing slash and root dir) */
+    /* length of nodedir in path (including enforced trailing slash and root dir) */
     size_t node_length;
     /* the path */
     char path[REDNODE_FACTORY_PATH_LEN];

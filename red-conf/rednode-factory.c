@@ -397,7 +397,15 @@ int rednode_factory_create_node(
     if (rfab->root_length == 0)
         return -RednodeFactory_Error_Cleared;
 
-    /* get offset of the parent */
+    /*
+    * get offset of the parent
+    * example:
+    *     root_length   off   node_length
+    *               V    V    V
+    *    /some/root/with/node/
+    *                    <-->
+    *                    len
+    */
     len = rfab->node_length;
     while (len && rfab->path[len - 1] == '/')
         len--;
@@ -441,16 +449,16 @@ int rednode_factory_create_node(
 
     /* check parent exists */
     status = RednodeFactory_OK;
-    if(is_system && off + 1 >= rfab->root_length) {
-        rfab->path[off] = 0;
+    if(is_system && off >= rfab->root_length) {
+        rfab->path[off - 1] = 0;
         rc = access(rfab->path, F_OK);
-        rfab->path[off] = '/';
+        rfab->path[off - 1] = '/';
         if (rc != 0) {
             rednode_factory_t sysfab;
             rednode_factory_param_t syspar;
             sysfab.root_length = rfab->root_length;
-            sysfab.node_length = off + 1;
-            memcpy(sysfab.path, rfab->path, off + 1);
+            sysfab.node_length = off;
+            memcpy(sysfab.path, rfab->path, off);
             syspar.alias = "system";
             syspar.normal = deftemplate_System;
             syspar.admin = deftemplate_SystemAdmin;

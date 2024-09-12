@@ -31,6 +31,7 @@
 #include "redconf-expand.h"
 #include "redconf-node.h"
 #include "redconf-merge.h"
+#include "rednode-factory.h"
 
 
 #endif // _RED_LIB_INCLUDE_
