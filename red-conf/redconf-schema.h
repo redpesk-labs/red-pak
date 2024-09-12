@@ -140,9 +140,7 @@
         const char *chdir;
         const char *cgrouproot;
         unsigned int gpgcheck;
-        unsigned int inherit;
         unsigned int unsafe;
-        unsigned int maxage;
         unsigned int maprootuser;
         redConfOptFlagE diewithparent;
         redConfOptFlagE newsession;

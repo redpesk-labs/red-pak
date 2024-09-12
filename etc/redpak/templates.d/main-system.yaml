@@ -39,7 +39,6 @@ config:
     cachedir: $NODE_PATH/var/cache/dnf
     gpgcheck: true
     verbose: 0
-    maxage: 0
     umask: 027
 
     # value are cumulated (coreos 1st, then node family from the yougest to the oldest)
