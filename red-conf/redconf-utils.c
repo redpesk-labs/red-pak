@@ -192,9 +192,17 @@ int make_directories(const char *path, size_t base, size_t length, mode_t mode, 
     /* check arguments */
     if (idx > 0 && path[idx - 1] == '/')
         idx--;
-    if (idx > length || (idx < length && path[idx] != '/')) {
+    if (length == 0 || idx > length || (idx < length && path[idx] != '/')) {
         errno = EINVAL;
         return -1;
+    }
+    if (idx == 0) {
+        if (path[0] == '/')
+            idx = 1;
+        else {
+            while (idx < length && path[idx] != '/')
+                idx++;
+        }
     }
     /* check base */
     memcpy(tmp, path, idx);
