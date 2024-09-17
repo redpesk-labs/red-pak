@@ -25,14 +25,6 @@
 #include <sys/stat.h>
 
 
-#ifndef BWRAP_CMD_PATH
-#define BWRAP_CMD_PATH "/usr/bin/bwrap"
-#endif
-
-#ifndef BWRAP_MAXVAR_LEN
-#define BWRAP_MAXVAR_LEN 1024
-#endif
-
 typedef struct {
     const char*redpath;
     const char*cnfpath;

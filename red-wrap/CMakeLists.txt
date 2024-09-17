@@ -20,9 +20,8 @@ add_library(
     libredwrap
         SHARED
             cgroups.c
-            commands/redwrap-cmd.c
             redwrap-conf.c
-            redwrap-main.c
+            redwrap-exec.c
             redwrap-node.c
 )
 
@@ -56,9 +55,8 @@ install(
 
 install(
     FILES 
-            commands/redwrap-cmd.h
             redwrap.h
-            redwrap-main.h
+            redwrap-exec.h
         DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
 )
 

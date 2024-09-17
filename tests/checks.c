@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 
 #include "redconf-utils.h"
-#include "redwrap-main.h"
+#include "redwrap-exec.h"
 #include "redconf-merge.h"
 
 #ifndef REDMICRODNF_CMD
@@ -116,7 +116,7 @@ static int testcmd(const char *redpath, char *cmd) {
     };
 
     printf("\n[TESTCMD] = redpath=%s cmd=%s", redpath, cmd);
-    return redwrapMain(cmd, &cliargs, subargc, subargv);
+    return redwrapExecBwrap(cmd, &cliargs, subargc, subargv);
 }
 
 static void test_simple_cmds(const char *redpath) {

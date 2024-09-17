@@ -37,9 +37,13 @@
 #include <linux/sched.h>
 #include <sys/syscall.h>
 
-#include "redwrap-main.h"
+#include "redwrap-exec.h"
 #include "redconf-defaults.h"
 #include "cgroups.h"
+
+#ifndef BWRAP_MAXVAR_LEN
+#define BWRAP_MAXVAR_LEN 1024
+#endif
 
 static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, dataNodeT *dataNode, int *argcount, const char *argval[]) {
     int error = RwrapParseNode (node, cliarg, lastleaf, argval, argcount);
@@ -141,7 +145,7 @@ static bool unshares(redConfOptFlagE target, redConfOptFlagE all)
                 || (target == RED_CONF_OPT_UNSET && all != RED_CONF_OPT_ENABLED);
 }
 
-int redwrapMain (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
+int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     if (cliarg->verbose)
         SetLogLevel(REDLOG_DEBUG);
 

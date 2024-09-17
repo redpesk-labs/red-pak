@@ -26,9 +26,13 @@
 #include <unistd.h>
 #include <string.h>
 
-
-
 #include "redwrap.h"
+
+
+#ifndef BWRAP_CMD_PATH
+#define BWRAP_CMD_PATH "/usr/bin/bwrap"
+#endif
+
 
 static struct option options[] = {
     {"verbose", optional_argument, 0,  'v' },

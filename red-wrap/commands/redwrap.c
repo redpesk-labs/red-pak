@@ -17,7 +17,23 @@
  * limitations under the License.
  */
 
-#include "redwrap-cmd.h"
+#include "redwrap-exec.h"
+
+static const char * redwrap_usage = "usage: redwrap --redpath=... [--verbose] [--force] [--admin[=.../main-admin.yaml]] [--rmain=.../main.yaml] -- program args\n";
+
+/**
+ * @brief execute redwrap command according arguments
+ * 
+ * @param argc Number of arguments
+ * @param argv Array of arguments
+ * @return 0 in success negative otherwise
+ */
+int redwrap_cmd_exec(int argc, char *argv[]) {
+    rWrapConfigT *cliarg = RwrapParseArgs (argc, argv, redwrap_usage);
+    if (!cliarg)
+        return -1;
+    return redwrapExecBwrap(argv[0], cliarg, argc - cliarg->index, argv + cliarg->index);
+}
 
 int main (int argc, char *argv[]) {
     if (redwrap_cmd_exec(argc, argv) < 0)
