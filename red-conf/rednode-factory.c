@@ -384,6 +384,53 @@ int rednode_factory_set_node(rednode_factory_t *rfab, const char *path)
     return rednode_factory_set_node_len(rfab, path, strlen(path));
 }
 
+/**
+* Check if the file DIRPATH/STATUS exists
+*
+* @param dirpath the path of the directory to be checked
+* @param length the length of path in bytes
+*
+* @return true if existing or else false
+*/
+static bool is_rednode(const char *dirpath, size_t length)
+{
+    const char *stssubpath = get_status_subpath();
+    size_t sz = strlen(stssubpath);
+    char buffer[length + sz + 2];
+    memcpy(buffer, dirpath, length);
+    buffer[length] = '/';
+    memcpy(&buffer[length + 1], stssubpath, sz);
+    buffer[length + sz + 1] = 0;
+    return access(buffer, F_OK) == 0;
+}
+
+/**
+* Create a system node based on settings of the factory.
+*
+* @param rfab the factory context
+* @param node_length the length of the node to create
+*
+* @return @ref RednodeFactory_OK on success or a negative value on error.
+* When error is returned, the absolute value returned is one of these:
+*   - @ref RednodeFactory_Error_Cleared when root wasn't already set
+*   - @ref RednodeFactory_Error_Allocation when memory got exhausted
+*   - @ref RednodeFactory_Error_Default_Alias_Empty when params->alias == NULL
+*     and when the node path is the same that the root path
+*   - @ref RednodeFactory_Error_FmtDate abnormal error when computing date
+*/
+static int create_system_node(rednode_factory_t *rfab, size_t node_length)
+{
+        rednode_factory_t sysfab;
+        rednode_factory_param_t syspar;
+        sysfab.root_length = rfab->root_length;
+        sysfab.node_length = node_length;
+        memcpy(sysfab.path, rfab->path, node_length);
+        syspar.alias = "system";
+        syspar.normal = deftemplate_System;
+        syspar.admin = deftemplate_SystemAdmin;
+        return rednode_factory_create_node(&sysfab, &syspar, false, false);
+}
+
 /* see rednode-factory.h */
 int rednode_factory_create_node(
             rednode_factory_t *rfab,
@@ -391,7 +438,7 @@ int rednode_factory_create_node(
             bool update,
             bool is_system
 ) {
-    int status, rc;
+    int status;
     size_t off, len;
     rednode_factory_param_t locparam;
     char *localias = NULL;
@@ -450,24 +497,10 @@ int rednode_factory_create_node(
     else
         locparam.admin = deftemplate_AdminNoSystemNode;
 
-    /* check parent exists */
+    /* check if required parent system exists */
     status = RednodeFactory_OK;
-    if(is_system && off >= rfab->root_length) {
-        rfab->path[off - 1] = 0;
-        rc = access(rfab->path, F_OK);
-        rfab->path[off - 1] = '/';
-        if (rc != 0) {
-            rednode_factory_t sysfab;
-            rednode_factory_param_t syspar;
-            sysfab.root_length = rfab->root_length;
-            sysfab.node_length = off;
-            memcpy(sysfab.path, rfab->path, off);
-            syspar.alias = "system";
-            syspar.normal = deftemplate_System;
-            syspar.admin = deftemplate_SystemAdmin;
-            status = rednode_factory_create_node(&sysfab, &syspar, false, true);
-        }
-    }
+    if(is_system && off >= rfab->root_length && !is_rednode(rfab->path, off - 1))
+        status = create_system_node(rfab, off);
 
     /* create the node now */
     if (status == RednodeFactory_OK)
