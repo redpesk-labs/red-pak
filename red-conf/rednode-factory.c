@@ -436,7 +436,7 @@ int rednode_factory_create_node(
             rednode_factory_t *rfab,
             const rednode_factory_param_t *params,
             bool update,
-            bool is_system
+            bool insert_system_node
 ) {
     int status;
     size_t off, len;
@@ -484,7 +484,7 @@ int rednode_factory_create_node(
     /* get template */
     if (params->normal && params->normal[0])
         locparam.normal = params->normal;
-    else if (is_system)
+    else if (insert_system_node)
         locparam.normal = deftemplate_Default;
     else
         locparam.normal = deftemplate_DefaultNoSystemNode;
@@ -492,14 +492,14 @@ int rednode_factory_create_node(
     /* get admin template */
     if (params->admin && params->admin[0])
         locparam.admin = params->admin;
-    else if (is_system)
+    else if (insert_system_node)
         locparam.admin = deftemplate_Admin;
     else
         locparam.admin = deftemplate_AdminNoSystemNode;
 
     /* check if required parent system exists */
     status = RednodeFactory_OK;
-    if(is_system && off >= rfab->root_length && !is_rednode(rfab->path, off - 1))
+    if(insert_system_node && off >= rfab->root_length && !is_rednode(rfab->path, off - 1))
         status = create_system_node(rfab, off);
 
     /* create the node now */

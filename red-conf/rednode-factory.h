@@ -161,7 +161,7 @@ extern int rednode_factory_set_node(rednode_factory_t *rfab, const char *path);
  * @param rfab   pointer to the rednode factory to use
  * @param params parameters of creation (can be NULL for defaults)
  * @param update boolean indicating if update is possible (false enforce creation)
- * @param is_system boolean indicating if it is a system node
+ * @param insert_system_node boolean indicating if a system node must be add if missing
  * 
  * @return @ref RednodeFactory_OK on success or a negative value on error.
  * When error is returned, the absolute value returned is one of these:
@@ -175,6 +175,6 @@ extern int rednode_factory_create_node(
                 rednode_factory_t *rfab,
                 const rednode_factory_param_t *params,
                 bool update,
-                bool is_system);
+                bool insert_system_node);
 
 #endif /* _REDNODE_FACTORY_INCLUDED_ */
