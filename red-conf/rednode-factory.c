@@ -127,9 +127,11 @@ static int create_parent_directories(char path[REDNODE_FACTORY_PATH_LEN], size_t
 }
 
 /* load the template configuration in redconfig */
-static int load_template_config(const char *tmplname, redConfigT **redconfig)
+static int load_template_config(const char *tmplname, bool admin, redConfigT **redconfig)
 {
     static const char YAMLEXT[] = ".yaml";
+    static const char STDEXT[] = "-normal.yaml";
+    static const char ADMEXT[] = "-admin.yaml";
 
     char path[REDNODE_FACTORY_PATH_LEN];
     size_t sztmplname, sz = 0;
@@ -155,20 +157,41 @@ static int load_template_config(const char *tmplname, redConfigT **redconfig)
     memcpy(&path[sz], tmplname, sztmplname + 1); /*also copy the zero*/
     sz += sztmplname;
 
-    /* append '.yaml' suffix when needed */
-    if (access(path, F_OK) != 0
-     && sz >= (sizeof YAMLEXT - 1)
-     && strcmp(YAMLEXT, &path[sz - (sizeof YAMLEXT - 1)])) {
+    /* check existing file */
+    if (access(path, F_OK) != 0) {
+        /* check if path suffixed by .yaml */
+        if (sz < (sizeof YAMLEXT - 1) || 0 == strcmp(YAMLEXT, &path[sz - (sizeof YAMLEXT - 1)]))
+            /* yes suffixed by .yaml, stop here */
+            return -RednodeFactory_Error_No_Config;
+
+        /* try to add the suffix .yaml and check existing */
         if (sz + sizeof YAMLEXT >= sizeof path)
             return -RednodeFactory_Error_Config_Too_Long;
         memcpy(&path[sz], YAMLEXT, sizeof YAMLEXT); /*also copy the zero*/
-        sz += sizeof YAMLEXT - 1;
+        if (access(path, F_OK) == 0)
+            /* okay, existing */
+            sz += sizeof YAMLEXT - 1;
+        else if (admin) {
+            /* not existing, try with the suffix -admin.yaml */
+            if (sz + sizeof ADMEXT >= sizeof path)
+                return -RednodeFactory_Error_Config_Too_Long;
+            memcpy(&path[sz], ADMEXT, sizeof ADMEXT); /*also copy the zero*/
+            if (access(path, F_OK) != 0)
+                return -RednodeFactory_Error_No_Config;
+            sz += sizeof ADMEXT - 1;
+        }
+        else {
+            /* not existing, try with the suffix -normal.yaml */
+            if (sz + sizeof STDEXT >= sizeof path)
+                return -RednodeFactory_Error_Config_Too_Long;
+            memcpy(&path[sz], STDEXT, sizeof STDEXT); /*also copy the zero*/
+            if (access(path, F_OK) != 0)
+                return -RednodeFactory_Error_No_Config;
+            sz += sizeof STDEXT - 1;
+        }
     }
 
-    /* check existing file */
-    if (access(path, F_OK))
-        return -RednodeFactory_Error_No_Config;
-
+    /* load rednode configuration */
     *redconfig = RedLoadConfig(path, 0);
     if (*redconfig == NULL)
         return -RednodeFactory_Error_Loading_Config;
@@ -251,7 +274,7 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
     getFreshUUID(uuid, sizeof uuid);
 
     /* load the config */
-    status = load_template_config(params->normal, &normal_config);
+    status = load_template_config(params->normal, false, &normal_config);
     if (status != RednodeFactory_OK)
         return status;
 
@@ -281,7 +304,7 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
     }
 
     /* load the administrative config */
-    status = load_template_config(params->admin, &admin_config);
+    status = load_template_config(params->admin, true, &admin_config);
     if (status == RednodeFactory_OK) {
 
         /* create the directories */
