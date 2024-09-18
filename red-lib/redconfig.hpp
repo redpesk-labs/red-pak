@@ -33,8 +33,6 @@ extern "C" {
 #include "redconf.h"
 }
 
-#include "rednodefactory.hpp"
-
 namespace redlib {
 
 class RedNode
@@ -52,14 +50,6 @@ public:
     const std::filesystem::path &getRedpath() const { return redpath; }
 
 private:
-    /* default template names */
-    inline static const std::string tmplDefaultNoSystemNode = "full-normal";
-    inline static const std::string tmplAdminNoSystemNode = "full-admin";
-    inline static const std::string tmplSystem = "root-normal";
-    inline static const std::string tmplSystemAdmin = "root-admin";
-    inline static const std::string tmplDefault = "leaf-normal";
-    inline static const std::string tmplAdmin = "leaf-admin";
-
     /* node members */
     bool strictmode{false};
     bool isnode{false};
@@ -102,6 +92,14 @@ private:
     void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);
 
 #if !LEGACY_REDCONFIG
+    /* default template names */
+    inline static const std::string tmplDefaultNoSystemNode = "full-normal";
+    inline static const std::string tmplAdminNoSystemNode = "full-admin";
+    inline static const std::string tmplSystem = "root-normal";
+    inline static const std::string tmplSystemAdmin = "root-admin";
+    inline static const std::string tmplDefault = "leaf-normal";
+    inline static const std::string tmplAdmin = "leaf-admin";
+
     static void get_uuid(char * uuid_str);
     void saveto(bool update, const std::string & var_rednode, std::unique_ptr<redConfigT> & redconfig);
     static void date(char *today, std::size_t size);

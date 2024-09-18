@@ -36,6 +36,9 @@ extern "C" {
 #include <solv/repo_rpmdb.h>
 }
 
+#if !LEGACY_REDCONFIG
+#include "rednodefactory.hpp"
+#endif
 
 namespace redlib {
 
@@ -285,6 +288,7 @@ std::vector<libdnf::base::TransactionPackage> RedNode::checkTransactionPkgs(libd
 }
 
 #if !LEGACY_REDCONFIG
+
 void RedNode::createRedNode(const std::string & alias, bool update, const std::string & tmplate, const std::string & tmplateadmin, bool no_system_node) {
     isRedpath(true);
     RedNodeFactory factory;
@@ -309,6 +313,7 @@ void RedNode::createRedNode(const std::string & alias, bool update, const std::s
                     fmt::arg("tmplate", tmplate),
                     fmt::arg("tmplateadmin", tmplateadmin)));
 }
+
 #else
 void RedNode::get_uuid(char * uuid_str) {
     uuid_t u;
