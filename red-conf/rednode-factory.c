@@ -127,7 +127,7 @@ static int create_parent_directories(char path[REDNODE_FACTORY_PATH_LEN], size_t
 }
 
 /* load the template configuration in redconfig */
-static int load_template_config(const char *tmplname, bool admin, redConfigT **redconfig)
+static int load_template_config(const rednode_factory_param_t *params, bool admin, redConfigT **redconfig)
 {
     static const char YAMLEXT[] = ".yaml";
     static const char STDEXT[] = "-normal.yaml";
@@ -135,10 +135,14 @@ static int load_template_config(const char *tmplname, bool admin, redConfigT **r
 
     char path[REDNODE_FACTORY_PATH_LEN];
     size_t sztmplname, sz = 0;
+    const char *tmplname;
+
+    /* get the name */
+    tmplname = admin ? params->admin : params->normal;
 
     /* prepend default directory if needed */
     if (strchr(tmplname, '/') == NULL) {
-        const char *tmpldir = get_template_dir();
+        const char *tmpldir = params->templatedir;
         sz = strlen(tmpldir);
         while (sz > 0 && tmpldir[sz - 1] == '/')
             sz--;
@@ -274,7 +278,7 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
     getFreshUUID(uuid, sizeof uuid);
 
     /* load the config */
-    status = load_template_config(params->normal, false, &normal_config);
+    status = load_template_config(params, false, &normal_config);
     if (status != RednodeFactory_OK)
         return status;
 
@@ -304,7 +308,7 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
     }
 
     /* load the administrative config */
-    status = load_template_config(params->admin, true, &admin_config);
+    status = load_template_config(params, true, &admin_config);
     if (status == RednodeFactory_OK) {
 
         /* create the directories */
@@ -451,7 +455,8 @@ static int create_system_node(rednode_factory_t *rfab, size_t node_length)
         syspar.alias = "system";
         syspar.normal = deftemplate_System;
         syspar.admin = deftemplate_SystemAdmin;
-        return rednode_factory_create_node(&sysfab, &syspar, false, false);
+        syspar.templatedir = get_template_dir();
+        return create_node(&sysfab, &syspar, false);
 }
 
 /* see rednode-factory.h */
@@ -487,9 +492,15 @@ int rednode_factory_create_node(
 
     /* setup default params if none was given */
     if (params == NULL) {
-        locparam.alias = locparam.normal = locparam.admin = NULL;
+        locparam.alias = locparam.normal = locparam.admin = locparam.templatedir = NULL;
         params = &locparam;
     }
+
+    /* template directory */
+    if (params->templatedir != NULL)
+        locparam.templatedir = params->templatedir;
+    else
+        locparam.templatedir = get_template_dir();
 
     /* get alias */
     if (params->alias && params->alias[0])

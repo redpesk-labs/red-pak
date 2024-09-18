@@ -59,6 +59,8 @@ struct rednode_factory_param_s
     const char *normal;
     /* admin config name or path to an admin configuration file (NULL for default name) */
     const char *admin;
+    /* template directory to be used (NULL for default name) */
+    const char *templatedir;
 };
 
 /* structure for creating red node */

@@ -206,6 +206,7 @@ bool RedNodeFactory::process(const char *alias, const char *tmplate, const char 
     params.alias = alias;
     params.normal = tmplate;
     params.admin = tmplateadmin;
+    params.templatedir = NULL;
     return x_(rednode_factory_create_node(&factory_, &params, update, !no_system_node));
 }
 

@@ -722,7 +722,6 @@ START_TEST(test_factory)
 
     init_bigname();
     write_tempfile("$%!?##\n", 0);
-    setenv("REDNODE_TEMPLATE_DIR", TEMPLATES_DIR, 1);
     for (; iter != end ; iter++) {
         if (iter->root != NULL || iter->node != NULL) {
             rednode_factory_t factory;
@@ -750,6 +749,7 @@ START_TEST(test_factory)
                     params.alias = iter->alias;
                     params.normal = iter->normal;
                     params.admin = iter->admin;
+                    params.templatedir = TEMPLATES_DIR;
                     ppar = &params;
                 }
                 rfs = rednode_factory_create_node(&factory, ppar, iter->update, iter->issys);

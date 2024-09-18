@@ -135,6 +135,7 @@ static int perform_create_node(const rCreateConfigT *createConfig)
     params.alias = createConfig->alias;
     params.normal = createConfig->normal;
     params.admin = createConfig->admin;
+    params.templatedir = createConfig->tempdir;
 
     RedLog(REDLOG_INFO, "[create]: redroot=%s", createConfig->redroot);
     RedLog(REDLOG_INFO, "[create]: redpath=%s", createConfig->redpath);
@@ -158,8 +159,6 @@ static int perform_create_node(const rCreateConfigT *createConfig)
     RedLog(REDLOG_DEBUG, "[create]: rfab.root=%.*s", rfab.root_length, rfab.path);
     RedLog(REDLOG_DEBUG, "[create]: rfab.node=%.*s", rfab.node_length, rfab.path);
 
-    if (createConfig->tempdir != NULL)
-        setenv("REDNODE_TEMPLATE_DIR", createConfig->tempdir, 1);
     rc = rednode_factory_create_node(&rfab, &params, createConfig->updt, createConfig->issys);
     if (rc != RednodeFactory_OK) {
         RedLog(REDLOG_ERROR, "creation of node failed: %s", rednode_factory_error_text(-rc));
