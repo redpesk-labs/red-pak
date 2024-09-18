@@ -489,13 +489,12 @@ static void do_test_config(const char *path, int exists)
 /* Test that RedLoadConfig works by loading the current templates */
 START_TEST(test_config)
 {
-    do_test_config(TEMPLATES_DIR "/" "admin-no-system-node.yaml", 1);
-    do_test_config(TEMPLATES_DIR "/" "admin.yaml", 1);
-    do_test_config(TEMPLATES_DIR "/" "default-no-system-node.yaml", 1);
-    do_test_config(TEMPLATES_DIR "/" "default.yaml", 1);
-    do_test_config(TEMPLATES_DIR "/" "main-admin-system.yaml", 1);
-    do_test_config(TEMPLATES_DIR "/" "main-system.yaml", 1);
-    do_test_config(TEMPLATES_DIR "/" "main-system.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "full-normal.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "full-admin.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "root-normal.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "root-admin.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "leaf-normal.yaml", 1);
+    do_test_config(TEMPLATES_DIR "/" "leaf-admin.yaml", 1);
     do_test_config(TEMPLATES_DIR "/" "i-should-not-exists.yaml", 0);
 }
 END_TEST

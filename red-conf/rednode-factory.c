@@ -43,12 +43,16 @@
 #define REDNODE_STATUS_SUBPATH       REDNODE_STATUS
 
 /* default template names */
-static const char deftemplate_Default[]             = "default";
-static const char deftemplate_Admin[]               = "admin";
-static const char deftemplate_DefaultNoSystemNode[] = "default-no-system-node";
-static const char deftemplate_AdminNoSystemNode[]   = "admin-no-system-node";
-static const char deftemplate_System[]              = "main-system";
-static const char deftemplate_SystemAdmin[]         = "main-admin-system";
+static const char deftemplate_full_normal[]  = "full-normal";
+static const char deftemplate_full_admin[]   = "full-admin";
+static const char deftemplate_root_normal[]  = "root-normal";
+static const char deftemplate_root_admin[]   = "root-admin";
+static const char deftemplate_leaf_normal[]  = "leaf-normal";
+static const char deftemplate_leaf_admin[]   = "leaf-admin";
+
+static const char YAMLEXT[] = ".yaml";
+static const char STDEXT[] = "-normal.yaml";
+static const char ADMEXT[] = "-admin.yaml";
 
 /* error code */
 static const char *text_of_errors[] =
@@ -129,10 +133,6 @@ static int create_parent_directories(char path[REDNODE_FACTORY_PATH_LEN], size_t
 /* load the template configuration in redconfig */
 static int load_template_config(const rednode_factory_param_t *params, bool admin, redConfigT **redconfig)
 {
-    static const char YAMLEXT[] = ".yaml";
-    static const char STDEXT[] = "-normal.yaml";
-    static const char ADMEXT[] = "-admin.yaml";
-
     char path[REDNODE_FACTORY_PATH_LEN];
     size_t sztmplname, sz = 0;
     const char *tmplname;
@@ -453,8 +453,8 @@ static int create_system_node(rednode_factory_t *rfab, size_t node_length)
         sysfab.node_length = node_length;
         memcpy(sysfab.path, rfab->path, node_length);
         syspar.alias = "system";
-        syspar.normal = deftemplate_System;
-        syspar.admin = deftemplate_SystemAdmin;
+        syspar.normal = deftemplate_root_normal;
+        syspar.admin = deftemplate_root_admin;
         syspar.templatedir = get_template_dir();
         return create_node(&sysfab, &syspar, false);
 }
@@ -519,17 +519,17 @@ int rednode_factory_create_node(
     if (params->normal && params->normal[0])
         locparam.normal = params->normal;
     else if (insert_system_node)
-        locparam.normal = deftemplate_Default;
+        locparam.normal = deftemplate_leaf_normal;
     else
-        locparam.normal = deftemplate_DefaultNoSystemNode;
+        locparam.normal = deftemplate_full_normal;
 
     /* get admin template */
     if (params->admin && params->admin[0])
         locparam.admin = params->admin;
     else if (insert_system_node)
-        locparam.admin = deftemplate_Admin;
+        locparam.admin = deftemplate_leaf_admin;
     else
-        locparam.admin = deftemplate_AdminNoSystemNode;
+        locparam.admin = deftemplate_full_admin;
 
     /* check if required parent system exists */
     status = RednodeFactory_OK;

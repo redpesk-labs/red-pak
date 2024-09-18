@@ -53,12 +53,12 @@ public:
 
 private:
     /* default template names */
-    inline static const std::string tmplDefault = "default";
-    inline static const std::string tmplAdmin = "admin";
-    inline static const std::string tmplDefaultNoSystemNode = "default-no-system-node";
-    inline static const std::string tmplAdminNoSystemNode = "admin-no-system-node";
-    inline static const std::string tmplSystem = "main-system";
-    inline static const std::string tmplSystemAdmin = "main-admin-system";
+    inline static const std::string tmplDefaultNoSystemNode = "full-normal";
+    inline static const std::string tmplAdminNoSystemNode = "full-admin";
+    inline static const std::string tmplSystem = "root-normal";
+    inline static const std::string tmplSystemAdmin = "root-admin";
+    inline static const std::string tmplDefault = "leaf-normal";
+    inline static const std::string tmplAdmin = "leaf-admin";
 
     /* node members */
     bool strictmode{false};
