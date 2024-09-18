@@ -53,8 +53,9 @@ static const char short_options[] = "a::b:c:fm:p:r:uv::?";
 
 rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
     rWrapConfigT *config = calloc (1, sizeof(rWrapConfigT));
-     int index;
+    int index;
 
+    optind = 0; /* force reset */
     for (int done=0; !done;) {
         int option = getopt_long(argc, argv, short_options, options, &index);
 

@@ -84,7 +84,7 @@ static int globalParseArgs(int argc, char *argv[], rGlobalConfigT *gConfig) {
     struct option longOpts [sizeof(struct option) * sizeof(globalOptions) / sizeof(globalOptions[0])];
 
     setLongOptions(globalOptions, longOpts);
-    optind = 1;
+    optind = 0; /* force reset */
     while(1) {
         option = getopt_long(argc, argv, SHORTOPTS, longOpts, NULL);
 
@@ -126,7 +126,7 @@ static int globalParseArgs(int argc, char *argv[], rGlobalConfigT *gConfig) {
                 gConfig->cmd = argv[optind];
                 gConfig->sub_argc = argc - optind;
                 gConfig->sub_argv = argv + optind;
-                optind = 1;
+                optind = 0; /* force reset */
                 return 0;
         }
     }
