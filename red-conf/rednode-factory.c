@@ -64,10 +64,10 @@ static const char *text_of_errors[] =
     [RednodeFactory_Error_Default_Alias_Empty]  = "Default alias is empty",
     [RednodeFactory_Error_MkDir]                = "Can't create directories",
     [RednodeFactory_Error_FmtDate]              = "Can't create current date",
-    [RednodeFactory_Error_TemplateDir_Too_Long] = "Template path too long",
-    [RednodeFactory_Error_Config_Too_Long]      = "Config path too long",
-    [RednodeFactory_Error_No_Config]            = "No configuration file",
-    [RednodeFactory_Error_Loading_Config]       = "Can't load configuration file",
+    [RednodeFactory_Error_TemplateDir_Too_Long] = "Template directory path too long",
+    [RednodeFactory_Error_Template_Too_Long]    = "Config path too long",
+    [RednodeFactory_Error_No_Template]          = "No configuration file",
+    [RednodeFactory_Error_Loading_Template]     = "Can't load configuration file",
     [RednodeFactory_Error_Config_Exist]         = "Configuration file already existing",
     [RednodeFactory_Error_Storing_Config]       = "Can't store configuration file",
     [RednodeFactory_Error_Path_Too_Long]        = "Path is too long",
@@ -155,7 +155,7 @@ static int load_template_config(const rednode_factory_param_t *params, bool admi
     /* copy the template name */
     sztmplname = strlen(tmplname);
     if (sztmplname + sz >= sizeof path)
-        return -RednodeFactory_Error_Config_Too_Long;
+        return -RednodeFactory_Error_Template_Too_Long;
     memcpy(&path[sz], tmplname, sztmplname + 1); /*also copy the zero*/
     sz += sztmplname;
 
@@ -164,11 +164,11 @@ static int load_template_config(const rednode_factory_param_t *params, bool admi
         /* check if path suffixed by .yaml */
         if (sz < (sizeof YAMLEXT - 1) || 0 == strcmp(YAMLEXT, &path[sz - (sizeof YAMLEXT - 1)]))
             /* yes suffixed by .yaml, stop here */
-            return -RednodeFactory_Error_No_Config;
+            return -RednodeFactory_Error_No_Template;
 
         /* try to add the suffix .yaml and check existing */
         if (sz + sizeof YAMLEXT >= sizeof path)
-            return -RednodeFactory_Error_Config_Too_Long;
+            return -RednodeFactory_Error_Template_Too_Long;
         memcpy(&path[sz], YAMLEXT, sizeof YAMLEXT); /*also copy the zero*/
         if (access(path, F_OK) == 0)
             /* okay, existing */
@@ -176,19 +176,19 @@ static int load_template_config(const rednode_factory_param_t *params, bool admi
         else if (admin) {
             /* not existing, try with the suffix -admin.yaml */
             if (sz + sizeof ADMEXT >= sizeof path)
-                return -RednodeFactory_Error_Config_Too_Long;
+                return -RednodeFactory_Error_Template_Too_Long;
             memcpy(&path[sz], ADMEXT, sizeof ADMEXT); /*also copy the zero*/
             if (access(path, F_OK) != 0)
-                return -RednodeFactory_Error_No_Config;
+                return -RednodeFactory_Error_No_Template;
             sz += sizeof ADMEXT - 1;
         }
         else {
             /* not existing, try with the suffix -normal.yaml */
             if (sz + sizeof STDEXT >= sizeof path)
-                return -RednodeFactory_Error_Config_Too_Long;
+                return -RednodeFactory_Error_Template_Too_Long;
             memcpy(&path[sz], STDEXT, sizeof STDEXT); /*also copy the zero*/
             if (access(path, F_OK) != 0)
-                return -RednodeFactory_Error_No_Config;
+                return -RednodeFactory_Error_No_Template;
             sz += sizeof STDEXT - 1;
         }
     }
@@ -196,7 +196,7 @@ static int load_template_config(const rednode_factory_param_t *params, bool admi
     /* load rednode configuration */
     *redconfig = RedLoadConfig(path, 0);
     if (*redconfig == NULL)
-        return -RednodeFactory_Error_Loading_Config;
+        return -RednodeFactory_Error_Loading_Template;
 
     return RednodeFactory_OK;
 }
