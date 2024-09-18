@@ -91,6 +91,13 @@ typedef struct rednode_factory_param_s rednode_factory_param_t;
 typedef enum   rednode_factory_error_e rednode_factory_error_t;
 typedef enum   rednode_factory_mode_e  rednode_factory_mode_t;
 
+/** Default model name for full config (no-system) */
+extern const char rednode_factory_deftmpl_full[];
+/** Default model name for root config (system node) */
+extern const char rednode_factory_deftmpl_root[];
+/** Default model name for leaf config (leaf node) */
+extern const char rednode_factory_deftmpl_leaf[];
+
 /**
  * Get text of the error report
  *

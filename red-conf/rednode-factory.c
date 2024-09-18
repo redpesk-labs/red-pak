@@ -43,12 +43,9 @@
 #define REDNODE_STATUS_SUBPATH       REDNODE_STATUS
 
 /* default template names */
-static const char deftemplate_full_normal[]  = "full-normal";
-static const char deftemplate_full_admin[]   = "full-admin";
-static const char deftemplate_root_normal[]  = "root-normal";
-static const char deftemplate_root_admin[]   = "root-admin";
-static const char deftemplate_leaf_normal[]  = "leaf-normal";
-static const char deftemplate_leaf_admin[]   = "leaf-admin";
+const char rednode_factory_deftmpl_full[] = "full";
+const char rednode_factory_deftmpl_root[] = "root";
+const char rednode_factory_deftmpl_leaf[] = "leaf";
 
 static const char YAMLEXT[] = ".yaml";
 static const char STDEXT[] = "-normal.yaml";
@@ -454,8 +451,8 @@ static int create_root_node(rednode_factory_t *rfab, size_t node_length)
         sysfab.node_length = node_length;
         memcpy(sysfab.path, rfab->path, node_length);
         syspar.alias = "system";
-        syspar.normal = deftemplate_root_normal;
-        syspar.admin = deftemplate_root_admin;
+        syspar.normal = rednode_factory_deftmpl_root;
+        syspar.admin = rednode_factory_deftmpl_root;
         syspar.templatedir = get_template_dir();
         return create_node(&sysfab, &syspar, false);
 }
@@ -520,17 +517,17 @@ int rednode_factory_create_node(
     if (params->normal && params->normal[0])
         locparam.normal = params->normal;
     else if (mode == RednodeFactory_Mode_Legacy_NoSys)
-        locparam.normal = deftemplate_full_normal;
+        locparam.normal = rednode_factory_deftmpl_full;
     else
-        locparam.normal = deftemplate_leaf_normal;
+        locparam.normal = rednode_factory_deftmpl_leaf;
 
     /* get admin template */
     if (params->admin && params->admin[0])
         locparam.admin = params->admin;
     else if (mode == RednodeFactory_Mode_Legacy_NoSys)
-        locparam.admin = deftemplate_full_admin;
+        locparam.admin = rednode_factory_deftmpl_full;
     else
-        locparam.admin = deftemplate_leaf_admin;
+        locparam.admin = rednode_factory_deftmpl_leaf;
 
     /* check if required parent system exists */
     status = RednodeFactory_OK;

@@ -44,9 +44,13 @@ static const rOption treeOptions[] = {
     {{"alias"     , required_argument, 0,  'a' }, "alias of the node"},
     {{"config"    , required_argument, 0,  'c' }, "template configuration of the node, name or path"},
     {{"config-adm", required_argument, 0,  'C' }, "template admin configuration of the node, name or path"},
+    {{"full"      , no_argument      , 0,  'f' }, "like -m full"},
     {{"help"      , no_argument      , 0,  'h' }, "print this help"},
+    {{"leaf"      , no_argument      , 0,  'l' }, "like -m leaf"},
+    {{"model"     , required_argument, 0,  'm' }, "model name of template configuration"},
     {{"node"      , required_argument, 0,  'n' }, "path of the rednode"},
-    {{"redroot"   , required_argument, 0,  'r' }, "path to root node"},
+    {{"root"      , no_argument      , 0,  'r' }, "like -m root"},
+    {{"redroot"   , required_argument, 0,  'R' }, "path to root node"},
     {{"templates" , required_argument, 0,  't' }, "default directory of templates"},
     {{"update"    , no_argument      , 0,  'u' }, "update an existing node"},
     {{0, 0, 0, 0}, 0}
@@ -72,7 +76,7 @@ static int parseCreateArgs(int argc, char * argv[], rCreateConfigT *createConfig
 
     setLongOptions(treeOptions, longOpts);
     while(1) {
-        int option = getopt_long(argc, argv, "a:c:C:hn:r:t:u", longOpts, NULL);
+        int option = getopt_long(argc, argv, "a:c:C:fhlm:n:rR:t:u", longOpts, NULL);
         if(option == -1)
             break;
 
@@ -86,13 +90,25 @@ static int parseCreateArgs(int argc, char * argv[], rCreateConfigT *createConfig
             case 'C':
                 createConfig->admin = optarg;
                 break;
+            case 'f':
+                createConfig->normal = createConfig->admin = rednode_factory_deftmpl_full;
+                break;
             case 'h':
                 createUsage(treeOptions, EXIT_SUCCESS);
+                break;
+            case 'l':
+                createConfig->normal = createConfig->admin = rednode_factory_deftmpl_leaf;
+                break;
+            case 'm':
+                createConfig->normal = createConfig->admin = optarg;
                 break;
             case 'n':
                 createConfig->redpath = optarg;
                 break;
             case 'r':
+                createConfig->normal = createConfig->admin = rednode_factory_deftmpl_root;
+                break;
+            case 'R':
                 createConfig->redroot = optarg;
                 break;
             case 't':
