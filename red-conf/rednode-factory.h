@@ -48,7 +48,8 @@ enum rednode_factory_error_e
     RednodeFactory_Error_Storing_Config,
     RednodeFactory_Error_Path_Too_Long,
     RednodeFactory_Error_Storing_Status,
-    RednodeFactory_Error_At_Root
+    RednodeFactory_Error_At_Root,
+    RednodeFactory_Error_Config_Not_Exist
 };
 
 /** creation modes */

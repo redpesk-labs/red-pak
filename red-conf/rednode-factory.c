@@ -47,6 +47,10 @@ const char rednode_factory_deftmpl_full[] = "full";
 const char rednode_factory_deftmpl_root[] = "root";
 const char rednode_factory_deftmpl_leaf[] = "leaf";
 
+/* automatic admin aliasing */
+static const char ADMIN_ALIAS_PREFIX[] = "admin-of-";
+
+/* name deduction from model */
 static const char YAMLEXT[] = ".yaml";
 static const char STDEXT[] = "-normal.yaml";
 static const char ADMEXT[] = "-admin.yaml";
@@ -72,7 +76,8 @@ static const char *text_of_errors[] =
     [RednodeFactory_Error_Storing_Config]       = "Can't store configuration file",
     [RednodeFactory_Error_Path_Too_Long]        = "Path is too long",
     [RednodeFactory_Error_Storing_Status]       = "Can't store status file",
-    [RednodeFactory_Error_At_Root]              = "Can't inspect below root path"
+    [RednodeFactory_Error_At_Root]              = "Can't inspect below root path",
+    [RednodeFactory_Error_Config_Not_Exist]     = "Can't update not existing config"
 };
 
 static const char *get_default_item(const char *defvalue, const char *varname)
@@ -256,11 +261,90 @@ static int store_status(rednode_factory_t *rfab, const char *subpath, redStatusT
     return status;
 }
 
+/* make freash header data */
+static int make_config_headers(redConfigT *config, const char *alias, bool admin)
+{
+    char *h_info, *h_name, *h_alias;
+
+    /* create/copy specific values */
+    h_info = (char*)RedNodeStringExpand(NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY");
+    h_name = malloc(RED_UUID_STR_LEN);
+    h_alias = admin ? malloc(strlen(alias) + sizeof(ADMIN_ALIAS_PREFIX)) : strdup(alias);
+
+    /* check creation status */
+    if (h_info == NULL || h_name == NULL || h_alias == NULL) {
+        free(h_info);
+        free(h_name);
+        free(h_alias);
+        return -RednodeFactory_Error_Allocation;
+    }
+
+    /* get new uuid */
+    getFreshUUID(h_name, RED_UUID_STR_LEN);
+
+    /* make the alias */
+    if (admin) {
+        strcpy(h_alias, ADMIN_ALIAS_PREFIX);
+        strcpy(&h_alias[sizeof(ADMIN_ALIAS_PREFIX) - 1], alias);
+    }
+
+    /* assign to the config */
+    free((char *)config->headers->info);
+    free((char *)config->headers->name);
+    free((char *)config->headers->alias);
+    config->headers->info = h_info;
+    config->headers->name = h_name;
+    config->headers->alias = h_alias;
+
+    return RednodeFactory_OK;
+}
+
+/* reload header data from existing */
+static int update_config_headers(redConfigT *config, rednode_factory_t *rfab, const char *subpath)
+{
+    char *h_info, *h_name, *h_alias;
+    redConfigT *prvcfg;
+    int status;
+
+    /* get the path */
+    status = set_subpath_path(rfab, subpath, true);
+    if (status != RednodeFactory_OK)
+        return status;
+
+    /* load the config */
+    prvcfg = RedLoadConfig(rfab->path, 0);
+    if (prvcfg == NULL)
+        return -RednodeFactory_Error_Config_Not_Exist;
+
+    /* copy header values */
+    h_info = strdup(prvcfg->headers->info);
+    h_name = strdup(prvcfg->headers->name);
+    h_alias = strdup(prvcfg->headers->alias);
+    RedFreeConfig(prvcfg, 0);
+
+    /* check creation status */
+    if (h_info == NULL || h_name == NULL || h_alias == NULL) {
+        free(h_info);
+        free(h_name);
+        free(h_alias);
+        return -RednodeFactory_Error_Allocation;
+    }
+
+    /* assign to the config */
+    free((char *)config->headers->info);
+    free((char *)config->headers->name);
+    free((char *)config->headers->alias);
+    config->headers->info = h_info;
+    config->headers->name = h_name;
+    config->headers->alias = h_alias;
+
+    return RednodeFactory_OK;
+}
+
 /* create the given node */
 static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *params, bool update)
 {
     char today[100];
-    char uuid[RED_UUID_STR_LEN];
     char info[150];
     int rc, status;
     redStatusT redstatus;
@@ -268,12 +352,11 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
     size_t existing_length;
     unsigned long timestamp;
 
-    /* get date and new uuid */
+    /* get date */
     timestamp = RedUtcGetTimeMs();
     rc = getDateOfToday(today, sizeof today);
     if (rc == 0)
         return -RednodeFactory_Error_FmtDate;
-    getFreshUUID(uuid, sizeof uuid);
 
     /* load the config */
     status = load_template_config(params, false, &normal_config);
@@ -281,52 +364,41 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
         return status;
 
     /* creation of specific headers */
-    if(!update) {
-        /* create/copy specific values */
-        char *info = (char*)RedNodeStringExpand(NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY");
-        char *name = strdup(uuid);
-        char *alias = strdup(params->alias);
-
-        /* check creation status */
-        if (info == NULL || name == NULL || alias == NULL) {
-            free(info);
-            free(name);
-            free(alias);
-            RedFreeConfig(normal_config, 0);
-            return -RednodeFactory_Error_Allocation;
-        }
-
-        /* assign to the config */
-        free((char *)normal_config->headers->info);
-        free((char *)normal_config->headers->name);
-        free((char *)normal_config->headers->alias);
-        normal_config->headers->info = info;
-        normal_config->headers->name = name;
-        normal_config->headers->alias = alias;
-    }
+    status = update ? update_config_headers(normal_config, rfab, get_normal_conf_subpath())
+                    : make_config_headers(normal_config, params->alias, false);
 
     /* load the administrative config */
-    status = load_template_config(params, true, &admin_config);
     if (status == RednodeFactory_OK) {
-
-        /* create the directories */
-        status = create_directories(rfab->path, rfab->root_length, rfab->node_length, &existing_length);
-        if (status == RednodeFactory_OK)
-            status = store_config(rfab, get_normal_conf_subpath(), normal_config, update);
-        if (status == RednodeFactory_OK)
-            status = store_config(rfab, get_admin_conf_subpath(), admin_config, update);
+        status = load_template_config(params, true, &admin_config);
         if (status == RednodeFactory_OK) {
-            char realpath[rfab->node_length];
-            memcpy(realpath, rfab->path, rfab->node_length - 1);
-            realpath[rfab->node_length - 1] = 0;
-            redstatus.realpath = realpath;
-            redstatus.state = RED_STATUS_ENABLE;
-            redstatus.timestamp = timestamp;
-            redstatus.info = info;
-            strcpy(stpcpy(info, "created by red-manager the "), today);
-            status = store_status(rfab, get_status_subpath(), &redstatus);
-        }
 
+            /* creation of specific headers */
+            status = update ? update_config_headers(admin_config, rfab, get_admin_conf_subpath())
+                            : make_config_headers(admin_config, params->alias, true);
+
+            /* create the directories */
+            if (status == RednodeFactory_OK)
+                status = create_directories(rfab->path, rfab->root_length, rfab->node_length, &existing_length);
+
+            /* store the configs */
+            if (status == RednodeFactory_OK)
+                status = store_config(rfab, get_normal_conf_subpath(), normal_config, update);
+            if (status == RednodeFactory_OK)
+                status = store_config(rfab, get_admin_conf_subpath(), admin_config, update);
+
+            /* create and store the status */
+            if (status == RednodeFactory_OK) {
+                char realpath[rfab->node_length];
+                memcpy(realpath, rfab->path, rfab->node_length - 1);
+                realpath[rfab->node_length - 1] = 0;
+                redstatus.realpath = realpath;
+                redstatus.state = RED_STATUS_ENABLE;
+                redstatus.timestamp = timestamp;
+                redstatus.info = info;
+                strcpy(stpcpy(info, "created by red-manager the "), today);
+                status = store_status(rfab, get_status_subpath(), &redstatus);
+            }
+        }
         /* cleanup */
         RedFreeConfig(admin_config, 0);
     }
