@@ -27,7 +27,7 @@
 #include "redconf-defaults.h"
 #define REDNODE_FACTORY_PATH_LEN  RED_MAXPATHLEN
 
-/* error code */
+/** error code */
 enum rednode_factory_error_e
 {
     RednodeFactory_OK,
@@ -47,7 +47,19 @@ enum rednode_factory_error_e
     RednodeFactory_Error_Config_Exist,
     RednodeFactory_Error_Storing_Config,
     RednodeFactory_Error_Path_Too_Long,
-    RednodeFactory_Error_Storing_Status
+    RednodeFactory_Error_Storing_Status,
+    RednodeFactory_Error_At_Root
+};
+
+/** creation modes */
+enum rednode_factory_mode_e
+{
+    /** create a node (default leaf) */
+    RednodeFactory_Mode_Default,
+    /** create a node (default leaf) and if absent a parent root node */
+    RednodeFactory_Mode_Legacy,
+    /** create a node (default full) */
+    RednodeFactory_Mode_Legacy_NoSys
 };
 
 /* parameters of node creation */
@@ -77,6 +89,7 @@ struct rednode_factory_s
 typedef struct rednode_factory_s       rednode_factory_t;
 typedef struct rednode_factory_param_s rednode_factory_param_t;
 typedef enum   rednode_factory_error_e rednode_factory_error_t;
+typedef enum   rednode_factory_mode_e  rednode_factory_mode_t;
 
 /**
  * Get text of the error report
@@ -163,7 +176,7 @@ extern int rednode_factory_set_node(rednode_factory_t *rfab, const char *path);
  * @param rfab   pointer to the rednode factory to use
  * @param params parameters of creation (can be NULL for defaults)
  * @param update boolean indicating if update is possible (false enforce creation)
- * @param insert_system_node boolean indicating if a system node must be add if missing
+ * @param mode   creation mode
  * 
  * @return @ref RednodeFactory_OK on success or a negative value on error.
  * When error is returned, the absolute value returned is one of these:
@@ -177,6 +190,6 @@ extern int rednode_factory_create_node(
                 rednode_factory_t *rfab,
                 const rednode_factory_param_t *params,
                 bool update,
-                bool insert_system_node);
+                rednode_factory_mode_t mode);
 
 #endif /* _REDNODE_FACTORY_INCLUDED_ */

@@ -38,7 +38,6 @@ typedef struct {
     const char *admin;
     const char *tempdir;
     bool updt;
-    bool issys;
 } rCreateConfigT;
 
 static const rOption treeOptions[] = {
@@ -48,7 +47,6 @@ static const rOption treeOptions[] = {
     {{"help"      , no_argument      , 0,  'h' }, "print this help"},
     {{"node"      , required_argument, 0,  'n' }, "path of the rednode"},
     {{"redroot"   , required_argument, 0,  'r' }, "path to root node"},
-    {{"system"    , no_argument      , 0,  's' }, "create a system node"},
     {{"templates" , required_argument, 0,  't' }, "default directory of templates"},
     {{"update"    , no_argument      , 0,  'u' }, "update an existing node"},
     {{0, 0, 0, 0}, 0}
@@ -71,11 +69,10 @@ static int parseCreateArgs(int argc, char * argv[], rCreateConfigT *createConfig
     createConfig->admin   = NULL;
     createConfig->tempdir = NULL;
     createConfig->updt    = false;
-    createConfig->issys   = false;
 
     setLongOptions(treeOptions, longOpts);
     while(1) {
-        int option = getopt_long(argc, argv, "a:c:C:hn:r:st:u", longOpts, NULL);
+        int option = getopt_long(argc, argv, "a:c:C:hn:r:t:u", longOpts, NULL);
         if(option == -1)
             break;
 
@@ -97,9 +94,6 @@ static int parseCreateArgs(int argc, char * argv[], rCreateConfigT *createConfig
                 break;
             case 'r':
                 createConfig->redroot = optarg;
-                break;
-            case 's':
-                createConfig->issys = true;
                 break;
             case 't':
                 createConfig->tempdir = optarg;
@@ -143,7 +137,6 @@ static int perform_create_node(const rCreateConfigT *createConfig)
     RedLog(REDLOG_INFO, "[create]: normal=%s", createConfig->normal ?: "");
     RedLog(REDLOG_INFO, "[create]: admin=%s", createConfig->admin ?: "");
     RedLog(REDLOG_INFO, "[create]: update=%s", createConfig->updt ? "yes" : "no");
-    RedLog(REDLOG_INFO, "[create]: system=%s", createConfig->issys ? "yes" : "no");
 
     rednode_factory_clear(&rfab);
     rc = rednode_factory_set_root(&rfab, createConfig->redroot);
@@ -159,7 +152,7 @@ static int perform_create_node(const rCreateConfigT *createConfig)
     RedLog(REDLOG_DEBUG, "[create]: rfab.root=%.*s", rfab.root_length, rfab.path);
     RedLog(REDLOG_DEBUG, "[create]: rfab.node=%.*s", rfab.node_length, rfab.path);
 
-    rc = rednode_factory_create_node(&rfab, &params, createConfig->updt, createConfig->issys);
+    rc = rednode_factory_create_node(&rfab, &params, createConfig->updt, RednodeFactory_Mode_Default);
     if (rc != RednodeFactory_OK) {
         RedLog(REDLOG_ERROR, "creation of node failed: %s", rednode_factory_error_text(-rc));
         return -1;

@@ -90,6 +90,12 @@ private:
 };
 
 inline
+rednode_factory_mode_t mode(bool no_system_node)
+{
+    return no_system_node ? RednodeFactory_Mode_Legacy_NoSys : RednodeFactory_Mode_Legacy;
+}
+
+inline
 RedNodeFactory::RedNodeFactory() noexcept
 {
     clear();
@@ -160,7 +166,7 @@ bool RedNodeFactory::setNodeDir(const std::filesystem::path &nodedir) noexcept
 inline
 bool RedNodeFactory::createRedNode(bool no_system_node) noexcept
 {
-    return x_(rednode_factory_create_node(&factory_, NULL, false, !no_system_node));
+    return x_(rednode_factory_create_node(&factory_, NULL, false, mode(no_system_node)));
 }
 
 inline
@@ -178,7 +184,7 @@ bool RedNodeFactory::createRedNode(const std::string &alias, const std::string &
 inline
 bool RedNodeFactory::updateRedNode(bool no_system_node) noexcept
 {
-    return x_(rednode_factory_create_node(&factory_, NULL, true, !no_system_node));
+    return x_(rednode_factory_create_node(&factory_, NULL, true, mode(no_system_node)));
 }
 
 inline
@@ -207,7 +213,7 @@ bool RedNodeFactory::process(const char *alias, const char *tmplate, const char 
     params.normal = tmplate;
     params.admin = tmplateadmin;
     params.templatedir = NULL;
-    return x_(rednode_factory_create_node(&factory_, &params, update, !no_system_node));
+    return x_(rednode_factory_create_node(&factory_, &params, update, mode(no_system_node)));
 }
 
 }

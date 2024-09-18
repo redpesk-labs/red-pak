@@ -680,31 +680,31 @@ struct factorydef
     const char *normal;
     const char *admin;
     int update;
-    int issys;
+    rednode_factory_mode_t mode;
     rednode_factory_error_t expected;
 }
     factories[] = 
 {
-#define TEST(root,node,alias,normal,admin,update,issys,expected) { root,node,alias,normal,admin,update,issys,expected }
+#define TEST(root,node,alias,normal,admin,update,mode,expected) { root,node,alias,normal,admin,update,mode,expected }
 #define MKDIR(path) { NULL,NULL,NULL,path,NULL,0,0,0 }
 #define RMDIR(path) { NULL,NULL,NULL,NULL,path,0,0,0 }
 
     RMDIR(ROOT),
-    TEST(BIGNAME(REDNODE_FACTORY_PATH_LEN), NULL, NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Root_Too_Long),
-    TEST("simple", NULL, NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Root_Not_Absolute),
-    TEST("/tmp", BIGNAME(REDNODE_FACTORY_PATH_LEN), NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Node_Too_Long),
-    TEST(NULL, "simple", NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Cleared),
-    TEST(NULL, NULL, "simple", NULL, NULL, 0, 0, RednodeFactory_Error_Cleared),
-    TEST("/tmp", NULL, NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Default_Alias_Empty),
-    TEST("/tmp", NULL, "alias", BIGNAME(REDNODE_FACTORY_PATH_LEN), NULL, 0, 0, RednodeFactory_Error_Config_Too_Long),
-    TEST("/tmp", NULL, "alias", "not-existing", NULL, 0, 0, RednodeFactory_Error_No_Config),
-    TEST("/tmp", NULL, "alias", NULL, "not-existing", 0, 0, RednodeFactory_Error_No_Config),
-    TEST("/tmp", NULL, "alias", tempname, NULL, 0, 0, RednodeFactory_Error_Loading_Config),
-    TEST("/tmp", NULL, "alias", NULL, tempname, 0, 0, RednodeFactory_Error_Loading_Config),
-    TEST(ROOT, "simple", NULL, NULL, NULL, 0, 0, RednodeFactory_Error_Root_Not_Exist),
+    TEST(BIGNAME(REDNODE_FACTORY_PATH_LEN), NULL, NULL, NULL, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Root_Too_Long),
+    TEST("simple", NULL, NULL, NULL, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Root_Not_Absolute),
+    TEST("/tmp", BIGNAME(REDNODE_FACTORY_PATH_LEN), NULL, NULL, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Node_Too_Long),
+    TEST(NULL, "simple", NULL, NULL, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Cleared),
+    TEST(NULL, NULL, "simple", NULL, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Cleared),
+    TEST("/tmp", NULL, NULL, NULL, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Default_Alias_Empty),
+    TEST("/tmp", NULL, "alias", BIGNAME(REDNODE_FACTORY_PATH_LEN), NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Config_Too_Long),
+    TEST("/tmp", NULL, "alias", "not-existing", NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_No_Config),
+    TEST("/tmp", NULL, "alias", NULL, "not-existing", 0, RednodeFactory_Mode_Default, RednodeFactory_Error_No_Config),
+    TEST("/tmp", NULL, "alias", tempname, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Loading_Config),
+    TEST("/tmp", NULL, "alias", NULL, tempname, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Loading_Config),
+    TEST(ROOT, "simple", NULL, NULL, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_Error_Root_Not_Exist),
     MKDIR(ROOT),
-    TEST(ROOT, "simple", NULL, NULL, NULL, 0, 0, RednodeFactory_OK),
-    TEST(ROOT, "simple/subsimple", NULL, NULL, NULL, 0, 0, RednodeFactory_OK),
+    TEST(ROOT, "simple", NULL, NULL, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_OK),
+    TEST(ROOT, "simple/subsimple", NULL, NULL, NULL, 0, RednodeFactory_Mode_Default, RednodeFactory_OK),
     RMDIR(ROOT),
 
 #undef TEST
@@ -734,7 +734,7 @@ START_TEST(test_factory)
             printf("    - normal %s\n", iter->normal);
             printf("    - admin  %s\n", iter->admin);
             printf("    - update %d\n", iter->update);
-            printf("    - issys  %d\n", iter->issys);
+            printf("    - mode   %d\n", iter->mode);
             rfs = RednodeFactory_OK;
             rednode_factory_clear(&factory);
             if (iter->root != NULL)
@@ -751,7 +751,7 @@ START_TEST(test_factory)
                     params.templatedir = TEMPLATES_DIR;
                     ppar = &params;
                 }
-                rfs = rednode_factory_create_node(&factory, ppar, iter->update, iter->issys);
+                rfs = rednode_factory_create_node(&factory, ppar, iter->update, iter->mode);
             }
             printf("    - expec  %d\n", iter->expected);
             printf("    = got    %d\n", -rfs);

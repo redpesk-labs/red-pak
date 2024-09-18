@@ -74,7 +74,8 @@ static const char *text_of_errors[] =
     [RednodeFactory_Error_Config_Exist]         = "Configuration file already existing",
     [RednodeFactory_Error_Storing_Config]       = "Can't store configuration file",
     [RednodeFactory_Error_Path_Too_Long]        = "Path is too long",
-    [RednodeFactory_Error_Storing_Status]       = "Can't store status file"
+    [RednodeFactory_Error_Storing_Status]       = "Can't store status file",
+    [RednodeFactory_Error_At_Root]              = "Can't inspect below root path"
 };
 
 static const char *get_default_item(const char *defvalue, const char *varname)
@@ -445,7 +446,7 @@ static bool is_rednode(const char *dirpath, size_t length)
 *     and when the node path is the same that the root path
 *   - @ref RednodeFactory_Error_FmtDate abnormal error when computing date
 */
-static int create_system_node(rednode_factory_t *rfab, size_t node_length)
+static int create_root_node(rednode_factory_t *rfab, size_t node_length)
 {
         rednode_factory_t sysfab;
         rednode_factory_param_t syspar;
@@ -464,7 +465,7 @@ int rednode_factory_create_node(
             rednode_factory_t *rfab,
             const rednode_factory_param_t *params,
             bool update,
-            bool insert_system_node
+            rednode_factory_mode_t mode
 ) {
     int status;
     size_t off, len;
@@ -518,23 +519,27 @@ int rednode_factory_create_node(
     /* get template */
     if (params->normal && params->normal[0])
         locparam.normal = params->normal;
-    else if (insert_system_node)
-        locparam.normal = deftemplate_leaf_normal;
-    else
+    else if (mode == RednodeFactory_Mode_Legacy_NoSys)
         locparam.normal = deftemplate_full_normal;
+    else
+        locparam.normal = deftemplate_leaf_normal;
 
     /* get admin template */
     if (params->admin && params->admin[0])
         locparam.admin = params->admin;
-    else if (insert_system_node)
-        locparam.admin = deftemplate_leaf_admin;
-    else
+    else if (mode == RednodeFactory_Mode_Legacy_NoSys)
         locparam.admin = deftemplate_full_admin;
+    else
+        locparam.admin = deftemplate_leaf_admin;
 
     /* check if required parent system exists */
     status = RednodeFactory_OK;
-    if(insert_system_node && off >= rfab->root_length && !is_rednode(rfab->path, off - 1))
-        status = create_system_node(rfab, off);
+    if(mode == RednodeFactory_Mode_Legacy) {
+        if (off < rfab->root_length)
+            status = -RednodeFactory_Error_At_Root;
+        else if (!is_rednode(rfab->path, off - 1))
+            status = create_root_node(rfab, off);
+    }
 
     /* create the node now */
     if (status == RednodeFactory_OK)
