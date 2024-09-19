@@ -76,7 +76,7 @@ static const struct red_cmd redmicrodnf_commands [] = {
 //                             PRIVATE VARIABLES                            //
 //////////////////////////////////////////////////////////////////////////////
 
-static const char * redwrap_dnf_usage = "usage: redwrap-dnf --redpath=... [--verbose] [--force] [--admin[=.../main-admin.yaml]] [--rmain=.../main.yaml] [redmicrodnfcmd [args]]  \n\n";
+static const char * redwrap_dnf_usage = "usage: redwrap-dnf --redpath=... [--verbose] [--strict] [--admin[=.../main-admin.yaml]] [--rmain=.../main.yaml] [redmicrodnfcmd [args]]  \n\n";
 
 //////////////////////////////////////////////////////////////////////////////
 //                             PRIVATE FUNCTIONS                            //

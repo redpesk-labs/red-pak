@@ -24,7 +24,7 @@
 #include "redwrap-conf.h"
 #include "redwrap-exec.h"
 
-static const char * redwrap_usage = "usage: redwrap --redpath=... [--verbose] [--force] [--admin[=.../main-admin.yaml]] [--rmain=.../main.yaml] -- program args\n";
+static const char * redwrap_usage = "usage: redwrap --redpath=... [--verbose] [--strict] [--admin[=.../main-admin.yaml]] -- program args\n";
 
 /**
  * @brief execute redwrap command according arguments
