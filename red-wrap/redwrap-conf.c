@@ -19,20 +19,17 @@
 
 #define _GNU_SOURCE
 
+#include "redwrap-conf.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <string.h>
 
-#include "redwrap.h"
-
+#include "redconf-defaults.h"
 
 #ifndef BWRAP_CMD_PATH
 #define BWRAP_CMD_PATH "/usr/bin/bwrap"
 #endif
-
 
 static struct option options[] = {
     {"verbose", optional_argument, 0,  'v' },
@@ -72,7 +69,8 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 
             case 'v':
                 config->verbose++;
-                  if (optarg)    config->verbose = atoi(optarg);
+                if (optarg)
+                    config->verbose = atoi(optarg);
                 break;
 
             case 'c':
@@ -80,9 +78,11 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
                 break;
 
             case 'a':
-                config->adminpath = getenv("redpak_MAIN_ADMIN");
-                if (!config->adminpath) config->adminpath= redpak_MAIN_ADMIN;
-                if (optarg) config->adminpath = optarg;
+                config->adminpath = secure_getenv("redpak_MAIN_ADMIN");
+                if (!config->adminpath)
+                    config->adminpath= redpak_MAIN_ADMIN;
+                if (optarg)
+                    config->adminpath = optarg;
                 break;
 
             case 'b':
@@ -103,13 +103,13 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
     }
 
     if (!config->cnfpath) {
-        config->cnfpath = getenv("redpak_MAIN");
-        if (!config->cnfpath) config->cnfpath= redpak_MAIN;
+        config->cnfpath = secure_getenv("redpak_MAIN");
+        if (!config->cnfpath)
+            config->cnfpath = redpak_MAIN;
     }
 
-    if (!config->bwrap) {
+    if (!config->bwrap)
         config->bwrap= BWRAP_CMD_PATH;
-    }
 
     if (!config->redpath)
         goto OnErrorExit;

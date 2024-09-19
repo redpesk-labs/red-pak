@@ -17,13 +17,8 @@
 */
 
 
-#ifndef _REDWRAP_INCLUDE_
-#define _REDWRAP_INCLUDE_
-
-#include "redconf.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-
+#ifndef _REDWRAP_CONF_INCLUDE_
+#define _REDWRAP_CONF_INCLUDE_
 
 typedef struct {
     const char*redpath;
@@ -37,9 +32,6 @@ typedef struct {
     int verboseopts;
 } rWrapConfigT;
 
-rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage);
-int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs,  int lastleaf, const char *argval[], int *argcount);
-int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount);
-int RedSetCapabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount);
+extern rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage);
 
 #endif

@@ -55,8 +55,9 @@ install(
 
 install(
     FILES 
-            redwrap.h
+            redwrap-conf.h
             redwrap-exec.h
+            redwrap-node.h
         DESTINATION ${CMAKE_INSTALL_FULL_INCLUDEDIR}
 )
 

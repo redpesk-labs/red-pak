@@ -17,19 +17,30 @@
  * limitations under the License.
  */
 
-#include "redwrap-exec.h"
+#define _GNU_SOURCE
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
+
+#include "redwrap-conf.h"
+#include "redwrap-exec.h"
+#include "redconf-defaults.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //                             DEFINE                                       //
 //////////////////////////////////////////////////////////////////////////////
 
+#ifndef REDMICRODNF_CMD
 #define REDMICRODNF_CMD "redmicrodnf"
+#endif
+#ifndef REDMICRODNF_CMD_PATH
 #define REDMICRODNF_CMD_PATH "/usr/bin/"REDMICRODNF_CMD
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 //                             STRUCTURES                                   //
@@ -162,28 +173,26 @@ static int _exec_bwrap(int argc, char *argv[], int position) {
  * @param[in] argv Array of arguments
  * @return 0 in success negative otherwise
  */
-static int redwrap_dnf_cmd_exec(int argc, char *argv[]) {
-    int error = 0;
+int main (int argc, char *argv[]) {
+
+    int error;
     int position = -1;
 
     const struct red_cmd * redcmd = _find_redmicrodnf_cmd(argc, argv, &position);
     if (!redcmd) {
         fprintf(stderr, "No redmicrodnf command found!");
-        return -1;
+        return EXIT_FAILURE;
     }
 
     if (redcmd->outnode) {
         error = _exec_redmicrodnf(argc, argv);
-        if (error) return -1;
+        if (error)
+            return EXIT_FAILURE;
     } else {
         error = _exec_bwrap(argc, argv, position);
-        if (error) return -1;
+        if (error)
+            return EXIT_FAILURE;
     }
 
-    return 0;
-}
-
-
-int main (int argc, char *argv[]) {
-    return redwrap_dnf_cmd_exec(argc, argv);
+    return EXIT_SUCCESS;
 }

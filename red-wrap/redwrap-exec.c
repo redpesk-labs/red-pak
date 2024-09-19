@@ -20,25 +20,31 @@
 // generated corresponding environment variables LD_PATh, PATH, ...
 // generate all sharing and mouting point
 // exec bwrap
+
 #define _GNU_SOURCE
 
+#include "redwrap-exec.h"
+
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <limits.h>
 #include <sys/wait.h>
-
 #include <sched.h>
+#ifndef CLONE_NEWTIME
 #include <linux/sched.h>
+#endif
 #include <sys/syscall.h>
 
-#include "redwrap-exec.h"
+#include "redconf-log.h"
+#include "redconf-schema.h"
+#include "redconf-merge.h"
+#include "redconf-expand.h"
 #include "redconf-defaults.h"
+#include "redwrap-node.h"
 #include "cgroups.h"
 
 #ifndef BWRAP_MAXVAR_LEN
@@ -139,7 +145,7 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
 }
 
 /* this function tests if sharing of (item) is disabled  */
-static bool unshares(redConfOptFlagE target, redConfOptFlagE all)
+static bool can_unshare(redConfOptFlagE target, redConfOptFlagE all)
 {
     return target == RED_CONF_OPT_DISABLED
                 || (target == RED_CONF_OPT_UNSET && all != RED_CONF_OPT_ENABLED);
@@ -195,7 +201,8 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         goto OnErrorExit;
     }
 
-    if (isCgroups) setcgroups(mergedConfTags, rootNode);
+    if (isCgroups)
+        setcgroups(mergedConfTags, rootNode);
 
     // add commulated LD_PATH_LIBRARY & PATH
     argval[argcount++]="--setenv";
@@ -218,19 +225,19 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         argval[argcount++]= RedNodeStringExpand (redtree, mergedConfTags->chdir);
     }
 
-    if (unshares(mergedConfTags->share_user, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share_user, mergedConfTags->share_all))
         argval[argcount++]="--unshare-user";
 
-    if (unshares(mergedConfTags->share_cgroup, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share_cgroup, mergedConfTags->share_all))
         argval[argcount++]="--unshare-cgroup";
 
-    if (unshares(mergedConfTags->share_ipc, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share_ipc, mergedConfTags->share_all))
         argval[argcount++]="--unshare-ipc";
 
-    if (unshares(mergedConfTags->share_pid, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share_pid, mergedConfTags->share_all))
         argval[argcount++]="--unshare-pid";
 
-    if (unshares(mergedConfTags->share_net, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share_net, mergedConfTags->share_all))
         argval[argcount++]="--share-net";
     else
         argval[argcount++]="--unshare-net";
@@ -277,7 +284,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         close(pipe_fd[0]);
 
         /* unshare time ns */
-        if (unshares(mergedConfTags->share_time, mergedConfTags->share_all))
+        if (can_unshare(mergedConfTags->share_time, mergedConfTags->share_all))
             unshare(CLONE_NEWTIME);
 
         argval[argcount]=NULL;

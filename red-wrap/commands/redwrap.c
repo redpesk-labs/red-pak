@@ -17,6 +17,11 @@
  * limitations under the License.
  */
 
+#define _GNU_SOURCE
+
+#include <stdlib.h>
+
+#include "redwrap-conf.h"
 #include "redwrap-exec.h"
 
 static const char * redwrap_usage = "usage: redwrap --redpath=... [--verbose] [--force] [--admin[=.../main-admin.yaml]] [--rmain=.../main.yaml] -- program args\n";
@@ -28,15 +33,11 @@ static const char * redwrap_usage = "usage: redwrap --redpath=... [--verbose] [-
  * @param argv Array of arguments
  * @return 0 in success negative otherwise
  */
-int redwrap_cmd_exec(int argc, char *argv[]) {
+int main (int argc, char *argv[]) {
     rWrapConfigT *cliarg = RwrapParseArgs (argc, argv, redwrap_usage);
     if (!cliarg)
-        return -1;
-    return redwrapExecBwrap(argv[0], cliarg, argc - cliarg->index, argv + cliarg->index);
-}
-
-int main (int argc, char *argv[]) {
-    if (redwrap_cmd_exec(argc, argv) < 0)
-        exit(1);
-    exit(0);
+        return EXIT_FAILURE;
+    if (redwrapExecBwrap(argv[0], cliarg, argc - cliarg->index, argv + cliarg->index) < 0)
+        return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }

@@ -1,8 +1,7 @@
 /*
- Copyright (C) 2021 "IoT.bzh"
+ Copyright (C) 2016, 2017 "IoT.bzh"
 
  author: Fulup Ar Foll <fulup@iot.bzh>
- author: Clément Bénier <clement.benier@iot.bzh>
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,13 +17,14 @@
 */
 
 
-#ifndef _REDWRAP_MAIN_INCLUDE_
-#define _REDWRAP_MAIN_INCLUDE_
+#ifndef _REDWRAP_NODE_INCLUDE_
+#define _REDWRAP_NODE_INCLUDE_
 
 #include "redwrap-conf.h"
+#include "redconf-node.h"
 
-#define MAX_BWRAP_ARGS 512
+extern int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs,  int lastleaf, const char *argval[], int *argcount);
+extern int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount);
+extern int RedSetCapabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount);
 
-int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]);
-
-#endif //_REDWRAP_MAIN_INCLUDE_
+#endif

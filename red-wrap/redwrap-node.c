@@ -17,16 +17,20 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
+#define _GNU_SOURCE
+
+#include "redwrap-node.h"
+
 #include <stdlib.h>
-#include <sys/types.h>
+#include <stdio.h>
 #include <sys/stat.h>
-#include <unistd.h>
 #include <string.h>
 #include <errno.h>
 
+#include "redconf-log.h"
+#include "redconf-expand.h"
+#include "redconf-utils.h"
 #include "redconf-hashmerge.h"
-#include "redwrap.h"
 
 /**
  * @brief Check if folder to mount exists, and try to create it if not
