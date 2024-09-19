@@ -110,7 +110,7 @@ static int testcmd(const char *redpath, char *cmd) {
         .adminpath = NULL,
         .index = 0,
         .verbose = 1,
-        .forcemod = 1,
+        .strict = 0,
         .unsafe = 0
     };
 

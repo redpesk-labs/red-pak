@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <getopt.h>
 
 #include "redconf-defaults.h"
@@ -34,17 +35,32 @@
 static struct option options[] = {
     {"admin"  , optional_argument, 0,  'a' },
     {"bwrap"  , required_argument, 0,  'b' },
-    {"force"  , no_argument      , 0,  'f' },
+    {"force"  , optional_argument, 0,  'f' },
     {"help"   , no_argument      , 0,  '?' },
     {"redpath", required_argument, 0,  'r' },
     {"rpath"  , required_argument, 0,  'r' },
     {"rp"     , required_argument, 0,  'r' },
-    {"unsafe" , no_argument      , 0,  'u' },
+    {"strict" , optional_argument, 0,  's' },
+    {"unsafe" , optional_argument, 0,  'u' },
     {"verbose", optional_argument, 0,  'v' },
     {0,         0,                 0,  0 }
 };
 
-static const char short_options[] = "a::b:f?r:uv::";
+static const char short_options[] = "a::b:f::?r:s::u::v::";
+
+static int optbool(const char *arg, int def, const char *option)
+{
+    if (arg == NULL)
+        return def;
+    if (!strcasecmp(arg, "yes"))
+        return 1;
+    if (!strcasecmp(arg, "no"))
+        return 0;
+
+    fprintf (stderr, "illegal boolean value '%s' for option %s (valid values: yes or no)", arg, option);
+    exit(EXIT_FAILURE);
+    return def;
+}
 
 rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
     rWrapConfigT *config = calloc (1, sizeof(rWrapConfigT));
@@ -62,11 +78,13 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
         // option return short option even when long option is given
         switch (option) {
             case 'a':
-                config->adminpath = secure_getenv("redpak_MAIN_ADMIN");
-                if (!config->adminpath)
-                    config->adminpath= redpak_MAIN_ADMIN;
                 if (optarg)
                     config->adminpath = optarg;
+                else {
+                    config->adminpath = secure_getenv("redpak_MAIN_ADMIN");
+                    if (!config->adminpath)
+                        config->adminpath= redpak_MAIN_ADMIN;
+                }
                 break;
 
             case 'b':
@@ -74,15 +92,19 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
                 break;
 
             case 'f':
-                config->forcemod=1;
+                config->strict = !optbool(optarg, 1, "force");
                 break;
 
             case 'r':
                 config->redpath=optarg;
                 break;
 
+            case 's':
+                config->strict = optbool(optarg, 1, "strict");
+                break;
+
             case 'u':
-                config->unsafe=1;
+                config->unsafe = optbool(optarg, 1, "unsafe");
                 break;
 
             case 'v':
@@ -106,5 +128,6 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 
 OnErrorExit:
     fprintf (stderr, "%s", usage);
+    exit(EXIT_FAILURE);
     return NULL;
 }

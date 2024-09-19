@@ -33,17 +33,17 @@
 #include "redconf-hashmerge.h"
 
 /**
- * @brief Check if folder to mount exists, and try to create it if not
+ * @brief Check if path exists, and if not and if required, create a directory for the path
  *
  * @param path      Path into the node
  * @param configN   Config of the Node
- * @param forcemod  force command
+ * @param create    Create the directory if doesn't exist
  * @return 0 in success negative otherwise
  */
-static int RwrapCreateDir(const char *path, redConfigT *configN, int forcemod) {
+static int RwrapCheckDir(const char *path, redConfigT *configN, int create) {
     struct stat status;
     int err = stat(path, &status);
-    if (err && forcemod) {
+    if (err && create) {
         err = make_directories(path, 0, strlen(path), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
     }
     if (err) {
@@ -90,9 +90,9 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         expandpath = RedNodeStringExpand (node, path);
 
-        // if directory: check/try to create it in forcemod else ignore
+        // if directory: check/create it
         if (mode & RED_EXPORT_DIRS) {
-            if (RwrapCreateDir(expandpath, configN, cliargs->forcemod))
+            if (RwrapCheckDir(expandpath, configN, !cliargs->strict))
                 continue;
         }
         // if file: check file exists
@@ -245,7 +245,7 @@ int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const c
 
     // if not in force mode do further sanity check
     if (!((configN->conftag && configN->conftag->unsafe) || cliargs->unsafe)) {
-        // check it was updated in the future
+        // check it was not updated in the future
         if (epocms < statusN->timestamp) {
             RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is older that it's parent [require 'dnf red-update' or --force] nodepath=%s", configN->headers->alias, node->redpath);
             goto OnErrorExit;

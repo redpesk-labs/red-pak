@@ -26,7 +26,7 @@ typedef struct {
     const char*adminpath;
     int index;
     int verbose;
-    int forcemod;
+    int strict;
     int unsafe;
     int verboseopts;
 } rWrapConfigT;
