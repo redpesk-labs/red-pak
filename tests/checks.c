@@ -106,7 +106,6 @@ static int testcmd(const char *redpath, char *cmd) {
 
     rWrapConfigT cliargs = {
         .redpath = redpath,
-        .cnfpath = NULL,
         .bwrap = BWRAP,
         .adminpath = NULL,
         .index = 0,

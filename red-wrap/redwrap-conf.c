@@ -32,21 +32,19 @@
 #endif
 
 static struct option options[] = {
-    {"verbose", optional_argument, 0,  'v' },
+    {"admin"  , optional_argument, 0,  'a' },
+    {"bwrap"  , required_argument, 0,  'b' },
+    {"force"  , no_argument      , 0,  'f' },
+    {"help"   , no_argument      , 0,  '?' },
     {"redpath", required_argument, 0,  'r' },
     {"rpath"  , required_argument, 0,  'r' },
     {"rp"     , required_argument, 0,  'r' },
-    {"redmain", required_argument, 0,  'c' },
-    {"rmain"  , required_argument, 0,  'c' },
-    {"bwrap"  , required_argument, 0,  'b' },
-    {"admin"  , optional_argument, 0,  'a' },
-    {"force"  , no_argument      , 0,  'f' },
     {"unsafe" , no_argument      , 0,  'u' },
-    {"help"   , no_argument      , 0,  '?' },
+    {"verbose", optional_argument, 0,  'v' },
     {0,         0,                 0,  0 }
 };
 
-static const char short_options[] = "a::b:c:fm:p:r:uv::?";
+static const char short_options[] = "a::b:f?r:uv::";
 
 rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
     rWrapConfigT *config = calloc (1, sizeof(rWrapConfigT));
@@ -63,20 +61,6 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 
         // option return short option even when long option is given
         switch (option) {
-            case 'r':
-                config->redpath=optarg;
-                break;
-
-            case 'v':
-                config->verbose++;
-                if (optarg)
-                    config->verbose = atoi(optarg);
-                break;
-
-            case 'c':
-                config->cnfpath=optarg;
-                break;
-
             case 'a':
                 config->adminpath = secure_getenv("redpak_MAIN_ADMIN");
                 if (!config->adminpath)
@@ -93,19 +77,23 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
                 config->forcemod=1;
                 break;
 
+            case 'r':
+                config->redpath=optarg;
+                break;
+
             case 'u':
                 config->unsafe=1;
+                break;
+
+            case 'v':
+                config->verbose++;
+                if (optarg)
+                    config->verbose = atoi(optarg);
                 break;
 
             default:
                 goto OnErrorExit;
         }
-    }
-
-    if (!config->cnfpath) {
-        config->cnfpath = secure_getenv("redpak_MAIN");
-        if (!config->cnfpath)
-            config->cnfpath = redpak_MAIN;
     }
 
     if (!config->bwrap)
