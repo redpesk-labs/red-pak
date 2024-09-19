@@ -269,33 +269,33 @@ int cgroups (redConfCgroupT *cgroups, const char *cgroup_name, char cgroup_paren
         goto OnSuccessExit;
 
     if (cgroups->cpuset) {
-        if (cgroups->cpuset->cpus) err =+ utilsFileAddControl (cgroup_name, subgroupFd, "cpuset.cpus", cgroups->cpuset->cpus);
-        if (cgroups->cpuset->mems) err =+ utilsFileAddControl (cgroup_name, subgroupFd, "cpuset.mems", cgroups->cpuset->mems);
-        if (cgroups->cpuset->cpus_partition) err =+ utilsFileAddControl (cgroup_name, subgroupFd, "cpuset.cpus.partition", cgroups->cpuset->cpus_partition);
+        if (cgroups->cpuset->cpus) err += utilsFileAddControl (cgroup_name, subgroupFd, "cpuset.cpus", cgroups->cpuset->cpus);
+        if (cgroups->cpuset->mems) err += utilsFileAddControl (cgroup_name, subgroupFd, "cpuset.mems", cgroups->cpuset->mems);
+        if (cgroups->cpuset->cpus_partition) err += utilsFileAddControl (cgroup_name, subgroupFd, "cpuset.cpus.partition", cgroups->cpuset->cpus_partition);
         if (err) goto OnErrorExit;
     }
 
     if (cgroups->cpu) {
         // https://facebookmicrosites.github.io/cgroup2/docs/cpu-controller.html
-        if (cgroups->cpu->weight)  err =+ utilsFileAddControl (cgroup_name, subgroupFd, "cpu.weight", cgroups->cpu->weight);
-        if (cgroups->cpu->max)  err =+ utilsFileAddControl (cgroup_name, subgroupFd, "cpu.max", cgroups->cpu->max);
+        if (cgroups->cpu->weight)  err += utilsFileAddControl (cgroup_name, subgroupFd, "cpu.weight", cgroups->cpu->weight);
+        if (cgroups->cpu->max)  err += utilsFileAddControl (cgroup_name, subgroupFd, "cpu.max", cgroups->cpu->max);
         if (err) goto OnErrorExit;
     }
 
     if (cgroups->mem) {
         // https://facebookmicrosites.github.io/cgroup2/docs/memory-controller.html
-        if (cgroups->mem->min)   err =+ utilsFileAddControl (cgroup_name, subgroupFd, "memory.min", cgroups->mem->min);
-        if (cgroups->mem->max)   err =+ utilsFileAddControl (cgroup_name, subgroupFd, "memory.max", cgroups->mem->max);
-        if (cgroups->mem->high) err =+ utilsFileAddControl (cgroup_name, subgroupFd, "memory.high", cgroups->mem->high);
-        if (cgroups->mem->swap_max)  err =+ utilsFileAddControl (cgroup_name, subgroupFd, "memory.swap.max", cgroups->mem->swap_max);
-        if (cgroups->mem->swap_high)  err =+ utilsFileAddControl (cgroup_name, subgroupFd, "memory.swap.high", cgroups->mem->swap_high);
+        if (cgroups->mem->min)   err += utilsFileAddControl (cgroup_name, subgroupFd, "memory.min", cgroups->mem->min);
+        if (cgroups->mem->max)   err += utilsFileAddControl (cgroup_name, subgroupFd, "memory.max", cgroups->mem->max);
+        if (cgroups->mem->high) err += utilsFileAddControl (cgroup_name, subgroupFd, "memory.high", cgroups->mem->high);
+        if (cgroups->mem->swap_max)  err += utilsFileAddControl (cgroup_name, subgroupFd, "memory.swap.max", cgroups->mem->swap_max);
+        if (cgroups->mem->swap_high)  err += utilsFileAddControl (cgroup_name, subgroupFd, "memory.swap.high", cgroups->mem->swap_high);
         if (err) goto OnErrorExit;
     }
 
 
     if (cgroups->io) {
-        if (cgroups->io->max) err =+ utilsFileAddControl (cgroup_name, subgroupFd, "io.max", cgroups->io->max);
-        if (cgroups->io->weight) err =+ utilsFileAddControl (cgroup_name, subgroupFd, "io.weight", cgroups->io->weight);
+        if (cgroups->io->max) err += utilsFileAddControl (cgroup_name, subgroupFd, "io.max", cgroups->io->max);
+        if (cgroups->io->weight) err += utilsFileAddControl (cgroup_name, subgroupFd, "io.weight", cgroups->io->weight);
         if (err) goto OnErrorExit;
     }
 
