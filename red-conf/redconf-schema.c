@@ -30,9 +30,6 @@
 #define CYFLAG_CASE CYAML_FLAG_CASE_INSENSITIVE
 #define CYFLAG_OPT  CYAML_FLAG_OPTIONAL
 
-#define RED_FIELD_INFO(_STRUCTTYPE) CYAML_FIELD_STRING_PTR("info", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, _STRUCTTYPE, info, 0, CYAML_UNLIMITED)
-#define RED_FIELD_WARN(_STRUCTTYPE) CYAML_FIELD_STRING_PTR("warn", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, _STRUCTTYPE, warn, 0, CYAML_UNLIMITED)
-
 static int LOGYAML = 0;
 
 static const cyaml_config_t yconfError= {
@@ -149,8 +146,8 @@ static const cyaml_schema_field_t CgroupsSchema[] = {
 static const cyaml_schema_field_t CapabilityEntry[] = {
     CYAML_FIELD_STRING_PTR("cap", CYFLAG_PTR|CYFLAG_CASE, redConfCapT, cap, 0, CYAML_UNLIMITED),
     CYAML_FIELD_INT("add", CYFLAG_PTR|CYFLAG_CASE, redConfCapT, add),
-    RED_FIELD_INFO(redConfCapT),
-    RED_FIELD_WARN(redConfCapT),
+    CYAML_FIELD_STRING_PTR("info", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCapT, info, 0, CYAML_UNLIMITED),
+    CYAML_FIELD_STRING_PTR("warn", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfCapT, warn, 0, CYAML_UNLIMITED),
     CYAML_FIELD_END
 };
 
