@@ -30,26 +30,26 @@
 /** error code */
 enum rednode_factory_error_e
 {
-    RednodeFactory_OK,
-    RednodeFactory_Error_Cleared,
-    RednodeFactory_Error_Allocation,
-    RednodeFactory_Error_Root_Too_Long,
-    RednodeFactory_Error_Root_Not_Absolute,
-    RednodeFactory_Error_Root_Not_Exist,
-    RednodeFactory_Error_Node_Too_Long,
-    RednodeFactory_Error_Default_Alias_Empty,
-    RednodeFactory_Error_MkDir,
-    RednodeFactory_Error_FmtDate,
-    RednodeFactory_Error_TemplateDir_Too_Long,
-    RednodeFactory_Error_Template_Too_Long,
-    RednodeFactory_Error_No_Template,
-    RednodeFactory_Error_Loading_Template,
-    RednodeFactory_Error_Config_Exist,
-    RednodeFactory_Error_Storing_Config,
-    RednodeFactory_Error_Path_Too_Long,
-    RednodeFactory_Error_Storing_Status,
-    RednodeFactory_Error_At_Root,
-    RednodeFactory_Error_Config_Not_Exist
+/*  0 */    RednodeFactory_OK,
+/*  1 */    RednodeFactory_Error_Cleared,
+/*  2 */    RednodeFactory_Error_Allocation,
+/*  3 */    RednodeFactory_Error_Root_Too_Long,
+/*  4 */    RednodeFactory_Error_Root_Not_Absolute,
+/*  5 */    RednodeFactory_Error_Root_Not_Exist,
+/*  6 */    RednodeFactory_Error_Node_Too_Long,
+/*  7 */    RednodeFactory_Error_Default_Alias_Empty,
+/*  8 */    RednodeFactory_Error_MkDir,
+/*  9 */    RednodeFactory_Error_FmtDate,
+/* 10 */    RednodeFactory_Error_TemplateDir_Too_Long,
+/* 11 */    RednodeFactory_Error_Template_Too_Long,
+/* 12 */    RednodeFactory_Error_No_Template,
+/* 13 */    RednodeFactory_Error_Loading_Template,
+/* 14 */    RednodeFactory_Error_Config_Exist,
+/* 15 */    RednodeFactory_Error_Storing_Config,
+/* 16 */    RednodeFactory_Error_Path_Too_Long,
+/* 17 */    RednodeFactory_Error_Storing_Status,
+/* 18 */    RednodeFactory_Error_At_Root,
+/* 19 */    RednodeFactory_Error_Config_Not_Exist
 };
 
 /** creation modes */
