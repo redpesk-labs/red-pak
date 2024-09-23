@@ -719,6 +719,7 @@ START_TEST(test_factory)
     const struct factorydef *iter = factories;
     const struct factorydef *end = &factories[sizeof factories / sizeof *factories];
 
+    setenv("REDNODE_TEMPLATE_DIR", TEMPLATES_DIR, 1);
     init_bigname();
     write_tempfile("$%!?##\n", 0);
     for (; iter != end ; iter++) {
