@@ -506,6 +506,7 @@ static bool is_rednode(const char *dirpath, size_t length)
 *
 * @param rfab the factory context
 * @param node_length the length of the node to create
+* @param templatedir path of templates' directory
 *
 * @return @ref RednodeFactory_OK on success or a negative value on error.
 * When error is returned, the absolute value returned is one of these:
@@ -515,7 +516,7 @@ static bool is_rednode(const char *dirpath, size_t length)
 *     and when the node path is the same that the root path
 *   - @ref RednodeFactory_Error_FmtDate abnormal error when computing date
 */
-static int create_root_node(rednode_factory_t *rfab, size_t node_length)
+static int create_root_node(rednode_factory_t *rfab, size_t node_length, const char *templatedir)
 {
         rednode_factory_t sysfab;
         rednode_factory_param_t syspar;
@@ -525,7 +526,7 @@ static int create_root_node(rednode_factory_t *rfab, size_t node_length)
         syspar.alias = "system";
         syspar.normal = rednode_factory_deftmpl_root;
         syspar.admin = rednode_factory_deftmpl_root;
-        syspar.templatedir = get_template_dir();
+        syspar.templatedir = templatedir;
         return create_node(&sysfab, &syspar, false);
 }
 
@@ -607,7 +608,7 @@ int rednode_factory_create_node(
         if (off < rfab->root_length)
             status = -RednodeFactory_Error_At_Root;
         else if (!is_rednode(rfab->path, off - 1))
-            status = create_root_node(rfab, off);
+            status = create_root_node(rfab, off, locparam.templatedir);
     }
 
     /* create the node now */
