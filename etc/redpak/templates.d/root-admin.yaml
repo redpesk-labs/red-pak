@@ -102,11 +102,11 @@ exports:
   mount: $NODE_PATH/var/cache/dnf
   path: $NODE_PATH/var/cache/dnf
 - mode: Restricted
-  mount: $NODE_PATH/etc/redpack.yaml
-  path: $NODE_PATH/etc/redpack.yaml
+  mount: $NODE_PATH/etc/redpak.yaml
+  path: $NODE_PATH/etc/redpak.yaml
 - mode: Restricted
-  mount: $NODE_PATH/etc/redpack-admin.yaml
-  path: $NODE_PATH/etc/redpack-admin.yaml
+  mount: $NODE_PATH/etc/redpak-admin.yaml
+  path: $NODE_PATH/etc/redpak-admin.yaml
 - mode: Restricted
   mount: $NODE_PATH/.rednode.yaml
   path: $NODE_PATH/.rednode.yaml

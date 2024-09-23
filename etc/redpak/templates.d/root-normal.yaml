@@ -7,7 +7,7 @@
 # - Define default exec time values for every rednode nspace
 # - Syntax is identical for all rednode (root, platform, terminal, ...)
 #
-# - RedNode redpack.yaml is typically generated at creation time from template:
+# - RedNode redpak.yaml is typically generated at creation time from template:
 #   + redwrap-dnf --redpath=/xxxx/xxxx --alias=xxxx [--template=default]
 #-----------------------------------------------------------------------------
 

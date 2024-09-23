@@ -117,7 +117,7 @@ void RedNode::configure() {
 }
 
 void RedNode::scanNode() {
-    // If we have no redpath or when redpath=/ than we seach for coreos redpack.yaml otherwise search for a rednode
+    // If we have no redpath or when redpath=/ than we seach for coreos redpak.yaml otherwise search for a rednode
     if (redpath != "/") {
         getConf();
     } else {
@@ -135,7 +135,7 @@ void RedNode::getConf() {
             throw_error(fmt::format("No file at path={}", redpath.string()));
         } else {
             isnode = false;
-            fmt::print("Info: Node ignored [no redpack.yaml] path={} ()", redpath.c_str());
+            fmt::print("Info: Node ignored [no redpak.yaml] path={} ()", redpath.c_str());
         }
     } else {
         isnode = true;

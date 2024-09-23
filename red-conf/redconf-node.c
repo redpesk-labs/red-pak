@@ -25,6 +25,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include "redconf-log.h"
 #include "redconf-defaults.h"
@@ -103,6 +104,8 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admi
 
     // parse redpath node config file
     error = snprintf (path, sizeof(path), "%s/%s", redpath, REDNODE_CONF);
+    if (error > 0 && (size_t)error < sizeof(path) && access(path, F_OK) != 0)
+        error = snprintf (path, sizeof(path), "%s/%s", redpath, LEGACY_REDNODE_CONF);
     if (error < 0 || (size_t)error >= sizeof(path)) {
         RedLog(REDLOG_ERROR, "Fail to get config path [path=%s/%s]", redpath, REDNODE_CONF);
         goto OnErrorFreeExit;
@@ -116,6 +119,8 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admi
     if (admin) {
         // parse redpath node config admin file: if exists
         error = snprintf (path, sizeof(path), "%s/%s", redpath, REDNODE_ADMIN);
+        if (error > 0 && (size_t)error < sizeof(path) && access(path, F_OK) != 0)
+            error = snprintf (path, sizeof(path), "%s/%s", redpath, LEGACY_REDNODE_ADMIN);
         if (error < 0 || (size_t)error >= sizeof(path)) {
             RedLog(REDLOG_ERROR, "Fail to get admin path [path=%s/%s]", redpath, REDNODE_ADMIN);
             goto OnErrorFreeExit;

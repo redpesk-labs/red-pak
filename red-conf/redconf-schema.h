@@ -22,7 +22,7 @@
 
 #include <stddef.h>
 
-// ---- RedConfig Schema for ${redpath}/etc/redpack.yaml ----
+// ---- RedConfig Schema for configs ----
 
     /** structure for header of a rednode config */
     typedef struct {

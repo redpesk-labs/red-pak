@@ -48,11 +48,19 @@
 
 // Following file/dir are automatically prefixed by $REDPATH at runtime
 #ifndef REDNODE_CONF
-#define REDNODE_CONF "etc/redpack.yaml"
+#define REDNODE_CONF "etc/redpak.yaml"
 #endif
 
 #ifndef REDNODE_ADMIN
-#define REDNODE_ADMIN "etc/redpack-admin.yaml"
+#define REDNODE_ADMIN "etc/redpak-admin.yaml"
+#endif
+
+#ifndef LEGACY_REDNODE_CONF
+#define LEGACY_REDNODE_CONF "etc/redpack.yaml"
+#endif
+
+#ifndef LEGACY_REDNODE_ADMIN
+#define LEGACY_REDNODE_ADMIN "etc/redpack-admin.yaml"
 #endif
 
 #ifndef REDNODE_STATUS

@@ -7,11 +7,11 @@ exports:
     mount: $NODE_PATH/var/lib/rpm/
     path: $NODE_PATH/var/lib/rpm/
   - mode: Restricted
-    mount: $NODE_PATH/etc/redpack.yaml
-    path: $NODE_PATH/etc/redpack.yaml
+    mount: $NODE_PATH/etc/redpak.yaml
+    path: $NODE_PATH/etc/redpak.yaml
   - mode: Restricted
-    mount: $NODE_PATH/etc/redpack-admin.yaml
-    path: $NODE_PATH/etc/redpack-admin.yaml
+    mount: $NODE_PATH/etc/redpak-admin.yaml
+    path: $NODE_PATH/etc/redpak-admin.yaml
   - mode: Private
     mount: $NODE_PATH/etc/yum.repos.d
     path: $NODE_PATH/etc/yum.repos.d
