@@ -35,6 +35,7 @@
 static struct option options[] = {
     {"admin"  , optional_argument, 0,  'a' },
     {"bwrap"  , required_argument, 0,  'b' },
+    {"dump"   , no_argument      , 0,  'D' },
     {"force"  , optional_argument, 0,  'f' },
     {"help"   , no_argument      , 0,  '?' },
     {"redpath", required_argument, 0,  'r' },
@@ -46,7 +47,7 @@ static struct option options[] = {
     {0,         0,                 0,  0 }
 };
 
-static const char short_options[] = "a::b:f::?r:s::u::v::";
+static const char short_options[] = "a::b:Df::?r:s::u::v::";
 
 static int optbool(const char *arg, int def, const char *option)
 {
@@ -89,6 +90,10 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 
             case 'b':
                 config->bwrap=optarg;
+                break;
+
+            case 'D':
+                config->dump = 1;
                 break;
 
             case 'f':

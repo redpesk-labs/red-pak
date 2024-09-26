@@ -256,14 +256,12 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         argval[argcount++]=subargv[idx];
     }
 
-    //if (1) {
-    //    printf("\n#### OPTIONS ####\n");
-    //    for (int idx=1; idx < argcount; idx++) {
-    //        printf (" %s", argval[idx]);
-    //    }
-    //    printf ("\n###################\n");
-    //}
-
+    if (cliarg->dump) {
+        for (int idx=0; idx < argcount; idx++ )
+            printf(idx ? " %s" : "%s", argval[idx]);
+        printf("\n");
+        exit(0);
+    }
 
     int pipe_fd[2];
     if (pipe(pipe_fd) == -1) {

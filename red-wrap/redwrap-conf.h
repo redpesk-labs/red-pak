@@ -29,6 +29,7 @@ typedef struct {
     int strict;
     int unsafe;
     int verboseopts;
+    int dump;
 } rWrapConfigT;
 
 extern rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage);
