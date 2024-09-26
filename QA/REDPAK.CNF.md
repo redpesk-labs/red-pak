@@ -10,7 +10,7 @@ also include configuration of the rednodes that it belongs to, recursively.
 
 ### Valid YAML file
 
-.RULE 
+.RULE REDPAK.CNF-U-VAL-YAM-FIL
 
 A rednode configuration file is a YAML encoded text file.
 Being a YAML text file has implication, it must be valid.
@@ -20,7 +20,7 @@ Invalid YAML file must be rejected.
 
 ### Keys are not case sensitive
 
-.RULE
+.RULE REDPAK.CNF-U-KEY-ARE-NOT-CAS-SEN
 
 When parsing rednode configuration, name of sections, keys of
 associative maps and enumerated values are processed without
@@ -29,7 +29,7 @@ regards to the case used. So the key `Key` is the same that
 
 ### Content is expanded
 
-.RULE
+.RULE REDPAK.CNF-U-CON-EXP
 
 Immediately after being parsed, values of configuration files
 are expanded. The expansion process allows to add some templating
@@ -39,7 +39,7 @@ and result of command execution.
 
 ### Content must be valid
 
-.RULE
+.RULE REDPAK.CNF-U-CON-MUS-BE-VAL
 
 The content of the configuration file must be valid
 for each rule given below in the section content.
@@ -47,7 +47,7 @@ for each rule given below in the section content.
 
 ### Unexpected content is not valid
 
-.RULE
+.RULE REDPAK.CNF-U-UNE-CON-NOT-VAL
 
 Any content not specified make the whole
 configuration file invalid.
@@ -56,7 +56,7 @@ configuration file invalid.
 
 ### Expansion occurs on strings
 
-.RULE 
+.RULE REDPAK.CNF-U-EXP-OCC-STR
 
 Expansion occurs on strings, not on numbers, boolean, or, enumerations.
 
@@ -66,7 +66,7 @@ The reason is to search in integration with libcyaml.
 
 ### Pattern expansion character
 
-.RULE
+.RULE REDPAK.CNF-U-PAT-EXP-CHA
 
 Expansion is the replacement of expension patterns by the value resulting
 of evaluation of the replacement pattern. Within strings, patterns are starting by
@@ -80,7 +80,7 @@ TODO: allow or not the pattern `${}`
 
 ### Escaping pattern expansion character
 
-.RULE
+.RULE REDPAK.CNF-U-ESC-PAT-EXP-CHA
 
 The escaping character is the *backslash* (`\`, UNICODE point 92). When the 
 pattern expansion character is immediatyely following the escaping character
@@ -91,7 +91,7 @@ TODO: The escaping character should also be escaped but it is not the case ATM.
 
 ### Expansion of command evaluation replacement
 
-.RULE
+.RULE REDPAK.CNF-U-EXP-COM-EVA-REP
 
 A *command evaluation replacement* is required when the pattern expansion
 character is followed by an opening bracket (`(`, UNICODE point 40).
@@ -116,9 +116,9 @@ TODO: precise if and how output is trimmed
 
 ### Expansion of tag replacement
 
-.RULE
+.RULE REDPAK.CNF-U-EXP-TAG-REP
 
-When the pattern expansion character is not immediatly succeeded
+When the pattern expansion character is not immediately succeeded
 by an opening bracket, this is a *tag replacement*. Any character
 following the pattern expansion character and in the range of
 UNICODE codepoints from 48 to 122 are interpreted as a tag.
@@ -172,7 +172,7 @@ matching environment variable.
 
 ### Valid root map
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-ROO-MAP
 
 At the root of a *rednode* configuration file is a map.
 The content of the root map is:
@@ -188,7 +188,7 @@ It is an error if the *header* entry is absent.
 
 ### Valid headers map
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-HEA-MAP
 
 The main entry *headers* must be a valid map with valid content as described below:
 
@@ -204,7 +204,7 @@ It is an error if the value of *alias* is invalid.
 
 ### Valid alias
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-ALI
 
 ????? any string
 
@@ -212,13 +212,13 @@ TODO: validate alias name using strict rules (ex: should not have any '/', shoul
 
 ### Valid environ sequence
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-ENV-SEQ
 
 The main entry *environ* must be a valid sequence of valid environ entries
 
 ### Valid environ entries
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-ENV-ENT
 
 Valid environ entries are maps with the entries described below:
 
@@ -241,7 +241,7 @@ TODO: check processing of letter's case
 
 ### Valid  mode of environ entries
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-MOD-ENV-ENT
 
 Valid mode for environ entries are:
 
@@ -250,20 +250,20 @@ Valid mode for environ entries are:
 | `Remove`  | no       | value depending on the mode             |
 | `Static`  | required | the variable is set with the value      |
 | `Default` | required | the variable is set with the value after expansion |
-| `Execfd`  | required | the value is a shell command, the variable is set with the output file  of that command |
+| `Execfd`  | required | the value is a shell command, the variable is set with the output of that command |
 
 It is an error if the mode is not one of the above value.
 
 ### Valid exports sequence
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-EXP-SEQ
 
 The main entry *exports* must be a valid sequence of valid export entries.
 
 
 ### Valid export entries
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-EXP-ENT
 
 Valid export entries are maps with the entries described below:
 
@@ -286,7 +286,7 @@ It is an error if the *path* entry is present when the mode does not expect it.
 
 ### Valid  mode of export entries
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-MOD-EXP-ENT
 
 Valid mode for export entries are:
 
@@ -319,7 +319,7 @@ but it is not always coherent.
 
 ### Valid config map
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-CON-MAP
 
 The main entry *config* must be a valid map containing any number of the below
 entries, all are optional:
@@ -372,7 +372,7 @@ TODO: EDU mostly is on/off but unset has some meaning too (it means let the chil
 
 ### Valid cgroups map
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-CGR-MAP
 
 Within main *config* map, the map *cgroups* must have
 the below entries, all are optional:
@@ -387,7 +387,7 @@ the below entries, all are optional:
 
 ### Valid cpuset map of cgroups
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-CPUSET-MAP-CGR
 
 Within map *cgroups* of *config*, the entry *cpuset*  must have
 the below entries, all are optional:
@@ -402,7 +402,7 @@ TODO check cpuset.cpus.exclusive for cpuset.cpus.partition
 
 ### Valid mem map of cgroups
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-MEM-MAP-CGR
 
 Within map *cgroups* of *config*, the entry *mem*  must have
 the below entries, all are optional:
@@ -424,7 +424,7 @@ TODO check that low is not used
 
 ### Valid cpu map of cgroups
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-CPU-MAP-CGR
 
 Within map *cgroups* of *config*, the entry *cpu*  must have
 the below entries, all are optional:
@@ -439,7 +439,7 @@ TODO check that weight_nice is not used
 
 ### Valid io map of cgroups
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-IO-MAP-CGR
 
 Within map *cgroups* of *config*, the entry *cpuset*  must have
 the below entries, all are optional:
@@ -457,7 +457,7 @@ TODO check that cost_model is not used
 
 ### Valid pids map of cgroups
 
-.RULE
+.RULE REDPAK.CNF-U-VAL-PID-MAP-CGR
 
 Within map *cgroups* of *config*, the entry *cpuset*  must have
 the below entries, all are optional:

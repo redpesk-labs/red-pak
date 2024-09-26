@@ -299,17 +299,6 @@ a program in a controlled environment. The executed program naturally *inherit*
 the settings of its parents. *REDWRAP* is invoked for setting the
 restricted environment of the process to be executed.
 
-
-
-
-
-
-
-
-
-
-
-
 ## Integration of REDPAK in DNF
 
 
@@ -318,4 +307,73 @@ restricted environment of the process to be executed.
 > adding, removing and updating packages within *REDNODE*s. The nested
 > hierarchy of *REDNODE*s forbids to install in children a package
 > already installed in a parent.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Merging rules
+
+The terms below are used for explaining merging rules:
+
+- *FINAL* refers to the final configuration after merge.
+
+- *LEAF* refers to the targeted *REDNODE*.
+
+- *TARGET* refers to the appropriate configuration of the *LEAF* either
+  the normal configuration or the administrative configuration, depending
+  on the required target.
+
+- *INTERMEDIATE* is 
+
+### High level rules
+
+The principle of merging are:
+
+- normal child settings can not be weaker than normal parent settings
+
+- administrative child settings can not be weaker than administrative parent settings
+
+- administrative settings of a *REDNODE* are ...
+
+
+### Header values
+
+In the *FINAL* configuration, header values are the header values
+of the *TARGET* unchanged.
+
+
+
+### 
+
+Data of header are those of the leaf unchanged and are 
+
 
