@@ -11,19 +11,16 @@
 #   + redwrap-dnf --redpath=/xxxx/xxxx --alias=xxxx [--template=default]
 #-----------------------------------------------------------------------------
 
-
 #---------------------------------------------------------------------
-# Headers: Automtically generated at the node creation
+# Headers: Automtically generated and filled at the node creation
 #   Alias: alias of the node given by --alias at the creation or the basename of redpath
 #   Name : generated uuid
 #   Info: information of user/date
-#
-# below an header example
 #---------------------------------------------------------------------
 headers:
-  alias: parent
-  name: 77460e61-2dd7-4122-845f-4a644e01f73b
-  info: Node created by rp-owner(localhost.localdomain) the 16-May-2022 May:29 (CEST)
+  alias: ROOT-NORMAL
+  name: ROOT-NORMAL
+  info: default root node configuration
 
 #---------------------------------------------------------------------
 # Config:
@@ -111,7 +108,7 @@ config:
 #---------------------------------------------------------------------
 environ:
   - key: PS1
-    value: Rednode($LEAF_ALIAS)>
+    value: 'Rednode($LEAF_ALIAS)> '
     mode: Default
 
   - key: SHELL_SESSION_ID
@@ -161,7 +158,6 @@ exports:
   - mode: Public
     mount: /home/$UID/app-data
     path: /home/$UID/app-data
-
 
   # mount /usr/lib + /usr/bin in node '/' in order to keep /usr free for node hosted RPM
   - mount: /lib64

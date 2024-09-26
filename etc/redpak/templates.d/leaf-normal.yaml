@@ -4,13 +4,13 @@
 
 headers:
     # alias: the name application see at exec time (typically siblings use the same alias)
-    alias: $NODE_ALIAS
+    alias: LEAF-NORMAL
 
     # name: identify siblings within a familly (mostly for debug)
-    name:  $UUID
+    name: LEAF-NORMAL
 
     # info: any text that may help you to manage a node
-    info:  "Node created by $LOGNAME($HOSTNAME) the $TODAY"
+    info: default leaf node configuration
 
 config:
     # rpm/dnf storage dir

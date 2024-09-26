@@ -20,9 +20,9 @@
 #   Info:
 #---------------------------------------------------------------------
 headers:
-  alias:
-  name:
-  info:
+  alias: FULL-NORMAL
+  name: FULL-NORMAL
+  info: default full node configuration
 
 #---------------------------------------------------------------------
 # Config:
@@ -80,7 +80,7 @@ environ:
     mode: Default
 
   - key: PS1
-    value: Rednode($LEAF_ALIAS)>
+    value: 'Rednode($LEAF_ALIAS)> '
     mode: Default
 
   - key: SHELL_SESSION_ID

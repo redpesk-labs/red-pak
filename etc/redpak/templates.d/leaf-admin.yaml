@@ -1,7 +1,8 @@
 headers:
-  alias: $NODE_ALIAS-admin
-  name: $UUID
-  info:  "Node created by $LOGNAME($HOSTNAME) the $TODAY"
+  alias: LEAF-ADMIN
+  name: LEAF-ADMIN
+  info: default leaf node administrative configuration
+
 exports:
   - mode: Restricted
     mount: $NODE_PATH/var/lib/rpm/

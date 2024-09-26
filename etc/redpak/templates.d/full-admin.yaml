@@ -18,9 +18,9 @@
 #   Name : A unique name for debug ($UUID will expand at creation time)
 #---------------------------------------------------------------------
 headers:
-  alias: coreos-admin
-  name: $UUID
-  info: 'redpak root node config admin'
+  alias: FULL-ADMIN
+  name: FULL-ADMIN
+  info: default full node administrative configuration
 
 
 #---------------------------------------------------------------------
