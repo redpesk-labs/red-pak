@@ -281,6 +281,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     if (pid == 0) {
         /* wait for parent to set uid/gid maps */
         close(pipe_fd[1]);
+        read(pipe_fd[0], &pid, sizeof(pid));
         close(pipe_fd[0]);
 
         /* unshare time ns */
@@ -294,9 +295,12 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         }
         return 0;
     }
+    close(pipe_fd[0]);
     setuidgidmap(pid, mergedConfTags->maprootuser);
     /* signal child that uid/gid maps are set */
+    write(pipe_fd[1], &pid, sizeof(pid));
     close(pipe_fd[1]);
+
     int returnStatus;
     waitpid(pid, &returnStatus, 0);
     return returnStatus;
