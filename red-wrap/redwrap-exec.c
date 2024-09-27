@@ -238,9 +238,9 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         argval[argcount++]="--unshare-pid";
 
     if (can_unshare(mergedConfTags->share_net, mergedConfTags->share_all))
-        argval[argcount++]="--share-net";
-    else
         argval[argcount++]="--unshare-net";
+    else
+        argval[argcount++]="--share-net";
 
     if (mergedConfTags->diewithparent & RED_CONF_OPT_ENABLED)
         argval[argcount++]="--die-with-parent";
