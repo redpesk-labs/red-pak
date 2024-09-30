@@ -204,7 +204,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     if (isCgroups)
         setcgroups(mergedConfTags, rootNode);
 
-    // add commulated LD_PATH_LIBRARY & PATH
+    // add cumulated LD_PATH_LIBRARY & PATH
     argval[argcount++]="--setenv";
     argval[argcount++]="PATH";
     argval[argcount++]=strdup(pathString);
@@ -287,7 +287,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
             unshare(CLONE_NEWTIME);
 
         argval[argcount]=NULL;
-        if(execv(cliarg->bwrap, (char**) argval)) {
+        if(execve(cliarg->bwrap, (char**) argval, NULL)) {
             RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
             return 1;
         }
