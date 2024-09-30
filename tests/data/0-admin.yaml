@@ -1,0 +1,8 @@
+headers:
+    alias: 0-ADMIN
+    name: 0-ADMIN
+    info: 0-ADMIN
+exports:
+  - mode: Private
+    mount: /bin/busybox
+    path: /usr/bin/busybox
