@@ -64,15 +64,15 @@ OnError:
 }
 
 int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
-    int error;
-    // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-    error= RedConfAppendEnvKey(node, dataNode->ldpathString, (int *)&dataNode->ldpathIdx, RED_MAXPATHLEN, node->config->conftag->ldpath, ":", NULL);
-    if (error) goto OnErrorExit;
+    int error = 0;
 
-    error= RedConfAppendEnvKey(node, dataNode->pathString, (int *)&dataNode->pathIdx, RED_MAXPATHLEN, node->config->conftag->path, ":",NULL);
-    if (error) goto OnErrorExit;
+    if (node->config->conftag && node->config->conftag->ldpath)
+        // node looks good extract path/ldpath before adding red-wrap cli program+arguments
+        error= RedConfAppendEnvKey(node, dataNode->ldpathString, (int *)&dataNode->ldpathIdx, RED_MAXPATHLEN, node->config->conftag->ldpath, ":", NULL);
 
-OnErrorExit:
+    if (!error && node->config->conftag && node->config->conftag->path)
+        error= RedConfAppendEnvKey(node, dataNode->pathString, (int *)&dataNode->pathIdx, RED_MAXPATHLEN, node->config->conftag->path, ":",NULL);
+
     return error;
 }
 
