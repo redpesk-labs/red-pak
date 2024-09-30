@@ -28,6 +28,10 @@ add_executable(
     redwrap-dnf
         redwrap-dnf.c
 )
+target_compile_definitions(
+    redwrap-dnf
+        PRIVATE REDMICRODNF_BIN_DIR="${CMAKE_INSTALL_FULL_BINDIR}"
+)
 target_link_libraries(
     redwrap-dnf
         PRIVATE

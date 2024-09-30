@@ -38,8 +38,11 @@
 #ifndef REDMICRODNF_CMD
 #define REDMICRODNF_CMD "redmicrodnf"
 #endif
+#ifndef REDMICRODNF_BIN_DIR
+#define REDMICRODNF_BIN_DIR "/usr/bin"
+#endif
 #ifndef REDMICRODNF_CMD_PATH
-#define REDMICRODNF_CMD_PATH "/usr/bin/"REDMICRODNF_CMD
+#define REDMICRODNF_CMD_PATH REDMICRODNF_BIN_DIR"/"REDMICRODNF_CMD
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
