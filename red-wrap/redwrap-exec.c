@@ -168,6 +168,8 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         .pathIdx = 0
     };
     int admin = cliarg->adminpath ? 1 : 0;
+    pathString[0] = 0;
+    ldpathString[0] = 0;
 
     // start argument list with red-wrap command name
     argval[argcount++] = command_name;
