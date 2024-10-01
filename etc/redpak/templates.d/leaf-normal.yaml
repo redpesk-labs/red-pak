@@ -17,7 +17,7 @@ config:
     rpmdir: $NODE_PATH/var/lib/rpm
     persistdir: $NODE_PATH/var/lib/dnf
 
-    # exec path added at res-tart time
+    # exec path added at restart time
     path: /nodes/$NODE_ALIAS/usr/bin
     ldpath: /nodes/$NODE_ALIAS/usr/lib:/nodes/$NODE_ALIAS/usr/lib64
 
