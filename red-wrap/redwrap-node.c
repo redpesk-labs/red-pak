@@ -72,6 +72,7 @@ static void RwrapMountModeArgval(redNodeT *node, const char *mount, const char *
 static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
 
     unsigned idx;
+    char buffer[2049];
 
     // scan export directory
     for (idx=0; idx <configN->exports_count; idx++) {
@@ -80,7 +81,6 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         const char* path=configN->exports[idx].path;
         struct stat status;
         const char * expandpath = NULL;
-        char fdstr[32];
 
         // if mouting path is not privide let's duplicate mount
         if (!path) path=mount;
@@ -128,8 +128,8 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         case RED_EXPORT_EXECFD:
             argval[(*argcount)++]="--file";
-            snprintf(fdstr, sizeof(fdstr), "%d", MemFdExecCmd(mount, path, 1));
-            argval[(*argcount)++]=strdup(fdstr);
+            snprintf(buffer, sizeof(buffer), "%d", MemFdExecCmd(mount, path, 1));
+            argval[(*argcount)++]=strdup(buffer);
             argval[(*argcount)++]=RedNodeStringExpand (node, mount);
             break;
 
@@ -179,7 +179,6 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         redVarEnvFlagE mode= configN->confvar[idx].mode;
         const char* key= configN->confvar[idx].key;
         const char* value=configN->confvar[idx].value;
-        char fdstr[32];
 
         switch (mode) {
         case RED_CONFVAR_STATIC:
@@ -191,8 +190,8 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         case RED_CONFVAR_EXECFD:
             argval[(*argcount)++]="--setenv";
             argval[(*argcount)++]=key;
-            snprintf(fdstr, sizeof(fdstr), "%d", MemFdExecCmd(key, value, 1));
-            argval[(*argcount)++]=strdup(fdstr);
+            ExecCmd(key, value, buffer, sizeof(buffer), 1);
+            argval[(*argcount)++]=strdup(buffer);
             break;
 
         case RED_CONFVAR_DEFLT:
