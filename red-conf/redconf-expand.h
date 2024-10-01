@@ -35,8 +35,8 @@ extern char *RedGetDefaultExpand(const redNodeT *node, const char* key);
 
 /**
 * This function expands in the buffer @ref outputS, of @ref maxlen length
-* and indexed by *@ref idxOut, the  expansion of @ref keys specified in
-* @ref inputS in the context of @ref node.
+* and indexed by *@ref idxOut, the  expansion of @ref inputS
+* in the context of @ref node.
 *
 * On termination, *@ref idxOut is updated and a trailing zero is appended.
 *
@@ -93,5 +93,24 @@ extern char *RedNodeStringExpand(const redNodeT *node, const char* inputS);
 *         or (3) expansion is too large or (4) expansion reached errors.
 */
 extern char *expandAlloc(const redNodeT *node, const char *input, int expand);
+
+/**
+* This function expands in the buffer @ref outputS, of @ref maxlen length
+* and indexed by *@ref idxOut, the path expansion of @ref inputS
+* in the context of @ref node.
+*
+* On termination, *@ref idxOut is updated and a trailing zero is appended.
+*
+* @param node     the node to use for contextual expansion
+* @param outputS  output string buffer receiving expansion
+* @param idxOut   pointer to the integer index in @ref outputS
+* @param maxlen   length of the output string buffer
+* @param inputS   the string to expand (cannot be NULL)
+*
+* @return 0 in case of success or 1 in case of too large expansion.
+*/
+extern int RedConfAppendPath(const redNodeT *node,
+                             char *outputS, int *idxOut, int maxlen,
+                             const char *inputS);
 
 #endif

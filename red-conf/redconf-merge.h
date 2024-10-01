@@ -25,9 +25,9 @@
 // ---- Special confvar
 typedef struct {
     char *ldpathString;
-    unsigned int ldpathIdx;
+    int ldpathIdx;
     char *pathString;
-    unsigned int pathIdx;
+    int pathIdx;
 
 } dataNodeT;
 

@@ -7,7 +7,7 @@
 ---------------
 LD_LIBRARY_PATH=
 SHLVL=2
-PATH=:/bin
+PATH=/bin
 PWD=/
 ---------------
 /

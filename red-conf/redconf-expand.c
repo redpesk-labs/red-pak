@@ -437,3 +437,74 @@ char *expandAlloc(const redNodeT *node, const char *input, int expand) {
     return RedNodeStringExpand(node, input);
 }
 
+/* see redconf-expand.h */
+int RedConfAppendPath(const redNodeT *node,
+                      char *outputS, int *idxOut, int maxlen,
+                      const char *inputS
+) {
+    int idx, idxbeg, idxend, idxrd, idxwr, idxse;
+
+    /* copy the prefix */
+    idxbeg = *idxOut;
+    if (idxbeg >= maxlen)
+        return 1;
+
+    /* add default separator */
+    if (idxbeg > 0)
+        outputS[idxbeg++] = ':';
+
+    /* expand the middle */
+    *idxOut = idxbeg;
+    if (defaultsExpand(node, inputS, idxOut, outputS, maxlen, 0))
+        return 1;
+
+    /* copy the suffix */
+    idxend = *idxOut;
+    idxrd = idxwr = idxbeg;
+    while (idxrd < idxend) {
+        /* remove heading colon */
+        while (idxrd < idxend && outputS[idxrd] == ':')
+            idxrd++;
+
+        /* search any previously existing path */
+        idxse = 0;
+        while (idxse < idxwr) {
+            while (idxse < idxwr && outputS[idxse] == ':')
+                idxse++;
+            if (idxse < idxwr) {
+                idx = 0;
+                while (idxse + idx < idxwr
+                    && outputS[idxse + idx] != ':'
+                    && idxrd + idx < idxend
+                    && outputS[idxse + idx] == outputS[idxrd + idx])
+                    idx++;
+                if (idxse + idx < idxwr
+                    && outputS[idxse + idx] == ':'
+                    && (idxrd + idx == idxend || outputS[idxrd + idx] == ':')) {
+                    break;
+                }
+                else {
+                    idxse += idx;
+                    while (idxse < idxwr && outputS[idxse] != ':')
+                        idxse++;
+                }
+            }
+        }
+
+        if (idxse == idxwr)
+            /* not found, copy */
+            while (idxrd < idxend && (outputS[idxwr++] = outputS[idxrd++]) != ':');
+        else
+            /* found so skip */
+            while (idxrd < idxend && outputS[idxrd++] != ':');
+    }
+
+    /* remove tailing colon */
+    while (idxwr > 0 && outputS[idxwr - 1] == ':')
+        idxwr--;
+
+    /* append a zero */
+    outputS[*idxOut = idxwr] = 0;
+    return 0;
+}
+

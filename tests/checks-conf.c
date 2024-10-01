@@ -351,6 +351,35 @@ void test_exp_def_env(const char *key, const char *value, const redNodeT *node)
     }
 }
 
+void test_exp_path(const redNodeT *node)
+{
+    static const char *tests[][3] = {
+        { "", "", "" },
+        { "", "/bin", "/bin" },
+        { "", "/bin:/usr/bin", "/bin:/usr/bin" },
+        { "/bin:/usr/bin", "/bin:/usr/bin", "/bin:/usr/bin" },
+        { "/bin", "/bin:/usr/bin", "/bin:/usr/bin" },
+        { "/usr/bin", "/bin:/usr/bin", "/usr/bin:/bin" },
+    };
+    char buffer[1024];
+    int rc, sz, len, idx, cnt = (int)(sizeof tests / sizeof tests[0]);
+
+    for (idx = 0 ; idx < cnt ; idx++) {
+        sz = (int)sizeof buffer;
+        len = (int)strlen(tests[idx][0]);
+        strcpy(buffer, tests[idx][0]),
+        printf("\n\nEXPANDING PATH\n");
+        printf(" - got %s\n", tests[idx][0]);
+        printf(" - add %s\n", tests[idx][1]);
+        printf(" - exp %s\n", tests[idx][2]);
+        rc = RedConfAppendPath(node, buffer, &len, sz, tests[idx][1]);
+        printf(" - rc  %d\n", rc);
+        printf(" - fnd %s\n", buffer);
+        ck_assert_int_eq(rc, 0);
+        ck_assert_str_eq(buffer, tests[idx][2]);
+    }
+}
+
 /* basic expansion test */
 START_TEST(test_expand)
 {
@@ -385,6 +414,7 @@ START_TEST(test_expand)
     test_exp_def(KEY_LEAF_PATH, EXP_NODE_PATH, &node);
     test_exp_def(KEY_LEAF_INFO, EXP_NODE_INFO, &node);
     test_exp_def(KEY_CONF, EXP_CONF, &node);
+    test_exp_path(&node);
 }
 END_TEST
 
