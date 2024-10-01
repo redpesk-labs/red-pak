@@ -34,33 +34,49 @@
 
 // Only merge tags that should overloaded
 static int RedConfCopyConfTags(redConfTagT *source, redConfTagT *destination) {
-    if(!source || !destination) {
-        RedLog(REDLOG_ERROR, "source=%p or destination=%p is NULL", source, destination);
-        goto OnError;
+    if(!destination) {
+        RedLog(REDLOG_ERROR, "destination is NULL", source, destination);
+        return 1;
     }
 
-    if (source->cachedir) destination->cachedir = source->cachedir;
-    if (source->hostname) destination->hostname = source->hostname;
-    if (source->chdir) destination->chdir = source->chdir;
-    if (source->umask) destination->umask = source->umask;
-    if (source->verbose) destination->verbose = source->verbose;
-    if (source->diewithparent) destination->diewithparent = source->diewithparent;
-    if (source->newsession) destination->newsession = source->newsession;
-    if (source->umask)  destination->umask = source->umask;
-    if (source->maprootuser)  destination->maprootuser = source->maprootuser;
-    if (source->cgrouproot) destination->cgrouproot = source->cgrouproot;
+    if(source) {
+        if (source->cachedir)
+            destination->cachedir = source->cachedir;
+        if (source->hostname)
+            destination->hostname = source->hostname;
+        if (source->chdir)
+            destination->chdir = source->chdir;
+        if (source->umask)
+            destination->umask = source->umask;
+        if (source->verbose)
+            destination->verbose = source->verbose;
+        if (source->diewithparent)
+            destination->diewithparent = source->diewithparent;
+        if (source->newsession)
+            destination->newsession = source->newsession;
+        if (source->umask)
+            destination->umask = source->umask;
+        if (source->maprootuser)
+            destination->maprootuser = source->maprootuser;
+        if (source->cgrouproot)
+            destination->cgrouproot = source->cgrouproot;
 
-    if(destination->share_all != RED_CONF_OPT_DISABLED) destination->share_all = source->share_all;
-    if(destination->share_user != RED_CONF_OPT_DISABLED) destination->share_user = source->share_user;
-    if(destination->share_ipc != RED_CONF_OPT_DISABLED) destination->share_ipc = source->share_ipc;
-    if(destination->share_cgroup != RED_CONF_OPT_DISABLED) destination->share_cgroup =source->share_cgroup;
-    if(destination->share_pid != RED_CONF_OPT_DISABLED) destination->share_pid = source->share_pid;
-    if(destination->share_net != RED_CONF_OPT_DISABLED) destination->share_net = source->share_net;
-    if(destination->share_time != RED_CONF_OPT_DISABLED) destination->share_time = source->share_time;
-
+        if(destination->share_all != RED_CONF_OPT_DISABLED)
+            destination->share_all = source->share_all;
+        if(destination->share_user != RED_CONF_OPT_DISABLED)
+            destination->share_user = source->share_user;
+        if(destination->share_ipc != RED_CONF_OPT_DISABLED)
+            destination->share_ipc = source->share_ipc;
+        if(destination->share_cgroup != RED_CONF_OPT_DISABLED)
+            destination->share_cgroup =source->share_cgroup;
+        if(destination->share_pid != RED_CONF_OPT_DISABLED)
+            destination->share_pid = source->share_pid;
+        if(destination->share_net != RED_CONF_OPT_DISABLED)
+            destination->share_net = source->share_net;
+        if(destination->share_time != RED_CONF_OPT_DISABLED)
+            destination->share_time = source->share_time;
+    }
     return 0;
-OnError:
-    return 1;
 }
 
 int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
