@@ -1,0 +1,16 @@
+---------------
+/
+/testscript
+/testscript/4-prog
+/bin
+/bin/busybox
+---------------
+LD_LIBRARY_PATH=
+SHLVL=2
+PATH=:/bin
+PWD=/
+---------------
+/
+---------------
+/bin/busybox
+---------------

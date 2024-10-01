@@ -1,11 +1,14 @@
 ---------------
 /
-/busybox
+/bin
+/bin/busybox
 ---------------
 LD_LIBRARY_PATH=
 SHLVL=1
-PATH=
+PATH=:/bin
 PWD=/
 ---------------
 /
+---------------
+/bin/busybox
 ---------------

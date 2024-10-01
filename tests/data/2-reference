@@ -1,5 +1,7 @@
+---------------
 /
 /busybox
+---------------
 LD_LIBRARY_PATH=
 SHLVL=1
 NOTEXPANDED=$NODE_ALIAS
@@ -7,4 +9,6 @@ EXPANDED=NODE-2
 PATH=
 CMDOUTPUT=Current Working Directory = /root/red-pak/tests
 PWD=/
+---------------
 /
+---------------

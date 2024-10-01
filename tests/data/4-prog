@@ -1,0 +1,10 @@
+#!/bin/busybox sh
+busybox echo ---------------
+busybox find /
+busybox echo ---------------
+busybox env
+busybox echo ---------------
+busybox pwd
+busybox echo ---------------
+busybox which busybox
+busybox echo ---------------

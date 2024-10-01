@@ -1,0 +1,14 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+exports:
+  - mode: Private
+    mount: /bin/busybox
+    path: /usr/sbin/busybox
+  - mode: Private
+    mount: /testscript/4-prog
+    path: $NODE_PATH/testscript/4-prog
+config:
+    path: /bin
+

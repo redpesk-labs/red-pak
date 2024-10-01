@@ -1,0 +1,3 @@
+Simple test entering a node with busybox in /bin and program in testscript directory.
+Defines the PATH environment variable and try to use it.
+Displays the content and the environment.

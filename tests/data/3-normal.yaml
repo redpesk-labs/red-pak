@@ -1,0 +1,11 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+exports:
+  - mode: Private
+    mount: /bin/busybox
+    path: /usr/sbin/busybox
+config:
+    path: /bin
+
