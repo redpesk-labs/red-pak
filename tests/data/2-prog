@@ -1,0 +1,3 @@
+/busybox find /
+/busybox env
+/busybox pwd

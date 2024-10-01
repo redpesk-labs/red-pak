@@ -1,0 +1,19 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+exports:
+  - mode: Private
+    mount: /busybox
+    path: /usr/sbin/busybox
+environ:
+  - key: NOTEXPANDED
+    value: $NODE_ALIAS
+    mode: Static
+  - key: EXPANDED
+    value: $NODE_ALIAS
+    mode: Default
+  - key: CMDOUTPUT
+    value: printf 'Current Working Directory = %s' $PWD
+    mode: Execfd
+
