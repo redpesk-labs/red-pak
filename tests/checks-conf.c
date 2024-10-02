@@ -528,7 +528,7 @@ const assoc_string_uint_t assoc_export[] = {
     { "Anonymous",      RED_EXPORT_ANONYMOUS},
     { "Symlink",        RED_EXPORT_SYMLINK},
     { "Execfd" ,        RED_EXPORT_EXECFD},
-    { "Internal" ,      RED_EXPORT_DEFLT},
+    { "Internal" ,      RED_EXPORT_INTERNAL},
     { "Tmpfs"    ,      RED_EXPORT_TMPFS},
     { "Procfs"   ,      RED_EXPORT_PROCFS},
     { "Mqueue"   ,      RED_EXPORT_MQUEFS},

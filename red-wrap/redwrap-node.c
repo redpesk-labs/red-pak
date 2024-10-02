@@ -124,7 +124,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
             argval[(*argcount)++]= exp_mount;
             break;
 
-        case RED_EXPORT_DEFLT:
+        case RED_EXPORT_INTERNAL:
             argval[(*argcount)++]="--file";
             argval[(*argcount)++]=expandpath;
             argval[(*argcount)++]= exp_mount;

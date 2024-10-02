@@ -123,7 +123,7 @@
         RED_EXPORT_ANONYMOUS            = 1 << 7,
         RED_EXPORT_SYMLINK              = 1 << 8,
         RED_EXPORT_EXECFD               = 1 << 9,
-        RED_EXPORT_DEFLT                = 1 << 10,
+        RED_EXPORT_INTERNAL             = 1 << 10,
         RED_EXPORT_DEVFS                = 1 << 11,
         RED_EXPORT_TMPFS                = 1 << 12,
         RED_EXPORT_MQUEFS               = 1 << 13,
