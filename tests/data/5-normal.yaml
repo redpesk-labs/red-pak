@@ -1,0 +1,90 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+exports:
+  - mode: Private
+    mount: /busybox
+    path: /usr/sbin/busybox
+environ:
+  - key: NODE_PREFIX
+    value: ($NODE_PREFIX)
+    mode: Default
+  - key: redpak_MAIN
+    value: IGNORE($redpak_MAIN)
+    mode: Default
+  - key: redpak_TMPL
+    value: IGNORE($redpak_TMPL)
+    mode: Default
+  - key: REDNODE_CONF
+    value: ($REDNODE_CONF)
+    mode: Default
+  - key: REDNODE_ADMIN
+    value: ($REDNODE_ADMIN)
+    mode: Default
+  - key: REDNODE_STATUS
+    value: ($REDNODE_STATUS)
+    mode: Default
+  - key: REDNODE_VARDIR
+    value: ($REDNODE_VARDIR)
+    mode: Default
+  - key: REDNODE_REPODIR
+    value: ($REDNODE_REPODIR)
+    mode: Default
+  - key: REDNODE_LOCK
+    value: ($REDNODE_LOCK)
+    mode: Default
+  - key: USER
+    value: IGNORE($USER)
+    mode: Default
+  - key: LOGNAME
+    value: IGNORE($LOGNAME)
+    mode: Default
+  - key: HOSTNAME
+    value: ($HOSTNAME)
+    mode: Default
+  - key: CGROUPS_MOUNT_POINT
+    value: ($CGROUPS_MOUNT_POINT)
+    mode: Default
+  - key: PID
+    value: IGNORE($PID)
+    mode: Default
+  - key: UID
+    value: IGNORE($UID)
+    mode: Default
+  - key: GID
+    value: IGNORE($GID)
+    mode: Default
+  - key: TODAY
+    value: IGNORE($TODAY)
+    mode: Default
+  - key: UUID
+    value: IGNORE($UUID)
+    mode: Default
+  - key: NODE_ALIAS
+    value: ($NODE_ALIAS)
+    mode: Default
+  - key: NODE_NAME
+    value: IGNORE($NODE_NAME)
+    mode: Default
+  - key: NODE_PATH
+    value: ($NODE_PATH)
+    mode: Default
+  - key: NODE_INFO
+    value: IGNORE($NODE_INFO)
+    mode: Default
+  - key: LEAF_ALIAS
+    value: ($LEAF_ALIAS)
+    mode: Default
+  - key: LEAF_NAME
+    value: IGNORE($LEAF_NAME)
+    mode: Default
+  - key: LEAF_PATH
+    value: ($LEAF_PATH)
+    mode: Default
+  - key: LEAF_INFO
+    value: IGNORE($LEAF_INFO)
+    mode: Default
+  - key: REDPESK_VERSION
+    value: IGNORE($REDPESK_VERSION)
+    mode: Default

@@ -40,7 +40,7 @@ do
 
     echo "redwrap --redpath ${rednode} -- ${bbox} sh -c ${cmd}"
     redwrap --redpath "${rednode}" -- "${bbox}" sh -c "${cmd}" > "${resu}"
-    diff "${refe}" "${resu}"
+    grep -v '\<IGNORE\>' "${resu}" | diff "${refe}" -
 done
 echo
 rm -rf "${rednode}"
