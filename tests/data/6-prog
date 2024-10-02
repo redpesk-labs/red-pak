@@ -1,0 +1,6 @@
+#!/bin/sh
+echo ----------------
+ls -l /bin/* | sed 's:.*[0-9] /bin:/bin:'
+echo ----------------
+sed 's:,.*::' /proc/mounts | sort
+echo ----------------

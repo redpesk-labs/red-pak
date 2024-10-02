@@ -1,0 +1,25 @@
+----------------
+/bin/busybox
+/bin/echo -> /bin/busybox
+/bin/ls -> /bin/busybox
+/bin/sed -> /bin/busybox
+/bin/sh -> /bin/busybox
+/bin/sort -> /bin/busybox
+----------------
+/dev/sda4 /bin/busybox ext4 ro
+devpts /dev/pts devpts rw
+devtmpfs /dev/full devtmpfs rw
+devtmpfs /dev/null devtmpfs rw
+devtmpfs /dev/random devtmpfs rw
+devtmpfs /dev/tty devtmpfs rw
+devtmpfs /dev/urandom devtmpfs rw
+devtmpfs /dev/zero devtmpfs rw
+proc /proc proc rw
+proc /proc/bus proc ro
+proc /proc/irq proc ro
+proc /proc/sysrq-trigger proc ro
+tmpfs / tmpfs rw
+tmpfs /dev tmpfs rw
+tmpfs /testscript/6-prog tmpfs rw
+tmpfs /tmp tmpfs rw
+----------------

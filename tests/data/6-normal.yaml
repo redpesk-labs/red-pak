@@ -1,0 +1,37 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+config:
+    path: /bin
+exports:
+  - mode: PrivateRestricted
+    mount: /bin/busybox
+    path: /usr/sbin/busybox
+  - mode: Private
+    mount: /testscript/6-prog
+    path: $NODE_PATH/testscript/6-prog
+  - mount: /proc
+    mode: Procfs
+  - mount: /dev
+    mode: Devfs
+  - mount: /tmp
+    mode: Tmpfs
+  - mount: /run
+    mode: Anonymous
+  - mount: /bin/sh
+    path: /bin/busybox
+    mode: Symlink
+  - mount: /bin/ls
+    path: /bin/busybox
+    mode: Symlink
+  - mount: /bin/sed
+    path: /bin/busybox
+    mode: Symlink
+  - mount: /bin/sort
+    path: /bin/busybox
+    mode: Symlink
+  - mount: /bin/echo
+    path: /bin/busybox
+    mode: Symlink
+
