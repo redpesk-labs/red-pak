@@ -34,34 +34,6 @@
 extern char *RedGetDefaultExpand(const redNodeT *node, const char* key);
 
 /**
-* This function expands in the buffer @ref outputS, of @ref maxlen length
-* and indexed by *@ref idxOut, the  expansion of @ref inputS
-* in the context of @ref node.
-*
-* On termination, *@ref idxOut is updated and a trailing zero is appended.
-*
-* Expansion of commands $(...) are NOT allowed by this function.
-*
-* When @ref prefix isn't NULL, it is prepended to the expansion.
-* When @ref suffix isn't NULL, it is appended to the expansion.
-* But if expansions lead to an empty string, nothing is neither
-* prepended nor appended to that empty string.
-*
-* @param node     the node to use for contextual expansion
-* @param outputS  output string buffer receiving expansion
-* @param idxOut   pointer to the integer index in @ref outputS
-* @param maxlen   length of the output string buffer
-* @param inputS   the string to expand (cannot be NULL)
-* @param prefix   if not NULL a prepended string
-* @param suffix   if not NULL an appended string
-*
-* @return 0 in case of success or 1 in case of too large expansion.
-*/
-extern int RedConfAppendEnvKey(const redNodeT *node,
-                                char *outputS, int *idxOut, int maxlen,
-                                const char *inputS, const char* prefix, const char *suffix);
-
-/**
 * Returns a fresh allocated string being the expansion of the input
 * string @ref inputS in the context of @ref node.
 *

@@ -357,54 +357,6 @@ OnErrorExit:
 }
 
 /* see redconf-expand.h */
-int RedConfAppendEnvKey (const redNodeT *node,
-                            char *outputS, int *idxOut, int maxlen,
-                            const char *inputS, const char* prefix, const char *suffix) {
-
-    int idx, idxout0, idxout1, idxout2;
-
-    /* copy the prefix */
-    idxout0 = *idxOut;
-    if (prefix) {
-        for (idx=0; prefix[idx]; idx++) {
-            if (*idxOut >= maxlen)
-                goto OnErrorExit;
-            outputS[(*idxOut)++]=prefix[idx];
-        }
-    }
-
-    /* expand the middle */
-    idxout1 = *idxOut;
-    if (defaultsExpand(node, inputS, idxOut, outputS, maxlen, 0))
-        goto OnErrorExit;
-
-    /* copy the suffix */
-    idxout2 = *idxOut;
-    if (idxout2 == idxout1) {
-        /* nothing added, remove prefix */
-        *idxOut = idxout0;
-    }
-    else {
-        if (suffix) {
-            for (idx=0; suffix[idx]; idx++) {
-                if (*idxOut >= maxlen)
-                    goto OnErrorExit;
-                outputS[(*idxOut)++]=suffix[idx];
-            }
-        }
-    }
-
-    /* append a zero */
-    if (*idxOut >= maxlen)
-        goto OnErrorExit;
-    outputS[(*idxOut)]='\0';
-    return 0;
-
-OnErrorExit:
-    return 1;
-}
-
-/* see redconf-expand.h */
 char *RedGetDefaultExpand(const redNodeT *node, const char* key) {
     int idxOut = 0;
     char outputS[MAX_CYAML_FORMAT_STR];

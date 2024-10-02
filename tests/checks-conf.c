@@ -317,20 +317,6 @@ void test_exp_def(const char *key, const char *value, const redNodeT *node)
     ck_assert_ptr_nonnull(str);
     ck_assert_str_eq(str, tbe_val);
     free(str);
-
-    sprintf(tbe_key, "{$%s}", key);
-    sprintf(tbe_val, "%s{%s}%s", prefix, value, suffix);
-
-    len = 0;
-    rc = RedConfAppendEnvKey(node, scratch, &len, 1000, tbe_key, prefix, suffix);
-    printf("%s -> %s\n", tbe_key, scratch);
-    ck_assert_int_eq(rc, 0);
-    ck_assert_int_eq(len, strlen(scratch));
-    ck_assert_str_eq(scratch, tbe_val);
-
-    len2 = 0;
-    rc = RedConfAppendEnvKey(node, scratch, &len2, len, tbe_key, prefix, suffix);
-    ck_assert_int_ne(rc, 0);
 }
 
 void test_exp_def_env(const char *key, const char *value, const redNodeT *node)
