@@ -53,22 +53,6 @@ static int RwrapCheckDir(const char *path, redConfigT *configN, int create) {
     return 0;
 }
 
-/**
- * @brief Adding arguments for bwrap to mount path from system to node
- *
- * @param node          Node data
- * @param mount         System path to mount (destination)
- * @param bindMode      Mode of the bind "--bind" or "--ro-bind"
- * @param expandpath    Node path to mount (source)
- * @param argval        List of arguments
- * @param argcount      Index and count args
- */
-static void RwrapMountModeArgval(redNodeT *node, const char *mount, const char *bindMode, const char *expandpath, const char *argval[], int *argcount) {
-    argval[(*argcount)++]=bindMode;
-    argval[(*argcount)++]=expandpath;
-    argval[(*argcount)++]=RedNodeStringExpand (node, mount);
-}
-
 static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
 
     unsigned idx;
@@ -81,6 +65,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         const char* path=configN->exports[idx].path;
         struct stat status;
         const char * expandpath = NULL;
+        char *exp_mount;
 
         // if mouting path is not privide let's duplicate mount
         if (!path) path=mount;
@@ -105,71 +90,78 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
             }
         }
 
+        exp_mount = RedNodeStringExpand (node, mount);
+
         switch (mode) {
 
         case RED_EXPORT_PRIVATE:
         case RED_EXPORT_PUBLIC:
         case RED_EXPORT_PRIVATE_FILE:
         case RED_EXPORT_PUBLIC_FILE:
-            RwrapMountModeArgval(node, mount, "--bind", expandpath, argval, argcount);
+            argval[(*argcount)++]="--bind";
+            argval[(*argcount)++]=expandpath;
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_RESTRICTED_FILE:
         case RED_EXPORT_RESTRICTED:
         case RED_EXPORT_PRIVATE_RESTRICTED:
-            RwrapMountModeArgval(node, mount, "--ro-bind", expandpath, argval, argcount);
+            argval[(*argcount)++]="--ro-bind";
+            argval[(*argcount)++]=expandpath;
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_SYMLINK:
             argval[(*argcount)++]="--symlink";
             argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_EXECFD:
             argval[(*argcount)++]="--file";
             snprintf(buffer, sizeof(buffer), "%d", MemFdExecCmd(mount, path, 1));
             argval[(*argcount)++]=strdup(buffer);
-            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_DEFLT:
             argval[(*argcount)++]="--file";
             argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_ANONYMOUS:
             argval[(*argcount)++]="--dir";
-            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_TMPFS:
             argval[(*argcount)++]="--tmpfs";
-            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_DEVFS:
             argval[(*argcount)++]="--dev";
-            argval[(*argcount)++]=RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_PROCFS:
             argval[(*argcount)++]="--proc";
-            argval[(*argcount)++]= RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_MQUEFS:
             argval[(*argcount)++]="--mqueue";
-            argval[(*argcount)++]= RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= exp_mount;
             break;
 
         case RED_EXPORT_LOCK:
             argval[(*argcount)++]="--lock-file";
-            argval[(*argcount)++]= RedNodeStringExpand (node, mount);
+            argval[(*argcount)++]= exp_mount;
             break;
 
         default:
+            free(exp_mount);
             break;
         }
     }
