@@ -148,18 +148,16 @@ static int _exec_bwrap(int argc, char *argv[], int position) {
         return -1;
     }
 
+    //admin is needed for redmicrodnf
+    cliarg->isadmin = 1;
+
     //add redmicrodnf command
     argcount = 0;
     subargv[argcount++] = "--";
     subargv[argcount++] = REDMICRODNF_CMD;
 
-    //admin is needed for redmicrodnf
-    if(!cliarg->adminpath) {
-        cliarg->adminpath = redpak_MAIN_ADMIN;
-    }
     subargv[argcount++] = "--redpath";
     subargv[argcount++] = (char *)cliarg->redpath;
-
 
     for (int i = cliarg->index; i < argc; i++)
         subargv[argcount++] = argv[i];

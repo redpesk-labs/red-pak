@@ -79,13 +79,9 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
         // option return short option even when long option is given
         switch (option) {
             case 'a':
+                config->isadmin = 1;
                 if (optarg)
                     config->adminpath = optarg;
-                else {
-                    config->adminpath = secure_getenv("redpak_MAIN_ADMIN");
-                    if (!config->adminpath)
-                        config->adminpath= redpak_MAIN_ADMIN;
-                }
                 break;
 
             case 'b':

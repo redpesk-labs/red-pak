@@ -30,6 +30,7 @@ typedef struct {
     int unsafe;
     int verboseopts;
     int dump;
+    int isadmin;
 } rWrapConfigT;
 
 extern rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage);
