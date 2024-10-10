@@ -34,10 +34,11 @@ perform_test() {
     fi
 
     # admin config
-    local admin
+    local admin flagadmin
     if test -f "data/${num}-admin.yaml"
     then
         admin="data/${num}-admin.yaml"
+        flagadm="--admin"
     else
         admin="data/0-admin.yaml"
     fi
@@ -65,7 +66,7 @@ perform_test() {
     fi
 
     # execute the command in the node
-    action redwrap --redpath "${rednode}" -- ${shell} sh -c "${cmd}" > "${resu}"
+    action redwrap $flagadm --redpath "${rednode}" -- ${shell} sh -c "${cmd}" > "${resu}"
     test $? -gt 0 && return $?
 
     # compare result
