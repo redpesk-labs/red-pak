@@ -141,19 +141,6 @@ int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicate) {
     return 0;
 }
 
-//get mergedConftags from hierarchy
-redConfTagT *mergedConftags(const redNodeT *node) {
-    redConfTagT *mergedConfTags = calloc(1, sizeof(redConfTagT));
-    if (mergedConfTags != NULL) {
-        int rc = mergeConfTag(node, mergedConfTags, 0 /* not duplicating */);
-        if (rc < 0) {
-            free(mergedConfTags);
-            mergedConfTags = NULL;
-        }
-    }
-    return mergedConfTags;
-}
-
 /*************************************
  * MAIN MERGE *
  * **********************************/
