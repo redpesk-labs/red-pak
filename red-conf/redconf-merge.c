@@ -32,51 +32,77 @@
 #include "redconf-utils.h"
 #include "redconf-hashmerge.h"
 
+/* merge the source string to the destination
+ * returns 0 on success or 1 on error
+ */
+static inline int merge_string(const char *source, const char **destination, int duplicate) {
+    if (source != NULL) {
+        if (!duplicate)
+            *destination = source;
+        else {
+            free((void*)*destination);
+            *destination = strdup(source);
+            if (*destination == NULL)
+                return 1;
+        }
+    }
+    return 0;
+}
+
+/* merge the source sharing opt flag to the destination */
+static inline void merge_optflag_sharing(redConfOptFlagE source, redConfOptFlagE *destination) {
+    if (*destination != RED_CONF_OPT_DISABLED)
+        *destination = source;
+}
+
+/* merge the source opt flag to the destination */
+static inline void merge_optflag_overwrite(redConfOptFlagE source, redConfOptFlagE *destination) {
+    if (source != RED_CONF_OPT_UNSET)
+        *destination = source;
+}
+
+/* merge the source opt flag to the destination */
+static inline void merge_int_not_null(int source, int *destination) {
+    if (source)
+        *destination = source;
+}
+
+/* merge the source opt flag to the destination */
+static inline void merge_uint_not_null(unsigned source, unsigned *destination) {
+    if (source)
+        *destination = source;
+}
+
 // Only merge tags that should overloaded
-static int RedConfCopyConfTags(redConfTagT *source, redConfTagT *destination) {
-    if(!destination) {
+static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destination) {
+    if(destination == NULL) {
         RedLog(REDLOG_ERROR, "destination is NULL", source, destination);
         return 1;
     }
 
-    if(source) {
-        if (source->cachedir)
-            destination->cachedir = source->cachedir;
-        if (source->hostname)
-            destination->hostname = source->hostname;
-        if (source->chdir)
-            destination->chdir = source->chdir;
-        if (source->umask)
-            destination->umask = source->umask;
-        if (source->verbose)
-            destination->verbose = source->verbose;
-        if (source->diewithparent)
-            destination->diewithparent = source->diewithparent;
-        if (source->newsession)
-            destination->newsession = source->newsession;
-        if (source->umask)
-            destination->umask = source->umask;
-        if (source->maprootuser)
-            destination->maprootuser = source->maprootuser;
-        if (source->cgrouproot)
-            destination->cgrouproot = source->cgrouproot;
+    if(source == NULL)
+        return 0;
 
-        if(destination->share_all != RED_CONF_OPT_DISABLED)
-            destination->share_all = source->share_all;
-        if(destination->share_user != RED_CONF_OPT_DISABLED)
-            destination->share_user = source->share_user;
-        if(destination->share_ipc != RED_CONF_OPT_DISABLED)
-            destination->share_ipc = source->share_ipc;
-        if(destination->share_cgroup != RED_CONF_OPT_DISABLED)
-            destination->share_cgroup =source->share_cgroup;
-        if(destination->share_pid != RED_CONF_OPT_DISABLED)
-            destination->share_pid = source->share_pid;
-        if(destination->share_net != RED_CONF_OPT_DISABLED)
-            destination->share_net = source->share_net;
-        if(destination->share_time != RED_CONF_OPT_DISABLED)
-            destination->share_time = source->share_time;
-    }
-    return 0;
+    merge_optflag_sharing(source->share_all, &destination->share_all);
+    merge_optflag_sharing(source->share_user, &destination->share_user);
+    merge_optflag_sharing(source->share_ipc, &destination->share_ipc);
+    merge_optflag_sharing(source->share_cgroup, &destination->share_cgroup);
+    merge_optflag_sharing(source->share_pid, &destination->share_pid);
+    merge_optflag_sharing(source->share_net, &destination->share_net);
+    merge_optflag_sharing(source->share_time, &destination->share_time);
+
+    merge_optflag_overwrite(source->diewithparent, &destination->diewithparent);
+    merge_optflag_overwrite(source->newsession, &destination->newsession);
+
+    merge_int_not_null(source->verbose, &destination->verbose);
+    merge_uint_not_null(source->maprootuser, &destination->maprootuser);
+
+
+    return merge_string(source->cachedir, &destination->cachedir, 0)
+        || merge_string(source->hostname, &destination->hostname, 0)
+        || merge_string(source->chdir, &destination->chdir, 0)
+        || merge_string(source->umask, &destination->umask, 0)
+        || merge_string(source->cgrouproot, &destination->cgrouproot, 0);
 }
 
 int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
