@@ -93,29 +93,30 @@ int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
 }
 
 //get mergedConftags from hierarchy
-redConfTagT *mergedConftags(const redNodeT *rootnode) {
+redConfTagT *mergedConftags(const redNodeT *node) {
+    const redNodeT *iter;
     redConfTagT *mergedConfTags = calloc(1, sizeof(redConfTagT));
 
-    for (const redNodeT *node=rootnode; node; node=node->first_child) {
-        (void) RedConfCopyConfTags(node->config->conftag, mergedConfTags);
-        if(!node->parent) { //system_node
+    for (iter=node; iter != NULL; iter=iter->first_child) {
+        (void) RedConfCopyConfTags(iter->config->conftag, mergedConfTags);
+        if(!iter->parent) { //system_node
             // update process default umask
             RedSetUmask (mergedConfTags ? mergedConfTags->umask : NULL);
         }
     }
 
-    //assume admin overload everything exepted node specific
-    for (const redNodeT *node=rootnode; node != NULL; node=node->parent) {
-        if (!node->confadmin) {
-            RedLog(REDLOG_DEBUG, "no admin config for %s", node->redpath);
+    // assume admin overload everything exepted node specific
+    for (iter=node; iter != NULL; iter=iter->parent) {
+        if (!iter->confadmin) {
+            RedLog(REDLOG_DEBUG, "no admin config for %s", iter->redpath);
             continue;
         }
 
-        if (!node->confadmin->conftag) {
-            RedLog(REDLOG_INFO, "no admin conftag for %s", node->redpath);
+        if (!iter->confadmin->conftag) {
+            RedLog(REDLOG_INFO, "no admin conftag for %s", iter->redpath);
             continue;
         }
-        (void) RedConfCopyConfTags(node->confadmin->conftag, mergedConfTags);
+        (void) RedConfCopyConfTags(iter->confadmin->conftag, mergedConfTags);
     }
     return mergedConfTags;
 }
