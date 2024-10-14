@@ -74,7 +74,7 @@ static inline void merge_uint_not_null(unsigned source, unsigned *destination) {
 }
 
 // Only merge tags that should overloaded
-static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destination) {
+static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destination, int duplicate) {
     if(destination == NULL) {
         RedLog(REDLOG_ERROR, "destination is NULL", source, destination);
         return 1;
@@ -97,12 +97,11 @@ static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destinati
     merge_int_not_null(source->verbose, &destination->verbose);
     merge_uint_not_null(source->maprootuser, &destination->maprootuser);
 
-
-    return merge_string(source->cachedir, &destination->cachedir, 0)
-        || merge_string(source->hostname, &destination->hostname, 0)
-        || merge_string(source->chdir, &destination->chdir, 0)
-        || merge_string(source->umask, &destination->umask, 0)
-        || merge_string(source->cgrouproot, &destination->cgrouproot, 0);
+    return merge_string(source->cachedir, &destination->cachedir, duplicate)
+        || merge_string(source->hostname, &destination->hostname, duplicate)
+        || merge_string(source->chdir, &destination->chdir, duplicate)
+        || merge_string(source->umask, &destination->umask, duplicate)
+        || merge_string(source->cgrouproot, &destination->cgrouproot, duplicate);
 }
 
 int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
@@ -119,11 +118,11 @@ int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
 }
 
 // put in conftag the merge of node hierarchy
-static int mergeConfTag(const redNodeT *node, redConfTagT *conftag) {
+static int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicate) {
     const redNodeT *iter;
 
     for (iter=node; iter != NULL; iter=iter->first_child) {
-        (void) RedConfCopyConfTags(iter->config->conftag, conftag);
+        (void) RedConfCopyConfTags(iter->config->conftag, conftag, duplicate);
         if(!iter->parent) { //system_node
             // update process default umask
             RedSetUmask (conftag ? conftag->umask : NULL);
@@ -141,7 +140,7 @@ static int mergeConfTag(const redNodeT *node, redConfTagT *conftag) {
             RedLog(REDLOG_INFO, "no admin conftag for %s", iter->redpath);
             continue;
         }
-        (void) RedConfCopyConfTags(iter->confadmin->conftag, conftag);
+        (void) RedConfCopyConfTags(iter->confadmin->conftag, conftag, duplicate);
     }
     return 0;
 }
@@ -150,7 +149,7 @@ static int mergeConfTag(const redNodeT *node, redConfTagT *conftag) {
 redConfTagT *mergedConftags(const redNodeT *node) {
     redConfTagT *mergedConfTags = calloc(1, sizeof(redConfTagT));
     if (mergedConfTags != NULL) {
-        int rc = mergeConfTag(node, mergedConfTags);
+        int rc = mergeConfTag(node, mergedConfTags, 0 /* not duplicating */);
         if (rc < 0) {
             free(mergedConfTags);
             mergedConfTags = NULL;
