@@ -151,7 +151,7 @@ static const cyaml_schema_field_t CapabilityEntry[] = {
     CYAML_FIELD_END
 };
 
-static const cyaml_schema_value_t CapabilitiesSchema= {CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT,redConfCapT, CapabilityEntry),};
+static const cyaml_schema_value_t CapabilitiesSchema= {CYAML_VALUE_MAPPING(CYFLAG_CASE,redConfCapT, CapabilityEntry),};
 /**** end capabilities ****/
 
 /* config main part */
@@ -163,10 +163,10 @@ static const cyaml_schema_field_t ConfigSchema[] = {
     CYAML_FIELD_STRING_PTR("ldpath", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, ldpath, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("umask", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, umask, 0, CYAML_UNLIMITED),
     CYAML_FIELD_INT("verbose", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, verbose),
-    CYAML_FIELD_IGNORE("maxage", CYFLAG_OPT),
+    CYAML_FIELD_IGNORE("maxage", CYFLAG_OPT|CYFLAG_CASE),
     CYAML_FIELD_INT("map-root-user", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, maprootuser),
     CYAML_FIELD_BOOL("gpgcheck", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, gpgcheck),
-    CYAML_FIELD_IGNORE("inherit", CYFLAG_OPT),
+    CYAML_FIELD_IGNORE("inherit", CYFLAG_OPT|CYFLAG_CASE),
     CYAML_FIELD_BOOL("unsafe", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, unsafe),
     CYAML_FIELD_ENUM("die-with-parent", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, diewithparent, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
     CYAML_FIELD_ENUM("new-session", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, newsession, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
@@ -240,8 +240,8 @@ static const cyaml_schema_field_t EnvValEntry[] = {
     CYAML_FIELD_END
 };
 
-static const cyaml_schema_value_t ExportSchema= {CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT,redConfExportPathT, ExportEntry),};
-static const cyaml_schema_value_t EnvVarSchema= {CYAML_VALUE_MAPPING(CYAML_FLAG_DEFAULT,redConfVarT, EnvValEntry),};
+static const cyaml_schema_value_t ExportSchema= {CYAML_VALUE_MAPPING(CYFLAG_CASE,redConfExportPathT, ExportEntry),};
+static const cyaml_schema_value_t EnvVarSchema= {CYAML_VALUE_MAPPING(CYFLAG_CASE,redConfVarT, EnvValEntry),};
 
 /****************************************************************************************************************
 * --- HEADER SECTION --- *
