@@ -185,6 +185,11 @@ static const cyaml_schema_field_t ConfigSchema[] = {
     CYAML_FIELD_END
 };
 
+// Top wlevel schema entry point must be a unique CYAML_VALUE_MAPPING
+static const cyaml_schema_value_t RedPakConfTagSchema = {
+    CYAML_VALUE_MAPPING(CYFLAG_PTR|CYFLAG_CASE, redConfTagT, ConfigSchema),
+};
+
 /****************************************************************************************************************
 * --- EXPORT SECTION --- *
 *****************************************************************************************************************/
@@ -398,6 +403,11 @@ int RedGetConfigYAML(char **output, size_t *len, const redConfigT *config) {
 int RedFreeConfig(redConfigT *config, int wlevel) {
     (void)wlevel;
     return SchemaFree(&RedPakConfigSchema, (cyaml_data_t *)config, 0);
+}
+
+int RedFreeConfTag(redConfTagT *conftag, int wlevel) {
+    (void)wlevel;
+    return SchemaFree(&RedPakConfTagSchema, (cyaml_data_t *)conftag, 0);
 }
 
 redStatusT* RedLoadStatus (const char* filepath, int warning) {

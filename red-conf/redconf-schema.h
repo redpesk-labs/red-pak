@@ -317,6 +317,7 @@ extern redConfigT* RedLoadConfig (const char* filepath, int warning);
 extern int RedSaveConfig (const char* filepath, const redConfigT *config, int warning);
 extern int RedGetConfigYAML(char **output, size_t *len, const redConfigT *config);
 extern int RedFreeConfig(redConfigT *config, int wlevel);
+extern int RedFreeConfTag(redConfTagT *conftag, int wlevel);
 
 extern redStatusT* RedLoadStatus (const char* filepath, int warning);
 extern int RedSaveStatus (const char* filepath, const redStatusT *status, int warning);
