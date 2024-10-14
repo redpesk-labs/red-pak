@@ -92,16 +92,15 @@ int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
     return error;
 }
 
-//get mergedConftags from hierarchy
-redConfTagT *mergedConftags(const redNodeT *node) {
+// put in conftag the merge of node hierarchy
+static int mergeConfTag(const redNodeT *node, redConfTagT *conftag) {
     const redNodeT *iter;
-    redConfTagT *mergedConfTags = calloc(1, sizeof(redConfTagT));
 
     for (iter=node; iter != NULL; iter=iter->first_child) {
-        (void) RedConfCopyConfTags(iter->config->conftag, mergedConfTags);
+        (void) RedConfCopyConfTags(iter->config->conftag, conftag);
         if(!iter->parent) { //system_node
             // update process default umask
-            RedSetUmask (mergedConfTags ? mergedConfTags->umask : NULL);
+            RedSetUmask (conftag ? conftag->umask : NULL);
         }
     }
 
@@ -116,7 +115,20 @@ redConfTagT *mergedConftags(const redNodeT *node) {
             RedLog(REDLOG_INFO, "no admin conftag for %s", iter->redpath);
             continue;
         }
-        (void) RedConfCopyConfTags(iter->confadmin->conftag, mergedConfTags);
+        (void) RedConfCopyConfTags(iter->confadmin->conftag, conftag);
+    }
+    return 0;
+}
+
+//get mergedConftags from hierarchy
+redConfTagT *mergedConftags(const redNodeT *node) {
+    redConfTagT *mergedConfTags = calloc(1, sizeof(redConfTagT));
+    if (mergedConfTags != NULL) {
+        int rc = mergeConfTag(node, mergedConfTags);
+        if (rc < 0) {
+            free(mergedConfTags);
+            mergedConfTags = NULL;
+        }
     }
     return mergedConfTags;
 }
