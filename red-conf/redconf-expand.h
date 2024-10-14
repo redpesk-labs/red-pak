@@ -81,7 +81,7 @@ extern char *expandAlloc(const redNodeT *node, const char *input, int expand);
 *
 * @return 0 in case of success or 1 in case of too large expansion.
 */
-extern int RedConfAppendPath(const redNodeT *node,
+extern int RedConfAppendExpandedPath(const redNodeT *node,
                              char *outputS, int *idxOut, int maxlen,
                              const char *inputS);
 

@@ -109,10 +109,10 @@ int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
 
     if (node->config->conftag && node->config->conftag->ldpath)
         // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-        error= RedConfAppendPath(node, dataNode->ldpathString, &dataNode->ldpathIdx, RED_MAXPATHLEN, node->config->conftag->ldpath);
+        error= RedConfAppendExpandedPath(node, dataNode->ldpathString, &dataNode->ldpathIdx, RED_MAXPATHLEN, node->config->conftag->ldpath);
 
     if (!error && node->config->conftag && node->config->conftag->path)
-        error= RedConfAppendPath(node, dataNode->pathString, &dataNode->pathIdx, RED_MAXPATHLEN, node->config->conftag->path);
+        error= RedConfAppendExpandedPath(node, dataNode->pathString, &dataNode->pathIdx, RED_MAXPATHLEN, node->config->conftag->path);
 
     return error;
 }

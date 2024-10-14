@@ -358,7 +358,7 @@ void test_exp_path(const redNodeT *node)
         printf(" - got %s\n", tests[idx][0]);
         printf(" - add %s\n", tests[idx][1]);
         printf(" - exp %s\n", tests[idx][2]);
-        rc = RedConfAppendPath(node, buffer, &len, sz, tests[idx][1]);
+        rc = RedConfAppendExpandedPath(node, buffer, &len, sz, tests[idx][1]);
         printf(" - rc  %d\n", rc);
         printf(" - fnd %s\n", buffer);
         ck_assert_int_eq(rc, 0);

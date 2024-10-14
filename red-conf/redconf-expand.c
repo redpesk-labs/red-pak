@@ -390,7 +390,7 @@ char *expandAlloc(const redNodeT *node, const char *input, int expand) {
 }
 
 /* see redconf-expand.h */
-int RedConfAppendPath(const redNodeT *node,
+int RedConfAppendExpandedPath(const redNodeT *node,
                       char *outputS, int *idxOut, int maxlen,
                       const char *inputS
 ) {
