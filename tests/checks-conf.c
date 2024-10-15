@@ -296,12 +296,8 @@ These tests are checking functions of 'redconf-expand.c'.
 
 void test_exp_def(const char *key, const char *value, const redNodeT *node)
 {
-    static const char prefix[] = "<<<";
-    static const char suffix[] = ">>>";
-
-    char tbe_key[1000], tbe_val[1000], scratch[1000];
+    char tbe_key[1000], tbe_val[1000];
     char *str;
-    int rc, len, len2;
 
     str = RedGetDefaultExpand(node, key);
     printf("%s -> %s\n", key, str);
