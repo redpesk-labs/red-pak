@@ -83,13 +83,13 @@ static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destinati
     if(source == NULL)
         return 0;
 
-    merge_optflag_sharing(source->share_all, &destination->share_all);
-    merge_optflag_sharing(source->share_user, &destination->share_user);
-    merge_optflag_sharing(source->share_ipc, &destination->share_ipc);
-    merge_optflag_sharing(source->share_cgroup, &destination->share_cgroup);
-    merge_optflag_sharing(source->share_pid, &destination->share_pid);
-    merge_optflag_sharing(source->share_net, &destination->share_net);
-    merge_optflag_sharing(source->share_time, &destination->share_time);
+    merge_optflag_sharing(source->share.all, &destination->share.all);
+    merge_optflag_sharing(source->share.user, &destination->share.user);
+    merge_optflag_sharing(source->share.ipc, &destination->share.ipc);
+    merge_optflag_sharing(source->share.cgroup, &destination->share.cgroup);
+    merge_optflag_sharing(source->share.pid, &destination->share.pid);
+    merge_optflag_sharing(source->share.net, &destination->share.net);
+    merge_optflag_sharing(source->share.time, &destination->share.time);
 
     merge_optflag_overwrite(source->diewithparent, &destination->diewithparent);
     merge_optflag_overwrite(source->newsession, &destination->newsession);

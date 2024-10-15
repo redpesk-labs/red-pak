@@ -208,6 +208,25 @@
     }
     redConfCapT;
 
+    /** structure holding sharing values */
+    typedef struct {
+        /** if enabled/disabled share/unshare every namespace by default */
+        redConfOptFlagE all;
+        /** if enabled/disabled share/unshare user namespace */
+        redConfOptFlagE user;
+        /** if enabled/disabled share/unshare cgroup namespace */
+        redConfOptFlagE cgroup;
+        /** if enabled/disabled share/unshare ipc namespace */
+        redConfOptFlagE ipc;
+        /** if enabled/disabled share/unshare pid namespace */
+        redConfOptFlagE pid;
+        /** if enabled/disabled share/unshare net namespace */
+        redConfOptFlagE net;
+        /** if enabled/disabled share/unshare time namespace */
+        redConfOptFlagE time;
+    }
+    redConfShareT;
+
     /** structure holding config values */
     typedef struct {
         /** directory of RPMs */
@@ -238,20 +257,8 @@
         redConfOptFlagE diewithparent;
         /** should create a new session? */
         redConfOptFlagE newsession;
-        /** if enabled/disabled share/unshare every namespace by default */
-        redConfOptFlagE share_all;
-        /** if enabled/disabled share/unshare user namespace */
-        redConfOptFlagE share_user;
-        /** if enabled/disabled share/unshare cgroup namespace */
-        redConfOptFlagE share_cgroup;
-        /** if enabled/disabled share/unshare ipc namespace */
-        redConfOptFlagE share_ipc;
-        /** if enabled/disabled share/unshare pid namespace */
-        redConfOptFlagE share_pid;
-        /** if enabled/disabled share/unshare net namespace */
-        redConfOptFlagE share_net;
-        /** if enabled/disabled share/unshare time namespace */
-        redConfOptFlagE share_time;
+        /** configuration of sharings */
+        redConfShareT share;
         /** configuration of cgroups */
         redConfCgroupT *cgroups;
         /** array of capability configurations */

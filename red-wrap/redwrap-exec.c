@@ -237,19 +237,19 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         argval[argcount++]= RedNodeStringExpand (redtree, mergedConfTags->chdir);
     }
 
-    if (can_unshare(mergedConfTags->share_user, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share.user, mergedConfTags->share.all))
         argval[argcount++]="--unshare-user";
 
-    if (can_unshare(mergedConfTags->share_cgroup, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share.cgroup, mergedConfTags->share.all))
         argval[argcount++]="--unshare-cgroup";
 
-    if (can_unshare(mergedConfTags->share_ipc, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share.ipc, mergedConfTags->share.all))
         argval[argcount++]="--unshare-ipc";
 
-    if (can_unshare(mergedConfTags->share_pid, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share.pid, mergedConfTags->share.all))
         argval[argcount++]="--unshare-pid";
 
-    if (can_unshare(mergedConfTags->share_net, mergedConfTags->share_all))
+    if (can_unshare(mergedConfTags->share.net, mergedConfTags->share.all))
         argval[argcount++]="--unshare-net";
     else
         argval[argcount++]="--share-net";
@@ -295,7 +295,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         close(pipe_fd[0]);
 
         /* unshare time ns */
-        if (can_unshare(mergedConfTags->share_time, mergedConfTags->share_all))
+        if (can_unshare(mergedConfTags->share.time, mergedConfTags->share.all))
             unshare(CLONE_NEWTIME);
 
         argval[argcount]=NULL;

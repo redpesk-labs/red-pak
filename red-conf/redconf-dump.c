@@ -67,13 +67,13 @@ void RedDumpConftag(redConfTagT *conftag) {
     printf("\tdiewithparent: %d\n", conftag == NULL ? 0 : conftag->diewithparent);
     printf("\tumask: %s\n", conftag == NULL ? "" : conftag->umask);
     printf("\tnewsession: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->newsession));
-    printf("\tshare_all: %s\n",  conftag == NULL ? "" : getRedConfOptString(conftag->share_all));
-    printf("\tshare_user: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_user));
-    printf("\tshare_cgroup: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_cgroup));
-    printf("\tshare_ipc: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_ipc));
-    printf("\tshare_pid: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_pid));
-    printf("\tshare_net: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_net));
-    printf("\tshare_time: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share_time));
+    printf("\tshare_all: %s\n",  conftag == NULL ? "" : getRedConfOptString(conftag->share.all));
+    printf("\tshare_user: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.user));
+    printf("\tshare_cgroup: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.cgroup));
+    printf("\tshare_ipc: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.ipc));
+    printf("\tshare_pid: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.pid));
+    printf("\tshare_net: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.net));
+    printf("\tshare_time: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.time));
     //printf("\tcgroups: %s\n", conftag == NULL ? "" : conftag->cgroups);
 }
 
