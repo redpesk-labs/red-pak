@@ -69,6 +69,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/config-die-with-parent-disabled/config-die-with-parent-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -106,6 +107,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-die-with-parent-disabled/config-die-with-parent-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

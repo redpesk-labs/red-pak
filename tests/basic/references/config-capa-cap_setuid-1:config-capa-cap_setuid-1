@@ -46,8 +46,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redconf create --alias ROOT --config config-capa-cap_setuid-1 --config-adm NULL rootnn/config-capa-cap_setuid-1
 redconf create --alias SUBNODE --config config-capa-cap_setuid-1 --config-adm NULL rootnn/config-capa-cap_setuid-1/config-capa-cap_setuid-1
 redwrap  --dump-only --redpath rootnn/config-capa-cap_setuid-1/config-capa-cap_setuid-1
-[WARNING]:  key=cap_setuid is overload by /rednodes/rootnn/config-capa-cap_setuid-1/	[/root/red-pak/red-conf/redconf-hashmerge.c:41] 
-[WARNING]:  No data set for hashkey=cap_setuid redpath=/rednodes/rootnn/config-capa-cap_setuid-1/config-capa-cap_setuid-1	[/root/red-pak/red-conf/redconf-hash.c:163] 
 DUMP: /usr/bin/bwrap (as redwrap)
   --cap-add cap_setuid
   --unshare-user
@@ -56,8 +54,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/config-capa-cap_setuid-1/config-capa-cap_setuid-1
-[WARNING]:  key=cap_setuid is overload by /rednodes/rootnn/config-capa-cap_setuid-1/	[/root/red-pak/red-conf/redconf-hashmerge.c:41] 
-[WARNING]:  No data set for hashkey=cap_setuid redpath=/rednodes/rootnn/config-capa-cap_setuid-1/config-capa-cap_setuid-1	[/root/red-pak/red-conf/redconf-hash.c:163] 
 DUMP: /usr/bin/bwrap (as redwrap)
   --cap-add cap_setuid
   --unshare-user
@@ -118,6 +114,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-capa-cap_setuid-1/config-capa-cap_setuid-1
 DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_setuid
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

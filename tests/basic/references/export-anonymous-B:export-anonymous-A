@@ -46,8 +46,8 @@ redconf create --alias ROOT --config export-anonymous-B --config-adm NULL rootnn
 redconf create --alias SUBNODE --config export-anonymous-A --config-adm NULL rootnn/export-anonymous-B/export-anonymous-A
 redwrap  --dump-only --redpath rootnn/export-anonymous-B/export-anonymous-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dir /A
   --dir /B
+  --dir /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -55,8 +55,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-anonymous-B/export-anonymous-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dir /A
   --dir /B
+  --dir /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -76,8 +76,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/export-anonymous-B/export-anonymous-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dir /A
   --dir /B
+  --dir /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -97,8 +97,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/export-anonymous-B/export-anonymous-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dir /A
   --dir /B
+  --dir /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -117,8 +117,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-anonymous-B/export-anonymous-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dir /A
   --dir /B
+  --dir /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

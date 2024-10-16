@@ -46,8 +46,8 @@ redconf create --alias ROOT --config export-procfs-A --config-adm NULL rootnn/ex
 redconf create --alias SUBNODE --config export-procfs-B --config-adm NULL rootnn/export-procfs-A/export-procfs-B
 redwrap  --dump-only --redpath rootnn/export-procfs-A/export-procfs-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --proc /B
   --proc /A
+  --proc /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -55,8 +55,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-procfs-A/export-procfs-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --proc /B
   --proc /A
+  --proc /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -76,8 +76,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/export-procfs-A/export-procfs-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --proc /B
   --proc /A
+  --proc /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -97,8 +97,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/export-procfs-A/export-procfs-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --proc /B
   --proc /A
+  --proc /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -117,8 +117,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-procfs-A/export-procfs-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --proc /B
   --proc /A
+  --proc /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

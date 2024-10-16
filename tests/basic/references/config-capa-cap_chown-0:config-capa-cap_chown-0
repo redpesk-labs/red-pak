@@ -46,8 +46,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redconf create --alias ROOT --config config-capa-cap_chown-0 --config-adm NULL rootnn/config-capa-cap_chown-0
 redconf create --alias SUBNODE --config config-capa-cap_chown-0 --config-adm NULL rootnn/config-capa-cap_chown-0/config-capa-cap_chown-0
 redwrap  --dump-only --redpath rootnn/config-capa-cap_chown-0/config-capa-cap_chown-0
-[WARNING]:  key=cap_chown is overload by /rednodes/rootnn/config-capa-cap_chown-0/	[/root/red-pak/red-conf/redconf-hashmerge.c:41] 
-[WARNING]:  No data set for hashkey=cap_chown redpath=/rednodes/rootnn/config-capa-cap_chown-0/config-capa-cap_chown-0	[/root/red-pak/red-conf/redconf-hash.c:163] 
 DUMP: /usr/bin/bwrap (as redwrap)
   --cap-drop cap_chown
   --unshare-user
@@ -56,8 +54,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/config-capa-cap_chown-0/config-capa-cap_chown-0
-[WARNING]:  key=cap_chown is overload by /rednodes/rootnn/config-capa-cap_chown-0/	[/root/red-pak/red-conf/redconf-hashmerge.c:41] 
-[WARNING]:  No data set for hashkey=cap_chown redpath=/rednodes/rootnn/config-capa-cap_chown-0/config-capa-cap_chown-0	[/root/red-pak/red-conf/redconf-hash.c:163] 
 DUMP: /usr/bin/bwrap (as redwrap)
   --cap-drop cap_chown
   --unshare-user
@@ -118,6 +114,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-capa-cap_chown-0/config-capa-cap_chown-0
 DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-drop cap_chown
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

@@ -31,7 +31,6 @@ redwrap  --admin --dump-only --redpath node/config-share_ipc-enabled/config-shar
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --unshare-net
 
@@ -42,14 +41,12 @@ redwrap  --dump-only --redpath rootnn/config-share_ipc-enabled/config-share_all-
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/config-share_ipc-enabled/config-share_all-disabled
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --unshare-net
 
@@ -60,14 +57,12 @@ redwrap  --dump-only --redpath rootna/config-share_ipc-enabled/config-share_all-
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/config-share_ipc-enabled/config-share_all-disabled
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --unshare-net
 

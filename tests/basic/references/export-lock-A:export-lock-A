@@ -34,7 +34,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath node/export-lock-A/export-lock-A
 DUMP: /usr/bin/bwrap (as redwrap)
   --lock-file /A
-  --lock-file /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -47,7 +46,6 @@ redconf create --alias SUBNODE --config export-lock-A --config-adm NULL rootnn/e
 redwrap  --dump-only --redpath rootnn/export-lock-A/export-lock-A
 DUMP: /usr/bin/bwrap (as redwrap)
   --lock-file /A
-  --lock-file /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -55,7 +53,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-lock-A/export-lock-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --lock-file /A
   --lock-file /A
   --unshare-user
   --unshare-cgroup
@@ -77,7 +74,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootna/export-lock-A/export-lock-A
 DUMP: /usr/bin/bwrap (as redwrap)
   --lock-file /A
-  --lock-file /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -98,7 +94,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootan/export-lock-A/export-lock-A
 DUMP: /usr/bin/bwrap (as redwrap)
   --lock-file /A
-  --lock-file /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -117,7 +112,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-lock-A/export-lock-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --lock-file /A
   --lock-file /A
   --unshare-user
   --unshare-cgroup

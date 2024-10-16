@@ -48,8 +48,8 @@ redconf create --alias ROOT --config export-symlink-B --config-adm NULL rootnn/e
 redconf create --alias SUBNODE --config export-symlink-A --config-adm NULL rootnn/export-symlink-B/export-symlink-A
 redwrap  --dump-only --redpath rootnn/export-symlink-B/export-symlink-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --symlink /somewhere /A
   --symlink /somewhere /B
+  --symlink /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -57,8 +57,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-symlink-B/export-symlink-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --symlink /somewhere /A
   --symlink /somewhere /B
+  --symlink /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -78,8 +78,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/export-symlink-B/export-symlink-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --symlink /somewhere /A
   --symlink /somewhere /B
+  --symlink /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -99,8 +99,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/export-symlink-B/export-symlink-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --symlink /somewhere /A
   --symlink /somewhere /B
+  --symlink /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -119,8 +119,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-symlink-B/export-symlink-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --symlink /somewhere /A
   --symlink /somewhere /B
+  --symlink /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

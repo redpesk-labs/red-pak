@@ -30,29 +30,17 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath node/config-share_all-disabled/config-share_all-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
-  --unshare-cgroup
-  --unshare-ipc
-  --unshare-pid
-  --unshare-net
+  --share-net
 
 ===================================
 redconf create --alias ROOT --config config-share_all-disabled --config-adm NULL rootnn/config-share_all-disabled
 redconf create --alias SUBNODE --config config-share_all-enabled --config-adm NULL rootnn/config-share_all-disabled/config-share_all-enabled
 redwrap  --dump-only --redpath rootnn/config-share_all-disabled/config-share_all-enabled
-DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
-  --unshare-cgroup
-  --unshare-ipc
-  --unshare-pid
-  --unshare-net
+[ERROR]:  Can't share all in /rednodes/rootnn/config-share_all-disabled/config-share_all-enabled because forbidden in /rednodes/rootnn/config-share_all-disabled/	[/root/red-pak/red-conf/redconf-mix.c:760]
+[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
 redwrap  --admin --dump-only --redpath rootnn/config-share_all-disabled/config-share_all-enabled
-DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
-  --unshare-cgroup
-  --unshare-ipc
-  --unshare-pid
-  --unshare-net
+[ERROR]:  Can't share all in /rednodes/rootnn/config-share_all-disabled/config-share_all-enabled because forbidden in /rednodes/rootnn/config-share_all-disabled/	[/root/red-pak/red-conf/redconf-mix.c:760]
+[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
 
 ===================================
 redconf create --alias ROOT --config config-share_all-disabled --config-adm NULL rootna/config-share_all-disabled
@@ -66,11 +54,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/config-share_all-disabled/config-share_all-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
-  --unshare-cgroup
-  --unshare-ipc
-  --unshare-pid
-  --unshare-net
+  --share-net
 
 ===================================
 redconf create --alias ROOT --config NULL --config-adm config-share_all-disabled rootan/config-share_all-disabled
@@ -97,10 +81,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-share_all-disabled/config-share_all-enabled
-DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
-  --unshare-cgroup
-  --unshare-ipc
-  --unshare-pid
-  --unshare-net
+[ERROR]:  Can't share all in /rednodes/rootaa/config-share_all-disabled/config-share_all-enabled (admin) because forbidden in /rednodes/rootaa/config-share_all-disabled/ (admin)	[/root/red-pak/red-conf/redconf-mix.c:760]
+[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
 

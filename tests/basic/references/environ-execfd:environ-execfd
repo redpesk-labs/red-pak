@@ -38,8 +38,6 @@ redwrap  --admin --dump-only --redpath node/environ-execfd/environ-execfd
 DUMP: /usr/bin/bwrap (as redwrap)
   --setenv VAR HELLO
 
-  --setenv VAR HELLO
-
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -53,8 +51,6 @@ redwrap  --dump-only --redpath rootnn/environ-execfd/environ-execfd
 DUMP: /usr/bin/bwrap (as redwrap)
   --setenv VAR HELLO
 
-  --setenv VAR HELLO
-
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -62,8 +58,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/environ-execfd/environ-execfd
 DUMP: /usr/bin/bwrap (as redwrap)
-  --setenv VAR HELLO
-
   --setenv VAR HELLO
 
   --unshare-user
@@ -88,8 +82,6 @@ redwrap  --admin --dump-only --redpath rootna/environ-execfd/environ-execfd
 DUMP: /usr/bin/bwrap (as redwrap)
   --setenv VAR HELLO
 
-  --setenv VAR HELLO
-
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -112,8 +104,6 @@ redwrap  --admin --dump-only --redpath rootan/environ-execfd/environ-execfd
 DUMP: /usr/bin/bwrap (as redwrap)
   --setenv VAR HELLO
 
-  --setenv VAR HELLO
-
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -132,8 +122,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/environ-execfd/environ-execfd
 DUMP: /usr/bin/bwrap (as redwrap)
-  --setenv VAR HELLO
-
   --setenv VAR HELLO
 
   --unshare-user

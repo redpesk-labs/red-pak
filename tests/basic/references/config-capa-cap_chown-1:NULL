@@ -90,6 +90,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/config-capa-cap_chown-1/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_chown
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -108,6 +109,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-capa-cap_chown-1/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_chown
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

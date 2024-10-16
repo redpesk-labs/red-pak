@@ -36,7 +36,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath node/export-private-B/export-private-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --bind /somewhere /B
-  --bind /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

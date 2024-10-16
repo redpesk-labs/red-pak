@@ -35,8 +35,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath node/environ-execfd/environ-remove
 DUMP: /usr/bin/bwrap (as redwrap)
-  --setenv VAR HELLO
-
   --unsetenv VAR
   --unshare-user
   --unshare-cgroup
@@ -50,8 +48,6 @@ redconf create --alias SUBNODE --config environ-remove --config-adm NULL rootnn/
 redwrap  --dump-only --redpath rootnn/environ-execfd/environ-remove
 DUMP: /usr/bin/bwrap (as redwrap)
   --unsetenv VAR
-  --setenv VAR HELLO
-
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -60,8 +56,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootnn/environ-execfd/environ-remove
 DUMP: /usr/bin/bwrap (as redwrap)
   --unsetenv VAR
-  --setenv VAR HELLO
-
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -83,8 +77,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootna/environ-execfd/environ-remove
 DUMP: /usr/bin/bwrap (as redwrap)
   --unsetenv VAR
-  --setenv VAR HELLO
-
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -104,7 +96,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/environ-execfd/environ-remove
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unsetenv VAR
   --setenv VAR HELLO
 
   --unshare-user
@@ -126,8 +117,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootaa/environ-execfd/environ-remove
 DUMP: /usr/bin/bwrap (as redwrap)
   --unsetenv VAR
-  --setenv VAR HELLO
-
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

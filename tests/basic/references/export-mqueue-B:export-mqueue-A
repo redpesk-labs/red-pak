@@ -46,8 +46,8 @@ redconf create --alias ROOT --config export-mqueue-B --config-adm NULL rootnn/ex
 redconf create --alias SUBNODE --config export-mqueue-A --config-adm NULL rootnn/export-mqueue-B/export-mqueue-A
 redwrap  --dump-only --redpath rootnn/export-mqueue-B/export-mqueue-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --mqueue /A
   --mqueue /B
+  --mqueue /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -55,8 +55,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-mqueue-B/export-mqueue-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --mqueue /A
   --mqueue /B
+  --mqueue /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -76,8 +76,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/export-mqueue-B/export-mqueue-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --mqueue /A
   --mqueue /B
+  --mqueue /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -97,8 +97,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/export-mqueue-B/export-mqueue-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --mqueue /A
   --mqueue /B
+  --mqueue /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -117,8 +117,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-mqueue-B/export-mqueue-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --mqueue /A
   --mqueue /B
+  --mqueue /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

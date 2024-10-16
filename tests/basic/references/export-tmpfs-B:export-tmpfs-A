@@ -46,8 +46,8 @@ redconf create --alias ROOT --config export-tmpfs-B --config-adm NULL rootnn/exp
 redconf create --alias SUBNODE --config export-tmpfs-A --config-adm NULL rootnn/export-tmpfs-B/export-tmpfs-A
 redwrap  --dump-only --redpath rootnn/export-tmpfs-B/export-tmpfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --tmpfs /A
   --tmpfs /B
+  --tmpfs /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -55,8 +55,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-tmpfs-B/export-tmpfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --tmpfs /A
   --tmpfs /B
+  --tmpfs /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -76,8 +76,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/export-tmpfs-B/export-tmpfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --tmpfs /A
   --tmpfs /B
+  --tmpfs /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -97,8 +97,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/export-tmpfs-B/export-tmpfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --tmpfs /A
   --tmpfs /B
+  --tmpfs /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -117,8 +117,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-tmpfs-B/export-tmpfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --tmpfs /A
   --tmpfs /B
+  --tmpfs /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

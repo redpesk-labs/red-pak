@@ -34,7 +34,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath node/export-anonymous-B/export-anonymous-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --dir /B
-  --dir /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -47,7 +46,6 @@ redconf create --alias SUBNODE --config export-anonymous-B --config-adm NULL roo
 redwrap  --dump-only --redpath rootnn/export-anonymous-B/export-anonymous-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --dir /B
-  --dir /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -55,7 +53,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-anonymous-B/export-anonymous-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dir /B
   --dir /B
   --unshare-user
   --unshare-cgroup
@@ -77,7 +74,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootna/export-anonymous-B/export-anonymous-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --dir /B
-  --dir /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -98,7 +94,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootan/export-anonymous-B/export-anonymous-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --dir /B
-  --dir /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -117,7 +112,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-anonymous-B/export-anonymous-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dir /B
   --dir /B
   --unshare-user
   --unshare-cgroup

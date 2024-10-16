@@ -33,7 +33,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
   --unshare-pid
-  --unshare-net
+  --share-net
 
 ===================================
 redconf create --alias ROOT --config config-share_net-enabled --config-adm NULL rootnn/config-share_net-enabled
@@ -43,14 +43,13 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
   --unshare-pid
-  --unshare-net
+  --share-net
 redwrap  --admin --dump-only --redpath rootnn/config-share_net-enabled/config-share_ipc-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
-  --unshare-net
+  --share-net
 
 ===================================
 redconf create --alias ROOT --config config-share_net-enabled --config-adm NULL rootna/config-share_net-enabled
@@ -61,14 +60,13 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
-  --unshare-net
+  --share-net
 redwrap  --admin --dump-only --redpath rootna/config-share_net-enabled/config-share_ipc-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
-  --unshare-net
+  --share-net
 
 ===================================
 redconf create --alias ROOT --config NULL --config-adm config-share_net-enabled rootan/config-share_net-enabled
@@ -83,7 +81,6 @@ redwrap  --admin --dump-only --redpath rootan/config-share_net-enabled/config-sh
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --share-net
 
@@ -101,7 +98,6 @@ redwrap  --admin --dump-only --redpath rootaa/config-share_net-enabled/config-sh
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --share-net
 

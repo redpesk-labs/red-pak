@@ -27,7 +27,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath node/config-share_user-enabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
@@ -38,14 +37,12 @@ redconf create --alias ROOT --config config-share_user-enabled --config-adm NULL
 redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-share_user-enabled/NULL
 redwrap  --dump-only --redpath rootnn/config-share_user-enabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/config-share_user-enabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
@@ -56,14 +53,12 @@ redconf create --alias ROOT --config config-share_user-enabled --config-adm NULL
 redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-share_user-enabled/NULL
 redwrap  --dump-only --redpath rootna/config-share_user-enabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/config-share_user-enabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid

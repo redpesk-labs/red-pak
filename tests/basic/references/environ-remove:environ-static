@@ -34,7 +34,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath node/environ-remove/environ-static
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unsetenv VAR
   --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
   --unshare-user
   --unshare-cgroup
@@ -48,7 +47,6 @@ redconf create --alias SUBNODE --config environ-static --config-adm NULL rootnn/
 redwrap  --dump-only --redpath rootnn/environ-remove/environ-static
 DUMP: /usr/bin/bwrap (as redwrap)
   --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
-  --unsetenv VAR
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -57,7 +55,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootnn/environ-remove/environ-static
 DUMP: /usr/bin/bwrap (as redwrap)
   --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
-  --unsetenv VAR
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -78,7 +75,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootna/environ-remove/environ-static
 DUMP: /usr/bin/bwrap (as redwrap)
   --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
-  --unsetenv VAR
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -98,7 +94,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/environ-remove/environ-static
 DUMP: /usr/bin/bwrap (as redwrap)
-  --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
   --unsetenv VAR
   --unshare-user
   --unshare-cgroup
@@ -119,7 +114,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootaa/environ-remove/environ-static
 DUMP: /usr/bin/bwrap (as redwrap)
   --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
-  --unsetenv VAR
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

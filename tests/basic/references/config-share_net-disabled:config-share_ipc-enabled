@@ -48,7 +48,6 @@ redwrap  --admin --dump-only --redpath rootnn/config-share_net-disabled/config-s
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --unshare-net
 
@@ -66,7 +65,6 @@ redwrap  --admin --dump-only --redpath rootna/config-share_net-disabled/config-s
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --unshare-net
 
@@ -83,7 +81,6 @@ redwrap  --admin --dump-only --redpath rootan/config-share_net-disabled/config-s
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --unshare-net
 
@@ -101,7 +98,6 @@ redwrap  --admin --dump-only --redpath rootaa/config-share_net-disabled/config-s
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
-  --unshare-ipc
   --unshare-pid
   --unshare-net
 

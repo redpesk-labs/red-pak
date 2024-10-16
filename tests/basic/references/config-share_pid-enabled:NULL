@@ -30,7 +30,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
-  --unshare-pid
   --unshare-net
 
 ===================================
@@ -41,14 +40,12 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
-  --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/config-share_pid-enabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
-  --unshare-pid
   --unshare-net
 
 ===================================
@@ -59,14 +56,12 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
-  --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/config-share_pid-enabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
-  --unshare-pid
   --unshare-net
 
 ===================================

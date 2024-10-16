@@ -36,7 +36,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath node/export-execfd-B/export-execfd-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --file 3 /B
-  --file 4 /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -49,7 +48,6 @@ redconf create --alias SUBNODE --config export-execfd-B --config-adm NULL rootnn
 redwrap  --dump-only --redpath rootnn/export-execfd-B/export-execfd-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --file 3 /B
-  --file 4 /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -58,7 +56,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootnn/export-execfd-B/export-execfd-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --file 3 /B
-  --file 4 /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -79,7 +76,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootna/export-execfd-B/export-execfd-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --file 3 /B
-  --file 4 /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -100,7 +96,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootan/export-execfd-B/export-execfd-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --file 3 /B
-  --file 4 /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -120,7 +115,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootaa/export-execfd-B/export-execfd-B
 DUMP: /usr/bin/bwrap (as redwrap)
   --file 3 /B
-  --file 4 /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

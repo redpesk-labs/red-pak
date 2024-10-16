@@ -48,8 +48,8 @@ redconf create --alias ROOT --config export-internal-A --config-adm NULL rootnn/
 redconf create --alias SUBNODE --config export-internal-B --config-adm NULL rootnn/export-internal-A/export-internal-B
 redwrap  --dump-only --redpath rootnn/export-internal-A/export-internal-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --file /somewhere /B
   --file /somewhere /A
+  --file /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -57,8 +57,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-internal-A/export-internal-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --file /somewhere /B
   --file /somewhere /A
+  --file /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -78,8 +78,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/export-internal-A/export-internal-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --file /somewhere /B
   --file /somewhere /A
+  --file /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -99,8 +99,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/export-internal-A/export-internal-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --file /somewhere /B
   --file /somewhere /A
+  --file /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -119,8 +119,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-internal-A/export-internal-B
 DUMP: /usr/bin/bwrap (as redwrap)
-  --file /somewhere /B
   --file /somewhere /A
+  --file /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

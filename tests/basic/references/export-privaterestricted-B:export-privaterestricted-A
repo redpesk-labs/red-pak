@@ -48,8 +48,8 @@ redconf create --alias ROOT --config export-privaterestricted-B --config-adm NUL
 redconf create --alias SUBNODE --config export-privaterestricted-A --config-adm NULL rootnn/export-privaterestricted-B/export-privaterestricted-A
 redwrap  --dump-only --redpath rootnn/export-privaterestricted-B/export-privaterestricted-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /A
   --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -57,8 +57,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-privaterestricted-B/export-privaterestricted-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /A
   --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -78,8 +78,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/export-privaterestricted-B/export-privaterestricted-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /A
   --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -99,8 +99,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/export-privaterestricted-B/export-privaterestricted-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /A
   --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -119,8 +119,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-privaterestricted-B/export-privaterestricted-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /A
   --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

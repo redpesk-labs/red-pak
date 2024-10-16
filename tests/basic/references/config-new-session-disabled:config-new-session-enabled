@@ -69,6 +69,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/config-new-session-disabled/config-new-session-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
+  --new-session
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -106,6 +107,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-new-session-disabled/config-new-session-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
+  --new-session
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

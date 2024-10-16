@@ -36,6 +36,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath node/config-capa-cap_chown-0/config-capa-cap_setuid-1
 DUMP: /usr/bin/bwrap (as redwrap)
   --cap-drop cap_chown
+  --cap-add cap_setuid
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -78,6 +79,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redwrap  --admin --dump-only --redpath rootna/config-capa-cap_chown-0/config-capa-cap_setuid-1
 DUMP: /usr/bin/bwrap (as redwrap)
   --cap-drop cap_chown
+  --cap-add cap_setuid
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -97,6 +99,7 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/config-capa-cap_chown-0/config-capa-cap_setuid-1
 DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-drop cap_chown
   --cap-add cap_setuid
   --unshare-user
   --unshare-cgroup
@@ -116,6 +119,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-capa-cap_chown-0/config-capa-cap_setuid-1
 DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-drop cap_chown
+  --cap-add cap_setuid
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

@@ -46,8 +46,8 @@ redconf create --alias ROOT --config export-devfs-B --config-adm NULL rootnn/exp
 redconf create --alias SUBNODE --config export-devfs-A --config-adm NULL rootnn/export-devfs-B/export-devfs-A
 redwrap  --dump-only --redpath rootnn/export-devfs-B/export-devfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dev /A
   --dev /B
+  --dev /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -55,8 +55,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-devfs-B/export-devfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dev /A
   --dev /B
+  --dev /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -76,8 +76,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/export-devfs-B/export-devfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dev /A
   --dev /B
+  --dev /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -97,8 +97,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/export-devfs-B/export-devfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dev /A
   --dev /B
+  --dev /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -117,8 +117,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-devfs-B/export-devfs-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --dev /A
   --dev /B
+  --dev /A
   --unshare-user
   --unshare-cgroup
   --unshare-ipc

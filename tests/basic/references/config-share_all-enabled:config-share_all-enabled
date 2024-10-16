@@ -36,29 +36,17 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --share-net
 redwrap  --admin --dump-only --redpath rootnn/config-share_all-enabled/config-share_all-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
-  --unshare-cgroup
-  --unshare-ipc
-  --unshare-pid
-  --unshare-net
+  --share-net
 
 ===================================
 redconf create --alias ROOT --config config-share_all-enabled --config-adm NULL rootna/config-share_all-enabled
 redconf create --alias SUBNODE --config NULL --config-adm config-share_all-enabled rootna/config-share_all-enabled/config-share_all-enabled
 redwrap  --dump-only --redpath rootna/config-share_all-enabled/config-share_all-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
-  --unshare-cgroup
-  --unshare-ipc
-  --unshare-pid
-  --unshare-net
+  --share-net
 redwrap  --admin --dump-only --redpath rootna/config-share_all-enabled/config-share_all-enabled
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
-  --unshare-cgroup
-  --unshare-ipc
-  --unshare-pid
-  --unshare-net
+  --share-net
 
 ===================================
 redconf create --alias ROOT --config NULL --config-adm config-share_all-enabled rootan/config-share_all-enabled
