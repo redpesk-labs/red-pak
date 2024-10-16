@@ -289,12 +289,12 @@ static int make_config_headers(redConfigT *config, const char *alias, bool admin
     }
 
     /* assign to the config */
-    free((char *)config->headers->info);
-    free((char *)config->headers->name);
-    free((char *)config->headers->alias);
-    config->headers->info = h_info;
-    config->headers->name = h_name;
-    config->headers->alias = h_alias;
+    free((char *)config->headers.info);
+    free((char *)config->headers.name);
+    free((char *)config->headers.alias);
+    config->headers.info = h_info;
+    config->headers.name = h_name;
+    config->headers.alias = h_alias;
 
     return RednodeFactory_OK;
 }
@@ -317,9 +317,9 @@ static int update_config_headers(redConfigT *config, rednode_factory_t *rfab, co
         return -RednodeFactory_Error_Config_Not_Exist;
 
     /* copy header values */
-    h_info = strdup(prvcfg->headers->info);
-    h_name = strdup(prvcfg->headers->name);
-    h_alias = strdup(prvcfg->headers->alias);
+    h_info = strdup(prvcfg->headers.info);
+    h_name = strdup(prvcfg->headers.name);
+    h_alias = strdup(prvcfg->headers.alias);
     RedFreeConfig(prvcfg, 0);
 
     /* check creation status */
@@ -331,12 +331,12 @@ static int update_config_headers(redConfigT *config, rednode_factory_t *rfab, co
     }
 
     /* assign to the config */
-    free((char *)config->headers->info);
-    free((char *)config->headers->name);
-    free((char *)config->headers->alias);
-    config->headers->info = h_info;
-    config->headers->name = h_name;
-    config->headers->alias = h_alias;
+    free((char *)config->headers.info);
+    free((char *)config->headers.name);
+    free((char *)config->headers.alias);
+    config->headers.info = h_info;
+    config->headers.name = h_name;
+    config->headers.alias = h_alias;
 
     return RednodeFactory_OK;
 }

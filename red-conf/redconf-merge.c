@@ -107,22 +107,22 @@ static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destinati
 int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
     int error = 0;
 
-    if (node->config->conftag && node->config->conftag->ldpath)
+    if (node->config->conftag.ldpath)
         // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-        error= RedConfAppendExpandedPath(node, dataNode->ldpathString, &dataNode->ldpathIdx, RED_MAXPATHLEN, node->config->conftag->ldpath);
+        error= RedConfAppendExpandedPath(node, dataNode->ldpathString, &dataNode->ldpathIdx, RED_MAXPATHLEN, node->config->conftag.ldpath);
 
-    if (!error && node->config->conftag && node->config->conftag->path)
-        error= RedConfAppendExpandedPath(node, dataNode->pathString, &dataNode->pathIdx, RED_MAXPATHLEN, node->config->conftag->path);
+    if (!error && node->config->conftag.path)
+        error= RedConfAppendExpandedPath(node, dataNode->pathString, &dataNode->pathIdx, RED_MAXPATHLEN, node->config->conftag.path);
 
     return error;
 }
 
 // put in conftag the merge of node hierarchy
-static int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicate) {
+int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicate) {
     const redNodeT *iter;
 
     for (iter=node; iter != NULL; iter=iter->first_child) {
-        (void) RedConfCopyConfTags(iter->config->conftag, conftag, duplicate);
+        (void) RedConfCopyConfTags(&iter->config->conftag, conftag, duplicate);
         if(!iter->parent) { //system_node
             // update process default umask
             RedSetUmask (conftag ? conftag->umask : NULL);
@@ -136,11 +136,7 @@ static int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicat
             continue;
         }
 
-        if (!iter->confadmin->conftag) {
-            RedLog(REDLOG_INFO, "no admin conftag for %s", iter->redpath);
-            continue;
-        }
-        (void) RedConfCopyConfTags(iter->confadmin->conftag, conftag, duplicate);
+        (void) RedConfCopyConfTags(&iter->confadmin->conftag, conftag, duplicate);
     }
     return 0;
 }
@@ -172,26 +168,25 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, 
 
     //config
     mergedNode->config =  calloc(1, sizeof(redConfigT));
-    mergedNode->config->headers = calloc(1, sizeof(redConfHeaderT));
 
     //headers
-    mergedNode->config->headers->alias = strdup(leaf->config->headers->alias);
-    mergedNode->config->headers->name = strdup(leaf->config->headers->name);
-    mergedNode->config->headers->info = strdup(leaf->config->headers->info);
+    mergedNode->config->headers.alias = strdup(leaf->config->headers.alias);
+    mergedNode->config->headers.name = strdup(leaf->config->headers.name);
+    mergedNode->config->headers.info = strdup(leaf->config->headers.info);
 
     //conftar
-    mergedNode->config->conftag = mergedConftags(rootNode);
-    mergedNode->config->conftag->cachedir = expandAlloc(mergedNode, mergedNode->config->conftag->cachedir, expand);
-    mergedNode->config->conftag->hostname = expandAlloc(mergedNode, mergedNode->config->conftag->hostname, expand);
-    mergedNode->config->conftag->chdir = expandAlloc(mergedNode, mergedNode->config->conftag->chdir, expand);
-    mergedNode->config->conftag->umask = expandAlloc(mergedNode, mergedNode->config->conftag->umask, expand);
-    mergedNode->config->conftag->cgrouproot = expandAlloc(mergedNode, mergedNode->config->conftag->cgrouproot, expand);
+    mergeConfTag(rootNode, &mergedNode->config->conftag, 0);
+    mergedNode->config->conftag.cachedir = expandAlloc(mergedNode, mergedNode->config->conftag.cachedir, expand);
+    mergedNode->config->conftag.hostname = expandAlloc(mergedNode, mergedNode->config->conftag.hostname, expand);
+    mergedNode->config->conftag.chdir = expandAlloc(mergedNode, mergedNode->config->conftag.chdir, expand);
+    mergedNode->config->conftag.umask = expandAlloc(mergedNode, mergedNode->config->conftag.umask, expand);
+    mergedNode->config->conftag.cgrouproot = expandAlloc(mergedNode, mergedNode->config->conftag.cgrouproot, expand);
 
     //capabilities
-    if(mergeCapabilities(rootNode, mergedNode->config->conftag, duplicate)) {
+    if(mergeCapabilities(rootNode, &mergedNode->config->conftag, duplicate)) {
         RedLog(REDLOG_ERROR, "Issue mergeCapabilities for %s", mergedNode->redpath);
     }
-    mergedNode->config->conftag->umask = expandAlloc(mergedNode, mergedNode->config->conftag->umask, expand);
+    mergedNode->config->conftag.umask = expandAlloc(mergedNode, mergedNode->config->conftag.umask, expand);
 
     //confvars
     if(mergeConfVars(rootNode, mergedNode, expand, duplicate)) {

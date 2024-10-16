@@ -47,7 +47,7 @@ static int RwrapCheckDir(const char *path, redConfigT *configN, int create) {
         err = make_directories(path, 0, strlen(path), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
     }
     if (err) {
-        RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", configN->headers->alias, path, strerror(errno));
+        RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", configN->headers.alias, path, strerror(errno));
         return err;
     }
     return 0;
@@ -85,7 +85,7 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
             if (stat(expandpath, &status) >= 0) {
                 RedLog(REDLOG_WARNING,
                        "*** Node [%s] export path=%s Missing file, not mount for now(error=%s)",
-                       configN->headers->alias, expandpath, strerror(errno));
+                       configN->headers.alias, expandpath, strerror(errno));
                 continue;
             }
         }
@@ -230,21 +230,21 @@ int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const c
 
     // make sure node is not disabled
     if (statusN->state !=  RED_STATUS_ENABLE) {
-        RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is DISABLED [check/update node] nodepath=%s", configN->headers->alias, node->redpath);
+        RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is DISABLED [check/update node] nodepath=%s", configN->headers.alias, node->redpath);
         goto OnErrorExit;
     }
 
     // if not in force mode do further sanity check
-    if (!((configN->conftag && configN->conftag->unsafe) || cliargs->unsafe)) {
+    if (!(configN->conftag.unsafe || cliargs->unsafe)) {
         // check it was not updated in the future
         if (epocms < statusN->timestamp) {
-            RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is older that it's parent [require 'dnf red-update' or --force] nodepath=%s", configN->headers->alias, node->redpath);
+            RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is older that it's parent [require 'dnf red-update' or --force] nodepath=%s", configN->headers.alias, node->redpath);
             goto OnErrorExit;
         }
 
         // check node was not moved from one family to an other
         if (!RedConfIsSameFile(node->redpath, statusN->realpath)) {
-            RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] was moved [require 'dnf red-update' or --force] nodepath=%s", configN->headers->alias, statusN->realpath);
+            RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] was moved [require 'dnf red-update' or --force] nodepath=%s", configN->headers.alias, statusN->realpath);
             goto OnErrorExit;
         }
 

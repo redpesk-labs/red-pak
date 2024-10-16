@@ -124,20 +124,20 @@ static int GetThisNodeInfo(const redNodeT *node, const vardef_t *vardef, char *o
 
     switch (vardef->ivalue) {
     case REDNODE_INFO_ALIAS:
-        if (node && node->config && node->config->headers)
-            value = node->config->headers->alias;
+        if (node && node->config)
+            value = node->config->headers.alias;
         break;
     case REDNODE_INFO_NAME:
-        if (node && node->config && node->config->headers)
-            value = node->config->headers->name;
+        if (node && node->config)
+            value = node->config->headers.name;
         break;
     case REDNODE_INFO_PATH:
         if (node)
             value = node->redpath;
         break;
     case REDNODE_INFO_INFO:
-        if (node && node->config && node->config->headers)
-            value = node->config->headers->info;
+        if (node && node->config)
+            value = node->config->headers.info;
         break;
     default:
         break;

@@ -153,25 +153,23 @@ void RedNode::getMain() {
 
     getConf();
 
-    RedSetUmask(node.get()->config->conftag ? node.get()->config->conftag->umask : nullptr);
+    RedSetUmask(node.get()->config->conftag.umask);
 }
 
 void RedNode::setPersistDir() {
-    if (!node.get()->config->conftag)
-        throw_error(fmt::format("No conftag so no persistDir in node {}", node->redpath));
-    auto ex_persistdir = RedNodeStringExpand(node.get(), node.get()->config->conftag->persistdir);
+    auto ex_persistdir = RedNodeStringExpand(node.get(), node.get()->config->conftag.persistdir);
     base.get_config().persistdir().set(libdnf::Option::Priority::RUNTIME, ex_persistdir);
 }
 
 void RedNode::setGpgCheck() {
-    base.get_config().gpgcheck().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag->gpgcheck);
+    base.get_config().gpgcheck().set(libdnf::Option::Priority::RUNTIME, node.get()->config->conftag.gpgcheck);
 }
 
 void RedNode::setCacheDir() {
     const char *cachedir = NULL;
     for (redNodeT *ancestor_node=node.get(); ancestor_node != NULL; ancestor_node=ancestor_node->parent) {
-        if(ancestor_node->config->conftag && ancestor_node->config->conftag->cachedir) {
-            cachedir = ancestor_node->config->conftag->cachedir;
+        if(ancestor_node->config->conftag.cachedir) {
+            cachedir = ancestor_node->config->conftag.cachedir;
             break;
         }
     }
@@ -198,7 +196,7 @@ void RedNode::checkdir(const std::string & label, const std::filesystem::path & 
 void RedNode::registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack) {
     // make sure node is not disabled
     if (node->status->state !=  RED_STATUS_ENABLE) {
-        throw_error(fmt::format("*** Node [{}""] is DISABLED [check/update node] nodepath={}", node->config->headers->alias, node->redpath));
+        throw_error(fmt::format("*** Node [{}""] is DISABLED [check/update node] nodepath={}", node->config->headers.alias, node->redpath));
     }
 
     // Expand node config to fit within redpath
@@ -387,14 +385,14 @@ void RedNode::rednode_template(const std::string & alias, const std::string & tm
     if(!update) {
         // set new headers
         info = RedNodeStringExpand(NULL, "Node created by $LOGNAME($HOSTNAME) the $TODAY");
-        if(config->headers->info) free((char *)config->headers->info);
-        config->headers->info = info;
+        if(config->headers.info) free((char *)config->headers.info);
+        config->headers.info = info;
 
-        if(config->headers->name) free((char *)config->headers->name);
-        config->headers->name = strdup(uuid);
+        if(config->headers.name) free((char *)config->headers.name);
+        config->headers.name = strdup(uuid);
 
-        if(config->headers->alias) free((char *)config->headers->alias);
-        config->headers->alias = strdup(alias.c_str());
+        if(config->headers.alias) free((char *)config->headers.alias);
+        config->headers.alias = strdup(alias.c_str());
 
     }
 

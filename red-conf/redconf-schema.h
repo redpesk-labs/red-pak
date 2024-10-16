@@ -272,9 +272,9 @@
     /** structure recording full node config */
     typedef struct {
         /** for section headers */
-        redConfHeaderT *headers;
+        redConfHeaderT headers;
         /** for section config */
-        redConfTagT  *conftag;
+        redConfTagT  conftag;
         /** for section environ */
         redConfVarT *confvar;
         unsigned int confvar_count; /**< count of var entries in confvar */

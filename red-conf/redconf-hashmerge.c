@@ -190,12 +190,12 @@ int mergeConfVars(const redNodeT *rootnode, redNodeT *expandNode, int expand, in
  * **********************************/
 
 static const void *getDataCapabilities(const redNodeT *node, int *count) {
-    if (!node->config->conftag || !node->config->conftag->capabilities_count) {
+    if (!node->config->conftag.capabilities_count) {
         RedLog(REDLOG_DEBUG, "no confvars values for %s", node->redpath);
         return NULL;
     }
-    *count = node->config->conftag->capabilities_count;
-    return (const void *)node->config->conftag->capabilities;
+    *count = node->config->conftag.capabilities_count;
+    return (const void *)node->config->conftag.capabilities;
 }
 
 static int setDataCapabilities(const void *destdata, redHashT *srchash, redHashT *overload, int expand, int duplicate) {

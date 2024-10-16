@@ -132,14 +132,12 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
         char *cgroup_name = (char *)alloca(strlen(node->status->realpath));
         replaceSlashDash(node->status->realpath, cgroup_name);
 
-        if (node->config->conftag) {
-            if (cgroups(node->config->conftag->cgroups, cgroup_name, cgroupParent))
-                break;
+        if (cgroups(node->config->conftag.cgroups, cgroup_name, cgroupParent))
+            break;
 
-            //set next cgroup parent
-            strncat(cgroupParent, "/", PATH_MAX - 1 - strlen("/") - strlen(cgroupParent));
-            strncat(cgroupParent, cgroup_name, PATH_MAX - 1 - strlen(cgroup_name) - strlen(cgroupParent));
-        }
+        //set next cgroup parent
+        strncat(cgroupParent, "/", PATH_MAX - 1 - strlen("/") - strlen(cgroupParent));
+        strncat(cgroupParent, cgroup_name, PATH_MAX - 1 - strlen(cgroup_name) - strlen(cgroupParent));
     }
     return 0;
 }
@@ -155,7 +153,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     if (cliarg->verbose)
         SetLogLevel(REDLOG_DEBUG);
 
-    redConfTagT *mergedConfTags = NULL;
+    redConfTagT mct, *mergedConfTags = &mct;
     int argcount=0;
     int error;
     const char *admin_path = NULL;
@@ -202,11 +200,11 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         error = loadNode(node, cliarg, (node == redtree), &dataNode, &argcount, argval);
         if (error) goto OnErrorExit;
         rootNode = node;
-        if (node->config->conftag && node->config->conftag->cgroups)
+        if (node->config->conftag.cgroups)
             isCgroups = 1;
     }
 
-    mergedConfTags = mergedConftags(rootNode);
+    mergeConfTag(rootNode, mergedConfTags, 0);
 
     if (RedSetCapabilities(rootNode, mergedConfTags, argval, &argcount)) {
         RedLog(REDLOG_ERROR, "Cannot set capabilities");

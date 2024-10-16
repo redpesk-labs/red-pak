@@ -74,7 +74,7 @@ void RedDumpConftag(redConfTagT *conftag) {
     printf("\tshare_pid: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.pid));
     printf("\tshare_net: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.net));
     printf("\tshare_time: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.time));
-    //printf("\tcgroups: %s\n", conftag == NULL ? "" : conftag->cgroups);
+    //printf("\tcgroups: %s\n", conftag == NULL ? "" : conftag.cgroups);
 }
 
 static void RedDumpExport(redConfExportPathT *export, unsigned idx) {
@@ -86,8 +86,8 @@ static void RedDumpExport(redConfExportPathT *export, unsigned idx) {
 void RedDumpConfigHandle(redConfigT *config) {
 
     printf ("---\n");
-    printf ("headers=> alias=%s name=%s info='%s'\n", config->headers->alias, config->headers->name, config->headers->info);
-    RedDumpConftag(config->conftag);
+    printf ("headers=> alias=%s name=%s info='%s'\n", config->headers.alias, config->headers.name, config->headers.info);
+    RedDumpConftag(&config->conftag);
     printf ("exports:\n");
     for (unsigned idx=0; idx < config->exports_count; idx++) {
         RedDumpExport(config->exports+idx, idx);
@@ -153,7 +153,7 @@ void RedDumpRoot(redNodeT *node, const char* prefix, int verbose, int last) {
     node_basename[sizeof(node_basename) - 1] = 0;
 
     //print current node
-    printf( "%s  %s %s  (%s)\n", prefix, last ? s_last : s_middle, basename(node_basename), node->config->headers->alias);
+    printf( "%s  %s %s  (%s)\n", prefix, last ? s_last : s_middle, basename(node_basename), node->config->headers.alias);
 
     //handle children
     redNodeT *child = node->first_child;
@@ -186,15 +186,6 @@ int RedDumpTree(const char *redrootpath, int verbose) {
     freeRedRoot(redroot);
     return 0;
 }
-
-/*
-// Debug tool dump a merge redpak node tree
-static void RedDumpNodeMerge(redNodeT *redroot) {
-    redConfTagT * mergeConftag = mergedConftags(redroot, 0);
-    RedDumpConftag(mergeConftag);
-    free(mergeConftag);
-}
-*/
 
 static int DumpGetConfig(redConfigT *config) {
     char *output;

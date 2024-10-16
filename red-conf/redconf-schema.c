@@ -261,10 +261,10 @@ static const cyaml_schema_value_t EnvVarSchema= {CYAML_VALUE_MAPPING(CYAML_FLAG_
 
 // First wlevel config structure (id, export, acl, status)
 static const cyaml_schema_field_t TopLevelSchema[] = {
-    CYAML_FIELD_MAPPING_PTR("headers", CYFLAG_PTR|CYFLAG_CASE, redConfigT , headers, HeaderSchema),
+    CYAML_FIELD_MAPPING("headers", CYFLAG_PTR|CYFLAG_CASE, redConfigT , headers, HeaderSchema),
     CYAML_FIELD_SEQUENCE("exports", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , exports, &ExportSchema, 0, CYAML_UNLIMITED),
     CYAML_FIELD_SEQUENCE("environ", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , confvar, &EnvVarSchema, 0, CYAML_UNLIMITED),
-    CYAML_FIELD_MAPPING_PTR("config", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , conftag, ConfigSchema),
+    CYAML_FIELD_MAPPING("config", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfigT , conftag, ConfigSchema),
     CYAML_FIELD_END
 };
 

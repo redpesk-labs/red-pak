@@ -367,17 +367,15 @@ START_TEST(test_expand)
 {
     redNodeT node;
     redConfigT config;
-    redConfHeaderT header;
 
     memset(&node, 0, sizeof node);
     memset(&config, 0, sizeof config);
     node.config = &config;
-    config.headers = &header;
     node.leaf = &node;
     node.redpath = VAL_NODE_PATH;
-    header.alias = VAL_NODE_ALIAS;
-    header.name = VAL_NODE_NAME;
-    header.info = VAL_NODE_INFO;
+    config.headers.alias = VAL_NODE_ALIAS;
+    config.headers.name = VAL_NODE_NAME;
+    config.headers.info = VAL_NODE_INFO;
 
 
     setenv(KEY_PREFIX, VAL_PREFIX, 1);
