@@ -89,4 +89,13 @@ extern int ExecCmd(const char* tag, const char* command, char *buffer, size_t si
 */
 extern int make_directories(const char *path, size_t base, size_t length, mode_t mode, size_t *existing_length);
 
+/**
+ * Locate the executable of name
+ * @param name    name of the command
+ * @param evar    name of an environment variable (or NULL) overwriting default search
+ * @param dflt    default value if nothing is found (or NULL)
+ * @return a freshly allocated path for the program or NULL or allocation error
+ */
+extern char *whichprog(const char *name, const char *evar, const char *dflt);
+
 #endif

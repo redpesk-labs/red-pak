@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <limits.h>
 #include <errno.h>
 #include <time.h>
 #include <ftw.h>
@@ -251,5 +252,36 @@ int make_directories(const char *path, size_t base, size_t length, mode_t mode, 
                 return rc;
         }
     }
+}
+
+char *whichprog(const char *name, const char *evar, const char *dflt)
+{
+    size_t off, lename = 1 + strlen(name);
+    char buffer[PATH_MAX];
+    const char *path, *next, *result = NULL;
+
+    /* if environment variable exist it takes precedence */
+    if (evar != NULL)
+        result = getenv(evar);
+    /* search in path */
+    for(path = secure_getenv("PATH") ; path != NULL && result == NULL ; path = next) {
+        /* extract part between colons */
+        for( ; *path == ':' ; path++);
+        for(off = 1 ; path[off] && path[off] != ':' ; off++);
+        /* prepare iteration (because off can change) */
+        next = path[off] ? &path[off + 1] : NULL;
+        if (off + lename < sizeof buffer) {
+            /* enougth space, makes PATH/NAME in buffer */
+            memcpy(buffer, path, off);
+            if (off == 0 || path[off - 1] != '/')
+                buffer[off++] = '/';
+            memcpy(&buffer[off], name, lename);
+            /* if matching an executable, its done */
+            if (access(buffer, X_OK) == 0)
+                result = buffer;
+        }
+    }
+    /* return the found result or els the default value or else the name  */
+    return strdup(result ?: dflt ?: name);
 }
 
