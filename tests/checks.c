@@ -8,8 +8,8 @@
 #include "redwrap-exec.h"
 #include "redconf-merge.h"
 
-#ifndef REDMICRODNF_CMD
-#define REDMICRODNF_CMD "/usr/bin/redmicrodnf"
+#ifndef REDMICRODNF
+#define REDMICRODNF "/usr/bin/redmicrodnf"
 #endif
 
 #ifndef TEMPLATES_DIR
@@ -31,7 +31,10 @@
 #define TEMPLATE TEMPLATES_DIR"/default.yaml"
 #define TEMPLATE_ADMIN TEMPLATES_DIR"/admin.yaml"
 
-static void debugargv(char * const argv[]) {
+static const char *bwrap = BWRAP;
+static const char *redmicrodnf = REDMICRODNF;
+
+static void debugargv(const char * const argv[]) {
     int i = 0;
     printf("[CMD] = ");
     while(argv[i]) {
@@ -42,14 +45,14 @@ static void debugargv(char * const argv[]) {
 }
 
 /* create node */
-static int redmicrodnf_manager(char * const argv[]) {
+static int redmicrodnf_manager(const char * const *argv) {
     debugargv(argv);
     int pid = fork();
     if (pid == 0) {
         int error;
-        error = execv(REDMICRODNF_CMD, argv);
+        error = execv(redmicrodnf, (char*const*)argv); /* cast because of compatibilty with legacy execv */
         if(error)
-            fprintf(stderr, "Issue exec outnode command %s error:%s\n", REDMICRODNF_CMD, strerror(errno));
+            fprintf(stderr, "Issue exec outnode command %s error:%s\n", redmicrodnf, strerror(errno));
     }
     int returnStatus;
     waitpid(pid, &returnStatus, 0);
@@ -57,8 +60,8 @@ static int redmicrodnf_manager(char * const argv[]) {
 }
 
 static int createNodeNoSystem(const char *redpath) {
-    char * argv[] = {
-        REDMICRODNF_CMD,
+    const char * argv[] = {
+        "redmicrodnf",
         "--redpath",
         (char *)redpath,
         "manager",
@@ -69,8 +72,8 @@ static int createNodeNoSystem(const char *redpath) {
     return redmicrodnf_manager(argv);
 }
 
-static int createNodeWithSystem(char *const redpath) {
-    char *const argv[] = {
+static int createNodeWithSystem(const char *redpath) {
+    const char *const argv[] = {
         "redmicrodnf",
         "--redpath",
         redpath,
@@ -81,8 +84,8 @@ static int createNodeWithSystem(char *const redpath) {
     return redmicrodnf_manager(argv);
 }
 
-static int createNodeWithTemplates(char *const redpath, char *const tpl, char *const tpladmin) {
-    char *const argv[] = {
+static int createNodeWithTemplates(const char *redpath, const char *tpl, const char *tpladmin) {
+    const char * argv[] = {
         "redmicrodnf",
         "--redpath",
         redpath,
@@ -106,7 +109,7 @@ static int testcmd(const char *redpath, char *cmd) {
 
     rWrapConfigT cliargs = {
         .redpath = redpath,
-        .bwrap = BWRAP,
+        .bwrap = bwrap,
         .adminpath = NULL,
         .index = 0,
         .verbose = 1,
@@ -243,7 +246,11 @@ Suite * tests_suite(void) {
 
 int main(void)
 {
-    printf("REDMICRODNF_CMD=%s\n", REDMICRODNF_CMD);
+    bwrap = whichprog("bwrap", "CHECK_BWRAP", BWRAP);
+    redmicrodnf = whichprog("redmicrodnf", "CHECK_REDMICRODNF", REDMICRODNF);
+
+    printf("BWRAP=%s\n", bwrap);
+    printf("REDMICRODNF=%s\n", redmicrodnf);
     int number_failed;
     SRunner *sr;
 
