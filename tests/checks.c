@@ -28,8 +28,9 @@
 
 #define PARENT_REDPATH_TEMPLATES ROOT_REDPATH"/templates/parent"
 #define CHILD_REDPATH_TEMPLATES PARENT_REDPATH_TEMPLATES"/child"
-#define TEMPLATE TEMPLATES_DIR"/default.yaml"
-#define TEMPLATE_ADMIN TEMPLATES_DIR"/admin.yaml"
+
+#define TEMPLATE TEMPLATES_DIR"/leaf-normal.yaml"
+#define TEMPLATE_ADMIN TEMPLATES_DIR"/leaf-admin.yaml"
 
 static const char *bwrap = BWRAP;
 static const char *redmicrodnf = REDMICRODNF;
