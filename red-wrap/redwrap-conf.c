@@ -35,7 +35,8 @@
 static struct option options[] = {
     {"admin"  , optional_argument, 0,  'a' },
     {"bwrap"  , required_argument, 0,  'b' },
-    {"dump"   , no_argument      , 0,  'D' },
+    {"dump"   , no_argument      , 0,  'd' },
+    {"dump-only", no_argument    , 0,  'D' },
     {"force"  , optional_argument, 0,  'f' },
     {"help"   , no_argument      , 0,  '?' },
     {"redpath", required_argument, 0,  'r' },
@@ -88,8 +89,12 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
                 config->bwrap=optarg;
                 break;
 
-            case 'D':
+            case 'd':
                 config->dump = 1;
+                break;
+
+            case 'D':
+                config->dump = 2;
                 break;
 
             case 'f':

@@ -267,10 +267,14 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     }
 
     if (cliarg->dump) {
+        FILE *fout = cliarg->dump > 1 ? stdout : stderr;
+        fprintf(fout, "\nDUMP: %s", cliarg->bwrap);
         for (int idx=0; idx < argcount; idx++ )
-            printf(idx ? " %s" : "%s", argval[idx]);
-        printf("\n");
-        exit(0);
+            fprintf(fout, " %s", argval[idx]);
+        fprintf(fout, "\n");
+        fflush(fout);
+        if (cliarg->dump > 1)
+            exit(0);
     }
 
     int pipe_fd[2];
