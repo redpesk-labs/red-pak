@@ -104,7 +104,7 @@ static int testcmd(const char *redpath, char *cmd) {
     int subargc = 1;
     char *subargv[] = {
         cmd,
-        "NULL"
+        NULL
         };
 
     rWrapConfigT cliargs = {
@@ -114,7 +114,10 @@ static int testcmd(const char *redpath, char *cmd) {
         .index = 0,
         .verbose = 1,
         .strict = 0,
-        .unsafe = 0
+        .unsafe = 0,
+        .verboseopts = 0,
+        .dump = 1,
+        .isadmin = 0
     };
 
     printf("\n[TESTCMD] = redpath=%s cmd=%s", redpath, cmd);
