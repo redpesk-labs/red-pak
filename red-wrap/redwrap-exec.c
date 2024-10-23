@@ -51,15 +51,19 @@
 #define BWRAP_MAXVAR_LEN 1024
 #endif
 
+
 static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, dataNodeT *dataNode, int *argcount, const char *argval[]) {
-    int error = RwrapParseNode (node, cliarg, lastleaf, argval, argcount);
-    if (error) goto OnErrorExit;
+
+    // Validate the node
+    int error = RwrapValidateNode(node, cliarg->unsafe);
+
+    // Finaly add environment from node config
+    if (error == 0)
+        error = RwrapParseConfig (node, cliarg, lastleaf, argval, argcount);
 
     // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-    error = mergeSpecialConfVar(node, dataNode);
-    if (error) goto OnErrorExit;
-
-OnErrorExit:
+    if (error == 0)
+        error = mergeSpecialConfVar(node, dataNode);
     return error;
 }
 
