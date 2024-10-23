@@ -161,11 +161,75 @@ static bool can_unshare(redConfOptFlagE target, redConfOptFlagE all)
                 || (target == RED_CONF_OPT_UNSET && all != RED_CONF_OPT_ENABLED);
 }
 
+static int set_for_conftag(redNodeT *node, const char *argval[MAX_BWRAP_ARGS], int *argcountadr, int has_cgroups, int *unshare_time, int *maprootuser)
+{
+    int argcount;
+    redConfTagT mct, *mergedConfTags = &mct;
+    redNodeT *root = node;
+
+    while(root->parent != NULL)
+        root = root->parent;
+    memset(&mct, 0, sizeof mct);
+    mergeConfTag(root, mergedConfTags, 0);
+
+    if (RedSetCapabilities(root, mergedConfTags, argval, argcountadr)) {
+        RedLog(REDLOG_ERROR, "Cannot set capabilities");
+        return 1;
+    }
+
+    if (has_cgroups)
+        setcgroups(mergedConfTags, root);
+
+    argcount = *argcountadr;
+
+    // set global merged config tags
+    if (mergedConfTags->hostname) {
+        argval[argcount++]="--unshare-uts";
+        argval[argcount++]="--hostname";
+        argval[argcount++]= RedNodeStringExpand (node, mergedConfTags->hostname);
+    }
+
+    if (mergedConfTags->chdir) {
+        argval[argcount++]="--chdir";
+        argval[argcount++]= RedNodeStringExpand (node, mergedConfTags->chdir);
+    }
+
+    if (can_unshare(mergedConfTags->share.user, mergedConfTags->share.all))
+        argval[argcount++]="--unshare-user";
+
+    if (can_unshare(mergedConfTags->share.cgroup, mergedConfTags->share.all))
+        argval[argcount++]="--unshare-cgroup";
+
+    if (can_unshare(mergedConfTags->share.ipc, mergedConfTags->share.all))
+        argval[argcount++]="--unshare-ipc";
+
+    if (can_unshare(mergedConfTags->share.pid, mergedConfTags->share.all))
+        argval[argcount++]="--unshare-pid";
+
+    if (can_unshare(mergedConfTags->share.net, mergedConfTags->share.all))
+        argval[argcount++]="--unshare-net";
+    else
+        argval[argcount++]="--share-net";
+
+    if (mergedConfTags->diewithparent & RED_CONF_OPT_ENABLED)
+        argval[argcount++]="--die-with-parent";
+
+    if (mergedConfTags->newsession & RED_CONF_OPT_ENABLED)
+        argval[argcount++]="--new-session";
+
+    *unshare_time = can_unshare(mergedConfTags->share.time, mergedConfTags->share.all);
+    *maprootuser = mergedConfTags->maprootuser;
+
+    *argcountadr = argcount;
+    return 0;
+}
+
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     if (cliarg->verbose)
         SetLogLevel(REDLOG_DEBUG);
 
-    redConfTagT mct, *mergedConfTags = &mct;
+    int unshare_time;
+    int maprootuser;
     int argcount=0;
     int error;
     const char *admin_path = NULL;
@@ -220,15 +284,9 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
             isCgroups = 1;
     }
 
-    mergeConfTag(rootNode, mergedConfTags, 0);
-
-    if (RedSetCapabilities(rootNode, mergedConfTags, argval, &argcount)) {
-        RedLog(REDLOG_ERROR, "Cannot set capabilities");
+    error = set_for_conftag(redtree, argval, &argcount, isCgroups, &unshare_time, &maprootuser);
+    if (error)
         goto OnErrorExit;
-    }
-
-    if (isCgroups)
-        setcgroups(mergedConfTags, rootNode);
 
     // add cumulated LD_PATH_LIBRARY & PATH
     argval[argcount++]="--setenv";
@@ -238,41 +296,6 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     argval[argcount++]="LD_LIBRARY_PATH";
     argval[argcount++]=strdup(ldpathString);
 
-
-    // set global merged config tags
-    if (mergedConfTags->hostname) {
-        argval[argcount++]="--unshare-uts";
-        argval[argcount++]="--hostname";
-        argval[argcount++]= RedNodeStringExpand (redtree, mergedConfTags->hostname);
-    }
-
-    if (mergedConfTags->chdir) {
-        argval[argcount++]="--chdir";
-        argval[argcount++]= RedNodeStringExpand (redtree, mergedConfTags->chdir);
-    }
-
-    if (can_unshare(mergedConfTags->share.user, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-user";
-
-    if (can_unshare(mergedConfTags->share.cgroup, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-cgroup";
-
-    if (can_unshare(mergedConfTags->share.ipc, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-ipc";
-
-    if (can_unshare(mergedConfTags->share.pid, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-pid";
-
-    if (can_unshare(mergedConfTags->share.net, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-net";
-    else
-        argval[argcount++]="--share-net";
-
-    if (mergedConfTags->diewithparent & RED_CONF_OPT_ENABLED)
-        argval[argcount++]="--die-with-parent";
-
-    if (mergedConfTags->newsession & RED_CONF_OPT_ENABLED)
-        argval[argcount++]="--new-session";
 
     // add remaining program to execute arguments
     for (int idx=0; idx < subargc; idx++ ) {
@@ -313,7 +336,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         close(pipe_fd[0]);
 
         /* unshare time ns */
-        if (can_unshare(mergedConfTags->share.time, mergedConfTags->share.all))
+        if (unshare_time)
             unshare(CLONE_NEWTIME);
 
         argval[argcount]=NULL;
@@ -324,7 +347,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         return 0;
     }
     close(pipe_fd[0]);
-    setuidgidmap(pid, mergedConfTags->maprootuser);
+    setuidgidmap(pid, maprootuser);
     /* signal child that uid/gid maps are set */
     write(pipe_fd[1], &pid, sizeof(pid));
     close(pipe_fd[1]);
