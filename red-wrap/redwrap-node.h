@@ -23,6 +23,7 @@
 #include "redwrap-conf.h"
 #include "redconf-node.h"
 
+extern int RwrapValidateNode (redNodeT *node, int unsafe);
 extern int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs,  int lastleaf, const char *argval[], int *argcount);
 extern int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount);
 extern int RedSetCapabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount);

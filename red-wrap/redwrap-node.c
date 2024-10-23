@@ -221,45 +221,46 @@ OnExit:
     return error;
 }
 
-int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
-    int error;
+int RwrapValidateNode (redNodeT *node, int unsafe) {
 
     redConfigT *configN = node->config;
     redStatusT *statusN = node->status;
-    unsigned long epocms =RedUtcGetTimeMs();
 
     // make sure node is not disabled
     if (statusN->state !=  RED_STATUS_ENABLE) {
         RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is DISABLED [check/update node] nodepath=%s", configN->headers.alias, node->redpath);
-        goto OnErrorExit;
+        return 1;
     }
 
     // if not in force mode do further sanity check
-    if (!(configN->conftag.unsafe || cliargs->unsafe)) {
+    if (!(unsafe || configN->conftag.unsafe)) {
+
+        unsigned long epocms =RedUtcGetTimeMs();
+
         // check it was not updated in the future
         if (epocms < statusN->timestamp) {
             RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is older that it's parent [require 'dnf red-update' or --force] nodepath=%s", configN->headers.alias, node->redpath);
-            goto OnErrorExit;
+            return 1;
         }
 
         // check node was not moved from one family to an other
         if (!RedConfIsSameFile(node->redpath, statusN->realpath)) {
             RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] was moved [require 'dnf red-update' or --force] nodepath=%s", configN->headers.alias, statusN->realpath);
-            goto OnErrorExit;
+            return 1;
         }
-
-        // update epoc for parent time check
-        epocms=statusN->timestamp;
     }
 
-    // Finaly add environment from node config
-    error=  RwrapParseConfig (node, cliargs, lastleaf, argval, argcount);
-    if (error) goto OnErrorExit;
-
     return 0;
+}
 
-OnErrorExit:
-    return 1;
+int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
+    int error = RwrapValidateNode(node, cliargs->unsafe);
+
+    // Finaly add environment from node config
+    if (error == 0)
+        error = RwrapParseConfig (node, cliargs, lastleaf, argval, argcount);
+
+    return error;
 }
 
 int RedSetCapabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount) {
