@@ -51,6 +51,27 @@
 #define BWRAP_MAXVAR_LEN 1024
 #endif
 
+/** redwrap exec state */
+typedef
+struct redwrap_state_s
+{
+    /** redwrap input arguments */
+    rWrapConfigT *cliarg;
+    /** the rednode */
+    redNodeT     *rednode;
+    /** flag indicating if cgroups are required */
+    int           has_cgroups;
+    /** flag indicating if time should be unshared */
+    int           unshare_time;
+    /** flag indicating if rednode user must map to root */
+    int           map_user_root;
+    /** arguments' count of the bwrap command */
+    int           argcount;
+    /** arguments' array of the bwrap command */
+    const char   *argval[MAX_BWRAP_ARGS];
+}
+    redwrap_state_t;
+
 /**
  * check if the node and its parents are valid
  */
@@ -161,78 +182,69 @@ static bool can_unshare(redConfOptFlagE target, redConfOptFlagE all)
                 || (target == RED_CONF_OPT_UNSET && all != RED_CONF_OPT_ENABLED);
 }
 
-static int set_for_conftag(redNodeT *node, const char *argval[MAX_BWRAP_ARGS], int *argcountadr, int has_cgroups, int *unshare_time, int *maprootuser)
+static int set_for_conftag(redwrap_state_t *restate)
 {
-    int argcount;
     redConfTagT mct, *mergedConfTags = &mct;
-    redNodeT *root = node;
+    redNodeT *root = restate->rednode;
 
     while(root->parent != NULL)
         root = root->parent;
     memset(&mct, 0, sizeof mct);
     mergeConfTag(root, mergedConfTags, 0);
 
-    if (RedSetCapabilities(root, mergedConfTags, argval, argcountadr)) {
+    if (RedSetCapabilities(root, mergedConfTags, restate->argval, &restate->argcount)) {
         RedLog(REDLOG_ERROR, "Cannot set capabilities");
         return 1;
     }
 
-    if (has_cgroups)
+    if (restate->has_cgroups)
         setcgroups(mergedConfTags, root);
-
-    argcount = *argcountadr;
 
     // set global merged config tags
     if (mergedConfTags->hostname) {
-        argval[argcount++]="--unshare-uts";
-        argval[argcount++]="--hostname";
-        argval[argcount++]= RedNodeStringExpand (node, mergedConfTags->hostname);
+        restate->argval[restate->argcount++]="--unshare-uts";
+        restate->argval[restate->argcount++]="--hostname";
+        restate->argval[restate->argcount++]= RedNodeStringExpand (restate->rednode, mergedConfTags->hostname);
     }
 
     if (mergedConfTags->chdir) {
-        argval[argcount++]="--chdir";
-        argval[argcount++]= RedNodeStringExpand (node, mergedConfTags->chdir);
+        restate->argval[restate->argcount++]="--chdir";
+        restate->argval[restate->argcount++]= RedNodeStringExpand (restate->rednode, mergedConfTags->chdir);
     }
 
     if (can_unshare(mergedConfTags->share.user, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-user";
+        restate->argval[restate->argcount++]="--unshare-user";
 
     if (can_unshare(mergedConfTags->share.cgroup, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-cgroup";
+        restate->argval[restate->argcount++]="--unshare-cgroup";
 
     if (can_unshare(mergedConfTags->share.ipc, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-ipc";
+        restate->argval[restate->argcount++]="--unshare-ipc";
 
     if (can_unshare(mergedConfTags->share.pid, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-pid";
+        restate->argval[restate->argcount++]="--unshare-pid";
 
     if (can_unshare(mergedConfTags->share.net, mergedConfTags->share.all))
-        argval[argcount++]="--unshare-net";
+        restate->argval[restate->argcount++]="--unshare-net";
     else
-        argval[argcount++]="--share-net";
+        restate->argval[restate->argcount++]="--share-net";
 
     if (mergedConfTags->diewithparent & RED_CONF_OPT_ENABLED)
-        argval[argcount++]="--die-with-parent";
+        restate->argval[restate->argcount++]="--die-with-parent";
 
     if (mergedConfTags->newsession & RED_CONF_OPT_ENABLED)
-        argval[argcount++]="--new-session";
+        restate->argval[restate->argcount++]="--new-session";
 
-    *unshare_time = can_unshare(mergedConfTags->share.time, mergedConfTags->share.all);
-    *maprootuser = mergedConfTags->maprootuser;
+    restate->unshare_time = can_unshare(mergedConfTags->share.time, mergedConfTags->share.all);
+    restate->map_user_root = mergedConfTags->maprootuser;
 
-    *argcountadr = argcount;
     return 0;
 }
 
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
-    if (cliarg->verbose)
-        SetLogLevel(REDLOG_DEBUG);
+    redwrap_state_t restate;
 
-    int unshare_time;
-    int maprootuser;
-    int argcount=0;
     int error;
-    const char *argval[MAX_BWRAP_ARGS];
     char pathString[BWRAP_MAXVAR_LEN];
     char ldpathString[BWRAP_MAXVAR_LEN];
     dataNodeT dataNode = {
@@ -242,49 +254,53 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         .pathIdx = 0
     };
 
+    if (cliarg->verbose)
+        SetLogLevel(REDLOG_DEBUG);
+
     pathString[0] = 0;
     ldpathString[0] = 0;
 
     // start argument list with red-wrap command name
-    argval[argcount++] = command_name;
+    restate.cliarg = cliarg;
+    restate.rednode = NULL;
+    restate.has_cgroups = 0;
+    restate.unshare_time = 0;
+    restate.map_user_root = 0;
+    restate.argcount = 1;
+    restate.argval[0] = command_name;
 
-    // update verbose/redpath from cliarg
-    const char *redpath = cliarg->redpath;
-
-    redNodeT *redtree = RedNodesScan(redpath, cliarg->isadmin, cliarg->verbose);
-    if (!redtree) {
-        RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", redpath);
+    restate.rednode = RedNodesScan(cliarg->redpath, cliarg->isadmin, cliarg->verbose);
+    if (!restate.rednode) {
+        RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", cliarg->redpath);
         goto OnErrorExit;
     }
 
-    error = validateNode(redtree, cliarg->unsafe);
+    /* validate the node */
+    error = validateNode(restate.rednode, cliarg->unsafe);
     if (error)
         goto OnErrorExit;
 
     // build arguments from nodes family tree
     // Scan redpath family nodes from terminal leaf to root node without ancestor
-    int isCgroups = 0;
 
-    redNodeT *rootNode = NULL;
-    for (redNodeT *node=redtree; node != NULL; node=node->parent) {
-        error = loadNode(node, cliarg, (node == redtree), &dataNode, &argcount, argval);
+    for (redNodeT *node=restate.rednode; node != NULL; node=node->parent) {
+        error = loadNode(node, cliarg, (node == restate.rednode), &dataNode, &restate.argcount, restate.argval);
         if (error) goto OnErrorExit;
-        rootNode = node;
         if (node->config->conftag.cgroups)
-            isCgroups = 1;
+            restate.has_cgroups = 1;
     }
 
-    error = set_for_conftag(redtree, argval, &argcount, isCgroups, &unshare_time, &maprootuser);
+    error = set_for_conftag(&restate);
     if (error)
         goto OnErrorExit;
 
     // add cumulated LD_PATH_LIBRARY & PATH
-    argval[argcount++]="--setenv";
-    argval[argcount++]="PATH";
-    argval[argcount++]=strdup(pathString);
-    argval[argcount++]="--setenv";
-    argval[argcount++]="LD_LIBRARY_PATH";
-    argval[argcount++]=strdup(ldpathString);
+    restate.argval[restate.argcount++]="--setenv";
+    restate.argval[restate.argcount++]="PATH";
+    restate.argval[restate.argcount++]=strdup(pathString);
+    restate.argval[restate.argcount++]="--setenv";
+    restate.argval[restate.argcount++]="LD_LIBRARY_PATH";
+    restate.argval[restate.argcount++]=strdup(ldpathString);
 
 
     // add remaining program to execute arguments
@@ -292,14 +308,14 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         if (idx == MAX_BWRAP_ARGS) {
             RedLog(REDLOG_ERROR,"red-wrap too many arguments limit=[%d]", MAX_BWRAP_ARGS);
         }
-        argval[argcount++]=subargv[idx];
+        restate.argval[restate.argcount++]=subargv[idx];
     }
 
     if (cliarg->dump) {
         FILE *fout = cliarg->dump > 1 ? stdout : stderr;
         fprintf(fout, "\nDUMP: %s", cliarg->bwrap);
-        for (int idx=0; idx < argcount; idx++ )
-            fprintf(fout, " %s", argval[idx]);
+        for (int idx=0; idx < restate.argcount; idx++ )
+            fprintf(fout, " %s", restate.argval[idx]);
         fprintf(fout, "\n");
         fflush(fout);
         if (cliarg->dump > 1)
@@ -326,18 +342,18 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         close(pipe_fd[0]);
 
         /* unshare time ns */
-        if (unshare_time)
+        if (restate.unshare_time)
             unshare(CLONE_NEWTIME);
 
-        argval[argcount]=NULL;
-        if(execve(cliarg->bwrap, (char**) argval, NULL)) {
+        restate.argval[restate.argcount]=NULL;
+        if(execve(cliarg->bwrap, (char**) restate.argval, NULL)) {
             RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
             return 1;
         }
         return 0;
     }
     close(pipe_fd[0]);
-    setuidgidmap(pid, maprootuser);
+    setuidgidmap(pid, restate.map_user_root);
     /* signal child that uid/gid maps are set */
     write(pipe_fd[1], &pid, sizeof(pid));
     close(pipe_fd[1]);
