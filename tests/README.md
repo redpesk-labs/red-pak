@@ -5,12 +5,14 @@ In order to run the tests, it might be necessary to export the below variables:
 - CHECK_BWRAP          path of bwrap binary
 - CHECK_REDMICRODNF    path of redmicrodnf binary
 
-for the plugin of RPM use a file containing:
+For the plugin of RPM create a file containing:
 
 %__plugindir PLUGINDIR
-%__transaction_redpak %{__plugindir}/redpak.so" \
+%__transaction_redpak %{__plugindir}/redpak.so
 
-then either add it in file $HOME/.rpmmacros
+where PLUGINDIR is where the plugin is installed
 
-or use export varaible RPM_CONFIGDIR=DIR
-and in that DIR put a file containing
+and either names it $HOME/.rpmmacros
+
+or use export variable RPM_CONFIGDIR=DIR
+and in that DIR put the file
