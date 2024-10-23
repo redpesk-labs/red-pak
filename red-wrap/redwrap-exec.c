@@ -51,15 +51,23 @@
 #define BWRAP_MAXVAR_LEN 1024
 #endif
 
+/**
+ * check if the node and its parents are valid
+ */
+static int validateNode(redNodeT *node, int unsafe)
+{
+    int result = 0;
+    while (node != NULL && result == 0) {
+        result = RwrapValidateNode(node, unsafe);
+        node = node->parent;
+    }
+    return result;
+}
 
 static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, dataNodeT *dataNode, int *argcount, const char *argval[]) {
 
-    // Validate the node
-    int error = RwrapValidateNode(node, cliarg->unsafe);
-
-    // Finaly add environment from node config
-    if (error == 0)
-        error = RwrapParseConfig (node, cliarg, lastleaf, argval, argcount);
+    // add environment from node config
+    int error = RwrapParseConfig (node, cliarg, lastleaf, argval, argcount);
 
     // node looks good extract path/ldpath before adding red-wrap cli program+arguments
     if (error == 0)
@@ -194,6 +202,10 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", redpath);
         goto OnErrorExit;
     }
+
+    error = validateNode(redtree, cliarg->unsafe);
+    if (error)
+        goto OnErrorExit;
 
     // build arguments from nodes family tree
     // Scan redpath family nodes from terminal leaf to root node without ancestor
