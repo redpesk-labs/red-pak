@@ -20,10 +20,8 @@
 #ifndef _REDWRAP_NODE_INCLUDE_
 #define _REDWRAP_NODE_INCLUDE_
 
-#include "redwrap-conf.h"
 #include "redconf-node.h"
 
 extern int RwrapValidateNode (redNodeT *node, int unsafe);
-extern int RwrapParseConfig (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount);
 
 #endif
