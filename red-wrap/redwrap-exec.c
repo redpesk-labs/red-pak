@@ -88,16 +88,52 @@ static int validateNode(redNodeT *node, int unsafe)
     return result;
 }
 
-static int loadNode(redNodeT *node, rWrapConfigT *cliarg, int lastleaf, dataNodeT *dataNode, int *argcount, const char *argval[]) {
+/**
+ * set the special conf variables
+ */
+static int set_special_confvar(redwrap_state_t *restate)
+{
+    const redNodeT *node;
+    char pathString[BWRAP_MAXVAR_LEN];
+    char ldpathString[BWRAP_MAXVAR_LEN];
+    dataNodeT dataNode = {
+        .ldpathString = ldpathString,
+        .ldpathIdx = 0,
+        .pathString = pathString,
+        .pathIdx = 0
+    };
+    int result = 0;
 
-    // add environment from node config
-    int error = RwrapParseConfig (node, cliarg, lastleaf, argval, argcount);
+    pathString[0] = ldpathString[0] = 0;
+    for (node = restate->rednode; node != NULL && result == 0; node = node->parent)
+        result = mergeSpecialConfVar(node, &dataNode);
 
-    // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-    if (error == 0)
-        error = mergeSpecialConfVar(node, dataNode);
+    if (result == 0) {
+        restate->argval[restate->argcount++]="--setenv";
+        restate->argval[restate->argcount++]="PATH";
+        restate->argval[restate->argcount++]=strdup(pathString);
+        restate->argval[restate->argcount++]="--setenv";
+        restate->argval[restate->argcount++]="LD_LIBRARY_PATH";
+        restate->argval[restate->argcount++]=strdup(ldpathString);
+    }
+
+    return result;
+}
+
+static int set_exports_and_vars(redwrap_state_t *restate)
+{
+    redNodeT *node = restate->rednode;
+    int error = 0, lastleaf = 1;
+
+    do {
+        error = RwrapParseConfig (node, restate->cliarg, lastleaf, restate->argval, &restate->argcount);
+        lastleaf = 0;
+        node=node->parent;
+    }
+    while (node != NULL && error == 0);
     return error;
 }
+
 
 static int setmap(const char *map_path, const char *map_buf) {
     int err = 0;
@@ -261,22 +297,10 @@ static int set_for_conftag(redwrap_state_t *restate)
 
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     redwrap_state_t restate;
-
     int error;
-    char pathString[BWRAP_MAXVAR_LEN];
-    char ldpathString[BWRAP_MAXVAR_LEN];
-    dataNodeT dataNode = {
-        .ldpathString = ldpathString,
-        .ldpathIdx = 0,
-        .pathString = pathString,
-        .pathIdx = 0
-    };
 
     if (cliarg->verbose)
         SetLogLevel(REDLOG_DEBUG);
-
-    pathString[0] = 0;
-    ldpathString[0] = 0;
 
     // start argument list with red-wrap command name
     restate.cliarg = cliarg;
@@ -297,36 +321,31 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
 
     /* search the rootnode */
     restate.rootnode = restate.rednode;
-    while (restate.rootnode->parent != NULL)
+    restate.has_cgroups = (restate.rednode->config->conftag.cgroups != NULL);
+    while (restate.rootnode->parent != NULL) {
         restate.rootnode = restate.rootnode->parent;
+        restate.has_cgroups |= (restate.rootnode->config->conftag.cgroups != NULL);
+    }
 
     /* validate the node */
-    error = validateNode(restate.rednode, cliarg->unsafe);
+    error = validateNode(restate.rednode, restate.cliarg->unsafe);
     if (error)
         goto OnErrorExit;
 
-    // build arguments from nodes family tree
-    // Scan redpath family nodes from terminal leaf to root node without ancestor
+    /* set exports and vars */
+    error = set_exports_and_vars(&restate);
+    if (error)
+        goto OnErrorExit;
 
-    for (redNodeT *node=restate.rednode; node != NULL; node=node->parent) {
-        error = loadNode(node, cliarg, (node == restate.rednode), &dataNode, &restate.argcount, restate.argval);
-        if (error) goto OnErrorExit;
-        if (node->config->conftag.cgroups)
-            restate.has_cgroups = 1;
-    }
-
+    /* set config */
     error = set_for_conftag(&restate);
     if (error)
         goto OnErrorExit;
 
-    // add cumulated LD_PATH_LIBRARY & PATH
-    restate.argval[restate.argcount++]="--setenv";
-    restate.argval[restate.argcount++]="PATH";
-    restate.argval[restate.argcount++]=strdup(pathString);
-    restate.argval[restate.argcount++]="--setenv";
-    restate.argval[restate.argcount++]="LD_LIBRARY_PATH";
-    restate.argval[restate.argcount++]=strdup(ldpathString);
-
+    // add LD_PATH_LIBRARY & PATH
+    error = set_special_confvar(&restate);
+    if (error)
+        goto OnErrorExit;
 
     // add remaining program to execute arguments
     for (int idx=0; idx < subargc; idx++ ) {
