@@ -122,162 +122,182 @@ static int set_special_confvar(redwrap_state_t *restate)
     return result;
 }
 
-
-static int RwrapParseSubConfig (redwrap_state_t *restate, redNodeT *node, redConfigT *configN)
+static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar, const redNodeT *node)
 {
-    unsigned idx;
+// scan export environment variables
+    char buffer[2049];
+    redVarEnvFlagE mode = confvar->mode;
+    const char *key = confvar->key;
+    const char *value = confvar->value;
+
+    switch (mode) {
+    case RED_CONFVAR_STATIC:
+        restate->argval[restate->argcount++] = "--setenv";
+        restate->argval[restate->argcount++] = key;
+        restate->argval[restate->argcount++] = value;
+        break;
+
+    case RED_CONFVAR_EXECFD:
+        restate->argval[restate->argcount++] = "--setenv";
+        restate->argval[restate->argcount++] = key;
+        ExecCmd(key, value, buffer, sizeof(buffer), 1);
+        restate->argval[restate->argcount++] = strdup(buffer);
+        break;
+
+    case RED_CONFVAR_DEFLT:
+        restate->argval[restate->argcount++] = "--setenv";
+        restate->argval[restate->argcount++] = key;
+        restate->argval[restate->argcount++] = RedNodeStringExpand (node, value);
+        break;
+
+    case RED_CONFVAR_REMOVE:
+        restate->argval[restate->argcount++] = "--unsetenv";
+        restate->argval[restate->argcount++] = key;
+        break;
+
+    default:
+        break;
+    }
+}
+
+static void set_envvars(redwrap_state_t *restate, const redNodeT *node, const redConfigT *configN)
+{
+    const redConfVarT *iter = configN->confvar;
+    const redConfVarT *end  = &iter[configN->confvar_count];
+    while(iter != end)
+        set_one_envvar(restate, iter++, node);
+}
+
+static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *export, const redNodeT *node)
+{
     char buffer[2049];
 
     // scan export directory
-    for (idx=0; idx <configN->exports_count; idx++) {
-        redExportFlagE mode= configN->exports[idx].mode;
-        const char* mount= configN->exports[idx].mount;
-        const char* path=configN->exports[idx].path;
-        struct stat status;
-        const char * expandpath = NULL;
-        char *exp_mount;
+    redExportFlagE mode = export->mode;
+    const char* mount = export->mount;
+    const char* path =export->path;
+    struct stat status;
+    const char * expandpath = NULL;
+    char *exp_mount;
 
-        // if mouting path is not privide let's duplicate mount
-        if (!path) path=mount;
-        // if private and not last leaf: ignore
-        if ((mode & RED_EXPORT_PRIVATES) != 0 && node != restate->rednode)
-            continue;
+    // if mouting path is not privide let's duplicate mount
+    if (!path) path=mount;
 
-        expandpath = RedNodeStringExpand (node, path);
+    // if private and not last leaf: ignore
+    if ((mode & RED_EXPORT_PRIVATES) != 0 && node != restate->rednode)
+        return;
 
-        // if directory: check/create it
-        if (mode & RED_EXPORT_DIRS) {
-            int err = stat(expandpath, &status);
-            if (err && !restate->cliarg->strict) {
-                err = make_directories(expandpath, 0, strlen(expandpath), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
-            }
-            if (err) {
-                RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", configN->headers.alias, path, strerror(errno));
-                continue;
-            }
+    expandpath = RedNodeStringExpand (node, path);
+
+    // if directory: check/create it
+    if (mode & RED_EXPORT_DIRS) {
+        int err = stat(expandpath, &status);
+        if (err && !restate->cliarg->strict) {
+            err = make_directories(expandpath, 0, strlen(expandpath), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
         }
-        // if file: check file exists
-        else if (mode & RED_EXPORT_FILES) {
-            if (stat(expandpath, &status) >= 0) {
-                RedLog(REDLOG_WARNING,
-                       "*** Node [%s] export path=%s Missing file, not mount for now(error=%s)",
-                       configN->headers.alias, expandpath, strerror(errno));
-                continue;
-            }
+        if (err) {
+            RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", node->config->headers.alias, path, strerror(errno));
+            return;
         }
-
-        exp_mount = RedNodeStringExpand (node, mount);
-
-        switch (mode) {
-
-        case RED_EXPORT_PRIVATE:
-        case RED_EXPORT_PUBLIC:
-        case RED_EXPORT_PRIVATE_FILE:
-        case RED_EXPORT_PUBLIC_FILE:
-            restate->argval[restate->argcount++] = "--bind";
-            restate->argval[restate->argcount++] = expandpath;
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_RESTRICTED_FILE:
-        case RED_EXPORT_RESTRICTED:
-        case RED_EXPORT_PRIVATE_RESTRICTED:
-            restate->argval[restate->argcount++] = "--ro-bind";
-            restate->argval[restate->argcount++] = expandpath;
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_SYMLINK:
-            restate->argval[restate->argcount++] = "--symlink";
-            restate->argval[restate->argcount++] = expandpath;
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_EXECFD:
-            restate->argval[restate->argcount++] = "--file";
-            snprintf(buffer, sizeof(buffer), "%d", MemFdExecCmd(mount, path, 1));
-            restate->argval[restate->argcount++] = strdup(buffer);
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_INTERNAL:
-            restate->argval[restate->argcount++] = "--file";
-            restate->argval[restate->argcount++] = expandpath;
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_ANONYMOUS:
-            restate->argval[restate->argcount++] = "--dir";
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_TMPFS:
-            restate->argval[restate->argcount++] = "--tmpfs";
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_DEVFS:
-            restate->argval[restate->argcount++] = "--dev";
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_PROCFS:
-            restate->argval[restate->argcount++] = "--proc";
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_MQUEFS:
-            restate->argval[restate->argcount++] = "--mqueue";
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        case RED_EXPORT_LOCK:
-            restate->argval[restate->argcount++] = "--lock-file";
-            restate->argval[restate->argcount++] =  exp_mount;
-            break;
-
-        default:
-            free(exp_mount);
-            break;
+    }
+    // if file: check file exists
+    else if (mode & RED_EXPORT_FILES) {
+        if (stat(expandpath, &status) >= 0) {
+            RedLog(REDLOG_WARNING,
+                   "*** Node [%s] export path=%s Missing file, not mount for now(error=%s)",
+                   node->config->headers.alias, expandpath, strerror(errno));
+            return;
         }
     }
 
-    // scan export environment variables
-    for (idx=0; idx < configN->confvar_count; idx++) {
-        redVarEnvFlagE mode= configN->confvar[idx].mode;
-        const char* key= configN->confvar[idx].key;
-        const char* value=configN->confvar[idx].value;
+    exp_mount = RedNodeStringExpand (node, mount);
 
-        switch (mode) {
-        case RED_CONFVAR_STATIC:
-            restate->argval[restate->argcount++] = "--setenv";
-            restate->argval[restate->argcount++] = key;
-            restate->argval[restate->argcount++] = value;
-            break;
+    switch (mode) {
 
-        case RED_CONFVAR_EXECFD:
-            restate->argval[restate->argcount++] = "--setenv";
-            restate->argval[restate->argcount++] = key;
-            ExecCmd(key, value, buffer, sizeof(buffer), 1);
-            restate->argval[restate->argcount++] = strdup(buffer);
-            break;
+    case RED_EXPORT_PRIVATE:
+    case RED_EXPORT_PUBLIC:
+    case RED_EXPORT_PRIVATE_FILE:
+    case RED_EXPORT_PUBLIC_FILE:
+        restate->argval[restate->argcount++] = "--bind";
+        restate->argval[restate->argcount++] = expandpath;
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
 
-        case RED_CONFVAR_DEFLT:
-            restate->argval[restate->argcount++] = "--setenv";
-            restate->argval[restate->argcount++] = key;
-            restate->argval[restate->argcount++] = RedNodeStringExpand (node, value);
-            break;
+    case RED_EXPORT_RESTRICTED_FILE:
+    case RED_EXPORT_RESTRICTED:
+    case RED_EXPORT_PRIVATE_RESTRICTED:
+        restate->argval[restate->argcount++] = "--ro-bind";
+        restate->argval[restate->argcount++] = expandpath;
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
 
-        case RED_CONFVAR_REMOVE:
-            restate->argval[restate->argcount++] = "--unsetenv";
-            restate->argval[restate->argcount++] = key;
-            break;
+    case RED_EXPORT_SYMLINK:
+        restate->argval[restate->argcount++] = "--symlink";
+        restate->argval[restate->argcount++] = expandpath;
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
 
-        default:
-            break;
-        }
+    case RED_EXPORT_EXECFD:
+        restate->argval[restate->argcount++] = "--file";
+        snprintf(buffer, sizeof(buffer), "%d", MemFdExecCmd(mount, path, 1));
+        restate->argval[restate->argcount++] = strdup(buffer);
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
 
+    case RED_EXPORT_INTERNAL:
+        restate->argval[restate->argcount++] = "--file";
+        restate->argval[restate->argcount++] = expandpath;
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
+
+    case RED_EXPORT_ANONYMOUS:
+        restate->argval[restate->argcount++] = "--dir";
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
+
+    case RED_EXPORT_TMPFS:
+        restate->argval[restate->argcount++] = "--tmpfs";
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
+
+    case RED_EXPORT_DEVFS:
+        restate->argval[restate->argcount++] = "--dev";
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
+
+    case RED_EXPORT_PROCFS:
+        restate->argval[restate->argcount++] = "--proc";
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
+
+    case RED_EXPORT_MQUEFS:
+        restate->argval[restate->argcount++] = "--mqueue";
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
+
+    case RED_EXPORT_LOCK:
+        restate->argval[restate->argcount++] = "--lock-file";
+        restate->argval[restate->argcount++] =  exp_mount;
+        break;
+
+    default:
+        free(exp_mount);
+        break;
     }
+}
+
+static void set_exports(redwrap_state_t *restate, const redNodeT *node, const redConfigT *configN)
+{
+    const redConfExportPathT *iter = configN->exports;
+    const redConfExportPathT *end  = &iter[configN->exports_count];
+    while(iter != end)
+        set_one_export(restate, iter++, node);
+}
+
+static int RwrapParseSubConfig (redwrap_state_t *restate, const redNodeT *node, const redConfigT *configN)
+{
+    set_exports(restate, node, configN);
+    set_envvars(restate, node, configN);
     return 0;
 }
 
