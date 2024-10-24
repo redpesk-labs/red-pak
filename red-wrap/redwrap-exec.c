@@ -59,6 +59,8 @@ struct redwrap_state_s
     rWrapConfigT *cliarg;
     /** the rednode */
     redNodeT     *rednode;
+    /** the root node of the rednode */
+    redNodeT     *rootnode;
     /** flag indicating if cgroups are required */
     int           has_cgroups;
     /** flag indicating if time should be unshared */
@@ -185,20 +187,17 @@ static bool can_unshare(redConfOptFlagE target, redConfOptFlagE all)
 static int set_for_conftag(redwrap_state_t *restate)
 {
     redConfTagT mct, *mergedConfTags = &mct;
-    redNodeT *root = restate->rednode;
 
-    while(root->parent != NULL)
-        root = root->parent;
     memset(&mct, 0, sizeof mct);
-    mergeConfTag(root, mergedConfTags, 0);
+    mergeConfTag(restate->rootnode, mergedConfTags, 0);
 
-    if (RedSetCapabilities(root, mergedConfTags, restate->argval, &restate->argcount)) {
+    if (RedSetCapabilities(restate->rootnode, mergedConfTags, restate->argval, &restate->argcount)) {
         RedLog(REDLOG_ERROR, "Cannot set capabilities");
         return 1;
     }
 
     if (restate->has_cgroups)
-        setcgroups(mergedConfTags, root);
+        setcgroups(mergedConfTags, restate->rootnode);
 
     // set global merged config tags
     if (mergedConfTags->hostname) {
@@ -263,17 +262,24 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     // start argument list with red-wrap command name
     restate.cliarg = cliarg;
     restate.rednode = NULL;
+    restate.rootnode = NULL;
     restate.has_cgroups = 0;
     restate.unshare_time = 0;
     restate.map_user_root = 0;
     restate.argcount = 1;
     restate.argval[0] = command_name;
 
+    /* get the rootnode */
     restate.rednode = RedNodesScan(cliarg->redpath, cliarg->isadmin, cliarg->verbose);
     if (!restate.rednode) {
         RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", cliarg->redpath);
         goto OnErrorExit;
     }
+
+    /* search the rootnode */
+    restate.rootnode = restate.rednode;
+    while (restate.rootnode->parent != NULL)
+        restate.rootnode = restate.rootnode->parent;
 
     /* validate the node */
     error = validateNode(restate.rednode, cliarg->unsafe);
