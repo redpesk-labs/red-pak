@@ -476,7 +476,9 @@ static int set_for_conftag(redwrap_state_t *restate)
 
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     redwrap_state_t restate;
-    int error;
+    int idx, error;
+    int pipe_fd[2];
+    pid_t pid;
 
     if (cliarg->verbose)
         SetLogLevel(REDLOG_DEBUG);
@@ -526,14 +528,15 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     if (error)
         goto OnErrorExit;
 
-    // add remaining program to execute arguments
-    for (int idx=0; idx < subargc; idx++ ) {
+    // add program to execute at tail of arguments
+    for (idx = 0; idx < subargc; idx++ ) {
         if (idx == MAX_BWRAP_ARGS) {
             RedLog(REDLOG_ERROR,"red-wrap too many arguments limit=[%d]", MAX_BWRAP_ARGS);
         }
         restate.argval[restate.argcount++]=subargv[idx];
     }
 
+    /* dump the call to bwrap */
     if (cliarg->dump) {
         FILE *fout = cliarg->dump > 1 ? stdout : stderr;
         fprintf(fout, "\nDUMP: %s (as %s)", cliarg->bwrap, restate.argval[0]);
@@ -548,47 +551,50 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
             exit(0);
     }
 
-    int pipe_fd[2];
+    /* setup a connexion from parent to child */
     if (pipe(pipe_fd) == -1) {
         RedLog(REDLOG_ERROR, "Cannot pipe error=%s", strerror(errno));
         goto OnErrorExit;
     }
 
-    int pid = (int) syscall (__NR_clone, CLONE_NEWUSER|SIGCHLD, NULL);
+    /* enter new user namespace now */
+    pid = (pid_t) syscall (__NR_clone, CLONE_NEWUSER|SIGCHLD, NULL);
     if (pid < 0) {
         RedLog(REDLOG_ERROR, "Cannot clone with NEWUSER error=%s", strerror(errno));
         goto OnErrorExit;
     }
-
-    // exec command
     if (pid == 0) {
+        /* in forked process */
         /* wait for parent to set uid/gid maps */
         close(pipe_fd[1]);
         read(pipe_fd[0], &pid, sizeof(pid));
         close(pipe_fd[0]);
 
-        /* unshare time ns */
+        /* unshare time nanespace if required */
         if (restate.unshare_time)
             unshare(CLONE_NEWTIME);
 
+        /* exec bwrap now */
         restate.argval[restate.argcount]=NULL;
         if(execve(cliarg->bwrap, (char**) restate.argval, NULL)) {
             RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
-            return 1;
+            return EXIT_FAILURE;
         }
-        return 0;
+        return EXIT_SUCCESS;
     }
+
+    /* in parent process */
+    /* set uid/gid maps and signal child */
     close(pipe_fd[0]);
     setuidgidmap(pid, restate.map_user_root);
-    /* signal child that uid/gid maps are set */
     write(pipe_fd[1], &pid, sizeof(pid));
     close(pipe_fd[1]);
 
-    int returnStatus;
-    waitpid(pid, &returnStatus, 0);
-    return returnStatus;
+    /* wait child completion */
+    waitpid(pid, &error, 0);
+    return error;
 
 OnErrorExit:
     RedLog(REDLOG_ERROR,"red-wrap aborted");
-    return -1;
+    return 1;
 }
