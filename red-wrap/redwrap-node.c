@@ -253,16 +253,6 @@ int RwrapValidateNode (redNodeT *node, int unsafe) {
     return 0;
 }
 
-int RwrapParseNode (redNodeT *node, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
-    int error = RwrapValidateNode(node, cliargs->unsafe);
-
-    // Finaly add environment from node config
-    if (error == 0)
-        error = RwrapParseConfig (node, cliargs, lastleaf, argval, argcount);
-
-    return error;
-}
-
 int RedSetCapabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount) {
     redConfCapT *cap;
 
