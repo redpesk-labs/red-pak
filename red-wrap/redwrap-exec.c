@@ -123,29 +123,6 @@ static int set_special_confvar(redwrap_state_t *restate)
 }
 
 
-
-
-/**
- * @brief Check if path exists, and if not and if required, create a directory for the path
- *
- * @param path      Path into the node
- * @param configN   Config of the Node
- * @param create    Create the directory if doesn't exist
- * @return 0 in success negative otherwise
- */
-static int RwrapCheckDir(const char *path, redConfigT *configN, int create) {
-    struct stat status;
-    int err = stat(path, &status);
-    if (err && create) {
-        err = make_directories(path, 0, strlen(path), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
-    }
-    if (err) {
-        RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", configN->headers.alias, path, strerror(errno));
-        return err;
-    }
-    return 0;
-}
-
 static int RwrapParseSubConfig (redwrap_state_t *restate, redNodeT *node, redConfigT *configN)
 {
     unsigned idx;
@@ -170,8 +147,14 @@ static int RwrapParseSubConfig (redwrap_state_t *restate, redNodeT *node, redCon
 
         // if directory: check/create it
         if (mode & RED_EXPORT_DIRS) {
-            if (RwrapCheckDir(expandpath, configN, !restate->cliarg->strict))
+            int err = stat(expandpath, &status);
+            if (err && !restate->cliarg->strict) {
+                err = make_directories(expandpath, 0, strlen(expandpath), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
+            }
+            if (err) {
+                RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", configN->headers.alias, path, strerror(errno));
                 continue;
+            }
         }
         // if file: check file exists
         else if (mode & RED_EXPORT_FILES) {
