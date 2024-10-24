@@ -232,7 +232,6 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     int maprootuser;
     int argcount=0;
     int error;
-    const char *admin_path = NULL;
     const char *argval[MAX_BWRAP_ARGS];
     char pathString[BWRAP_MAXVAR_LEN];
     char ldpathString[BWRAP_MAXVAR_LEN];
@@ -243,15 +242,6 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         .pathIdx = 0
     };
 
-    int isadmin = cliarg->isadmin;
-    if (isadmin) {
-        admin_path = cliarg->adminpath;
-        if (admin_path == NULL)
-            admin_path = secure_getenv("redpak_MAIN_ADMIN");
-        if (admin_path == NULL)
-            admin_path= redpak_MAIN_ADMIN;
-    }
-
     pathString[0] = 0;
     ldpathString[0] = 0;
 
@@ -261,7 +251,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     // update verbose/redpath from cliarg
     const char *redpath = cliarg->redpath;
 
-    redNodeT *redtree = RedNodesScan(redpath, isadmin, cliarg->verbose);
+    redNodeT *redtree = RedNodesScan(redpath, cliarg->isadmin, cliarg->verbose);
     if (!redtree) {
         RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", redpath);
         goto OnErrorExit;
