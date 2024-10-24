@@ -111,12 +111,12 @@ static int set_special_confvar(redwrap_state_t *restate)
         result = mergeSpecialConfVar(node, &dataNode);
 
     if (result == 0) {
-        restate->argval[restate->argcount++]="--setenv";
-        restate->argval[restate->argcount++]="PATH";
-        restate->argval[restate->argcount++]=strdup(pathString);
-        restate->argval[restate->argcount++]="--setenv";
-        restate->argval[restate->argcount++]="LD_LIBRARY_PATH";
-        restate->argval[restate->argcount++]=strdup(ldpathString);
+        restate->argval[restate->argcount++] = "--setenv";
+        restate->argval[restate->argcount++] = "PATH";
+        restate->argval[restate->argcount++] = strdup(pathString);
+        restate->argval[restate->argcount++] = "--setenv";
+        restate->argval[restate->argcount++] = "LD_LIBRARY_PATH";
+        restate->argval[restate->argcount++] = strdup(ldpathString);
     }
 
     return result;
@@ -146,8 +146,8 @@ static int RwrapCheckDir(const char *path, redConfigT *configN, int create) {
     return 0;
 }
 
-static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfigT *cliargs, int lastleaf, const char *argval[], int *argcount) {
-
+static int RwrapParseSubConfig (redwrap_state_t *restate, redNodeT *node, redConfigT *configN)
+{
     unsigned idx;
     char buffer[2049];
 
@@ -163,14 +163,14 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         // if mouting path is not privide let's duplicate mount
         if (!path) path=mount;
         // if private and not last leaf: ignore
-        if (mode & RED_EXPORT_PRIVATES && !lastleaf)
+        if ((mode & RED_EXPORT_PRIVATES) != 0 && node != restate->rednode)
             continue;
 
         expandpath = RedNodeStringExpand (node, path);
 
         // if directory: check/create it
         if (mode & RED_EXPORT_DIRS) {
-            if (RwrapCheckDir(expandpath, configN, !cliargs->strict))
+            if (RwrapCheckDir(expandpath, configN, !restate->cliarg->strict))
                 continue;
         }
         // if file: check file exists
@@ -191,66 +191,66 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
         case RED_EXPORT_PUBLIC:
         case RED_EXPORT_PRIVATE_FILE:
         case RED_EXPORT_PUBLIC_FILE:
-            argval[(*argcount)++]="--bind";
-            argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--bind";
+            restate->argval[restate->argcount++] = expandpath;
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_RESTRICTED_FILE:
         case RED_EXPORT_RESTRICTED:
         case RED_EXPORT_PRIVATE_RESTRICTED:
-            argval[(*argcount)++]="--ro-bind";
-            argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--ro-bind";
+            restate->argval[restate->argcount++] = expandpath;
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_SYMLINK:
-            argval[(*argcount)++]="--symlink";
-            argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--symlink";
+            restate->argval[restate->argcount++] = expandpath;
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_EXECFD:
-            argval[(*argcount)++]="--file";
+            restate->argval[restate->argcount++] = "--file";
             snprintf(buffer, sizeof(buffer), "%d", MemFdExecCmd(mount, path, 1));
-            argval[(*argcount)++]=strdup(buffer);
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = strdup(buffer);
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_INTERNAL:
-            argval[(*argcount)++]="--file";
-            argval[(*argcount)++]=expandpath;
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--file";
+            restate->argval[restate->argcount++] = expandpath;
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_ANONYMOUS:
-            argval[(*argcount)++]="--dir";
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--dir";
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_TMPFS:
-            argval[(*argcount)++]="--tmpfs";
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--tmpfs";
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_DEVFS:
-            argval[(*argcount)++]="--dev";
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--dev";
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_PROCFS:
-            argval[(*argcount)++]="--proc";
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--proc";
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_MQUEFS:
-            argval[(*argcount)++]="--mqueue";
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--mqueue";
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         case RED_EXPORT_LOCK:
-            argval[(*argcount)++]="--lock-file";
-            argval[(*argcount)++]= exp_mount;
+            restate->argval[restate->argcount++] = "--lock-file";
+            restate->argval[restate->argcount++] =  exp_mount;
             break;
 
         default:
@@ -267,27 +267,27 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 
         switch (mode) {
         case RED_CONFVAR_STATIC:
-            argval[(*argcount)++]="--setenv";
-            argval[(*argcount)++]=key;
-            argval[(*argcount)++]=value;
+            restate->argval[restate->argcount++] = "--setenv";
+            restate->argval[restate->argcount++] = key;
+            restate->argval[restate->argcount++] = value;
             break;
 
         case RED_CONFVAR_EXECFD:
-            argval[(*argcount)++]="--setenv";
-            argval[(*argcount)++]=key;
+            restate->argval[restate->argcount++] = "--setenv";
+            restate->argval[restate->argcount++] = key;
             ExecCmd(key, value, buffer, sizeof(buffer), 1);
-            argval[(*argcount)++]=strdup(buffer);
+            restate->argval[restate->argcount++] = strdup(buffer);
             break;
 
         case RED_CONFVAR_DEFLT:
-            argval[(*argcount)++]="--setenv";
-            argval[(*argcount)++]=key;
-            argval[(*argcount)++]=RedNodeStringExpand (node, value);
+            restate->argval[restate->argcount++] = "--setenv";
+            restate->argval[restate->argcount++] = key;
+            restate->argval[restate->argcount++] = RedNodeStringExpand (node, value);
             break;
 
         case RED_CONFVAR_REMOVE:
-            argval[(*argcount)++]="--unsetenv";
-            argval[(*argcount)++]=key;
+            restate->argval[restate->argcount++] = "--unsetenv";
+            restate->argval[restate->argcount++] = key;
             break;
 
         default:
@@ -301,14 +301,12 @@ static int RwrapParseSubConfig (redNodeT *node, redConfigT *configN, rWrapConfig
 static int set_exports_and_vars(redwrap_state_t *restate)
 {
     redNodeT *node = restate->rednode;
-    int error = 0, lastleaf = 1;
+    int error = 0;
 
     do {
-        error = RwrapParseSubConfig(node, node->config, restate->cliarg, lastleaf, restate->argval, &restate->argcount);
+        error = RwrapParseSubConfig(restate, node, node->config);
         if (error == 0 && node->confadmin != NULL)
-            error = RwrapParseSubConfig(node, node->confadmin, restate->cliarg, lastleaf, restate->argval, &restate->argcount);
-
-        lastleaf = 0;
+            error = RwrapParseSubConfig(restate, node, node->confadmin);
         node=node->parent;
     }
     while (node != NULL && error == 0);
