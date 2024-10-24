@@ -42,6 +42,7 @@
 #include "redconf-log.h"
 #include "redconf-schema.h"
 #include "redconf-merge.h"
+#include "redconf-hashmerge.h"
 #include "redconf-expand.h"
 #include "redconf-defaults.h"
 #include "redwrap-node.h"
@@ -177,6 +178,24 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
     return 0;
 }
 
+
+static int set_capabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount) {
+    redConfCapT *cap;
+
+    if(mergeCapabilities(rootnode, mergedConfTags, 0)) {
+        RedLog(REDLOG_ERROR, "Issue to merge capabilities");
+        return 1;
+    }
+
+    for(int i = 0; i < mergedConfTags->capabilities_count; i++) {
+        cap = mergedConfTags->capabilities+i;
+        argval[(*argcount)++] = cap->add ? "--cap-add" : "--cap-drop";
+        argval[(*argcount)++] = cap->cap;
+    }
+
+    return 0;
+}
+
 /* this function tests if sharing of (item) is disabled  */
 static bool can_unshare(redConfOptFlagE target, redConfOptFlagE all)
 {
@@ -191,7 +210,7 @@ static int set_for_conftag(redwrap_state_t *restate)
     memset(&mct, 0, sizeof mct);
     mergeConfTag(restate->rootnode, mergedConfTags, 0);
 
-    if (RedSetCapabilities(restate->rootnode, mergedConfTags, restate->argval, &restate->argcount)) {
+    if (set_capabilities(restate->rootnode, mergedConfTags, restate->argval, &restate->argcount)) {
         RedLog(REDLOG_ERROR, "Cannot set capabilities");
         return 1;
     }

@@ -30,9 +30,8 @@
 #include "redconf-log.h"
 #include "redconf-expand.h"
 #include "redconf-utils.h"
-#include "redconf-hashmerge.h"
 
-/**
+/*
  * @brief Check if path exists, and if not and if required, create a directory for the path
  *
  * @param path      Path into the node
@@ -251,23 +250,4 @@ int RwrapValidateNode (redNodeT *node, int unsafe) {
     }
 
     return 0;
-}
-
-int RedSetCapabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount) {
-    redConfCapT *cap;
-
-    if(mergeCapabilities(rootnode, mergedConfTags, 0)) {
-        RedLog(REDLOG_ERROR, "Issue to merge capabilities");
-        goto Error;
-    }
-
-    for(int i = 0; i < mergedConfTags->capabilities_count; i++) {
-        cap = mergedConfTags->capabilities+i;
-        argval[(*argcount)++] = cap->add ? "--cap-add" : "--cap-drop";
-        argval[(*argcount)++] = cap->cap;
-    }
-
-    return 0;
-Error:
-    return 1;
 }
