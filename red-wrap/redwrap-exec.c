@@ -536,9 +536,12 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
 
     if (cliarg->dump) {
         FILE *fout = cliarg->dump > 1 ? stdout : stderr;
-        fprintf(fout, "\nDUMP: %s", cliarg->bwrap);
-        for (int idx=0; idx < restate.argcount; idx++ )
+        fprintf(fout, "\nDUMP: %s (as %s)", cliarg->bwrap, restate.argval[0]);
+        for (int idx = 1; idx < restate.argcount; idx++ ) {
+            if (cliarg->dump > 1 && restate.argval[idx][0] == '-')
+                fprintf(fout, "\n ");
             fprintf(fout, " %s", restate.argval[idx]);
+        }
         fprintf(fout, "\n");
         fflush(fout);
         if (cliarg->dump > 1)
