@@ -207,7 +207,10 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
     if (mode & RED_EXPORT_DIRS) {
         int err = stat(expandpath, &status);
         if (err && !restate->cliarg->strict) {
-            err = make_directories(expandpath, 0, strlen(expandpath), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
+            if (restate->cliarg->dump > 1)
+                err = 0;
+            else
+                err = make_directories(expandpath, 0, strlen(expandpath), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
         }
         if (err) {
             RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", node->config->headers.alias, path, strerror(errno));
