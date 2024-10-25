@@ -210,7 +210,7 @@ OnErrorExit:
     return -1;
 }
 
-int cgroups (redConfCgroupT *cgroups, const char *cgroup_name, char cgroup_parent[PATH_MAX]) {
+int cgroups (const redConfCgroupT *cgroups, const char *cgroup_name, char cgroup_parent[PATH_MAX]) {
     int err, cgRootFd, subgroupFd = 0, subgroupNodeFd;
     char pid[1000];
 
