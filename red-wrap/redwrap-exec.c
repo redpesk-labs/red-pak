@@ -78,6 +78,29 @@ struct redwrap_state_s
     redwrap_state_t;
 
 /**
+ * Macro for adding a value in the redwrap state
+ */
+#define ADD(ars,value) do{                           \
+            redwrap_state_t *rs = (ars);              \
+            if (rs->argcount < MAX_BWRAP_ARGS)       \
+                rs->argval[rs->argcount++] = (value);\
+            else                                     \
+                too_many_parameters();               \
+    }while(0)
+
+#define ADD2(ars,val1,val2)       do{ADD((ars),(val1));ADD((ars),(val2));}while(0)
+#define ADD3(ars,val1,val2,val3)  do{ADD((ars),(val1));ADD((ars),(val2));ADD((ars),(val3));}while(0)
+
+/**
+ * emit an error if there are too many declared parameters
+ */
+static void too_many_parameters()
+{
+    RedLog(REDLOG_ERROR, "red-wrap too many arguments limit=[%d]", MAX_BWRAP_ARGS);
+    exit(EXIT_FAILURE);
+}
+
+/**
  * check if the node and its parents are valid
  */
 static int validateNode(redNodeT *node, int unsafe)
@@ -111,12 +134,8 @@ static int set_special_confvar(redwrap_state_t *restate)
         result = mergeSpecialConfVar(node, &dataNode);
 
     if (result == 0) {
-        restate->argval[restate->argcount++] = "--setenv";
-        restate->argval[restate->argcount++] = "PATH";
-        restate->argval[restate->argcount++] = strdup(pathString);
-        restate->argval[restate->argcount++] = "--setenv";
-        restate->argval[restate->argcount++] = "LD_LIBRARY_PATH";
-        restate->argval[restate->argcount++] = strdup(ldpathString);
+        ADD3(restate, "--setenv", "PATH", strdup(pathString));
+        ADD3(restate, "--setenv", "LD_LIBRARY_PATH", strdup(ldpathString));
     }
 
     return result;
@@ -132,27 +151,20 @@ static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar,
 
     switch (mode) {
     case RED_CONFVAR_STATIC:
-        restate->argval[restate->argcount++] = "--setenv";
-        restate->argval[restate->argcount++] = key;
-        restate->argval[restate->argcount++] = value;
+        ADD3(restate, "--setenv", key, value);
         break;
 
     case RED_CONFVAR_EXECFD:
-        restate->argval[restate->argcount++] = "--setenv";
-        restate->argval[restate->argcount++] = key;
         ExecCmd(key, value, buffer, sizeof(buffer), 1);
-        restate->argval[restate->argcount++] = strdup(buffer);
+        ADD3(restate, "--setenv", key, strdup(buffer));
         break;
 
     case RED_CONFVAR_DEFLT:
-        restate->argval[restate->argcount++] = "--setenv";
-        restate->argval[restate->argcount++] = key;
-        restate->argval[restate->argcount++] = RedNodeStringExpand (node, value);
+        ADD3(restate, "--setenv", key, RedNodeStringExpand (node, value));
         break;
 
     case RED_CONFVAR_REMOVE:
-        restate->argval[restate->argcount++] = "--unsetenv";
-        restate->argval[restate->argcount++] = key;
+        ADD2(restate, "--unsetenv", key);
         break;
 
     default:
@@ -218,66 +230,50 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
     case RED_EXPORT_PUBLIC:
     case RED_EXPORT_PRIVATE_FILE:
     case RED_EXPORT_PUBLIC_FILE:
-        restate->argval[restate->argcount++] = "--bind";
-        restate->argval[restate->argcount++] = expandpath;
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD3(restate, "--bind", expandpath, exp_mount);
         break;
 
     case RED_EXPORT_RESTRICTED_FILE:
     case RED_EXPORT_RESTRICTED:
     case RED_EXPORT_PRIVATE_RESTRICTED:
-        restate->argval[restate->argcount++] = "--ro-bind";
-        restate->argval[restate->argcount++] = expandpath;
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD3(restate, "--ro-bind", expandpath, exp_mount);
         break;
 
     case RED_EXPORT_SYMLINK:
-        restate->argval[restate->argcount++] = "--symlink";
-        restate->argval[restate->argcount++] = expandpath;
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD3(restate, "--symlink", expandpath, exp_mount);
         break;
 
     case RED_EXPORT_EXECFD:
-        restate->argval[restate->argcount++] = "--file";
         snprintf(buffer, sizeof(buffer), "%d", MemFdExecCmd(mount, path, 1));
-        restate->argval[restate->argcount++] = strdup(buffer);
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD3(restate, "--file", strdup(buffer),  exp_mount);
         break;
 
     case RED_EXPORT_INTERNAL:
-        restate->argval[restate->argcount++] = "--file";
-        restate->argval[restate->argcount++] = expandpath;
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD3(restate, "--file", expandpath, exp_mount);
         break;
 
     case RED_EXPORT_ANONYMOUS:
-        restate->argval[restate->argcount++] = "--dir";
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD2(restate, "--dir", exp_mount);
         break;
 
     case RED_EXPORT_TMPFS:
-        restate->argval[restate->argcount++] = "--tmpfs";
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD2(restate, "--tmpfs", exp_mount);
         break;
 
     case RED_EXPORT_DEVFS:
-        restate->argval[restate->argcount++] = "--dev";
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD2(restate, "--dev", exp_mount);
         break;
 
     case RED_EXPORT_PROCFS:
-        restate->argval[restate->argcount++] = "--proc";
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD2(restate, "--proc", exp_mount);
         break;
 
     case RED_EXPORT_MQUEFS:
-        restate->argval[restate->argcount++] = "--mqueue";
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD2(restate, "--mqueue", exp_mount);
         break;
 
     case RED_EXPORT_LOCK:
-        restate->argval[restate->argcount++] = "--lock-file";
-        restate->argval[restate->argcount++] =  exp_mount;
+        ADD2(restate, "--lock-file", exp_mount);
         break;
 
     default:
@@ -396,8 +392,7 @@ static int setcgroups(const redConfTagT* conftag, redNodeT *rootNode) {
 
 static int set_one_capability(redwrap_state_t *restate, const char *capability, int value)
 {
-    restate->argval[restate->argcount++] = value ? "--cap-add" : "--cap-drop";
-    restate->argval[restate->argcount++] = capability;
+    ADD2(restate, value ? "--cap-add" : "--cap-drop", capability);
     return 0;
 }
 
@@ -407,7 +402,6 @@ static int set_capabilities(redwrap_state_t *restate, const redConfTagT *conftag
         redConfCapT *cap = conftag->capabilities+i;
         set_one_capability(restate, cap->cap, cap->add);
     }
-
     return 0;
 }
 
@@ -421,21 +415,21 @@ static bool can_unshare(redConfOptFlagE target, redConfOptFlagE all)
 static int set_shares(redwrap_state_t *restate, const redConfShareT *shares)
 {
     if (can_unshare(shares->user, shares->all))
-        restate->argval[restate->argcount++]="--unshare-user";
+        ADD(restate, "--unshare-user");
 
     if (can_unshare(shares->cgroup, shares->all))
-        restate->argval[restate->argcount++]="--unshare-cgroup";
+        ADD(restate, "--unshare-cgroup");
 
     if (can_unshare(shares->ipc, shares->all))
-        restate->argval[restate->argcount++]="--unshare-ipc";
+        ADD(restate, "--unshare-ipc");
 
     if (can_unshare(shares->pid, shares->all))
-        restate->argval[restate->argcount++]="--unshare-pid";
+        ADD(restate, "--unshare-pid");
 
     if (can_unshare(shares->net, shares->all))
-        restate->argval[restate->argcount++]="--unshare-net";
+        ADD(restate, "--unshare-net");
     else
-        restate->argval[restate->argcount++]="--share-net";
+        ADD(restate, "--share-net");
 
     restate->unshare_time = can_unshare(shares->time, shares->all);
 
@@ -450,22 +444,17 @@ static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
         setcgroups(conftag, restate->rootnode);
 
     // set global merged config tags
-    if (conftag->hostname) {
-        restate->argval[restate->argcount++]="--unshare-uts";
-        restate->argval[restate->argcount++]="--hostname";
-        restate->argval[restate->argcount++]= RedNodeStringExpand (restate->rednode, conftag->hostname);
-    }
+    if (conftag->hostname)
+        ADD3(restate, "--unshare-uts", "--hostname", RedNodeStringExpand (restate->rednode, conftag->hostname));
 
-    if (conftag->chdir) {
-        restate->argval[restate->argcount++]="--chdir";
-        restate->argval[restate->argcount++]= RedNodeStringExpand (restate->rednode, conftag->chdir);
-    }
+    if (conftag->chdir)
+        ADD2(restate, "--chdir", RedNodeStringExpand (restate->rednode, conftag->chdir));
 
     if (conftag->diewithparent & RED_CONF_OPT_ENABLED)
-        restate->argval[restate->argcount++]="--die-with-parent";
+        ADD(restate, "--die-with-parent");
 
     if (conftag->newsession & RED_CONF_OPT_ENABLED)
-        restate->argval[restate->argcount++]="--new-session";
+        ADD(restate, "--new-session");
 
     restate->map_user_root = conftag->maprootuser;
 
@@ -544,12 +533,8 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         goto OnErrorExit;
 
     // add program to execute at tail of arguments
-    for (idx = 0; idx < subargc; idx++ ) {
-        if (restate.argcount >= MAX_BWRAP_ARGS) {
-            RedLog(REDLOG_ERROR,"red-wrap too many arguments limit=[%d]", MAX_BWRAP_ARGS);
-        }
-        restate.argval[restate.argcount++] = subargv[idx];
-    }
+    for (idx = 0; idx < subargc; idx++ )
+        ADD(&restate, subargv[idx]);
 
     /* dump the call to bwrap */
     if (cliarg->dump) {
