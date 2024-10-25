@@ -372,13 +372,11 @@ Error:
     return -1;
 }
 
-static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
+static int setcgroups(const redConfTagT* conftag, redNodeT *rootNode) {
     char cgroupParent[PATH_MAX] = {0};
 
-    if (mergedConfTags->cgrouproot) {
-        mergedConfTags->cgrouproot = RedNodeStringExpand (rootNode, mergedConfTags->cgrouproot);
-        strncpy(cgroupParent, mergedConfTags->cgrouproot, PATH_MAX);
-    }
+    if (conftag->cgrouproot)
+        strncpy(cgroupParent, conftag->cgrouproot, PATH_MAX);
 
     RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
     for (redNodeT *node=rootNode; node != NULL; node=node->first_child) {
@@ -396,19 +394,18 @@ static int setcgroups(redConfTagT* mergedConfTags, redNodeT *rootNode) {
     return 0;
 }
 
+static int set_one_capability(redwrap_state_t *restate, const char *capability, int value)
+{
+    restate->argval[restate->argcount++] = value ? "--cap-add" : "--cap-drop";
+    restate->argval[restate->argcount++] = capability;
+    return 0;
+}
 
-static int set_capabilities(const redNodeT *rootnode, redConfTagT *mergedConfTags, const char *argval[], int *argcount) {
-    redConfCapT *cap;
+static int set_capabilities(redwrap_state_t *restate, const redConfTagT *conftag) {
 
-    if(mergeCapabilities(rootnode, mergedConfTags, 0)) {
-        RedLog(REDLOG_ERROR, "Issue to merge capabilities");
-        return 1;
-    }
-
-    for(int i = 0; i < mergedConfTags->capabilities_count; i++) {
-        cap = mergedConfTags->capabilities+i;
-        argval[(*argcount)++] = cap->add ? "--cap-add" : "--cap-drop";
-        argval[(*argcount)++] = cap->cap;
+    for(int i = 0; i < conftag->capabilities_count; i++) {
+        redConfCapT *cap = conftag->capabilities+i;
+        set_one_capability(restate, cap->cap, cap->add);
     }
 
     return 0;
@@ -421,60 +418,75 @@ static bool can_unshare(redConfOptFlagE target, redConfOptFlagE all)
                 || (target == RED_CONF_OPT_UNSET && all != RED_CONF_OPT_ENABLED);
 }
 
-static int set_for_conftag(redwrap_state_t *restate)
+static int set_shares(redwrap_state_t *restate, const redConfShareT *shares)
 {
-    redConfTagT mct, *mergedConfTags = &mct;
-
-    memset(&mct, 0, sizeof mct);
-    mergeConfTag(restate->rootnode, mergedConfTags, 0);
-
-    if (set_capabilities(restate->rootnode, mergedConfTags, restate->argval, &restate->argcount)) {
-        RedLog(REDLOG_ERROR, "Cannot set capabilities");
-        return 1;
-    }
-
-    if (restate->has_cgroups)
-        setcgroups(mergedConfTags, restate->rootnode);
-
-    // set global merged config tags
-    if (mergedConfTags->hostname) {
-        restate->argval[restate->argcount++]="--unshare-uts";
-        restate->argval[restate->argcount++]="--hostname";
-        restate->argval[restate->argcount++]= RedNodeStringExpand (restate->rednode, mergedConfTags->hostname);
-    }
-
-    if (mergedConfTags->chdir) {
-        restate->argval[restate->argcount++]="--chdir";
-        restate->argval[restate->argcount++]= RedNodeStringExpand (restate->rednode, mergedConfTags->chdir);
-    }
-
-    if (can_unshare(mergedConfTags->share.user, mergedConfTags->share.all))
+    if (can_unshare(shares->user, shares->all))
         restate->argval[restate->argcount++]="--unshare-user";
 
-    if (can_unshare(mergedConfTags->share.cgroup, mergedConfTags->share.all))
+    if (can_unshare(shares->cgroup, shares->all))
         restate->argval[restate->argcount++]="--unshare-cgroup";
 
-    if (can_unshare(mergedConfTags->share.ipc, mergedConfTags->share.all))
+    if (can_unshare(shares->ipc, shares->all))
         restate->argval[restate->argcount++]="--unshare-ipc";
 
-    if (can_unshare(mergedConfTags->share.pid, mergedConfTags->share.all))
+    if (can_unshare(shares->pid, shares->all))
         restate->argval[restate->argcount++]="--unshare-pid";
 
-    if (can_unshare(mergedConfTags->share.net, mergedConfTags->share.all))
+    if (can_unshare(shares->net, shares->all))
         restate->argval[restate->argcount++]="--unshare-net";
     else
         restate->argval[restate->argcount++]="--share-net";
 
-    if (mergedConfTags->diewithparent & RED_CONF_OPT_ENABLED)
-        restate->argval[restate->argcount++]="--die-with-parent";
-
-    if (mergedConfTags->newsession & RED_CONF_OPT_ENABLED)
-        restate->argval[restate->argcount++]="--new-session";
-
-    restate->unshare_time = can_unshare(mergedConfTags->share.time, mergedConfTags->share.all);
-    restate->map_user_root = mergedConfTags->maprootuser;
+    restate->unshare_time = can_unshare(shares->time, shares->all);
 
     return 0;
+}
+
+static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
+{
+    set_capabilities(restate, conftag);
+
+    if (restate->has_cgroups)
+        setcgroups(conftag, restate->rootnode);
+
+    // set global merged config tags
+    if (conftag->hostname) {
+        restate->argval[restate->argcount++]="--unshare-uts";
+        restate->argval[restate->argcount++]="--hostname";
+        restate->argval[restate->argcount++]= RedNodeStringExpand (restate->rednode, conftag->hostname);
+    }
+
+    if (conftag->chdir) {
+        restate->argval[restate->argcount++]="--chdir";
+        restate->argval[restate->argcount++]= RedNodeStringExpand (restate->rednode, conftag->chdir);
+    }
+
+    if (conftag->diewithparent & RED_CONF_OPT_ENABLED)
+        restate->argval[restate->argcount++]="--die-with-parent";
+
+    if (conftag->newsession & RED_CONF_OPT_ENABLED)
+        restate->argval[restate->argcount++]="--new-session";
+
+    restate->map_user_root = conftag->maprootuser;
+
+    return set_shares(restate, &conftag->share);
+}
+
+static int set_for_conftag(redwrap_state_t *restate)
+{
+    redConfTagT mct;
+    memset(&mct, 0, sizeof mct);
+    if(mergeConfTag(restate->rootnode, &mct, 0)) {
+        RedLog(REDLOG_ERROR, "Issue to merge conftag");
+        return 1;
+    }
+    if(mergeCapabilities(restate->rootnode, &mct, 0)) {
+        RedLog(REDLOG_ERROR, "Issue to merge capabilities");
+        return 1;
+    }
+    if (restate->has_cgroups && mct.cgrouproot)
+        mct.cgrouproot = RedNodeStringExpand (restate->rootnode, mct.cgrouproot);
+    return set_conftag(restate, &mct);
 }
 
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
