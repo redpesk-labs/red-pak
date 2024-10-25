@@ -545,10 +545,10 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
 
     // add program to execute at tail of arguments
     for (idx = 0; idx < subargc; idx++ ) {
-        if (idx == MAX_BWRAP_ARGS) {
+        if (restate.argcount >= MAX_BWRAP_ARGS) {
             RedLog(REDLOG_ERROR,"red-wrap too many arguments limit=[%d]", MAX_BWRAP_ARGS);
         }
-        restate.argval[restate.argcount++]=subargv[idx];
+        restate.argval[restate.argcount++] = subargv[idx];
     }
 
     /* dump the call to bwrap */
@@ -590,7 +590,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
             unshare(CLONE_NEWTIME);
 
         /* exec bwrap now */
-        restate.argval[restate.argcount]=NULL;
+        restate.argval[restate.argcount] = NULL;
         if(execve(cliarg->bwrap, (char**) restate.argval, NULL)) {
             RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
             return EXIT_FAILURE;
