@@ -222,7 +222,7 @@ static const cyaml_strval_t redVarEnvStrings[] = {
 
 // mounting point label+path
 static const cyaml_schema_field_t ExportEntry[] = {
-    CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT, redConfExportPathT, mode, exportFlagStrings, CYAML_ARRAY_LEN(exportFlagStrings)),
+    CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT|CYFLAG_CASE, redConfExportPathT, mode, exportFlagStrings, CYAML_ARRAY_LEN(exportFlagStrings)),
     CYAML_FIELD_STRING_PTR("mount", CYFLAG_PTR|CYFLAG_CASE, redConfExportPathT, mount, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("path", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfExportPathT, path, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("info", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfExportPathT, info, 0, CYAML_UNLIMITED),
@@ -232,7 +232,7 @@ static const cyaml_schema_field_t ExportEntry[] = {
 
 // relocation old/new path
 static const cyaml_schema_field_t EnvValEntry[] = {
-    CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT|CYFLAG_OPT, redConfVarT, mode, redVarEnvStrings, CYAML_ARRAY_LEN(redVarEnvStrings)),
+    CYAML_FIELD_ENUM("mode", CYAML_FLAG_STRICT|CYFLAG_CASE|CYFLAG_OPT, redConfVarT, mode, redVarEnvStrings, CYAML_ARRAY_LEN(redVarEnvStrings)),
     CYAML_FIELD_STRING_PTR("key", CYFLAG_PTR|CYFLAG_CASE, redConfVarT, key, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("value", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfVarT, value, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("info", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfVarT, info, 0, CYAML_UNLIMITED),
