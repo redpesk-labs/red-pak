@@ -134,8 +134,10 @@ static int set_special_confvar(redwrap_state_t *restate)
         result = mergeSpecialConfVar(node, &dataNode);
 
     if (result == 0) {
-        ADD3(restate, "--setenv", "PATH", strdup(pathString));
-        ADD3(restate, "--setenv", "LD_LIBRARY_PATH", strdup(ldpathString));
+        if (pathString[0])
+            ADD3(restate, "--setenv", "PATH", strdup(pathString));
+        if (ldpathString[0])
+            ADD3(restate, "--setenv", "LD_LIBRARY_PATH", strdup(ldpathString));
     }
 
     return result;
