@@ -81,5 +81,5 @@ int config(const rGlobalConfigT * gConfig) {
         return -1;
 
     RedLog(REDLOG_DEBUG, "[config]: redpath=%s", cConfig.redpath);
-    return RedDumpFamilyNodePath(cConfig.redpath, gConfig->yaml, gConfig->verbose);
+    return RedDumpFamilyNodePath(cConfig.redpath, gConfig->yaml, GetLogLevel() >= REDLOG_INFO);
 }

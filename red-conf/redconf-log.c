@@ -24,7 +24,7 @@
 #define COLOR_REDPRINT "\033[0;31m"
 #define COLOR_RESET "\033[0m"
 
-static RedLogLevelE RedLogLevel = REDLOG_INFO;
+static RedLogLevelE RedLogLevel = REDLOG_WARNING;
 
 void SetLogLevel(RedLogLevelE level) {
     RedLogLevel = level < REDLOG_ERROR ? REDLOG_ERROR : level;

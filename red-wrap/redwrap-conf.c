@@ -27,6 +27,7 @@
 #include <getopt.h>
 
 #include "redconf-defaults.h"
+#include "redconf-log.h"
 
 #ifndef BWRAP_CMD_PATH
 #define BWRAP_CMD_PATH "/usr/bin/bwrap"
@@ -114,9 +115,10 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
                 break;
 
             case 'v':
-                config->verbose++;
                 if (optarg)
                     config->verbose = atoi(optarg);
+                else
+                    config->verbose = REDLOG_NOTICE;
                 break;
 
             default:

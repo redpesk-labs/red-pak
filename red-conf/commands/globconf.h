@@ -22,7 +22,6 @@ typedef struct {
     const char* cmd;
     int sub_argc;
     char **sub_argv;
-    int verbose;
     int yaml;
     int logyaml;
 } rGlobalConfigT;

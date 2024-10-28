@@ -49,13 +49,11 @@ static const rCommandT commands[] = {
     {0, 0, 0}
 };
 
-const RedLogLevelE verbose_default = REDLOG_WARNING;
-
 static const rOption globalOptions[] = {
-    {{"verbose",    optional_argument, (int *)&verbose_default, 'v'}, "increase verbosity to info"},
-    {{"yaml",       no_argument      ,     0,                   'y'}, "yaml output"},
-    {{"log-yaml",   required_argument,     0,                   'l'}, "yaml parse log level (max=4)"},
-    {{"help",       no_argument      ,     0,                   'h'}, "print this help"},
+    {{"verbose",    optional_argument,     0, 'v'}, "increase verbosity to info"},
+    {{"yaml",       no_argument      ,     0, 'y'}, "yaml output"},
+    {{"log-yaml",   required_argument,     0, 'l'}, "yaml parse log level (max=4)"},
+    {{"help",       no_argument      ,     0, 'h'}, "print this help"},
     {{0, 0, 0, 0}, 0}
 };
 
@@ -79,8 +77,7 @@ static void globalUsage(const rOption *options, int exitcode) {
 }
 
 static int globalParseArgs(int argc, char *argv[], rGlobalConfigT *gConfig) {
-    int option;
-    RedLogLevelE verbosity;
+    int option, verbosity;
     struct option longOpts [sizeof(struct option) * sizeof(globalOptions) / sizeof(globalOptions[0])];
 
     setLongOptions(globalOptions, longOpts);
@@ -91,19 +88,15 @@ static int globalParseArgs(int argc, char *argv[], rGlobalConfigT *gConfig) {
         // option return short option even when long option is given
         switch (option) {
             case 'v':
-                verbosity = REDLOG_INFO;
-                if(optarg) {
-                    size_t length = strlen(optarg);
-                    if (!strncmp(optarg, "v", length)) {
-                        verbosity = REDLOG_DEBUG;
-                    } else if (!strncmp(optarg, "vv", length)) {
-                        verbosity = REDLOG_TRACE;
-                    } else {
-                        optarg = NULL;
-                    }
+                verbosity = GetLogLevel();
+                if(!optarg)
+                    verbosity++;
+                else if (*optarg == 'v') {
+                    do { verbosity++; } while(*optarg++ == 'v');
                 }
-                SetLogLevel(verbosity);
-                gConfig->verbose = 1;
+                else
+                    verbosity = atoi(optarg);
+                SetLogLevel((RedLogLevelE)verbosity);
                 break;
 
             case 'y':

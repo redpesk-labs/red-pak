@@ -496,7 +496,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     pid_t pid;
 
     if (cliarg->verbose)
-        SetLogLevel(REDLOG_DEBUG);
+        SetLogLevel(cliarg->verbose);
 
     // start argument list with red-wrap command name
     restate.cliarg = cliarg;
