@@ -1,11 +1,9 @@
 LEAF_ALIAS=(NODE-5)
 HOSTNAME=(localhost)
-LD_LIBRARY_PATH=
 SHLVL=1
 NODE_ALIAS=(NODE-5)
 REDNODE_ADMIN=(/tmp/redpak-check-data-root/etc/redpak-admin.yaml)
 LEAF_PATH=(/tmp/redpak-check-data-root)
-PATH=
 REDNODE_STATUS=(/tmp/redpak-check-data-root/.rednode.yaml)
 NODE_PATH=(/tmp/redpak-check-data-root)
 REDNODE_CONF=(/tmp/redpak-check-data-root/etc/redpak.yaml)
