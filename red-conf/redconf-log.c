@@ -20,6 +20,7 @@
 #include "redconf-log.h"
 
 #include <stdio.h>
+#include <unistd.h>
 
 #define COLOR_REDPRINT "\033[0;31m"
 #define COLOR_RESET "\033[0m"
@@ -27,7 +28,8 @@
 static RedLogLevelE RedLogLevel = REDLOG_WARNING;
 
 void SetLogLevel(RedLogLevelE level) {
-    RedLogLevel = level < REDLOG_ERROR ? REDLOG_ERROR : level;
+    RedLogLevel = level < REDLOG_ERROR ? REDLOG_ERROR
+                : level > REDLOG_TRACE ? REDLOG_TRACE : level;
 }
 
 // Allow log function to be mapped on RedLog, syslog, ...
@@ -44,16 +46,16 @@ typedef struct {
 
 } debugStrValT;
 
-static const debugStrValT debugPrefixFormat[] = {
-    {COLOR_REDPRINT"[EMERGENCY]: ", REDLOG_EMERGENCY},
-    {COLOR_REDPRINT"[ALERT]: ", REDLOG_ALERT},
-    {COLOR_REDPRINT"[CRITICAL]: ", REDLOG_CRITICAL},
-    {COLOR_REDPRINT"[ERROR]: ", REDLOG_ERROR},
-    {COLOR_REDPRINT"[WARNING]: ", REDLOG_WARNING},
-    {              "[NOTICE]: ", REDLOG_NOTICE},
-    {              "[INFO]: ", REDLOG_INFO},
-    {              "[DEBUG]: ", REDLOG_DEBUG},
-    {              "[TRACE]: ", REDLOG_TRACE},
+static const char *debugPrefixFormat[] = {
+    "[EMERGENCY]: ",
+    "[ALERT]: ",
+    "[CRITICAL]: ",
+    "[ERROR]: ",
+    "[WARNING]: ",
+    "[NOTICE]: ",
+    "[INFO]: ",
+    "[DEBUG]: ",
+    "[TRACE]: "
 };
 
 RedLogLevelE GetLogLevel() {
@@ -62,6 +64,10 @@ RedLogLevelE GetLogLevel() {
 
 // redlib and redconf use RedLog to display error messages
 void redlog(RedLogLevelE level, const char *file, int line, const char *format, ...) {
+    if (level < REDLOG_EMERGENCY)
+        level = REDLOG_EMERGENCY;
+    else if (level > REDLOG_TRACE)
+        level = REDLOG_TRACE;
     if (level > RedLogLevel)
         return;
     va_list args;
@@ -70,10 +76,15 @@ void redlog(RedLogLevelE level, const char *file, int line, const char *format, 
     if (redLogRegisteredCb) {
         (*redLogRegisteredCb) (level, format, args);
     } else {
-        fprintf(stderr, "%s ", debugPrefixFormat[level].str);
+        const char *setcolo = "", *unsetcolo = "";
+        if (isatty(fileno(stderr)) && level <= REDLOG_WARNING) {
+            setcolo = COLOR_REDPRINT;
+            unsetcolo = COLOR_RESET;
+        }
+        fprintf(stderr, "%s%s ", setcolo, debugPrefixFormat[level]);
         vfprintf(stderr, format, args);
-        fprintf(stderr, "\t[%s:%d] ", file, line);
-        fprintf(stderr,"\n"COLOR_RESET);
+        fprintf(stderr, "\t[%s:%d]", file, line);
+        fprintf(stderr, "%s\n", unsetcolo);
     }
     va_end(args);
 }
