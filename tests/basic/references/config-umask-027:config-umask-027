@@ -1,0 +1,110 @@
+
+===================================
+== CONF1 config-umask-027
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   verbose: 027
+
+===================================
+== CONF2 config-umask-027
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   verbose: 027
+
+===================================
+redconf create --alias NODE --config config-umask-027 --config-adm config-umask-027 node/config-umask-027/config-umask-027
+redwrap  --dump-only --redpath node/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-umask-027 --config-adm NULL rootnn/config-umask-027
+redconf create --alias SUBNODE --config config-umask-027 --config-adm NULL rootnn/config-umask-027/config-umask-027
+redwrap  --dump-only --redpath rootnn/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-umask-027 --config-adm NULL rootna/config-umask-027
+redconf create --alias SUBNODE --config NULL --config-adm config-umask-027 rootna/config-umask-027/config-umask-027
+redwrap  --dump-only --redpath rootna/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-umask-027 rootan/config-umask-027
+redconf create --alias SUBNODE --config config-umask-027 --config-adm NULL rootan/config-umask-027/config-umask-027
+redwrap  --dump-only --redpath rootan/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-umask-027 rootaa/config-umask-027
+redconf create --alias SUBNODE --config NULL --config-adm config-umask-027 rootaa/config-umask-027/config-umask-027
+redwrap  --dump-only --redpath rootaa/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-umask-027/config-umask-027
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

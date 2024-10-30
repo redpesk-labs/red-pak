@@ -1,0 +1,110 @@
+
+===================================
+== CONF1 config-die-with-parent-unset
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   die-with-parent: unset
+
+===================================
+== CONF2 config-die-with-parent-disabled
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   die-with-parent: disabled
+
+===================================
+redconf create --alias NODE --config config-die-with-parent-unset --config-adm config-die-with-parent-disabled node/config-die-with-parent-unset/config-die-with-parent-disabled
+redwrap  --dump-only --redpath node/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-die-with-parent-unset --config-adm NULL rootnn/config-die-with-parent-unset
+redconf create --alias SUBNODE --config config-die-with-parent-disabled --config-adm NULL rootnn/config-die-with-parent-unset/config-die-with-parent-disabled
+redwrap  --dump-only --redpath rootnn/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-die-with-parent-unset --config-adm NULL rootna/config-die-with-parent-unset
+redconf create --alias SUBNODE --config NULL --config-adm config-die-with-parent-disabled rootna/config-die-with-parent-unset/config-die-with-parent-disabled
+redwrap  --dump-only --redpath rootna/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-die-with-parent-unset rootan/config-die-with-parent-unset
+redconf create --alias SUBNODE --config config-die-with-parent-disabled --config-adm NULL rootan/config-die-with-parent-unset/config-die-with-parent-disabled
+redwrap  --dump-only --redpath rootan/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-die-with-parent-unset rootaa/config-die-with-parent-unset
+redconf create --alias SUBNODE --config NULL --config-adm config-die-with-parent-disabled rootaa/config-die-with-parent-unset/config-die-with-parent-disabled
+redwrap  --dump-only --redpath rootaa/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-die-with-parent-unset/config-die-with-parent-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

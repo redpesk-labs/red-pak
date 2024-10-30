@@ -1,0 +1,129 @@
+
+===================================
+== CONF1 export-publicfile-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: publicfile
+    mount: /B
+    path: /somewhere
+
+===================================
+== CONF2 export-publicfile-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: publicfile
+    mount: /A
+    path: /somewhere
+
+===================================
+redconf create --alias NODE --config export-publicfile-B --config-adm export-publicfile-A node/export-publicfile-B/export-publicfile-A
+redwrap  --dump-only --redpath node/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /B
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-publicfile-B --config-adm NULL rootnn/export-publicfile-B
+redconf create --alias SUBNODE --config export-publicfile-A --config-adm NULL rootnn/export-publicfile-B/export-publicfile-A
+redwrap  --dump-only --redpath rootnn/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-publicfile-B --config-adm NULL rootna/export-publicfile-B
+redconf create --alias SUBNODE --config NULL --config-adm export-publicfile-A rootna/export-publicfile-B/export-publicfile-A
+redwrap  --dump-only --redpath rootna/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-publicfile-B rootan/export-publicfile-B
+redconf create --alias SUBNODE --config export-publicfile-A --config-adm NULL rootan/export-publicfile-B/export-publicfile-A
+redwrap  --dump-only --redpath rootan/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-publicfile-B rootaa/export-publicfile-B
+redconf create --alias SUBNODE --config NULL --config-adm export-publicfile-A rootaa/export-publicfile-B/export-publicfile-A
+redwrap  --dump-only --redpath rootaa/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-publicfile-B/export-publicfile-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

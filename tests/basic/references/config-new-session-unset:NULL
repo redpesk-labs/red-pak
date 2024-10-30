@@ -1,0 +1,108 @@
+
+===================================
+== CONF1 config-new-session-unset
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   new-session: unset
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config config-new-session-unset --config-adm NULL node/config-new-session-unset/NULL
+redwrap  --dump-only --redpath node/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-new-session-unset --config-adm NULL rootnn/config-new-session-unset
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-new-session-unset/NULL
+redwrap  --dump-only --redpath rootnn/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-new-session-unset --config-adm NULL rootna/config-new-session-unset
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-new-session-unset/NULL
+redwrap  --dump-only --redpath rootna/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-new-session-unset rootan/config-new-session-unset
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/config-new-session-unset/NULL
+redwrap  --dump-only --redpath rootan/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-new-session-unset rootaa/config-new-session-unset
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/config-new-session-unset/NULL
+redwrap  --dump-only --redpath rootaa/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-new-session-unset/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

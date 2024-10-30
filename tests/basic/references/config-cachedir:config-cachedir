@@ -1,0 +1,110 @@
+
+===================================
+== CONF1 config-cachedir
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   cachedir: $NODE_PATH:$NODE_ALIAS:$LEAF_ALIAS
+
+===================================
+== CONF2 config-cachedir
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   cachedir: $NODE_PATH:$NODE_ALIAS:$LEAF_ALIAS
+
+===================================
+redconf create --alias NODE --config config-cachedir --config-adm config-cachedir node/config-cachedir/config-cachedir
+redwrap  --dump-only --redpath node/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-cachedir --config-adm NULL rootnn/config-cachedir
+redconf create --alias SUBNODE --config config-cachedir --config-adm NULL rootnn/config-cachedir/config-cachedir
+redwrap  --dump-only --redpath rootnn/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-cachedir --config-adm NULL rootna/config-cachedir
+redconf create --alias SUBNODE --config NULL --config-adm config-cachedir rootna/config-cachedir/config-cachedir
+redwrap  --dump-only --redpath rootna/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-cachedir rootan/config-cachedir
+redconf create --alias SUBNODE --config config-cachedir --config-adm NULL rootan/config-cachedir/config-cachedir
+redwrap  --dump-only --redpath rootan/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-cachedir rootaa/config-cachedir
+redconf create --alias SUBNODE --config NULL --config-adm config-cachedir rootaa/config-cachedir/config-cachedir
+redwrap  --dump-only --redpath rootaa/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-cachedir/config-cachedir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

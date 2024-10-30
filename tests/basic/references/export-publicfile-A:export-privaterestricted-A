@@ -1,0 +1,129 @@
+
+===================================
+== CONF1 export-publicfile-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: publicfile
+    mount: /A
+    path: /somewhere
+
+===================================
+== CONF2 export-privaterestricted-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: privaterestricted
+    mount: /A
+    path: /somewhere
+
+===================================
+redconf create --alias NODE --config export-publicfile-A --config-adm export-privaterestricted-A node/export-publicfile-A/export-privaterestricted-A
+redwrap  --dump-only --redpath node/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-publicfile-A --config-adm NULL rootnn/export-publicfile-A
+redconf create --alias SUBNODE --config export-privaterestricted-A --config-adm NULL rootnn/export-publicfile-A/export-privaterestricted-A
+redwrap  --dump-only --redpath rootnn/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-publicfile-A --config-adm NULL rootna/export-publicfile-A
+redconf create --alias SUBNODE --config NULL --config-adm export-privaterestricted-A rootna/export-publicfile-A/export-privaterestricted-A
+redwrap  --dump-only --redpath rootna/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-publicfile-A rootan/export-publicfile-A
+redconf create --alias SUBNODE --config export-privaterestricted-A --config-adm NULL rootan/export-publicfile-A/export-privaterestricted-A
+redwrap  --dump-only --redpath rootan/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-publicfile-A rootaa/export-publicfile-A
+redconf create --alias SUBNODE --config NULL --config-adm export-privaterestricted-A rootaa/export-publicfile-A/export-privaterestricted-A
+redwrap  --dump-only --redpath rootaa/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-publicfile-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

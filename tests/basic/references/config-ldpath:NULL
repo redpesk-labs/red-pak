@@ -1,0 +1,114 @@
+
+===================================
+== CONF1 config-ldpath
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   ldpath: $NODE_PATH:$NODE_ALIAS:$LEAF_ALIAS
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config config-ldpath --config-adm NULL node/config-ldpath/NULL
+redwrap  --dump-only --redpath node/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+  --setenv LD_LIBRARY_PATH NODE
+redwrap  --admin --dump-only --redpath node/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+  --setenv LD_LIBRARY_PATH NODE
+
+===================================
+redconf create --alias ROOT --config config-ldpath --config-adm NULL rootnn/config-ldpath
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-ldpath/NULL
+redwrap  --dump-only --redpath rootnn/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+  --setenv LD_LIBRARY_PATH SUBNODE
+redwrap  --admin --dump-only --redpath rootnn/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+  --setenv LD_LIBRARY_PATH SUBNODE
+
+===================================
+redconf create --alias ROOT --config config-ldpath --config-adm NULL rootna/config-ldpath
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-ldpath/NULL
+redwrap  --dump-only --redpath rootna/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+  --setenv LD_LIBRARY_PATH SUBNODE
+redwrap  --admin --dump-only --redpath rootna/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+  --setenv LD_LIBRARY_PATH SUBNODE
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-ldpath rootan/config-ldpath
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/config-ldpath/NULL
+redwrap  --dump-only --redpath rootan/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-ldpath rootaa/config-ldpath
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/config-ldpath/NULL
+redwrap  --dump-only --redpath rootaa/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-ldpath/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

@@ -1,0 +1,129 @@
+
+===================================
+== CONF1 environ-default
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+environ:
+  - key: VAR
+    mode: default
+    value: '$NODE_ALIAS($LEAF_ALIAS)> '
+
+===================================
+== CONF2 environ-static
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+environ:
+  - key: VAR
+    mode: static
+    value: '$NODE_ALIAS($LEAF_ALIAS)> '
+
+===================================
+redconf create --alias NODE --config environ-default --config-adm environ-static node/environ-default/environ-static
+redwrap  --dump-only --redpath node/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR NODE(NODE)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR NODE(NODE)> 
+  --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config environ-default --config-adm NULL rootnn/environ-default
+redconf create --alias SUBNODE --config environ-static --config-adm NULL rootnn/environ-default/environ-static
+redwrap  --dump-only --redpath rootnn/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
+  --setenv VAR ROOT(SUBNODE)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
+  --setenv VAR ROOT(SUBNODE)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config environ-default --config-adm NULL rootna/environ-default
+redconf create --alias SUBNODE --config NULL --config-adm environ-static rootna/environ-default/environ-static
+redwrap  --dump-only --redpath rootna/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR ROOT(SUBNODE)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
+  --setenv VAR ROOT(SUBNODE)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm environ-default rootan/environ-default
+redconf create --alias SUBNODE --config environ-static --config-adm NULL rootan/environ-default/environ-static
+redwrap  --dump-only --redpath rootan/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
+  --setenv VAR ROOT(SUBNODE)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm environ-default rootaa/environ-default
+redconf create --alias SUBNODE --config NULL --config-adm environ-static rootaa/environ-default/environ-static
+redwrap  --dump-only --redpath rootaa/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/environ-default/environ-static
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR $NODE_ALIAS($LEAF_ALIAS)> 
+  --setenv VAR ROOT(SUBNODE)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

@@ -1,0 +1,124 @@
+
+===================================
+== CONF1 config-capa-cap_setuid-1
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   capabilities:
+     - cap: cap_setuid
+       add: 1
+
+===================================
+== CONF2 config-capa-cap_chown-1
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   capabilities:
+     - cap: cap_chown
+       add: 1
+
+===================================
+redconf create --alias NODE --config config-capa-cap_setuid-1 --config-adm config-capa-cap_chown-1 node/config-capa-cap_setuid-1/config-capa-cap_chown-1
+redwrap  --dump-only --redpath node/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_setuid
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_setuid
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-capa-cap_setuid-1 --config-adm NULL rootnn/config-capa-cap_setuid-1
+redconf create --alias SUBNODE --config config-capa-cap_chown-1 --config-adm NULL rootnn/config-capa-cap_setuid-1/config-capa-cap_chown-1
+redwrap  --dump-only --redpath rootnn/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_setuid
+  --cap-add cap_chown
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_setuid
+  --cap-add cap_chown
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-capa-cap_setuid-1 --config-adm NULL rootna/config-capa-cap_setuid-1
+redconf create --alias SUBNODE --config NULL --config-adm config-capa-cap_chown-1 rootna/config-capa-cap_setuid-1/config-capa-cap_chown-1
+redwrap  --dump-only --redpath rootna/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_setuid
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_setuid
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-capa-cap_setuid-1 rootan/config-capa-cap_setuid-1
+redconf create --alias SUBNODE --config config-capa-cap_chown-1 --config-adm NULL rootan/config-capa-cap_setuid-1/config-capa-cap_chown-1
+redwrap  --dump-only --redpath rootan/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_chown
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --cap-add cap_chown
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-capa-cap_setuid-1 rootaa/config-capa-cap_setuid-1
+redconf create --alias SUBNODE --config NULL --config-adm config-capa-cap_chown-1 rootaa/config-capa-cap_setuid-1/config-capa-cap_chown-1
+redwrap  --dump-only --redpath rootaa/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-capa-cap_setuid-1/config-capa-cap_chown-1
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

@@ -1,0 +1,128 @@
+
+===================================
+== CONF1 config-hostname
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   hostname: $LEAF_ALIAS
+
+===================================
+== CONF2 config-hostname
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   hostname: $LEAF_ALIAS
+
+===================================
+redconf create --alias NODE --config config-hostname --config-adm config-hostname node/config-hostname/config-hostname
+redwrap  --dump-only --redpath node/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-uts
+  --hostname NODE
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-uts
+  --hostname NODE
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-hostname --config-adm NULL rootnn/config-hostname
+redconf create --alias SUBNODE --config config-hostname --config-adm NULL rootnn/config-hostname/config-hostname
+redwrap  --dump-only --redpath rootnn/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-uts
+  --hostname SUBNODE
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-uts
+  --hostname SUBNODE
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-hostname --config-adm NULL rootna/config-hostname
+redconf create --alias SUBNODE --config NULL --config-adm config-hostname rootna/config-hostname/config-hostname
+redwrap  --dump-only --redpath rootna/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-uts
+  --hostname SUBNODE
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-uts
+  --hostname SUBNODE
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-hostname rootan/config-hostname
+redconf create --alias SUBNODE --config config-hostname --config-adm NULL rootan/config-hostname/config-hostname
+redwrap  --dump-only --redpath rootan/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-uts
+  --hostname SUBNODE
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-uts
+  --hostname SUBNODE
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-hostname rootaa/config-hostname
+redconf create --alias SUBNODE --config NULL --config-adm config-hostname rootaa/config-hostname/config-hostname
+redwrap  --dump-only --redpath rootaa/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-hostname/config-hostname
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-uts
+  --hostname SUBNODE
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

@@ -1,0 +1,129 @@
+
+===================================
+== CONF1 export-execfd-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: execfd
+    mount: /A
+    path: 'echo /somewhere/A'
+
+===================================
+== CONF2 export-execfd-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: execfd
+    mount: /B
+    path: 'echo /somewhere/B'
+
+===================================
+redconf create --alias NODE --config export-execfd-A --config-adm export-execfd-B node/export-execfd-A/export-execfd-B
+redwrap  --dump-only --redpath node/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file 3 /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file 3 /A
+  --file 4 /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-execfd-A --config-adm NULL rootnn/export-execfd-A
+redconf create --alias SUBNODE --config export-execfd-B --config-adm NULL rootnn/export-execfd-A/export-execfd-B
+redwrap  --dump-only --redpath rootnn/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file 3 /B
+  --file 4 /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file 3 /B
+  --file 4 /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-execfd-A --config-adm NULL rootna/export-execfd-A
+redconf create --alias SUBNODE --config NULL --config-adm export-execfd-B rootna/export-execfd-A/export-execfd-B
+redwrap  --dump-only --redpath rootna/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file 3 /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file 3 /B
+  --file 4 /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-execfd-A rootan/export-execfd-A
+redconf create --alias SUBNODE --config export-execfd-B --config-adm NULL rootan/export-execfd-A/export-execfd-B
+redwrap  --dump-only --redpath rootan/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file 3 /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file 3 /B
+  --file 4 /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-execfd-A rootaa/export-execfd-A
+redconf create --alias SUBNODE --config NULL --config-adm export-execfd-B rootaa/export-execfd-A/export-execfd-B
+redwrap  --dump-only --redpath rootaa/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-execfd-A/export-execfd-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file 3 /B
+  --file 4 /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

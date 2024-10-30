@@ -1,0 +1,127 @@
+
+===================================
+== CONF1 export-mqueue-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: mqueue
+    mount: /B
+
+===================================
+== CONF2 export-mqueue-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: mqueue
+    mount: /B
+
+===================================
+redconf create --alias NODE --config export-mqueue-B --config-adm export-mqueue-B node/export-mqueue-B/export-mqueue-B
+redwrap  --dump-only --redpath node/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --mqueue /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --mqueue /B
+  --mqueue /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-mqueue-B --config-adm NULL rootnn/export-mqueue-B
+redconf create --alias SUBNODE --config export-mqueue-B --config-adm NULL rootnn/export-mqueue-B/export-mqueue-B
+redwrap  --dump-only --redpath rootnn/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --mqueue /B
+  --mqueue /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --mqueue /B
+  --mqueue /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-mqueue-B --config-adm NULL rootna/export-mqueue-B
+redconf create --alias SUBNODE --config NULL --config-adm export-mqueue-B rootna/export-mqueue-B/export-mqueue-B
+redwrap  --dump-only --redpath rootna/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --mqueue /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --mqueue /B
+  --mqueue /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-mqueue-B rootan/export-mqueue-B
+redconf create --alias SUBNODE --config export-mqueue-B --config-adm NULL rootan/export-mqueue-B/export-mqueue-B
+redwrap  --dump-only --redpath rootan/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --mqueue /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --mqueue /B
+  --mqueue /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-mqueue-B rootaa/export-mqueue-B
+redconf create --alias SUBNODE --config NULL --config-adm export-mqueue-B rootaa/export-mqueue-B/export-mqueue-B
+redwrap  --dump-only --redpath rootaa/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-mqueue-B/export-mqueue-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --mqueue /B
+  --mqueue /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

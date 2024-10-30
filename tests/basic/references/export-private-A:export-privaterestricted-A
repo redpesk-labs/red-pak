@@ -1,0 +1,123 @@
+
+===================================
+== CONF1 export-private-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: private
+    mount: /A
+    path: /somewhere
+
+===================================
+== CONF2 export-privaterestricted-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: privaterestricted
+    mount: /A
+    path: /somewhere
+
+===================================
+redconf create --alias NODE --config export-private-A --config-adm export-privaterestricted-A node/export-private-A/export-privaterestricted-A
+redwrap  --dump-only --redpath node/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-private-A --config-adm NULL rootnn/export-private-A
+redconf create --alias SUBNODE --config export-privaterestricted-A --config-adm NULL rootnn/export-private-A/export-privaterestricted-A
+redwrap  --dump-only --redpath rootnn/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-private-A --config-adm NULL rootna/export-private-A
+redconf create --alias SUBNODE --config NULL --config-adm export-privaterestricted-A rootna/export-private-A/export-privaterestricted-A
+redwrap  --dump-only --redpath rootna/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-private-A rootan/export-private-A
+redconf create --alias SUBNODE --config export-privaterestricted-A --config-adm NULL rootan/export-private-A/export-privaterestricted-A
+redwrap  --dump-only --redpath rootan/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-private-A rootaa/export-private-A
+redconf create --alias SUBNODE --config NULL --config-adm export-privaterestricted-A rootaa/export-private-A/export-privaterestricted-A
+redwrap  --dump-only --redpath rootaa/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-private-A/export-privaterestricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

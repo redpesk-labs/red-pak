@@ -1,0 +1,118 @@
+
+===================================
+== CONF1 config-die-with-parent-enabled
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   die-with-parent: enabled
+
+===================================
+== CONF2 config-die-with-parent-unset
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   die-with-parent: unset
+
+===================================
+redconf create --alias NODE --config config-die-with-parent-enabled --config-adm config-die-with-parent-unset node/config-die-with-parent-enabled/config-die-with-parent-unset
+redwrap  --dump-only --redpath node/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-die-with-parent-enabled --config-adm NULL rootnn/config-die-with-parent-enabled
+redconf create --alias SUBNODE --config config-die-with-parent-unset --config-adm NULL rootnn/config-die-with-parent-enabled/config-die-with-parent-unset
+redwrap  --dump-only --redpath rootnn/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-die-with-parent-enabled --config-adm NULL rootna/config-die-with-parent-enabled
+redconf create --alias SUBNODE --config NULL --config-adm config-die-with-parent-unset rootna/config-die-with-parent-enabled/config-die-with-parent-unset
+redwrap  --dump-only --redpath rootna/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-die-with-parent-enabled rootan/config-die-with-parent-enabled
+redconf create --alias SUBNODE --config config-die-with-parent-unset --config-adm NULL rootan/config-die-with-parent-enabled/config-die-with-parent-unset
+redwrap  --dump-only --redpath rootan/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-die-with-parent-enabled rootaa/config-die-with-parent-enabled
+redconf create --alias SUBNODE --config NULL --config-adm config-die-with-parent-unset rootaa/config-die-with-parent-enabled/config-die-with-parent-unset
+redwrap  --dump-only --redpath rootaa/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-die-with-parent-enabled/config-die-with-parent-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --die-with-parent
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

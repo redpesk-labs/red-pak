@@ -1,0 +1,123 @@
+
+===================================
+== CONF1 export-privatefile-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: privatefile
+    mount: /A
+    path: /somewhere
+
+===================================
+== CONF2 export-public-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: public
+    mount: /A
+    path: /somewhere
+
+===================================
+redconf create --alias NODE --config export-privatefile-A --config-adm export-public-A node/export-privatefile-A/export-public-A
+redwrap  --dump-only --redpath node/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-privatefile-A --config-adm NULL rootnn/export-privatefile-A
+redconf create --alias SUBNODE --config export-public-A --config-adm NULL rootnn/export-privatefile-A/export-public-A
+redwrap  --dump-only --redpath rootnn/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-privatefile-A --config-adm NULL rootna/export-privatefile-A
+redconf create --alias SUBNODE --config NULL --config-adm export-public-A rootna/export-privatefile-A/export-public-A
+redwrap  --dump-only --redpath rootna/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-privatefile-A rootan/export-privatefile-A
+redconf create --alias SUBNODE --config export-public-A --config-adm NULL rootan/export-privatefile-A/export-public-A
+redwrap  --dump-only --redpath rootan/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-privatefile-A rootaa/export-privatefile-A
+redconf create --alias SUBNODE --config NULL --config-adm export-public-A rootaa/export-privatefile-A/export-public-A
+redwrap  --dump-only --redpath rootaa/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-privatefile-A/export-public-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

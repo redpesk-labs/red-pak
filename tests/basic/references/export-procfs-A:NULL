@@ -1,0 +1,117 @@
+
+===================================
+== CONF1 export-procfs-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: procfs
+    mount: /A
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config export-procfs-A --config-adm NULL node/export-procfs-A/NULL
+redwrap  --dump-only --redpath node/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-procfs-A --config-adm NULL rootnn/export-procfs-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/export-procfs-A/NULL
+redwrap  --dump-only --redpath rootnn/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-procfs-A --config-adm NULL rootna/export-procfs-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/export-procfs-A/NULL
+redwrap  --dump-only --redpath rootna/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-procfs-A rootan/export-procfs-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/export-procfs-A/NULL
+redwrap  --dump-only --redpath rootan/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-procfs-A rootaa/export-procfs-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/export-procfs-A/NULL
+redwrap  --dump-only --redpath rootaa/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-procfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

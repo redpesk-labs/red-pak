@@ -1,0 +1,127 @@
+
+===================================
+== CONF1 export-procfs-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: procfs
+    mount: /B
+
+===================================
+== CONF2 export-procfs-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: procfs
+    mount: /B
+
+===================================
+redconf create --alias NODE --config export-procfs-B --config-adm export-procfs-B node/export-procfs-B/export-procfs-B
+redwrap  --dump-only --redpath node/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /B
+  --proc /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-procfs-B --config-adm NULL rootnn/export-procfs-B
+redconf create --alias SUBNODE --config export-procfs-B --config-adm NULL rootnn/export-procfs-B/export-procfs-B
+redwrap  --dump-only --redpath rootnn/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /B
+  --proc /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /B
+  --proc /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-procfs-B --config-adm NULL rootna/export-procfs-B
+redconf create --alias SUBNODE --config NULL --config-adm export-procfs-B rootna/export-procfs-B/export-procfs-B
+redwrap  --dump-only --redpath rootna/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /B
+  --proc /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-procfs-B rootan/export-procfs-B
+redconf create --alias SUBNODE --config export-procfs-B --config-adm NULL rootan/export-procfs-B/export-procfs-B
+redwrap  --dump-only --redpath rootan/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /B
+  --proc /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-procfs-B rootaa/export-procfs-B
+redconf create --alias SUBNODE --config NULL --config-adm export-procfs-B rootaa/export-procfs-B/export-procfs-B
+redwrap  --dump-only --redpath rootaa/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-procfs-B/export-procfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --proc /B
+  --proc /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

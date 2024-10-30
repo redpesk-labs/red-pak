@@ -1,0 +1,127 @@
+
+===================================
+== CONF1 export-tmpfs-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: tmpfs
+    mount: /A
+
+===================================
+== CONF2 export-tmpfs-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: tmpfs
+    mount: /B
+
+===================================
+redconf create --alias NODE --config export-tmpfs-A --config-adm export-tmpfs-B node/export-tmpfs-A/export-tmpfs-B
+redwrap  --dump-only --redpath node/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --tmpfs /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --tmpfs /A
+  --tmpfs /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-tmpfs-A --config-adm NULL rootnn/export-tmpfs-A
+redconf create --alias SUBNODE --config export-tmpfs-B --config-adm NULL rootnn/export-tmpfs-A/export-tmpfs-B
+redwrap  --dump-only --redpath rootnn/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --tmpfs /B
+  --tmpfs /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --tmpfs /B
+  --tmpfs /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-tmpfs-A --config-adm NULL rootna/export-tmpfs-A
+redconf create --alias SUBNODE --config NULL --config-adm export-tmpfs-B rootna/export-tmpfs-A/export-tmpfs-B
+redwrap  --dump-only --redpath rootna/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --tmpfs /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --tmpfs /B
+  --tmpfs /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-tmpfs-A rootan/export-tmpfs-A
+redconf create --alias SUBNODE --config export-tmpfs-B --config-adm NULL rootan/export-tmpfs-A/export-tmpfs-B
+redwrap  --dump-only --redpath rootan/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --tmpfs /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --tmpfs /B
+  --tmpfs /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-tmpfs-A rootaa/export-tmpfs-A
+redconf create --alias SUBNODE --config NULL --config-adm export-tmpfs-B rootaa/export-tmpfs-A/export-tmpfs-B
+redwrap  --dump-only --redpath rootaa/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-tmpfs-A/export-tmpfs-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --tmpfs /B
+  --tmpfs /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

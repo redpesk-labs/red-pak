@@ -1,0 +1,108 @@
+
+===================================
+== CONF1 config-unsafe-false
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   unsafe: false
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config config-unsafe-false --config-adm NULL node/config-unsafe-false/NULL
+redwrap  --dump-only --redpath node/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-unsafe-false --config-adm NULL rootnn/config-unsafe-false
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-unsafe-false/NULL
+redwrap  --dump-only --redpath rootnn/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-unsafe-false --config-adm NULL rootna/config-unsafe-false
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-unsafe-false/NULL
+redwrap  --dump-only --redpath rootna/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-unsafe-false rootan/config-unsafe-false
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/config-unsafe-false/NULL
+redwrap  --dump-only --redpath rootan/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-unsafe-false rootaa/config-unsafe-false
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/config-unsafe-false/NULL
+redwrap  --dump-only --redpath rootaa/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-unsafe-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

@@ -1,0 +1,117 @@
+
+===================================
+== CONF1 export-anonymous-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: anonymous
+    mount: /A
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config export-anonymous-A --config-adm NULL node/export-anonymous-A/NULL
+redwrap  --dump-only --redpath node/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dir /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dir /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-anonymous-A --config-adm NULL rootnn/export-anonymous-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/export-anonymous-A/NULL
+redwrap  --dump-only --redpath rootnn/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dir /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dir /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-anonymous-A --config-adm NULL rootna/export-anonymous-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/export-anonymous-A/NULL
+redwrap  --dump-only --redpath rootna/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dir /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dir /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-anonymous-A rootan/export-anonymous-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/export-anonymous-A/NULL
+redwrap  --dump-only --redpath rootan/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dir /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-anonymous-A rootaa/export-anonymous-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/export-anonymous-A/NULL
+redwrap  --dump-only --redpath rootaa/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-anonymous-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dir /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

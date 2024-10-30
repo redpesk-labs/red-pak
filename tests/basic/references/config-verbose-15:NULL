@@ -1,0 +1,108 @@
+
+===================================
+== CONF1 config-verbose-15
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   verbose: 15
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config config-verbose-15 --config-adm NULL node/config-verbose-15/NULL
+redwrap  --dump-only --redpath node/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-verbose-15 --config-adm NULL rootnn/config-verbose-15
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-verbose-15/NULL
+redwrap  --dump-only --redpath rootnn/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-verbose-15 --config-adm NULL rootna/config-verbose-15
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-verbose-15/NULL
+redwrap  --dump-only --redpath rootna/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-verbose-15 rootan/config-verbose-15
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/config-verbose-15/NULL
+redwrap  --dump-only --redpath rootan/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-verbose-15 rootaa/config-verbose-15
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/config-verbose-15/NULL
+redwrap  --dump-only --redpath rootaa/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-verbose-15/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

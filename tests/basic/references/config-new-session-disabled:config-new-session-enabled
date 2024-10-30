@@ -1,0 +1,114 @@
+
+===================================
+== CONF1 config-new-session-disabled
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   new-session: disabled
+
+===================================
+== CONF2 config-new-session-enabled
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   new-session: enabled
+
+===================================
+redconf create --alias NODE --config config-new-session-disabled --config-adm config-new-session-enabled node/config-new-session-disabled/config-new-session-enabled
+redwrap  --dump-only --redpath node/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --new-session
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-new-session-disabled --config-adm NULL rootnn/config-new-session-disabled
+redconf create --alias SUBNODE --config config-new-session-enabled --config-adm NULL rootnn/config-new-session-disabled/config-new-session-enabled
+redwrap  --dump-only --redpath rootnn/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --new-session
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --new-session
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-new-session-disabled --config-adm NULL rootna/config-new-session-disabled
+redconf create --alias SUBNODE --config NULL --config-adm config-new-session-enabled rootna/config-new-session-disabled/config-new-session-enabled
+redwrap  --dump-only --redpath rootna/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-new-session-disabled rootan/config-new-session-disabled
+redconf create --alias SUBNODE --config config-new-session-enabled --config-adm NULL rootan/config-new-session-disabled/config-new-session-enabled
+redwrap  --dump-only --redpath rootan/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --new-session
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-new-session-disabled rootaa/config-new-session-disabled
+redconf create --alias SUBNODE --config NULL --config-adm config-new-session-enabled rootaa/config-new-session-disabled/config-new-session-enabled
+redwrap  --dump-only --redpath rootaa/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-new-session-disabled/config-new-session-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

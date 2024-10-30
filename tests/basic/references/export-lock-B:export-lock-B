@@ -1,0 +1,127 @@
+
+===================================
+== CONF1 export-lock-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: lock
+    mount: /B
+
+===================================
+== CONF2 export-lock-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: lock
+    mount: /B
+
+===================================
+redconf create --alias NODE --config export-lock-B --config-adm export-lock-B node/export-lock-B/export-lock-B
+redwrap  --dump-only --redpath node/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --lock-file /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --lock-file /B
+  --lock-file /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-lock-B --config-adm NULL rootnn/export-lock-B
+redconf create --alias SUBNODE --config export-lock-B --config-adm NULL rootnn/export-lock-B/export-lock-B
+redwrap  --dump-only --redpath rootnn/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --lock-file /B
+  --lock-file /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --lock-file /B
+  --lock-file /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-lock-B --config-adm NULL rootna/export-lock-B
+redconf create --alias SUBNODE --config NULL --config-adm export-lock-B rootna/export-lock-B/export-lock-B
+redwrap  --dump-only --redpath rootna/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --lock-file /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --lock-file /B
+  --lock-file /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-lock-B rootan/export-lock-B
+redconf create --alias SUBNODE --config export-lock-B --config-adm NULL rootan/export-lock-B/export-lock-B
+redwrap  --dump-only --redpath rootan/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --lock-file /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --lock-file /B
+  --lock-file /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-lock-B rootaa/export-lock-B
+redconf create --alias SUBNODE --config NULL --config-adm export-lock-B rootaa/export-lock-B/export-lock-B
+redwrap  --dump-only --redpath rootaa/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-lock-B/export-lock-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --lock-file /B
+  --lock-file /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

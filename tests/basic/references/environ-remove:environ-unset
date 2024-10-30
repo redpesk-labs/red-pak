@@ -1,0 +1,127 @@
+
+===================================
+== CONF1 environ-remove
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+environ:
+  - key: VAR
+    mode: remove
+
+===================================
+== CONF2 environ-unset
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+environ:
+  - key: VAR
+    value: '$NODE_ALIAS($LEAF_ALIAS)> '
+
+===================================
+redconf create --alias NODE --config environ-remove --config-adm environ-unset node/environ-remove/environ-unset
+redwrap  --dump-only --redpath node/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unsetenv VAR
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unsetenv VAR
+  --setenv VAR NODE(NODE)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config environ-remove --config-adm NULL rootnn/environ-remove
+redconf create --alias SUBNODE --config environ-unset --config-adm NULL rootnn/environ-remove/environ-unset
+redwrap  --dump-only --redpath rootnn/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR SUBNODE(SUBNODE)> 
+  --unsetenv VAR
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR SUBNODE(SUBNODE)> 
+  --unsetenv VAR
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config environ-remove --config-adm NULL rootna/environ-remove
+redconf create --alias SUBNODE --config NULL --config-adm environ-unset rootna/environ-remove/environ-unset
+redwrap  --dump-only --redpath rootna/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unsetenv VAR
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR SUBNODE(SUBNODE)> 
+  --unsetenv VAR
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm environ-remove rootan/environ-remove
+redconf create --alias SUBNODE --config environ-unset --config-adm NULL rootan/environ-remove/environ-unset
+redwrap  --dump-only --redpath rootan/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR SUBNODE(SUBNODE)> 
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR SUBNODE(SUBNODE)> 
+  --unsetenv VAR
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm environ-remove rootaa/environ-remove
+redconf create --alias SUBNODE --config NULL --config-adm environ-unset rootaa/environ-remove/environ-unset
+redwrap  --dump-only --redpath rootaa/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/environ-remove/environ-unset
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR SUBNODE(SUBNODE)> 
+  --unsetenv VAR
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

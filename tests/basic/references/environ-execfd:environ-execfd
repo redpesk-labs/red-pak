@@ -1,0 +1,144 @@
+
+===================================
+== CONF1 environ-execfd
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+environ:
+  - key: VAR
+    mode: execfd
+    value: 'echo HELLO'
+
+===================================
+== CONF2 environ-execfd
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+environ:
+  - key: VAR
+    mode: execfd
+    value: 'echo HELLO'
+
+===================================
+redconf create --alias NODE --config environ-execfd --config-adm environ-execfd node/environ-execfd/environ-execfd
+redwrap  --dump-only --redpath node/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR HELLO
+
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR HELLO
+
+  --setenv VAR HELLO
+
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config environ-execfd --config-adm NULL rootnn/environ-execfd
+redconf create --alias SUBNODE --config environ-execfd --config-adm NULL rootnn/environ-execfd/environ-execfd
+redwrap  --dump-only --redpath rootnn/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR HELLO
+
+  --setenv VAR HELLO
+
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR HELLO
+
+  --setenv VAR HELLO
+
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config environ-execfd --config-adm NULL rootna/environ-execfd
+redconf create --alias SUBNODE --config NULL --config-adm environ-execfd rootna/environ-execfd/environ-execfd
+redwrap  --dump-only --redpath rootna/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR HELLO
+
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR HELLO
+
+  --setenv VAR HELLO
+
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm environ-execfd rootan/environ-execfd
+redconf create --alias SUBNODE --config environ-execfd --config-adm NULL rootan/environ-execfd/environ-execfd
+redwrap  --dump-only --redpath rootan/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR HELLO
+
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR HELLO
+
+  --setenv VAR HELLO
+
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm environ-execfd rootaa/environ-execfd
+redconf create --alias SUBNODE --config NULL --config-adm environ-execfd rootaa/environ-execfd/environ-execfd
+redwrap  --dump-only --redpath rootaa/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/environ-execfd/environ-execfd
+DUMP: /usr/bin/bwrap (as redwrap)
+  --setenv VAR HELLO
+
+  --setenv VAR HELLO
+
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

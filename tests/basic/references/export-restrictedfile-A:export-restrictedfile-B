@@ -1,0 +1,129 @@
+
+===================================
+== CONF1 export-restrictedfile-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: restrictedfile
+    mount: /A
+    path: /somewhere
+
+===================================
+== CONF2 export-restrictedfile-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: restrictedfile
+    mount: /B
+    path: /somewhere
+
+===================================
+redconf create --alias NODE --config export-restrictedfile-A --config-adm export-restrictedfile-B node/export-restrictedfile-A/export-restrictedfile-B
+redwrap  --dump-only --redpath node/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-restrictedfile-A --config-adm NULL rootnn/export-restrictedfile-A
+redconf create --alias SUBNODE --config export-restrictedfile-B --config-adm NULL rootnn/export-restrictedfile-A/export-restrictedfile-B
+redwrap  --dump-only --redpath rootnn/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-restrictedfile-A --config-adm NULL rootna/export-restrictedfile-A
+redconf create --alias SUBNODE --config NULL --config-adm export-restrictedfile-B rootna/export-restrictedfile-A/export-restrictedfile-B
+redwrap  --dump-only --redpath rootna/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-restrictedfile-A rootan/export-restrictedfile-A
+redconf create --alias SUBNODE --config export-restrictedfile-B --config-adm NULL rootan/export-restrictedfile-A/export-restrictedfile-B
+redwrap  --dump-only --redpath rootan/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-restrictedfile-A rootaa/export-restrictedfile-A
+redconf create --alias SUBNODE --config NULL --config-adm export-restrictedfile-B rootaa/export-restrictedfile-A/export-restrictedfile-B
+redwrap  --dump-only --redpath rootaa/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-restrictedfile-A/export-restrictedfile-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

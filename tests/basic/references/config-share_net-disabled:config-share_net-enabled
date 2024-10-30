@@ -1,0 +1,110 @@
+
+===================================
+== CONF1 config-share_net-disabled
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   share_net: disabled
+
+===================================
+== CONF2 config-share_net-enabled
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   share_net: enabled
+
+===================================
+redconf create --alias NODE --config config-share_net-disabled --config-adm config-share_net-enabled node/config-share_net-disabled/config-share_net-enabled
+redwrap  --dump-only --redpath node/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-share_net-disabled --config-adm NULL rootnn/config-share_net-disabled
+redconf create --alias SUBNODE --config config-share_net-enabled --config-adm NULL rootnn/config-share_net-disabled/config-share_net-enabled
+redwrap  --dump-only --redpath rootnn/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-share_net-disabled --config-adm NULL rootna/config-share_net-disabled
+redconf create --alias SUBNODE --config NULL --config-adm config-share_net-enabled rootna/config-share_net-disabled/config-share_net-enabled
+redwrap  --dump-only --redpath rootna/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-share_net-disabled rootan/config-share_net-disabled
+redconf create --alias SUBNODE --config config-share_net-enabled --config-adm NULL rootan/config-share_net-disabled/config-share_net-enabled
+redwrap  --dump-only --redpath rootan/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --share-net
+redwrap  --admin --dump-only --redpath rootan/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-share_net-disabled rootaa/config-share_net-disabled
+redconf create --alias SUBNODE --config NULL --config-adm config-share_net-enabled rootaa/config-share_net-disabled/config-share_net-enabled
+redwrap  --dump-only --redpath rootaa/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-share_net-disabled/config-share_net-enabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

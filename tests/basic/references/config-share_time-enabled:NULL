@@ -1,0 +1,108 @@
+
+===================================
+== CONF1 config-share_time-enabled
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   share_time: enabled
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config config-share_time-enabled --config-adm NULL node/config-share_time-enabled/NULL
+redwrap  --dump-only --redpath node/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-share_time-enabled --config-adm NULL rootnn/config-share_time-enabled
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-share_time-enabled/NULL
+redwrap  --dump-only --redpath rootnn/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-share_time-enabled --config-adm NULL rootna/config-share_time-enabled
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-share_time-enabled/NULL
+redwrap  --dump-only --redpath rootna/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-share_time-enabled rootan/config-share_time-enabled
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/config-share_time-enabled/NULL
+redwrap  --dump-only --redpath rootan/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-share_time-enabled rootaa/config-share_time-enabled
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/config-share_time-enabled/NULL
+redwrap  --dump-only --redpath rootaa/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-share_time-enabled/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

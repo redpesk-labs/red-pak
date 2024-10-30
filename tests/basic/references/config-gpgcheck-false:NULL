@@ -1,0 +1,108 @@
+
+===================================
+== CONF1 config-gpgcheck-false
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   gpgcheck: false
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config config-gpgcheck-false --config-adm NULL node/config-gpgcheck-false/NULL
+redwrap  --dump-only --redpath node/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-gpgcheck-false --config-adm NULL rootnn/config-gpgcheck-false
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-gpgcheck-false/NULL
+redwrap  --dump-only --redpath rootnn/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-gpgcheck-false --config-adm NULL rootna/config-gpgcheck-false
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-gpgcheck-false/NULL
+redwrap  --dump-only --redpath rootna/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-gpgcheck-false rootan/config-gpgcheck-false
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/config-gpgcheck-false/NULL
+redwrap  --dump-only --redpath rootan/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-gpgcheck-false rootaa/config-gpgcheck-false
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/config-gpgcheck-false/NULL
+redwrap  --dump-only --redpath rootaa/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-gpgcheck-false/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

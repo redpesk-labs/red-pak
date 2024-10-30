@@ -1,0 +1,108 @@
+
+===================================
+== CONF1 config-cgrouproot
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   cgrouproot: /sys/fs/cgroup/user.slice/user-$UID.slice/user@$UID.service
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config config-cgrouproot --config-adm NULL node/config-cgrouproot/NULL
+redwrap  --dump-only --redpath node/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-cgrouproot --config-adm NULL rootnn/config-cgrouproot
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-cgrouproot/NULL
+redwrap  --dump-only --redpath rootnn/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-cgrouproot --config-adm NULL rootna/config-cgrouproot
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-cgrouproot/NULL
+redwrap  --dump-only --redpath rootna/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-cgrouproot rootan/config-cgrouproot
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/config-cgrouproot/NULL
+redwrap  --dump-only --redpath rootan/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-cgrouproot rootaa/config-cgrouproot
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/config-cgrouproot/NULL
+redwrap  --dump-only --redpath rootaa/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-cgrouproot/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

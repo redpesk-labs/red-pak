@@ -1,0 +1,129 @@
+
+===================================
+== CONF1 export-restricted-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: restricted
+    mount: /B
+    path: /somewhere
+
+===================================
+== CONF2 export-restricted-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: restricted
+    mount: /A
+    path: /somewhere
+
+===================================
+redconf create --alias NODE --config export-restricted-B --config-adm export-restricted-A node/export-restricted-B/export-restricted-A
+redwrap  --dump-only --redpath node/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /B
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-restricted-B --config-adm NULL rootnn/export-restricted-B
+redconf create --alias SUBNODE --config export-restricted-A --config-adm NULL rootnn/export-restricted-B/export-restricted-A
+redwrap  --dump-only --redpath rootnn/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-restricted-B --config-adm NULL rootna/export-restricted-B
+redconf create --alias SUBNODE --config NULL --config-adm export-restricted-A rootna/export-restricted-B/export-restricted-A
+redwrap  --dump-only --redpath rootna/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-restricted-B rootan/export-restricted-B
+redconf create --alias SUBNODE --config export-restricted-A --config-adm NULL rootan/export-restricted-B/export-restricted-A
+redwrap  --dump-only --redpath rootan/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-restricted-B rootaa/export-restricted-B
+redconf create --alias SUBNODE --config NULL --config-adm export-restricted-A rootaa/export-restricted-B/export-restricted-A
+redwrap  --dump-only --redpath rootaa/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-restricted-B/export-restricted-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

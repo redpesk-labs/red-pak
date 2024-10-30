@@ -1,0 +1,117 @@
+
+===================================
+== CONF1 export-devfs-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: devfs
+    mount: /A
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config export-devfs-A --config-adm NULL node/export-devfs-A/NULL
+redwrap  --dump-only --redpath node/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dev /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dev /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-devfs-A --config-adm NULL rootnn/export-devfs-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/export-devfs-A/NULL
+redwrap  --dump-only --redpath rootnn/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dev /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dev /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-devfs-A --config-adm NULL rootna/export-devfs-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/export-devfs-A/NULL
+redwrap  --dump-only --redpath rootna/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dev /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dev /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-devfs-A rootan/export-devfs-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/export-devfs-A/NULL
+redwrap  --dump-only --redpath rootan/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dev /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-devfs-A rootaa/export-devfs-A
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/export-devfs-A/NULL
+redwrap  --dump-only --redpath rootaa/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-devfs-A/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --dev /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

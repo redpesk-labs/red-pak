@@ -1,0 +1,110 @@
+
+===================================
+== CONF1 config-share_ipc-disabled
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   share_ipc: disabled
+
+===================================
+== CONF2 config-share_ipc-disabled
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   share_ipc: disabled
+
+===================================
+redconf create --alias NODE --config config-share_ipc-disabled --config-adm config-share_ipc-disabled node/config-share_ipc-disabled/config-share_ipc-disabled
+redwrap  --dump-only --redpath node/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-share_ipc-disabled --config-adm NULL rootnn/config-share_ipc-disabled
+redconf create --alias SUBNODE --config config-share_ipc-disabled --config-adm NULL rootnn/config-share_ipc-disabled/config-share_ipc-disabled
+redwrap  --dump-only --redpath rootnn/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-share_ipc-disabled --config-adm NULL rootna/config-share_ipc-disabled
+redconf create --alias SUBNODE --config NULL --config-adm config-share_ipc-disabled rootna/config-share_ipc-disabled/config-share_ipc-disabled
+redwrap  --dump-only --redpath rootna/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-share_ipc-disabled rootan/config-share_ipc-disabled
+redconf create --alias SUBNODE --config config-share_ipc-disabled --config-adm NULL rootan/config-share_ipc-disabled/config-share_ipc-disabled
+redwrap  --dump-only --redpath rootan/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-share_ipc-disabled rootaa/config-share_ipc-disabled
+redconf create --alias SUBNODE --config NULL --config-adm config-share_ipc-disabled rootaa/config-share_ipc-disabled/config-share_ipc-disabled
+redwrap  --dump-only --redpath rootaa/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-share_ipc-disabled/config-share_ipc-disabled
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

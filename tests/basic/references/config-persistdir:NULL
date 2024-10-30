@@ -1,0 +1,108 @@
+
+===================================
+== CONF1 config-persistdir
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   persistdir: $NODE_PATH:$NODE_ALIAS:$LEAF_ALIAS
+
+===================================
+== CONF2 NULL
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+
+===================================
+redconf create --alias NODE --config config-persistdir --config-adm NULL node/config-persistdir/NULL
+redwrap  --dump-only --redpath node/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-persistdir --config-adm NULL rootnn/config-persistdir
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-persistdir/NULL
+redwrap  --dump-only --redpath rootnn/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-persistdir --config-adm NULL rootna/config-persistdir
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-persistdir/NULL
+redwrap  --dump-only --redpath rootna/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-persistdir rootan/config-persistdir
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootan/config-persistdir/NULL
+redwrap  --dump-only --redpath rootan/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-persistdir rootaa/config-persistdir
+redconf create --alias SUBNODE --config NULL --config-adm NULL rootaa/config-persistdir/NULL
+redwrap  --dump-only --redpath rootaa/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-persistdir/NULL
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

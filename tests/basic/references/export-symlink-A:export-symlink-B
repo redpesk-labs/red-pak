@@ -1,0 +1,129 @@
+
+===================================
+== CONF1 export-symlink-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: symlink
+    mount: /A
+    path: /somewhere
+
+===================================
+== CONF2 export-symlink-B
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: symlink
+    mount: /B
+    path: /somewhere
+
+===================================
+redconf create --alias NODE --config export-symlink-A --config-adm export-symlink-B node/export-symlink-A/export-symlink-B
+redwrap  --dump-only --redpath node/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --symlink /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --symlink /somewhere /A
+  --symlink /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-symlink-A --config-adm NULL rootnn/export-symlink-A
+redconf create --alias SUBNODE --config export-symlink-B --config-adm NULL rootnn/export-symlink-A/export-symlink-B
+redwrap  --dump-only --redpath rootnn/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --symlink /somewhere /B
+  --symlink /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --symlink /somewhere /B
+  --symlink /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-symlink-A --config-adm NULL rootna/export-symlink-A
+redconf create --alias SUBNODE --config NULL --config-adm export-symlink-B rootna/export-symlink-A/export-symlink-B
+redwrap  --dump-only --redpath rootna/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --symlink /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --symlink /somewhere /B
+  --symlink /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-symlink-A rootan/export-symlink-A
+redconf create --alias SUBNODE --config export-symlink-B --config-adm NULL rootan/export-symlink-A/export-symlink-B
+redwrap  --dump-only --redpath rootan/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --symlink /somewhere /B
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --symlink /somewhere /B
+  --symlink /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-symlink-A rootaa/export-symlink-A
+redconf create --alias SUBNODE --config NULL --config-adm export-symlink-B rootaa/export-symlink-A/export-symlink-B
+redwrap  --dump-only --redpath rootaa/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-symlink-A/export-symlink-B
+DUMP: /usr/bin/bwrap (as redwrap)
+  --symlink /somewhere /B
+  --symlink /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

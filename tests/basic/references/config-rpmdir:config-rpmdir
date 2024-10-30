@@ -1,0 +1,110 @@
+
+===================================
+== CONF1 config-rpmdir
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   rpmdir: $NODE_PATH:$NODE_ALIAS:$LEAF_ALIAS
+
+===================================
+== CONF2 config-rpmdir
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+   rpmdir: $NODE_PATH:$NODE_ALIAS:$LEAF_ALIAS
+
+===================================
+redconf create --alias NODE --config config-rpmdir --config-adm config-rpmdir node/config-rpmdir/config-rpmdir
+redwrap  --dump-only --redpath node/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-rpmdir --config-adm NULL rootnn/config-rpmdir
+redconf create --alias SUBNODE --config config-rpmdir --config-adm NULL rootnn/config-rpmdir/config-rpmdir
+redwrap  --dump-only --redpath rootnn/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config config-rpmdir --config-adm NULL rootna/config-rpmdir
+redconf create --alias SUBNODE --config NULL --config-adm config-rpmdir rootna/config-rpmdir/config-rpmdir
+redwrap  --dump-only --redpath rootna/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-rpmdir rootan/config-rpmdir
+redconf create --alias SUBNODE --config config-rpmdir --config-adm NULL rootan/config-rpmdir/config-rpmdir
+redwrap  --dump-only --redpath rootan/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm config-rpmdir rootaa/config-rpmdir
+redconf create --alias SUBNODE --config NULL --config-adm config-rpmdir rootaa/config-rpmdir/config-rpmdir
+redwrap  --dump-only --redpath rootaa/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/config-rpmdir/config-rpmdir
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+

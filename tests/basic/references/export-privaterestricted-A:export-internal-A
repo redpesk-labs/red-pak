@@ -1,0 +1,129 @@
+
+===================================
+== CONF1 export-privaterestricted-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: privaterestricted
+    mount: /A
+    path: /somewhere
+
+===================================
+== CONF2 export-internal-A
+===================================
+headers:
+  alias: alias
+  name: name
+  info: info
+exports:
+  - mode: internal
+    mount: /A
+    path: /somewhere
+
+===================================
+redconf create --alias NODE --config export-privaterestricted-A --config-adm export-internal-A node/export-privaterestricted-A/export-internal-A
+redwrap  --dump-only --redpath node/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath node/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --file /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-privaterestricted-A --config-adm NULL rootnn/export-privaterestricted-A
+redconf create --alias SUBNODE --config export-internal-A --config-adm NULL rootnn/export-privaterestricted-A/export-internal-A
+redwrap  --dump-only --redpath rootnn/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file /somewhere /A
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootnn/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file /somewhere /A
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config export-privaterestricted-A --config-adm NULL rootna/export-privaterestricted-A
+redconf create --alias SUBNODE --config NULL --config-adm export-internal-A rootna/export-privaterestricted-A/export-internal-A
+redwrap  --dump-only --redpath rootna/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootna/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file /somewhere /A
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-privaterestricted-A rootan/export-privaterestricted-A
+redconf create --alias SUBNODE --config export-internal-A --config-adm NULL rootan/export-privaterestricted-A/export-internal-A
+redwrap  --dump-only --redpath rootan/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootan/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file /somewhere /A
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
+===================================
+redconf create --alias ROOT --config NULL --config-adm export-privaterestricted-A rootaa/export-privaterestricted-A
+redconf create --alias SUBNODE --config NULL --config-adm export-internal-A rootaa/export-privaterestricted-A/export-internal-A
+redwrap  --dump-only --redpath rootaa/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+redwrap  --admin --dump-only --redpath rootaa/export-privaterestricted-A/export-internal-A
+DUMP: /usr/bin/bwrap (as redwrap)
+  --file /somewhere /A
+  --ro-bind /somewhere /A
+  --unshare-user
+  --unshare-cgroup
+  --unshare-ipc
+  --unshare-pid
+  --unshare-net
+
