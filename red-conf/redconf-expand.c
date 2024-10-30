@@ -227,7 +227,7 @@ static int getDefault(const redNodeT *node,
     const vardef_t *iter = vardefs;
     const vardef_t *end = &vardefs[sizeof vardefs / sizeof *vardefs];
     for (; iter != end ; iter++) {
-        if (!memcmp (key, iter->key, (size_t)keylen) && !iter->key[keylen]) {
+        if (!strncmp (key, iter->key, (size_t)keylen) && !iter->key[keylen]) {
             /* get its value in local buffer */
             char value[MAX_CYAML_FORMAT_STR];
             int rc = iter->callback(node, iter, value, sizeof value);
@@ -265,8 +265,9 @@ static int computeKeyLength(const char *inputS) {
                 return len + 1;
         }
         else {
-            /* not in command */
-            if (c < '0' || c > 'z')
+            /* valid set for names [0-9A-Z_a-z] */
+            if (c < '0' || ('9' < c && c < 'A') || ('Z' < c && c < '_')
+            || ('_' < c && c < 'a') || 'z' < c)
                 break;
         }
     }
