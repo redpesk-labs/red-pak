@@ -3,9 +3,9 @@
 /bin
 /bin/busybox
 ---------------
-SHLVL=1
 PATH=/bin
 PWD=/
+SHLVL=1
 ---------------
 /
 ---------------

@@ -1,8 +1,8 @@
 #!/bin/busybox sh
 busybox echo ---------------
-busybox find /
+busybox find / | busybox sort
 busybox echo ---------------
-busybox env
+busybox env | busybox sort
 busybox echo ---------------
 busybox pwd
 busybox echo ---------------

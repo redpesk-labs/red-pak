@@ -1,1 +1,1 @@
-/busybox env
+/busybox env | /busybox sort

@@ -2,11 +2,11 @@
 /
 /busybox
 ---------------
-SHLVL=1
-NOTEXPANDED=$NODE_ALIAS
+CMDOUTPUT=Current Working Directory = <<PWD>>
 EXPANDED=NODE-2
-CMDOUTPUT=Current Working Directory = /root/red-pak/tests
+NOTEXPANDED=$NODE_ALIAS
 PWD=/
+SHLVL=1
 ---------------
 /
 ---------------

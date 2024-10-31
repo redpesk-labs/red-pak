@@ -66,11 +66,13 @@ perform_test() {
     fi
 
     # execute the command in the node
-    action redwrap $flagadm --redpath "${rednode}" -- ${shell} sh -c "${cmd}" > "${resu}"
+    action redwrap $flagadm --redpath "${rednode}" -- ${shell} sh -c "${cmd}" |
+        sed "s,$PWD,<<PWD>>,g" > "${resu}"
     test $? -gt 0 && return $?
 
     # compare result
-    grep -v '\<IGNORE\>' "${resu}" | diff "${refe}" -
+    grep -v '\<IGNORE\>' "${resu}" |
+    diff "${refe}" -
 }
 
 $tap && echo "TAP version 14"

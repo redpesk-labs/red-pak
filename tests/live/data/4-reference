@@ -1,13 +1,13 @@
 ---------------
 /
-/testscript
-/testscript/4-prog
 /bin
 /bin/busybox
+/testscript
+/testscript/4-prog
 ---------------
-SHLVL=2
 PATH=/bin
 PWD=/
+SHLVL=2
 ---------------
 /
 ---------------
