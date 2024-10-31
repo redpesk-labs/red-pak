@@ -40,11 +40,11 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redconf create --alias ROOT --config config-share_net-disabled --config-adm NULL rootnn/config-share_net-disabled
 redconf create --alias SUBNODE --config config-share_net-enabled --config-adm NULL rootnn/config-share_net-disabled/config-share_net-enabled
 redwrap  --dump-only --redpath rootnn/config-share_net-disabled/config-share_net-enabled
-[ERROR]:  Can't share net in /rednodes/rootnn/config-share_net-disabled/config-share_net-enabled because forbidden in /rednodes/rootnn/config-share_net-disabled/	[/root/red-pak/red-conf/redconf-mix.c:760]
-[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
+[ERROR]:  Can't share net in /rednodes/rootnn/config-share_net-disabled/config-share_net-enabled because forbidden in /rednodes/rootnn/config-share_net-disabled/
+[ERROR]:  red-wrap aborted
 redwrap  --admin --dump-only --redpath rootnn/config-share_net-disabled/config-share_net-enabled
-[ERROR]:  Can't share net in /rednodes/rootnn/config-share_net-disabled/config-share_net-enabled because forbidden in /rednodes/rootnn/config-share_net-disabled/	[/root/red-pak/red-conf/redconf-mix.c:760]
-[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
+[ERROR]:  Can't share net in /rednodes/rootnn/config-share_net-disabled/config-share_net-enabled because forbidden in /rednodes/rootnn/config-share_net-disabled/
+[ERROR]:  red-wrap aborted
 
 ===================================
 redconf create --alias ROOT --config config-share_net-disabled --config-adm NULL rootna/config-share_net-disabled
@@ -93,6 +93,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-share_net-disabled/config-share_net-enabled
-[ERROR]:  Can't share net in /rednodes/rootaa/config-share_net-disabled/config-share_net-enabled (admin) because forbidden in /rednodes/rootaa/config-share_net-disabled/ (admin)	[/root/red-pak/red-conf/redconf-mix.c:760]
-[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
+[ERROR]:  Can't share net in /rednodes/rootaa/config-share_net-disabled/config-share_net-enabled (admin) because forbidden in /rednodes/rootaa/config-share_net-disabled/ (admin)
+[ERROR]:  red-wrap aborted
 

@@ -39,11 +39,11 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redconf create --alias ROOT --config config-share_ipc-disabled --config-adm NULL rootnn/config-share_ipc-disabled
 redconf create --alias SUBNODE --config config-share_ipc-enabled --config-adm NULL rootnn/config-share_ipc-disabled/config-share_ipc-enabled
 redwrap  --dump-only --redpath rootnn/config-share_ipc-disabled/config-share_ipc-enabled
-[ERROR]:  Can't share ipc in /rednodes/rootnn/config-share_ipc-disabled/config-share_ipc-enabled because forbidden in /rednodes/rootnn/config-share_ipc-disabled/	[/root/red-pak/red-conf/redconf-mix.c:760]
-[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
+[ERROR]:  Can't share ipc in /rednodes/rootnn/config-share_ipc-disabled/config-share_ipc-enabled because forbidden in /rednodes/rootnn/config-share_ipc-disabled/
+[ERROR]:  red-wrap aborted
 redwrap  --admin --dump-only --redpath rootnn/config-share_ipc-disabled/config-share_ipc-enabled
-[ERROR]:  Can't share ipc in /rednodes/rootnn/config-share_ipc-disabled/config-share_ipc-enabled because forbidden in /rednodes/rootnn/config-share_ipc-disabled/	[/root/red-pak/red-conf/redconf-mix.c:760]
-[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
+[ERROR]:  Can't share ipc in /rednodes/rootnn/config-share_ipc-disabled/config-share_ipc-enabled because forbidden in /rednodes/rootnn/config-share_ipc-disabled/
+[ERROR]:  red-wrap aborted
 
 ===================================
 redconf create --alias ROOT --config config-share_ipc-disabled --config-adm NULL rootna/config-share_ipc-disabled
@@ -90,6 +90,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-share_ipc-disabled/config-share_ipc-enabled
-[ERROR]:  Can't share ipc in /rednodes/rootaa/config-share_ipc-disabled/config-share_ipc-enabled (admin) because forbidden in /rednodes/rootaa/config-share_ipc-disabled/ (admin)	[/root/red-pak/red-conf/redconf-mix.c:760]
-[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
+[ERROR]:  Can't share ipc in /rednodes/rootaa/config-share_ipc-disabled/config-share_ipc-enabled (admin) because forbidden in /rednodes/rootaa/config-share_ipc-disabled/ (admin)
+[ERROR]:  red-wrap aborted
 

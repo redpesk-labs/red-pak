@@ -46,11 +46,11 @@ DUMP: /usr/bin/bwrap (as redwrap)
 redconf create --alias ROOT --config config-capa-cap_setuid-0 --config-adm NULL rootnn/config-capa-cap_setuid-0
 redconf create --alias SUBNODE --config config-capa-cap_setuid-1 --config-adm NULL rootnn/config-capa-cap_setuid-0/config-capa-cap_setuid-1
 redwrap  --dump-only --redpath rootnn/config-capa-cap_setuid-0/config-capa-cap_setuid-1
-[ERROR]:  Capability cap_setuid of /rednodes/rootnn/config-capa-cap_setuid-0/ badly redefined in /rednodes/rootnn/config-capa-cap_setuid-0/config-capa-cap_setuid-1	[/root/red-pak/red-conf/redconf-mix.c:444]
-[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
+[ERROR]:  Capability cap_setuid of /rednodes/rootnn/config-capa-cap_setuid-0/ badly redefined in /rednodes/rootnn/config-capa-cap_setuid-0/config-capa-cap_setuid-1
+[ERROR]:  red-wrap aborted
 redwrap  --admin --dump-only --redpath rootnn/config-capa-cap_setuid-0/config-capa-cap_setuid-1
-[ERROR]:  Capability cap_setuid of /rednodes/rootnn/config-capa-cap_setuid-0/ badly redefined in /rednodes/rootnn/config-capa-cap_setuid-0/config-capa-cap_setuid-1	[/root/red-pak/red-conf/redconf-mix.c:444]
-[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
+[ERROR]:  Capability cap_setuid of /rednodes/rootnn/config-capa-cap_setuid-0/ badly redefined in /rednodes/rootnn/config-capa-cap_setuid-0/config-capa-cap_setuid-1
+[ERROR]:  red-wrap aborted
 
 ===================================
 redconf create --alias ROOT --config config-capa-cap_setuid-0 --config-adm NULL rootna/config-capa-cap_setuid-0
@@ -103,6 +103,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-capa-cap_setuid-0/config-capa-cap_setuid-1
-[ERROR]:  Capability cap_setuid of /rednodes/rootaa/config-capa-cap_setuid-0/ (admin) badly redefined in /rednodes/rootaa/config-capa-cap_setuid-0/config-capa-cap_setuid-1 (admin)	[/root/red-pak/red-conf/redconf-mix.c:419]
-[ERROR]:  red-wrap aborted	[/root/red-pak/red-wrap/redwrap-exec.c:585]
+[ERROR]:  Capability cap_setuid of /rednodes/rootaa/config-capa-cap_setuid-0/ (admin) badly redefined in /rednodes/rootaa/config-capa-cap_setuid-0/config-capa-cap_setuid-1 (admin)
+[ERROR]:  red-wrap aborted
 

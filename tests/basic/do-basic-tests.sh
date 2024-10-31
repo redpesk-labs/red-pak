@@ -104,6 +104,7 @@ testu() {
     echo
 }
 
+filter='s,'"$PWD"',,g;/^\[[A-Z]*]: /{s/\[[^][]*] *$//;s/[ \t]*$//}'
 
 xtap() {
     local conf1="${1}"
@@ -112,7 +113,7 @@ xtap() {
     local resu="results/${id}"
     local ref="references/${id}"
     itap=$((itap + 1))
-    testu "${conf1}" "${conf2}" |& sed "s,$PWD,,g" > "${resu}"
+    testu "${conf1}" "${conf2}" |& sed "$filter" > "${resu}"
     diff "$ref" "${resu}" >& "${tmp}"
     sts=$?
     if $tap; then
