@@ -42,8 +42,7 @@
 
 #include "redconf-log.h"
 #include "redconf-schema.h"
-#include "redconf-merge.h"
-#include "redconf-hashmerge.h"
+#include "redconf-mix.h"
 #include "redconf-expand.h"
 #include "redconf-defaults.h"
 #include "redconf-utils.h"
@@ -113,36 +112,6 @@ static int validateNode(redNodeT *node, int unsafe)
     return result;
 }
 
-/**
- * set the special conf variables
- */
-static int set_special_confvar(redwrap_state_t *restate)
-{
-    const redNodeT *node;
-    char pathString[BWRAP_MAXVAR_LEN];
-    char ldpathString[BWRAP_MAXVAR_LEN];
-    dataNodeT dataNode = {
-        .ldpathString = ldpathString,
-        .ldpathIdx = 0,
-        .pathString = pathString,
-        .pathIdx = 0
-    };
-    int result = 0;
-
-    pathString[0] = ldpathString[0] = 0;
-    for (node = restate->rednode; node != NULL && result == 0; node = node->parent)
-        result = mergeSpecialConfVar(node, &dataNode);
-
-    if (result == 0) {
-        if (pathString[0])
-            ADD3(restate, "--setenv", "PATH", strdup(pathString));
-        if (ldpathString[0])
-            ADD3(restate, "--setenv", "LD_LIBRARY_PATH", strdup(ldpathString));
-    }
-
-    return result;
-}
-
 static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar, const redNodeT *node)
 {
 // scan export environment variables
@@ -172,14 +141,6 @@ static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar,
     default:
         break;
     }
-}
-
-static void set_envvars(redwrap_state_t *restate, const redNodeT *node, const redConfigT *configN)
-{
-    const redConfVarT *iter = configN->confvar;
-    const redConfVarT *end  = &iter[configN->confvar_count];
-    while(iter != end)
-        set_one_envvar(restate, iter++, node);
 }
 
 static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *export, const redNodeT *node)
@@ -286,37 +247,6 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
         break;
     }
 }
-
-static void set_exports(redwrap_state_t *restate, const redNodeT *node, const redConfigT *configN)
-{
-    const redConfExportPathT *iter = configN->exports;
-    const redConfExportPathT *end  = &iter[configN->exports_count];
-    while(iter != end)
-        set_one_export(restate, iter++, node);
-}
-
-static int RwrapParseSubConfig (redwrap_state_t *restate, const redNodeT *node, const redConfigT *configN)
-{
-    set_exports(restate, node, configN);
-    set_envvars(restate, node, configN);
-    return 0;
-}
-
-static int set_exports_and_vars(redwrap_state_t *restate)
-{
-    redNodeT *node = restate->rednode;
-    int error = 0;
-
-    do {
-        error = RwrapParseSubConfig(restate, node, node->config);
-        if (error == 0 && node->confadmin != NULL)
-            error = RwrapParseSubConfig(restate, node, node->confadmin);
-        node=node->parent;
-    }
-    while (node != NULL && error == 0);
-    return error;
-}
-
 
 static int setmap(const char *map_path, const char *map_buf) {
     int err = 0;
@@ -466,21 +396,73 @@ static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
     return set_shares(restate, &conftag->share);
 }
 
+static int set_env_value(void *closure, const char *value, const char *name)
+{
+    if (value)
+        ADD3((redwrap_state_t*)closure, "--setenv", name, strdup(value));
+    return 0;
+}
+
+static const char *get_config_path(void *closure, const redConfigT *config)
+{
+    (void)closure;
+    return config->conftag.path;
+}
+
+static int set_env_path(void *closure, const char *value, size_t length)
+{
+    (void)length;
+    return set_env_value(closure, value, "PATH");
+}
+
+static const char *get_config_ldpath(void *closure, const redConfigT *config)
+{
+    (void)closure;
+    return config->conftag.ldpath;
+}
+
+static int set_env_ldpath(void *closure, const char *value, size_t length)
+{
+    (void)length;
+    return set_env_value(closure, value, "LD_LIBRARY_PATH");
+}
+
+static int set_special_confvar(redwrap_state_t *restate)
+{
+    int rc = mixPaths(restate->rednode, get_config_path, set_env_path, restate);
+    return rc != 0 ? rc : mixPaths(restate->rednode, get_config_ldpath, set_env_ldpath, restate);
+}
+
+static int mixvar(void *closure, const redConfVarT *var, const redNodeT *node, unsigned index, unsigned count)
+{
+    (void)index;
+    (void)count;
+    set_one_envvar((redwrap_state_t*)closure, var, node);
+    return 0;
+}
+static int mixexp(void *closure, const redConfExportPathT *exp, const redNodeT *node, unsigned index, unsigned count)
+{
+    (void)index;
+    (void)count;
+    set_one_export((redwrap_state_t*)closure, exp, node);
+    return 0;
+}
+static int set_exports_and_vars(redwrap_state_t *restate)
+{
+    int rc = mixExports(restate->rednode, mixexp, restate);
+    if (rc == 0)
+        rc = mixVariables(restate->rednode, mixvar, restate);
+    return rc;
+}
+
+static int mix_conftag(void *closure, const redConfTagT *conftag)
+{
+    return set_conftag((redwrap_state_t*)closure, conftag);
+}
+
 static int set_for_conftag(redwrap_state_t *restate)
 {
-    redConfTagT mct;
-    memset(&mct, 0, sizeof mct);
-    if(mergeConfTag(restate->rootnode, &mct, 0)) {
-        RedLog(REDLOG_ERROR, "Issue to merge conftag");
-        return 1;
-    }
-    if(mergeCapabilities(restate->rootnode, &mct, 0)) {
-        RedLog(REDLOG_ERROR, "Issue to merge capabilities");
-        return 1;
-    }
-    if (restate->has_cgroups && mct.cgrouproot)
-        mct.cgrouproot = RedNodeStringExpand (restate->rootnode, mct.cgrouproot);
-    return set_conftag(restate, &mct);
+    return mixConfTags(restate->rednode, mix_conftag, restate);
 }
 
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
