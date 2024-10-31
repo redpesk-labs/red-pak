@@ -27,6 +27,7 @@ set(
         redconf-hashmerge.c
         redconf-log.c
         redconf-merge.c
+        redconf-mix.c
         redconf-node.c
         redconf-schema.c
         redconf-utils.c
@@ -44,6 +45,7 @@ set(
         redconf-hashmerge.h
         redconf-log.h
         redconf-merge.h
+        redconf-mix.h
         redconf-node.h
         redconf-schema.h
         redconf-utils.h
