@@ -1,2 +1,4 @@
+basically-nothing
+
 Simple test entering a node with nothing except busybox at root.
 Displays the content and the environment.

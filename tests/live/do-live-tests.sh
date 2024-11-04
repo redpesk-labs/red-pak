@@ -81,14 +81,15 @@ for prog in $(ls data/*-prog 2>/dev/null | sort -t/ -k2n)
 do
     itap=$((itap + 1))
     num=$(echo -n "${prog}" | sed 's:.*/\([0-9]*\)-.*:\1:')
+    title=$(head -n 1 "data/${num}-desc" 2>/dev/null|tr ' ' '-')
     perform_test "${num}" >& "${tmp}"
     sts=$?
     if $tap; then
         if test $sts -gt 0; then
-            echo "not ok $itap"
+            echo "not ok $itap - ${title}"
             sed 's:^:   :' "${tmp}"
         else
-            echo "ok $itap"
+            echo "ok $itap - ${title}"
         fi
     else
         cat "${tmp}"

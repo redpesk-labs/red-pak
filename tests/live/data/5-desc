@@ -1,3 +1,5 @@
+expansion-of-keywords
+
 Simple test entering a node with nothing except busybox at root.
 Check the values of expanded variables.
 Displays the environment.

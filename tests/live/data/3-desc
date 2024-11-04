@@ -1,3 +1,5 @@
+path-to-mounted-bin
+
 Simple test entering a node with nothing except busybox in /bin.
 Defines the PATH environment variable and try to use it.
 Displays the content and the environment.

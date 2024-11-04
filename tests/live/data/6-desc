@@ -1,3 +1,5 @@
+basic-mounts
+
 Simple test entering a node with busybox in /bin and program in testscript directory.
 Mounts some basic export
 Displays mounts and content of /bin
