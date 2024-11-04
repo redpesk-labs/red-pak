@@ -109,7 +109,7 @@ filter='s,'"$PWD"',,g;/^\[[A-Z]*]: /{s/\[[^][]*] *$//;s/[ \t]*$//}'
 xtap() {
     local conf1="${1}"
     local conf2="${2}"
-    local id="${conf1}:${conf2}"
+    local id="${conf1}__${conf2}"
     local resu="results/${id}"
     local ref="references/${id}"
     itap=$((itap + 1))
