@@ -106,7 +106,7 @@ static int get_parent_cgroup(char cgroup_parent[PATH_MAX]) {
 
     //get current cgroup
     cgProcFd = open("/proc/self/cgroup", O_RDONLY);
-    if (cgProcFd <= 0) {
+    if (cgProcFd < 0) {
         RedLog(REDLOG_ERROR, "[proc-cgroups-not-found] /proc/self/cgroup error=%s", strerror(errno));
         goto OnErrorExit;
     }
