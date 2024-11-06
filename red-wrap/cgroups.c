@@ -104,59 +104,76 @@ static int replaceSlashDash(const char *source, char *dest, int lendest) {
     return -1;
 }
 
+static int set_cgroup_path(char dest[PATH_MAX], const char *src, int lensrc) {
+    const int prefixlen = strlen(CGROUPS_MOUNT_POINT);
+    const char * const prefix = CGROUPS_MOUNT_POINT;
+    int pos = 0;
+
+    /* copy the prefix if needed */
+    if (lensrc < prefixlen || strncmp(src, prefix, prefixlen) != 0) {
+        memcpy(dest, prefix, (unsigned)prefixlen);
+        pos = prefixlen;
+    }
+
+    /* ensure slash at start (except if copied prefix doesn't /) */
+    if (pos == 0 || prefix[pos - 1] != '/')
+        dest[pos++] = '/';
+    while (lensrc && *src == '/') {
+        src++;
+        lensrc--;
+    }
+    while (lensrc && src[lensrc - 1] == '/')
+        lensrc--;
+
+    /* copy the src */
+    if (lensrc >= PATH_MAX - pos) {
+        RedLog(REDLOG_ERROR, "cgroups path too long: %.*s%.*s", pos, dest, lensrc, src);
+        return -1;
+    }
+
+    memcpy(&dest[pos], src, lensrc);
+    pos += lensrc;
+    dest[pos] = 0;
+    return pos;
+}
+
+static int length_without_leaf_name(const char *path, int length) {
+    const int suffixlen = strlen(CGROUPS_ROOT_LEAF_NAME);
+    const char * const suffix = CGROUPS_ROOT_LEAF_NAME;
+    int off = length - suffixlen;
+    return off || memcmp(suffix, &path[off], suffixlen) != 0 ? length : off;
+}
+
 static int get_parent_cgroup(char cgroup_parent[PATH_MAX]) {
     int lenbuf, cgProcFd;
     ssize_t count;
-    char buf[PATH_MAX + 1 - strlen(CGROUPS_MOUNT_POINT)];
+    char buf[PATH_MAX];
 
     //get current cgroup
     cgProcFd = open("/proc/self/cgroup", O_RDONLY);
     if (cgProcFd < 0) {
         RedLog(REDLOG_ERROR, "[proc-cgroups-not-found] /proc/self/cgroup error=%s", strerror(errno));
-        goto OnErrorExit;
-    }
-
-    //read 3 first characters to ignore them, valid for cgroup2
-    count = read(cgProcFd, (void *)buf, 3);
-    if (count != 3) {
-        RedLog(REDLOG_ERROR, "Cannot read 3 first characters count=%d buf=%s", count, buf);
-        goto OnErrorCloseExit;
-    }
-    //check cgroup2
-    if (buf[0] != '0' || buf[1] != ':' || buf[2] != ':') {
-        RedLog(REDLOG_ERROR, "expected CGROUPv2 not matching /proc/self/cgroup");
-        goto OnErrorCloseExit;
+        return -1;
     }
 
     count = read(cgProcFd, (void *)buf, sizeof buf);
+    close(cgProcFd);
     if (count <= 0 ) {
         RedLog(REDLOG_ERROR, "[/proc/self/cgroup] cannot read current cgroup error=%s", strerror(errno));
-        goto OnErrorCloseExit;
+        return -1;
     }
 
-    //search first \n
-    for (lenbuf = 0 ; lenbuf < (int)count && buf[lenbuf] != '\n' ; lenbuf++);
-    if (lenbuf == 0 || lenbuf == (int)sizeof buf) {
-        RedLog(REDLOG_ERROR, "[proc-cgroups-too-long] /proc/self/cgroup has a too %s path", lenbuf ? "long" : "short");
-        goto OnErrorCloseExit;
+    //check cgroup2
+    if (count < 3 || buf[0] != '0' || buf[1] != ':' || buf[2] != ':') {
+        RedLog(REDLOG_ERROR, "expected CGROUPv2 not matching /proc/self/cgroup");
+        return -1;
     }
-    buf[lenbuf] = '\0';
 
-    snprintf(cgroup_parent, PATH_MAX, "%s%s", CGROUPS_MOUNT_POINT, buf);
-    cgroup_parent[PATH_MAX - 1] = 0;
+    //search first \n or end
+    for (lenbuf = 3 ; lenbuf < count && buf[lenbuf] != '\n' ; lenbuf++);
 
-    //check if cgroup is matching CGROUPS_ROOT_LEAF_NAME and so return parent/..
-    int off = lenbuf - strlen(CGROUPS_ROOT_LEAF_NAME);
-    if (off >= 0 && !strcmp(buf+off, CGROUPS_ROOT_LEAF_NAME))
-        strncat(cgroup_parent, "/..", PATH_MAX - 1 - strlen("/..") - strlen(cgroup_parent));
-
-    close(cgProcFd);
-    return 0;
-
-OnErrorCloseExit:
-    close(cgProcFd);
-OnErrorExit:
-    return -1;
+    //search first \n or end
+    return set_cgroup_path(cgroup_parent, &buf[3], length_without_leaf_name(&buf[3], lenbuf - 3));
 }
 
 static int moveProcstoLeaf(int parentFd) {
