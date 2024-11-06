@@ -61,10 +61,6 @@ struct redwrap_state_s
     rWrapConfigT *cliarg;
     /** the rednode */
     redNodeT     *rednode;
-    /** the root node of the rednode */
-    redNodeT     *rootnode;
-    /** flag indicating if cgroups are required */
-    int           has_cgroups;
     /** flag indicating if time should be unshared */
     int           unshare_time;
     /** flag indicating if rednode user must map to root */
@@ -303,11 +299,11 @@ Error:
     return -1;
 }
 
-static int setcgroups(const redConfTagT* conftag, redNodeT *rootNode) {
+static int setcgroups(const char *rootpath, redNodeT *rootNode) {
     char cgroupParent[PATH_MAX] = {0};
 
-    if (conftag->cgrouproot)
-        strncpy(cgroupParent, conftag->cgrouproot, PATH_MAX);
+    if (rootpath)
+        strncpy(cgroupParent, rootpath, PATH_MAX);
 
     RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
     for (redNodeT *node=rootNode; node != NULL; node=node->first_child) {
@@ -323,6 +319,21 @@ static int setcgroups(const redConfTagT* conftag, redNodeT *rootNode) {
         strncat(cgroupParent, cgroup_name, PATH_MAX - 1 - strlen(cgroup_name) - strlen(cgroupParent));
     }
     return 0;
+}
+
+int set_cgroups(redNodeT *node, const char *rootpath)
+{
+    redNodeT *root;
+    bool needed = false;
+    do {
+        if (node->config->conftag.cgroups != NULL
+         || (node->confadmin != NULL && node->confadmin->conftag.cgroups != NULL))
+            needed = true;
+        root = node;
+        node = node->parent;
+    }
+    while (node != NULL);
+    return needed ? setcgroups(rootpath, root): 0;
 }
 
 static int set_one_capability(redwrap_state_t *restate, const char *capability, int value)
@@ -375,8 +386,7 @@ static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
 {
     set_capabilities(restate, conftag);
 
-    if (restate->has_cgroups)
-        setcgroups(conftag, restate->rootnode);
+    set_cgroups(restate->rednode, conftag->cgrouproot);
 
     // set global merged config tags
     if (conftag->hostname)
@@ -477,26 +487,16 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     // start argument list with red-wrap command name
     restate.cliarg = cliarg;
     restate.rednode = NULL;
-    restate.rootnode = NULL;
-    restate.has_cgroups = 0;
     restate.unshare_time = 0;
     restate.map_user_root = 0;
     restate.argcount = 1;
     restate.argval[0] = command_name;
 
-    /* get the rootnode */
+    /* get the rednode */
     restate.rednode = RedNodesScan(cliarg->redpath, cliarg->isadmin, cliarg->verbose);
     if (!restate.rednode) {
         RedLog(REDLOG_ERROR, "Fail to scan rednodes family tree redpath=%s", cliarg->redpath);
         goto OnErrorExit;
-    }
-
-    /* search the rootnode */
-    restate.rootnode = restate.rednode;
-    restate.has_cgroups = (restate.rednode->config->conftag.cgroups != NULL);
-    while (restate.rootnode->parent != NULL) {
-        restate.rootnode = restate.rootnode->parent;
-        restate.has_cgroups |= (restate.rootnode->config->conftag.cgroups != NULL);
     }
 
     /* validate the node */
