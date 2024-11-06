@@ -93,13 +93,15 @@ OnErrorExit:
 }
 
 // copy source to dest replacing any / by -
-static void replaceSlashDash(const char *source, char *dest) {
-    char c = *source;
-    while (c) {
-        *dest++ = c == '/' ? '-' : c;
-        c = *++source;
+static int replaceSlashDash(const char *source, char *dest, int lendest) {
+    int idx;
+    for (idx = 0 ; idx < lendest ; idx++) {
+        char c = source[idx];
+        dest[idx] = c == '/' ? '-' : c;
+        if (c == 0)
+            return idx;
     }
-    *dest = c;
+    return -1;
 }
 
 static int get_parent_cgroup(char cgroup_parent[PATH_MAX]) {
@@ -340,8 +342,9 @@ static int setcgroups(const char *rootpath, redNodeT *rootNode) {
     RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
     for (redNodeT *node=rootNode; node != NULL; node=node->first_child) {
         //remove / from cgroup name
-        char *cgroup_name = (char *)alloca(strlen(node->status->realpath));
-        replaceSlashDash(node->status->realpath, cgroup_name);
+        size_t len = 1 + strlen(node->status->realpath);
+        char *cgroup_name = (char *)alloca(len);
+        replaceSlashDash(node->status->realpath, cgroup_name, (int)len);
 
         if (cgroups(node->config->conftag.cgroups, cgroup_name, cgroupParent))
             break;
