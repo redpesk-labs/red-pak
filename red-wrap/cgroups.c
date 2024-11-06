@@ -27,6 +27,9 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <alloca.h>
 
 #include "redconf-log.h"
 #include "redconf-defaults.h"
@@ -90,7 +93,7 @@ OnErrorExit:
 }
 
 // copy source to dest replacing any / by -
-void replaceSlashDash(const char *source, char *dest) {
+static void replaceSlashDash(const char *source, char *dest) {
     char c = *source;
     while (c) {
         *dest++ = c == '/' ? '-' : c;
@@ -210,7 +213,7 @@ OnErrorExit:
     return -1;
 }
 
-int cgroups (const redConfCgroupT *cgroups, const char *cgroup_name, char cgroup_parent[PATH_MAX]) {
+static int cgroups (const redConfCgroupT *cgroups, const char *cgroup_name, char cgroup_parent[PATH_MAX]) {
     int err, cgRootFd, subgroupFd = 0, subgroupNodeFd;
     char pid[1000];
 
@@ -326,4 +329,41 @@ OnErrorExit:
         cgroup_parent, cgroup_parent, cgroup_parent
         );
     return -1;
-} // end
+}
+
+static int setcgroups(const char *rootpath, redNodeT *rootNode) {
+    char cgroupParent[PATH_MAX] = {0};
+
+    if (rootpath)
+        strncpy(cgroupParent, rootpath, PATH_MAX);
+
+    RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
+    for (redNodeT *node=rootNode; node != NULL; node=node->first_child) {
+        //remove / from cgroup name
+        char *cgroup_name = (char *)alloca(strlen(node->status->realpath));
+        replaceSlashDash(node->status->realpath, cgroup_name);
+
+        if (cgroups(node->config->conftag.cgroups, cgroup_name, cgroupParent))
+            break;
+
+        //set next cgroup parent
+        strncat(cgroupParent, "/", PATH_MAX - 1 - strlen("/") - strlen(cgroupParent));
+        strncat(cgroupParent, cgroup_name, PATH_MAX - 1 - strlen(cgroup_name) - strlen(cgroupParent));
+    }
+    return 0;
+}
+
+int set_cgroups(redNodeT *node, const char *rootpath)
+{
+    redNodeT *root;
+    bool needed = false;
+    do {
+        if (node->config->conftag.cgroups != NULL
+         || (node->confadmin != NULL && node->confadmin->conftag.cgroups != NULL))
+            needed = true;
+        root = node;
+        node = node->parent;
+    }
+    while (node != NULL);
+    return needed ? setcgroups(rootpath, root): 0;
+}

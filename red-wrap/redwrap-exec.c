@@ -32,6 +32,7 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <sched.h>
@@ -297,43 +298,6 @@ static int setuidgidmap(int pid, int maprootuser) {
     return 0;
 Error:
     return -1;
-}
-
-static int setcgroups(const char *rootpath, redNodeT *rootNode) {
-    char cgroupParent[PATH_MAX] = {0};
-
-    if (rootpath)
-        strncpy(cgroupParent, rootpath, PATH_MAX);
-
-    RedLog(REDLOG_DEBUG, "[redwrap-main]: set cgroup");
-    for (redNodeT *node=rootNode; node != NULL; node=node->first_child) {
-        //remove / from cgroup name
-        char *cgroup_name = (char *)alloca(strlen(node->status->realpath));
-        replaceSlashDash(node->status->realpath, cgroup_name);
-
-        if (cgroups(node->config->conftag.cgroups, cgroup_name, cgroupParent))
-            break;
-
-        //set next cgroup parent
-        strncat(cgroupParent, "/", PATH_MAX - 1 - strlen("/") - strlen(cgroupParent));
-        strncat(cgroupParent, cgroup_name, PATH_MAX - 1 - strlen(cgroup_name) - strlen(cgroupParent));
-    }
-    return 0;
-}
-
-int set_cgroups(redNodeT *node, const char *rootpath)
-{
-    redNodeT *root;
-    bool needed = false;
-    do {
-        if (node->config->conftag.cgroups != NULL
-         || (node->confadmin != NULL && node->confadmin->conftag.cgroups != NULL))
-            needed = true;
-        root = node;
-        node = node->parent;
-    }
-    while (node != NULL);
-    return needed ? setcgroups(rootpath, root): 0;
 }
 
 static int set_one_capability(redwrap_state_t *restate, const char *capability, int value)

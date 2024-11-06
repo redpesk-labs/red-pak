@@ -20,10 +20,8 @@
 #ifndef _CGROUPS_H_
 #define _CGROUPS_H_
 
-#include <limits.h>
-#include "redconf-schema.h"
+#include "redconf-node.h"
 
-void replaceSlashDash(const char *source, char *dest);
-int cgroups (const redConfCgroupT *cgroups, const char *cgroup_name, char cgroup_parent[PATH_MAX]);
+extern int set_cgroups(redNodeT *node, const char *root);
 
 #endif //_CGROUPS_H_
