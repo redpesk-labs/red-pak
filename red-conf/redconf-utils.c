@@ -32,6 +32,7 @@
 #include <uuid/uuid.h>
 
 #include "redconf-utils.h"
+#include "redconf-defaults.h"
 #include "redconf-log.h"
 
 #ifndef MAX_CYAML_FORMAT_ENV
@@ -285,3 +286,13 @@ char *whichprog(const char *name, const char *evar, const char *dflt)
     return strdup(result ?: dflt ?: name);
 }
 
+const char *cgroup_root()
+{
+    static const char *cgroot = NULL;
+    if (cgroot == NULL) {
+        cgroot = secure_getenv("CGROUPS_MOUNT_POINT");
+        if (cgroot == NULL)
+            cgroot = CGROUPS_MOUNT_POINT;
+    }
+    return cgroot;
+}

@@ -112,6 +112,12 @@ static int GetEnviron(const redNodeT *node, const vardef_t *vardef, char *output
     return PutString(value, output, size);
 }
 
+static int GetCgroupRoot(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
+    (void)node;
+    (void)vardef;
+    return PutString(cgroup_root(), output, size);
+}
+
 typedef enum {
     REDNODE_INFO_ALIAS,
     REDNODE_INFO_NAME,
@@ -171,7 +177,7 @@ static const vardef_t vardefs[] = {
     { "USER"           , GetEnviron,  "Unknown", 0 },
     { "LOGNAME"        , GetEnviron,  "Unknown", 0 },
     { "HOSTNAME"       , GetEnviron,  "localhost", 0 },
-    { "CGROUPS_MOUNT_POINT", GetEnviron, CGROUPS_MOUNT_POINT, 0 },
+    { "CGROUPS_MOUNT_POINT", GetCgroupRoot, NULL, 0 },
     { "PID"            , GetPid,      NULL, 0 },
     { "UID"            , GetUid,      NULL, 0 },
     { "GID"            , GetGid,      NULL, 0 },

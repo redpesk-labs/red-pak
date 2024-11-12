@@ -98,4 +98,9 @@ extern int make_directories(const char *path, size_t base, size_t length, mode_t
  */
 extern char *whichprog(const char *name, const char *evar, const char *dflt);
 
+/**
+ * Locate the mount point of cgroups and return it
+ */
+extern const char *cgroup_root();
+
 #endif
