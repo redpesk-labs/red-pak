@@ -3,8 +3,8 @@
 tap=true
 test "$1" = "notap" && tap=false
 
-redroot=/tmp/redpak-check-data-root
-tmp=/tmp/redpak-check-data-output
+redroot=/tmp/rpak-livetest
+tmp=${redroot}.out
 
 print() {
     echo "$*" >&2
@@ -48,8 +48,7 @@ perform_test() {
     local resu="data/${num}-result"
 
     # create the node
-    local rednode="${redroot}"
-    rm -rf "${rednode}"
+    local rednode="${redroot}/rnod${num}"
     action redconf create --alias "NODE-${num}" --config "${normal}" --config-adm "${admin}" "${rednode}"
     test $? -gt 0 && return $?
 
