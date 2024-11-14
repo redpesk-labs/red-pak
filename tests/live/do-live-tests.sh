@@ -43,6 +43,13 @@ perform_test() {
         admin="data/0-admin.yaml"
     fi
 
+    # compile the C prog if existing
+    if test -f "data/${num}-prog.c"
+    then
+        prog="data/${num}.prog"
+        cc -static -o "${prog}" "data/${num}-prog.c"
+    fi
+
     # reference and result filenames
     local refe="data/${num}-reference"
     local resu="data/${num}-result"
