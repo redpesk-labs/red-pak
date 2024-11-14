@@ -1,0 +1,17 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+config:
+    path: /bin
+    cgroups:
+        mem:
+            max: 10000000
+exports:
+  - mode: PrivateRestricted
+    mount: /bin/busybox
+    path: /usr/sbin/busybox
+  - mode: Private
+    mount: /testscript/7.prog
+    path: $NODE_PATH/testscript/7.prog
+

@@ -1,0 +1,3 @@
+mem-max
+
+check that setting config.cgroup.mem.max works
