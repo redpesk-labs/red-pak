@@ -1,0 +1,18 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+config:
+    path: /bin
+    cgroups:
+        cpu:
+            max: "150000 1000000"
+exports:
+  - mode: PrivateRestricted
+    mount: /bin/busybox
+    path: /usr/sbin/busybox
+  - mode: Private
+    mount: /testscript/9.prog
+    path: $NODE_PATH/testscript/9.prog
+  - mount: /proc
+    mode: Procfs

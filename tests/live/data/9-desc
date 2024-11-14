@@ -1,0 +1,3 @@
+cpu-max
+
+check that setting config.cgroup.cpu.max works
