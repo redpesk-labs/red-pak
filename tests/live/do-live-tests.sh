@@ -6,6 +6,12 @@ test "$1" = "notap" && tap=false
 redroot=/tmp/rpak-livetest
 tmp=${redroot}.out
 
+# cleaning
+cleanup() {
+    rm -rf "${redroot}" "${tmp}"
+    find /sys/fs/cgroup -type d | grep rpak-livetest | sort -r | xargs -n 1 rmdir
+}
+
 print() {
     echo "$*" >&2
 }
@@ -57,7 +63,7 @@ perform_test() {
     # create the node
     local rednode="${redroot}/rnod${num}"
     action redconf create --alias "NODE-${num}" --config "${normal}" --config-adm "${admin}" "${rednode}"
-    test $? -gt 0 && return $?
+    test $? -eq 0 || return
 
     # prepare the command
     local shell=$(awk '$1~/mount/&&$2~/busybox/{r=$2}END{print r}' "${normal}")
@@ -74,16 +80,17 @@ perform_test() {
     # execute the command in the node
     action redwrap $flagadm --redpath "${rednode}" -- ${shell} sh -c "${cmd}" |
         sed "s,$PWD,<<PWD>>,g" > "${resu}"
-    test $? -gt 0 && return $?
+    test $? -eq 0 || return
 
     # compare result
     grep -v '\<IGNORE\>' "${resu}" |
-    diff "${refe}" -
+    diff -N "${refe}" -
 }
 
+cleanup
 $tap && echo "TAP version 14"
 itap=0
-for prog in $(ls data/*-prog 2>/dev/null | sort -t/ -k2n)
+for prog in $(ls data/*-prog* 2>/dev/null | sort -t/ -k2n)
 do
     itap=$((itap + 1))
     num=$(echo -n "${prog}" | sed 's:.*/\([0-9]*\)-.*:\1:')
@@ -103,4 +110,5 @@ do
 done
 $tap && echo "1..${itap}"
 echo
-rm -rf "${redroot}" "${tmp}"
+#cleanup
+
