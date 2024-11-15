@@ -36,7 +36,6 @@ set_target_properties(
 target_include_directories(
     libredwrap
         PUBLIC
-            ${RPM_INCLUDE_DIRS}
             ${CMAKE_CURRENT_SOURCE_DIR}
             ${CMAKE_SOURCE_DIR}/red-conf
 )
@@ -45,7 +44,6 @@ target_link_libraries(
     libredwrap
         PRIVATE
             libredconf
-            ${RPM_LIBRARIES}
 )
 
 install(
