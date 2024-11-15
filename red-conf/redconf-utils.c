@@ -286,13 +286,44 @@ char *whichprog(const char *name, const char *evar, const char *dflt)
     return strdup(result ?: dflt ?: name);
 }
 
+/*
+* this routine scans the special file /proc/self/mounts
+* and returns the path where the filesystem cgroup2 is mounted
+*/
+static char *get_cgroup2_mounting_path()
+{
+    static const char cg2[] = "cgroup2";
+    const int lencg2 = (int)strlen(cg2);
+    int begpath = 0, endpath = 0, begtype = 0, endtype = 0;
+    char line[300], *result = NULL;
+    FILE *f = fopen("/proc/self/mounts", "r");
+    if (f != NULL) {
+        while(result == NULL && fgets(line, sizeof line, f) != NULL) {
+            sscanf(line, "%*s %n%*s%n %n%*s%n ", &begpath, &endpath, &begtype, &endtype);
+            if (endtype == begtype + lencg2 && 0 == memcmp(&line[begtype], cg2, (unsigned)lencg2)) {
+                unsigned lenpath = (unsigned)(endpath - begpath);
+                result = malloc(1 + lenpath);
+                if (result != NULL) {
+                    memcpy(result, &line[begpath], lenpath);
+                    result[lenpath] = 0;
+                }
+            }
+        }
+        fclose(f);
+    }
+    return result;
+}
+
 const char *cgroup_root()
 {
     static const char *cgroot = NULL;
     if (cgroot == NULL) {
         cgroot = secure_getenv("CGROUPS_MOUNT_POINT");
-        if (cgroot == NULL)
-            cgroot = CGROUPS_MOUNT_POINT;
+        if (cgroot == NULL) {
+            cgroot = get_cgroup2_mounting_path();
+            if (cgroot == NULL)
+                cgroot = CGROUPS_MOUNT_POINT;
+        }
     }
     return cgroot;
 }
