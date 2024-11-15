@@ -56,7 +56,11 @@ int main()
 
     faend = for_all();
     r = (100 * for_me() * cpu_count()) / (faend - fabeg);
-    printf("%lld %%\n", r);
+    printf("IGNORE(%lld %%)\n", r);
+    if (14 <= r && r <= 16)
+        printf("OK\n");
+    else
+        printf("NOT OK\n");
 
     return 0;
 }
