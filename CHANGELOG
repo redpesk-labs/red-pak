@@ -1,0 +1,6 @@
+Version 2.3.0 (2024/11/18)
+
+ - fix of cgroup management
+ - redconf creates rednodes on demand
+ - more tests
+
