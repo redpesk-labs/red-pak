@@ -1,6 +1,5 @@
 build/
-red-lib/reddefaults.hpp
-red-microdnf/red-lib/reddefaults.hpp
 .vscode*
 .vscode/*
 site/
+pdfs/
