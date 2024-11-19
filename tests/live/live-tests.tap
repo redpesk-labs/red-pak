@@ -1,0 +1,12 @@
+TAP version 14
+ok 1 - basically-nothing
+ok 2 - setting-of-variables
+ok 3 - path-to-mounted-bin
+ok 4 - execute-script
+ok 5 - expansion-of-keywords
+ok 6 - basic-mounts
+ok 7 - mem-max
+ok 8 - pids-max
+ok 9 - cpu-max
+1..9
+

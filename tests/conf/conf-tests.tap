@@ -1,0 +1,8 @@
+TAP version 14
+ok 1 - test-conf-1
+ok 2 - test-conf-2
+ok 3 - test-conf-3
+ok 4 - test-conf-4
+ok 5 - test-conf-5
+1..5
+
