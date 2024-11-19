@@ -56,6 +56,7 @@ add_compile_definitions(
 
 
 # add sub directories
+add_subdirectory(docs)
 add_subdirectory(etc)
 add_subdirectory(red-conf)
 add_subdirectory(red-wrap)
