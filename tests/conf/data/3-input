@@ -1,0 +1,100 @@
+HEaders:
+  aliAS: FULL-NORMAL
+  nAMe: FULL-NORMAL
+  inFO: default full node configuration
+cONFig:
+  rpMdir: $NODE_PATH/var/lib/rpm
+  perSIstdir: $NODE_PATH/var/lib/dnf
+  cAChedir: $NODE_PATH/var/cache/dnf
+  VERBOSE: 0
+  UMAsk: 027
+  patH: /bin:/nodes/$NODE_ALIAS/usr/bin
+  ldpAth: /lib64:/nodes/$NODE_ALIAS/usr/lib:/nodes/$NODE_ALIAS/usr/lib64
+  shAre_all: disabLed
+  shaRe_user: unset
+  sharE_cgroup: unset
+  share_net: enabLed
+  share_Pid: unset
+  share_iPc: unsEt
+  share_tiMe: uNset
+  Hostname: $LEAF_ALIAS
+  cHdir: /home/$LEAF_ALIAS
+  diE-with-parent: enabled
+  new-Session: uNset
+  cgroUproot: /sys/fs/cgroup/user.slice/user-$UID.slice/user@$UID.service
+ENVIron:
+  - Key: XDG_RUNTIME_DIR
+    Value: /run/user/$UID
+    MOde: DefAUlt
+  - Key: PS1
+    vAlue: 'Rednode($LEAF_ALIAS)> '
+    moDe: Default
+  - key: SHELL_SESSION_ID
+    mOde: REMOVE
+  - keY: HOME
+    vaLue: /home/$LEAF_ALIAS
+exPOrts:
+  - Mode: Public
+    mOunt: /run/systemd/notify
+    paTh: /run/systemd/notify
+  - modE: PuBLIc
+    Mount: /run/platform
+    Path: /run/platform
+  - mOde: pubLic
+    moUnt: /run/user/$UID
+    patH: /run/user/$UID
+  - mode: PRIvate
+    mount: /var/local
+    path: $NODE_PATH/var/local
+  - mode: Public
+    mount: /home/$UID/app-data
+    path: /home/$UID/app-data
+  - mount: /lib64
+    path: /usr/lib64
+    mode: RestRIcted
+  - mount: /lib
+    path: /usr/lib
+    mode: restricted
+  - mount: /bin
+    path: /usr/bin
+    mode: Restricted
+  - mount: /etc/resolv.conf
+    path: /etc/resolv.conf
+    mode: Restricted
+  - mount: /home/$LEAF_ALIAS
+    path: /nodes/_private
+    mode: SYMLInk
+  - mount: /var
+    mode: AnonyMOus
+  - mount: /etc/passwd
+    path: getent passwd $UID 65534
+    mode: eXecfd
+  - mount: /etc/group
+    path: getent group $(id -g) 65534
+    mode: Execfd
+  - mount: /proc
+    mode: procFS
+  - mount: /dev
+    mode: dEVFs
+  - mount: /tmp
+    mode: TmpfS
+  - mount: /run
+    mode: AnonYMous
+  - mount: /usr/lib/rpm
+    path: /lib/rpm
+    mode: SymlinK
+  - mount: /usr/share
+    path: /usr/share
+    mode: RestriCted
+  - mount: /nodes/_private
+    path:  $NODE_PATH/private
+    mode:  PrivatE
+  - mount: /var/lib/rpm
+    path:  $NODE_PATH/var/lib/rpm
+    mode:  PrivatE
+  - mount: /nodes/$NODE_ALIAS/usr
+    path: $NODE_PATH/usr
+    mode: RestRIcted
+  - mount: /nodes/$NODE_ALIAS/var
+    path: $NODE_PATH/var
+    mode: PubliC

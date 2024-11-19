@@ -1,0 +1,9 @@
+libcyaml:   ERROR: Load: libyaml: did not find expected alphabetic or numeric character
+libcyaml:   ERROR: Load: Backtrace:
+libcyaml:   ERROR: Load: libyaml: did not find expected alphabetic or numeric character
+libcyaml:   ERROR: Load: Backtrace:
+[ERROR]:  Fail to read yaml config path=/tmp/rpak-conftest/etc/redpack.yaml err=[libyaml parser error]
+[ERROR]:  Fail to parse redpak config [path=/tmp/rpak-conftest/etc/redpack.yaml]
+[ERROR]:  redpak terminal leaf config & status not found [path=/tmp/rpak-conftest]
+[ERROR]:  Fail to scandown redpath family tree path=/tmp/rpak-conftest
+

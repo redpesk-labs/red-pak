@@ -1,0 +1,106 @@
+# REDNODE CONFIG /tmp/rpak-conftest
+headers:
+  alias: FULL-NORMAL
+  name: FULL-NORMAL
+  info: default full node configuration
+exports:
+- mode: Public
+  mount: /run/systemd/notify
+  path: /run/systemd/notify
+- mode: Public
+  mount: /run/platform
+  path: /run/platform
+- mode: Public
+  mount: /run/user/$UID
+  path: /run/user/$UID
+- mode: Private
+  mount: /var/local
+  path: $NODE_PATH/var/local
+- mode: Public
+  mount: /home/$UID/app-data
+  path: /home/$UID/app-data
+- mode: Restricted
+  mount: /lib64
+  path: /usr/lib64
+- mode: Restricted
+  mount: /lib
+  path: /usr/lib
+- mode: Restricted
+  mount: /bin
+  path: /usr/bin
+- mode: Restricted
+  mount: /etc/resolv.conf
+  path: /etc/resolv.conf
+- mode: Symlink
+  mount: /home/$LEAF_ALIAS
+  path: /nodes/_private
+- mode: Anonymous
+  mount: /var
+- mode: Execfd
+  mount: /etc/passwd
+  path: getent passwd $UID 65534
+- mode: Execfd
+  mount: /etc/group
+  path: getent group $(id -g) 65534
+- mode: Procfs
+  mount: /proc
+- mode: Devfs
+  mount: /dev
+- mode: Tmpfs
+  mount: /tmp
+- mode: Anonymous
+  mount: /run
+- mode: Symlink
+  mount: /usr/lib/rpm
+  path: /lib/rpm
+- mode: Restricted
+  mount: /usr/share
+  path: /usr/share
+- mode: Private
+  mount: /nodes/_private
+  path: $NODE_PATH/private
+- mode: Private
+  mount: /var/lib/rpm
+  path: $NODE_PATH/var/lib/rpm
+- mode: Restricted
+  mount: /nodes/$NODE_ALIAS/usr
+  path: $NODE_PATH/usr
+- mode: Public
+  mount: /nodes/$NODE_ALIAS/var
+  path: $NODE_PATH/var
+environ:
+- mode: Default
+  key: XDG_RUNTIME_DIR
+  value: /run/user/$UID
+- mode: Default
+  key: PS1
+  value: ! 'Rednode($LEAF_ALIAS)> '
+- mode: Remove
+  key: SHELL_SESSION_ID
+- mode: Default
+  key: HOME
+  value: /home/$LEAF_ALIAS
+config:
+  persistdir: $NODE_PATH/var/lib/dnf
+  rpmdir: $NODE_PATH/var/lib/rpm
+  cachedir: $NODE_PATH/var/cache/dnf
+  path: /bin:/nodes/$NODE_ALIAS/usr/bin
+  ldpath: /lib64:/nodes/$NODE_ALIAS/usr/lib:/nodes/$NODE_ALIAS/usr/lib64
+  umask: 027
+  verbose: 0
+  map-root-user: 0
+  gpgcheck: false
+  unsafe: false
+  die-with-parent: Enabled
+  new-session: Unset
+  share_all: Disabled
+  share_user: Unset
+  share_cgroup: Unset
+  share_net: Enabled
+  share_pid: Unset
+  share_ipc: Unset
+  share_time: Unset
+  hostname: $LEAF_ALIAS
+  chdir: /home/$LEAF_ALIAS
+  cgrouproot: /sys/fs/cgroup/user.slice/user-$UID.slice/user@$UID.service
+

@@ -1,0 +1,18 @@
+# REDNODE CONFIG /tmp/rpak-conftest
+headers:
+  alias: x
+config:
+  verbose: 0
+  map-root-user: 0
+  gpgcheck: false
+  unsafe: false
+  die-with-parent: Unset
+  new-session: Unset
+  share_all: Unset
+  share_user: Unset
+  share_cgroup: Unset
+  share_net: Unset
+  share_pid: Unset
+  share_ipc: Unset
+  share_time: Unset
+
