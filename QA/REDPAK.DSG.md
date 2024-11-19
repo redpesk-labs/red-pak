@@ -22,18 +22,75 @@ For high level requirements of *REDPAK*, see  @REDPAK.HRQ.
 for setting up isolated execution environments, the *REDNODE*s,
 and for running programs in these environements.
 
-The description of the isolated environments is made using
-configuration files in the filesystem.
+The description of the isolated environments, the *REDNODES* is
+done using configuration files in the filesystem.
 
+A *REDNODE* is intended to set an isolated environment for running programs.
+The setting of the running environment and the activation of the initial
+program is achieved by the program *REDWRAP*.
 
+*REDWRAP* uses the *out of the shelves* software component **bubblewrap**
+for setting up namespaces, capabilities and mounting items of the
+isolated filesystem.
 
+*REDPAK* also provides components allowing system's package manager
+(the couple DNF, RPM) to install items in *REDNODE* and allowing
+to safely run system's package manager inside *REDNODE*s.
+
+## REDPAK delivery
+
+### Interfaces of REDPAK delivery
+
+*REDPAK* packages's components leverage the below components:
+
+- **cyaml** is a library for reading YAML files. It is used for reading
+  configuration files of *REDNODE*s.
+
+- **bubblewrap** is a program that prepares the isolated environment
+  and runs an initial programm in it. It is used as the last stage
+  of *REDWRAP* after setting of CGROUPS and usernamespace.
+
+- **linux** is used for setting CGROUPS, namespaces and capabilities
+  environments of the launched processes.
+
+*REDPAK* package provides components used by:
+
+- **rpm** is a program installing components delivered in RPM files.
+  It uses the redpak plugin for running installation scripts
+  in isolated environement.
+
+- **red-microdnf** is a package manager. It uses *REDPAK* extension
+  to accept option for installing components in *REDNODE*s.
+
+The below figure shows interfaces of *REDPAK*:
+
+![Figure: redpak environment](assets/REDPAK-fig-interfaces.svg)
+
+### Content of REDPAK delivery
+
+The delivery is made of three subsets:
+
+- The core: **redpak-core**. It contains the tools
+  *REDCONF* and *REDWRAP* and their core libraries.
+
+- The python adaptor: **redpak-python**. It contains a python
+  interface to *REDCONF* library.
+
+- The package manager adaptor: **redpak-dnf**. It contains
+  plugins for the package manager system and the program
+  *redwrap-dnf*.
+
+The below figure shows the delivery, its components and its links
+to interfaces:
+
+![Figure: redpak delivery](assets/REDPAK-fig-redpak.svg)
 
 
 ## REDNODEs
 
 ### Nature of REDNODEs
 
-As explained in @REDPAK.OVE, a *REDNODE* is a lighweigth container.
+As explained in @REDPAK.OVE, a *REDNODE* is a lightweight container.
 As such it is made of several parts:
 
 - a configuration: that defines how the isolated environment of *REDNODE*
@@ -94,8 +151,6 @@ define specific "administrative" configuration.
 
 When administrative request is required, the administrive configuration
 is used if it exists.
-
-
 
 ## Organisation of REDNODEs
 
@@ -237,36 +292,204 @@ Settings of this file is merged to the final configuration using
 specific rules.
 
 
+## Merges rules
 
+### Merge of path like values
 
+The special environment variables **PATH** and **LD_LIBRARY_PATH**
+are merged.
 
+Merge rules:
 
+1. items of child node appear before items of its parents
+2. items of admin appear before item of normal
+3. duplication is avoided
 
 
+### Merge of environment variables
 
+Environment variables can be redefined.
+
+Merge rules:
+
+1. a normal child node can redefine an environment variable of a normal parent
+2. an admin child node can redefine an environment variable of a parent
+3. an admin value take precedence on normal
 
+Merge matrix:
 
+| PARENT | NORMAL | ADMIN | EFFECT     |
+|--------|--------|-------|------------|
+|   -    |   N    |   -   |   N
+|   P    |   -    |   -   |   P
+|   NP   |   N    |   -   |   N - WARN
+|   AP   |   N    |   -   |   AP
+|   *    |   *    |   A   |   A - WARN
 
+Legend:
 
+- -: unset,
+- *: any value,
+- N: normal definition,
+- A: admin definition
+- P: parent definition,
+- NP: normal prent definition,
+- AP: admin parent definition
+
+
+### Merge of capabilities
+
+Merge rules:
+
+1. a child node can not enable a capability disabled by a parent
+2. an admin config can enable a capability disabled by a normal node
+3. when admin is required, a child normal node can't change admin parent settings
+
+Merge matrix:
+
+| PARENT | NORMAL | ADMIN | EFFECT       |
+|--------|--------|-------|--------------|
+|   -    |   -    |   -   |   -          |
+|   -    |   0    |   -   |   0N         |
+|   -    |   1    |   -   |   1N         |
+|   -    |   *    |   0   |   0A         |
+|   -    |   *    |   1   |   1A         |
+|--------|--------|-------|--------------|
+|   0N   |   -    |   -   |   0N         |
+|   0N   |   0    |   -   |   0N         |
+|   0N   |   1    |   -   |   ERROR      |
+|   0N   |   *    |   0   |   0A         |
+|   0N   |   *    |   1   |   1A         |
+|--------|--------|-------|--------------|
+|   1N   |   -    |   -   |   1N         |
+|   1N   |   0    |   -   |   0N - WARN  |
+|   1N   |   1    |   -   |   1N - WARN  |
+|   1N   |   *    |   0   |   0A         |
+|   1N   |   *    |   1   |   1A         |
+|--------|--------|-------|--------------|
+|   0A   |   *    |   -   |   0A         |
+|   0A   |   *    |   0   |   0A - WARN  |
+|   0A   |   *    |   1   |   ERROR      |
+|--------|--------|-------|--------------|
+|   1A   |   *    |   -   |   1A         |
+|   1A   |   *    |   0   |   0A - WARN  |
+|   1A   |   *    |   1   |   1A - WARN  |
+
+Legend:
+
+- -: unset,
+- *: any value,
+- 0N: normal disabled,
+- 1N: normal enabled,
+- 0A: admin disabled,
+- 1A: admin enabled
+
+
+### Merge of exports
+
+Merge rules:
+
+1. a normal child node can redefine an export of a normal parent
+2. an admin child node can redefine an export of a parent
+
+Merge matrix:
+
+| PARENT | NORMAL | ADMIN | EFFECT     |
+|--------|--------|-------|------------|
+|   -    |   N    |   -   |   N        |
+|   P    |   -    |   -   |   P        |
+|   NP   |   N    |   -   |   N - WARN |
+|   AP   |   N    |   -   |   AP       |
+|   *    |   *    |   A   |   A - WARN |
 
+Legend:
 
+- -: unset,
+- *: any value,
+- N: normal definition,
+- A: admin definition
+- P: parent definition,
+- NP: normal parent definition,
+- AP: admin parent definition
 
 
+### Merge of Sharings
 
+Merge rules:
 
+1. a child node can not enable a sharing disabled by a parent
+2. an admin config can enable a sharing disabled by a normal node
+3. when admin is required, a child normal node can't change admin parent settings
 
+Merge matrix:
 
+| PARENT | NORMAL | ADMIN | EFFECT  |
+|--------|--------|-------|---------|
+|   -    |   -    |   -   |   -     |
+|   -    |   0    |   -   |   0N    |
+|   -    |   1    |   -   |   1N    |
+|   -    |   *    |   0   |   0A    |
+|   -    |   *    |   1   |   1A    |
+|--------|--------|-------|---------|
+|   0N   |   -    |   -   |   0N    |
+|   0N   |   0    |   -   |   0N    |
+|   0N   |   1    |   -   |   ERROR |
+|   0N   |   *    |   0   |   0A    |
+|   0N   |   *    |   1   |   1A    |
+|--------|--------|-------|---------|
+|   1N   |   -    |   -   |   1N    |
+|   1N   |   0    |   -   |   0N    |
+|   1N   |   1    |   -   |   1N    |
+|   1N   |   *    |   0   |   0A    |
+|   1N   |   *    |   1   |   1A    |
+|--------|--------|-------|---------|
+|   0A   |   *    |   -   |   0A    |
+|   0A   |   *    |   0   |   0A    |
+|   0A   |   *    |   1   |   ERROR |
+|--------|--------|-------|---------|
+|   1A   |   *    |   -   |   1A    |
+|   1A   |   *    |   0   |   0A    |
+|   1A   |   *    |   1   |   1A    |
 
+Legend:
 
+- -: unset,
+- *: any value,
+- 0N: normal disabled,
+- 1N: normal enabled,
+- 0A: admin disabled,
+- 1A: admin enabled
 
 
 
+merge of conftag
+----------------
 
+Merge rules:
 
+1. sharings are merged as sharings
+2. cgroups .....
+3. other values are set by the last item
 
+Merge matrix:
 
+| PARENT | NORMAL | ADMIN | EFFECT |
+|--------|--------|-------|--------|
+|   P    |   -    |   -   |   P    |
+|   -    |   N    |   -   |   N    |
+|   NP   |   N    |   -   |   N    |
+|   AP   |   N    |   -   |   AP   |
+|   *    |   *    |   A   |   A    |
 
+Legend:
 
+- -: unset,
+- *: any value,
+- N: normal definition,
+- A: admin definition
+- P: parent definition,
+- NP: normal prent definition,
+- AP: admin parent definition
 
 
 
@@ -281,99 +504,10 @@ specific rules.
 
 
 
-## Running commands in REDNODEs
 
 
 
-### Wrapper program for entering rednodes
 
-.REQUIREMENT
 
-*REDPACK* provides a program called *REDWRAP* that must be used for
-executing programs in a specific *REDNODE*.
-
-**MOTIVATION**:
-
-This is mandatory because this is the only way offered by linux of running
-a program in a controlled environment. The executed program naturally *inherit*
-the settings of its parents. *REDWRAP* is invoked for setting the
-restricted environment of the process to be executed.
-
-## Integration of REDPAK in DNF
-
-
-> **DRAFT**
-> REDPAK is integrated with a package manager in redpesk OS to enable
-> adding, removing and updating packages within *REDNODE*s. The nested
-> hierarchy of *REDNODE*s forbids to install in children a package
-> already installed in a parent.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Merging rules
-
-The terms below are used for explaining merging rules:
-
-- *FINAL* refers to the final configuration after merge.
-
-- *LEAF* refers to the targeted *REDNODE*.
-
-- *TARGET* refers to the appropriate configuration of the *LEAF* either
-  the normal configuration or the administrative configuration, depending
-  on the required target.
-
-- *INTERMEDIATE* is 
-
-### High level rules
-
-The principle of merging are:
-
-- normal child settings can not be weaker than normal parent settings
-
-- administrative child settings can not be weaker than administrative parent settings
-
-- administrative settings of a *REDNODE* are ...
-
-
-### Header values
-
-In the *FINAL* configuration, header values are the header values
-of the *TARGET* unchanged.
-
-
-
-### 
-
-Data of header are those of the leaf unchanged and are 
 
 

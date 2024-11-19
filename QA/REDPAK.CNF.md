@@ -1,10 +1,24 @@
-# Rednode configuration
+# REDNODE configuration
 
-Rednode configuration files fully decribe a rednode.
+*REDNODE* configuration files fully decribe a *REDNODE*.
 
-However because rednodes can be nested together in a hierarchical
-tree structure, the real excution environment of a rednode
-also include configuration of the rednodes that it belongs to, recursively.
+However because *REDNODE*s can be nested together in a hierarchical
+tree structure, the real excution environment of a *REDNODE*
+also include configuration of the *REDNODE*s that it belongs to, recursively.
+
+## Notation
+
+Configuration files are structured by the use of nested maps (or dictionnaries)
+and list of values. In the remaining of that document, the entries
+are referenced using common notation for path in such structured
+data. This chapter details that notation.
+
+In a map, the entries are referenced using dot. Then if `A`
+is a map, `A.B` is the entry in `A` of name `B`.
+
+The root of configurations is a map, then its entries
+should be noted `<ROOT>.X` but for simplicity they are
+merely noted `X` and the default root is implicit.
 
 ## Processing
 
@@ -12,17 +26,18 @@ also include configuration of the rednodes that it belongs to, recursively.
 
 .RULE REDPAK.CNF-U-VAL-YAM-FIL
 
-A rednode configuration file is a YAML encoded text file.
-Being a YAML text file has implication, it must be valid.
-This should be checked using YAML cheching tools.
+A *REDNODE* configuration file is a YAML encoded text file.
 
 Invalid YAML file must be rejected.
+
+Being a YAML text file has implication, it must be valid.
+This should be checked using YAML checking tools.
 
 ### Keys are not case sensitive
 
 .RULE REDPAK.CNF-U-KEY-ARE-NOT-CAS-SEN
 
-When parsing rednode configuration, name of sections, keys of
+When parsing *REDNODE* configuration, name of sections, keys of
 associative maps and enumerated values are processed without
 regards to the case used. So the key `Key` is the same that
 `key` or `KEY`.
@@ -54,29 +69,20 @@ configuration file invalid.
 
 ## Expansion
 
-### Expansion occurs on strings
-
-.RULE REDPAK.CNF-U-EXP-OCC-STR
-
-Expansion occurs on strings, not on numbers, boolean, or, enumerations.
-
-TODO: a really good expansion should also expand to numbers or to enumerations.
-I am not sure that it is needed here but it should at least be checked.
-The reason is to search in integration with libcyaml.
-
-### Pattern expansion character
+### Pattern expansion
 
 .RULE REDPAK.CNF-U-PAT-EXP-CHA
 
-Expansion is the replacement of expension patterns by the value resulting
-of evaluation of the replacement pattern. Within strings, patterns are starting by
-the character *dollar* (`$`, of UNICODE point 36).
+Expansion is the replacement of expansion patterns by the value resulting
+of evaluation of the replacement pattern.
+
+Expansion patterns are starting by the character *dollar* (`$`, of UNICODE point 36).
+After the *dollar*, all character being letter, digit or underscore are also
+part of the expansion pattern.
 
 When the pattern expansion character is followed by an opening bracket
 (`(`, UNICODE point 40) the replacement is a *command evaluation replacement*,
 otherwise, the replacement is a *tag replacement*.
-
-TODO: allow or not the pattern `${}`
 
 ### Escaping pattern expansion character
 
@@ -87,7 +93,11 @@ pattern expansion character is immediatyely following the escaping character
 there is no expansion and the escaping character is removed. In other words,
 writing `\$` produces `$`.
 
-TODO: The escaping character should also be escaped but it is not the case ATM.
+### Pattern expansion occurs on strings
+
+.RULE REDPAK.CNF-U-EXP-OCC-STR
+
+Expansion occurs on strings, not on numbers, boolean, or, enumerations.
 
 ### Expansion of command evaluation replacement
 
@@ -106,14 +116,6 @@ that returns the numeric identifier of user *nobody*: `65534`.
 Other example: the pattern `$(eval echo $VAR)` evaluate the shell command `eval echo $VAR`
 that returns the value of the environment variable *VAR*.
 
-TODO: is there any interest in allowing  brackets in commands?
-
-TODO: how to protect from nasty commands? what is the environment of evaluation?
-
-TODO: precise more when is the command invoked? each launch? at installation.
-
-TODO: precise if and how output is trimmed
-
 ### Expansion of tag replacement
 
 .RULE REDPAK.CNF-U-EXP-TAG-REP
@@ -129,52 +131,41 @@ before being searched.
 The tag is used for evaluation of the replacement.
 The only valid tags are:
 
-| tag                     | type        | description                                                  |
-|-------------------------|-------------|--------------------------------------------------------------|
-| `NODE_PREFIX`           | environment | ENVAL(NODE_PREFIX, )                                         |
-| `redpak_MAIN`       (*) | environment | ENVAL(redpak_MAIN, $NODE_PREFIX/etc/redpak/main.yaml)        |
-| `redpak_MAIN_ADMIN` (*) | environment | ENVAL(redpak_MAIN_ADMIN, $NODE_PREFIX/etc/redpak/main-admin.yaml) |
-| `redpak_TMPL`       (*) | environment | ENVAL(redpak_TMPL, $NODE_PREFIX/etc/redpak/templates.d)      |
-| `REDNODE_CONF`          | environment | ENVAL(REDNODE_CONF, $NODE_PATH/etc/redpak.yaml)              |
-| `REDNODE_ADMIN`         | environment | ENVAL(REDNODE_ADMIN, $NODE_PATH/etc/redpak-admin.yaml)       |
-| `REDNODE_STATUS`        | environment | ENVAL(REDNODE_STATUS, $NODE_PATH/.rednode.yaml)              |
-| `REDNODE_VARDIR`        | environment | ENVAL(REDNODE_VARDIR, $NODE_PATH/var/rpm/lib)                |
-| `REDNODE_REPODIR`       | environment | ENVAL(REDNODE_REPODIR, $NODE_PATH/etc/yum.repos.d)           |
-| `REDNODE_LOCK`          | environment | ENVAL(REDNODE_LOCK, $NODE_PATH/.rpm.lock)                    |
-| `LOGNAME`               | environment | ENVAL(LOGNAME, Unknown)                                      |
-| `HOSTNAME`              | environment | ENVAL(HOSTNAME, localhost)                                   |
-| `CGROUPS_MOUNT_POINT`   | environment | ENVAL(CGROUPS_MOUNT_POINT, /sys/fs/cgroup)                   |
-| `LEAF_ALIAS`            | environment | ENVAL(LEAF_ALIAS, #undef)                                    |
-| `LEAF_NAME`             | environment | ENVAL(LEAF_NAME, #undef)                                     |
-| `LEAF_PATH`             | environment | ENVAL(LEAF_PATH, #undef)                                     |
-| `PID`                   | pid         | the PID                                                      |
-| `UID`                   | uid         | the UID                                                      |
-| `GID`                   | gid         | the GID                                                      |
-| `TODAY`                 | date        | current date and hour                                        |
-| `UUID`                  | uuid        | new UUID                                                     |
-| `NODE_ALIAS`            | automatic   | the node alias                                               |
-| `NODE_NAME`             | automatic   | the node name                                                |
-| `NODE_PATH`             | automatic   | the node path                                                |
-| `NODE_INFO`             | automatic   | the node info                                                |
-| `REDPESK_VERSION`       | environment | ENVAL(REDPESK_VERSION, agl-redpesk9)                         |
-
-TODO: remove unexpected character from the accepted set
-
-TODO (*): tags redpak_MAIN and redpak_TMPL or given in lower case and are then
-excluded because of the current code.
-
-TODO: check definition of REDNODE_ADMIN that has a double slash in the middle.
-
-TODO: because command evaluation replacement is able to output environment
-variables it may be safe to allow tags not predefined to be replacd by the
-matching environment variable.
-
+| tag                   | type        | description                                                  |
+|-----------------------|-------------|--------------------------------------------------------------|
+| `NODE_PREFIX`         | environment | ENVAL(NODE_PREFIX, )                                         |
+| `redpak_MAIN`         | environment | ENVAL(redpak_MAIN, $NODE_PREFIX/etc/redpak/main.yaml)        |
+| `redpak_MAIN_ADMIN`   | environment | ENVAL(redpak_MAIN_ADMIN, \$NODE_PREFIX/etc/redpak/main-admin.yaml) |
+| `redpak_TMPL`         | expand      | EXPVAL(\$NODE_PREFIX/etc/redpak/templates.d)                 |
+| `REDNODE_CONF`        | expand      | EXPVAL(\$NODE_PATH/etc/redpak.yaml)                          |
+| `REDNODE_ADMIN`       | expand      | EXPVAL(\$NODE_PATH/etc/redpak-admin.yaml)                    |
+| `REDNODE_STATUS`      | expand      | EXPVAL(\$NODE_PATH/.*REDNODE*.yaml)                          |
+| `REDNODE_VARDIR`      | expand      | EXPVAL(\$NODE_PATH/var/rpm/lib)                              |
+| `REDNODE_REPODIR`     | expand      | EXPVAL(\$NODE_PATH/etc/yum.repos.d)                          |
+| `REDNODE_LOCK`        | expand      | EXPVAL(\$NODE_PATH/.rpm.lock)                                |
+| `LOGNAME`             | environment | ENVAL(LOGNAME, Unknown)                                      |
+| `HOSTNAME`            | environment | ENVAL(HOSTNAME, localhost)                                   |
+| `CGROUPS_MOUNT_POINT` | cgroup      | CGROUP(CGROUPS_MOUNT_POINT, MOUNTED, /sys/fs/cgroup)         |
+| `PID`                 | pid         | current PID                                                  |
+| `UID`                 | uid         | current UID                                                  |
+| `GID`                 | gid         | current GID                                                  |
+| `TODAY`               | date        | current date and hour                                        |
+| `UUID`                | uuid        | new UUID                                                     |
+| `LEAF_ALIAS`          | automatic   | the leaf alias                                               |
+| `LEAF_NAME`           | automatic   | the leaf name                                                |
+| `LEAF_PATH`           | automatic   | the leaf path                                                |
+| `LEAF_INFO`           | automatic   | the leaf info                                                |
+| `NODE_ALIAS`          | automatic   | the node alias                                               |
+| `NODE_NAME`           | automatic   | the node name                                                |
+| `NODE_PATH`           | automatic   | the node path                                                |
+| `NODE_INFO`           | automatic   | the node info                                                |
+| `REDPESK_VERSION`     | environment | ENVAL(REDPESK_VERSION, agl-redpesk9)                         |
 
 ### Valid root map
 
 .RULE REDPAK.CNF-U-VAL-ROO-MAP
 
-At the root of a *rednode* configuration file is a map.
+At the root of a *REDNODE* configuration file is a map.
 The content of the root map is:
 
 | name          | presence  | type     | description        |
@@ -194,9 +185,9 @@ The main entry *headers* must be a valid map with valid content as described bel
 
 | name          | presence  | type   | description             |
 |---------------|-----------|--------|-------------------------|
-| `alias`       | mandatory | string | name of the *rednode*   |
-| `name`        | optional  | string | ?                       |
-| `info`        | optional  | string | auto documentation text |
+| `alias`       | mandatory | string | name of the *REDNODE*   |
+| `name`        | optional  | string | set automatically during creation of *REDNODE* |
+| `info`        | optional  | string | documentation text |
 
 It is an error if the *alias* entry is absent.
 
@@ -206,9 +197,7 @@ It is an error if the value of *alias* is invalid.
 
 .RULE REDPAK.CNF-U-VAL-ALI
 
-????? any string
-
-TODO: validate alias name using strict rules (ex: should not have any '/', should not start with '.', ...)
+Any string is valid
 
 ### Valid environ sequence
 
@@ -236,8 +225,6 @@ It is an error if the *key* entry is absent.
 It is an error if the *value* entry is absent when the mode requires it.
 
 It is an error if the *value* entry is present when the mode does not expect it.
-
-TODO: check processing of letter's case
 
 ### Valid  mode of environ entries
 
@@ -313,9 +300,6 @@ Being optional for a *path* entry means that if the value is not given,
 the value of *mount* is used. This is a facility for reexporting items
 with restriction.
 
-TODO: rules must be better set, ATM mount is copied as path if path is missing
-but it is not always coherent.
-
 
 ### Valid config map
 
@@ -354,22 +338,6 @@ entries, all are optional:
 The type EDU is an enumeration, so a string, with 3 possible values:
 "enable", "disable", "unset".
 
-TODO: check if some values are really used (persistdir, rpmdir, cachedir, ...)
-
-TODO: review where strings are for paths
-
-TODO: validation of paths? umask? ...
-
-TODO: check real type of map-root-user, int or boolean?
-
-TODO: default value of gpgcheck is not true
-
-TODO: check if new-session, die-with-parent are boolean or not
-
-TODO: what to do of the mix between kebab (like new-session) case and snake case (like share_all)
-
-TODO: EDU mostly is on/off but unset has some meaning too (it means let the children the possibility to on/off themselves), it compensate the lack of unset feature of libcyaml
-
 ### Valid cgroups map
 
 .RULE REDPAK.CNF-U-VAL-CGR-MAP
@@ -398,8 +366,6 @@ the below entries, all are optional:
 | `mems`           | string | 
 | `cpus_partition` | string | 
 
-TODO check cpuset.cpus.exclusive for cpuset.cpus.partition
-
 ### Valid mem map of cgroups
 
 .RULE REDPAK.CNF-U-VAL-MEM-MAP-CGR
@@ -418,10 +384,6 @@ the below entries, all are optional:
 | `swap_max`  | string | 
 
 
-TODO check that oom_group is not used
-
-TODO check that low is not used
-
 ### Valid cpu map of cgroups
 
 .RULE REDPAK.CNF-U-VAL-CPU-MAP-CGR
@@ -434,8 +396,6 @@ the below entries, all are optional:
 | `weight`      | string | 
 | `weight_nice` | string | 
 | `max`         | string | 
-
-TODO check that weight_nice is not used
 
 ### Valid io map of cgroups
 
@@ -451,10 +411,6 @@ the below entries, all are optional:
 | `weight`     | string | 
 | `max`        | string | 
 
-TODO check that cost_qos is not used
-
-TODO check that cost_model is not used
-
 ### Valid pids map of cgroups
 
 .RULE REDPAK.CNF-U-VAL-PID-MAP-CGR
@@ -467,4 +423,60 @@ the below entries, all are optional:
 | `max`  | string | 
 
 
+### Valid capability entry
+
+.RULE REDPAK.CNF-U-VAL-CAP-ENT
+
+Within sequence *capabilitues* of *config*, a vamid capabilty entry
+is a map having the below entries, all are optional:
+
+| name   | presence  | type   | description                                |
+|--------|-----------|--------|--------------------------------------------|
+| `cap`  | mandatory | string | name of the capability to add or drop
+| `add`  | mandatory | integer | 0 for droping the capability, 1 for keeping it
+| `info` | optional  | string | informative text
+| `warn` | optional  | string | warning message when 
+
+The allowed 41 capability names are:
+    cap_chown,
+    cap_dac_override,
+    cap_dac_read_search,
+    cap_fowner,
+    cap_fsetid,
+    cap_kill,
+    cap_setgid,
+    cap_setuid,
+    cap_setpcap,
+    cap_linux_immutable,
+    cap_net_bind_service,
+    cap_net_broadcast,
+    cap_net_admin,
+    cap_net_raw,
+    cap_ipc_lock,
+    cap_ipc_owner,
+    cap_sys_module,
+    cap_sys_rawio,
+    cap_sys_chroot,
+    cap_sys_ptrace,
+    cap_sys_pacct,
+    cap_sys_admin,
+    cap_sys_boot,
+    cap_sys_nice,
+    cap_sys_resource,
+    cap_sys_time,
+    cap_sys_tty_config,
+    cap_mknod,
+    cap_lease,
+    cap_audit_write,
+    cap_audit_control,
+    cap_setfcap,
+    cap_mac_override,
+    cap_mac_admin,
+    cap_syslog,
+    cap_wake_alarm,
+    cap_block_suspend,
+    cap_audit_read,
+    cap_perfmon,
+    cap_bpf,
+    cap_checkpoint_restore
 

@@ -10,7 +10,7 @@
 
 .git-id($Id$)
 
-The component redpesk-labs/red-pak is here denoted as REDPAK.
+The component redpesk-labs/red-pak is here denoted as *REDPAK*.
 
 ## Overview
 
@@ -41,22 +41,23 @@ inside it isolated processes.
 
 ### REDWRAP setup isolation of processes
 
-.REQUIREMENT
+.REQUIREMENT REDPAK.HRQ-R-RED-SET-ISO-PRO
 
 The program *REDWRAP* shall setup the isolated execution environment,
-a *REDNODE*, by leveraging linux's namespaces an linux's cgroups.
+a *REDNODE*, by leveraging linux's namespaces, linux's cgroups and
+linux's capabilities.
 
 In that environment, *REDWRAP* executes an initial command (process) and
 all its forked subcommands (process).
 
 When every processes of the isolated environment are terminated,
 *REDWRAP* terminates isolated execution environment, destroying
-any artifact living in volatile area.
+any artifact living in volatile areas.
 
 
 ### REDWRAP always redefines filesystem's root
 
-.REQUIREMENT
+.REQUIREMENT REDPAK.HRQ-R-RED-ALW-RED-FIL-ROO
 
 The program *REDWRAP* shall always setup a full filesystem root
 by leveraging mount namespace.
@@ -66,7 +67,7 @@ It means that mount namespace is always setup in *REDNODE*s.
 
 ### REDWRAP mounts selected part of host's filesystem
 
-.REQUIREMENT
+.REQUIREMENT REDPAK.HRQ-R-RED-MOU-SEL-PAR-HOS-FIL
 
 Inside its fresh empty root filesystem, the program *REDWRAP*
 shall be able to mount parts of host's filesystem.
@@ -74,15 +75,15 @@ shall be able to mount parts of host's filesystem.
 
 ### REDWRAP mounts volatile area using tmpfs
 
-.REQUIREMENT
+.REQUIREMENT REDPAK.HRQ-R-RED-MOU-VOL-ARE-USI-TMP
 
 Inside its fresh empty root filesystem, the program *REDWRAP*
-shall be able to mount volatile area using tmpfs.
+shall mount volatile area using tmpfs.
 
 
 ### REDWRAP leverages all linux's namespaces
 
-.REQUIREMENT
+.REQUIREMENT REDPAK.HRQ-R-RED-LEV-ALL-LIN-NAM
 
 The program *REDWRAP* shall be able to setup isolation of *REDNODE*s for
 any namespace available in linux.
@@ -106,7 +107,7 @@ Note that *Mount* namespace is always unshared.
 
 ### REDWRAP leverages parts of cgroup
 
-.REQUIREMENT
+.REQUIREMENT REDPAK.HRQ-R-RED-LEV-PAR-CGR
 
 The program *REDWRAP* shall be able to setup for *REDNODE*s
 the below items of cgroup (v2):
@@ -128,15 +129,48 @@ the below items of cgroup (v2):
 
 ### REDWRAP manages Linux's capabilities
 
-.REQUIREMENT
+.REQUIREMENT REDPAK.HRQ-R-RED-MAN-LIN-CAP
 
-The program *REDWRAP* shall be able to drop or keep any available
-linux's capability.
-
-### REDPAK should be integrated in the package manager DNF
-
-.REQUIREMENT
-
-When the package manager DNF is managing the system, it must include
-extensions for managing (instal, remove, update, ...) components in
-*REDNODE*s.
+The program *REDWRAP* shall be able to drop or keep the following
+41 linux's capabilities:
+    cap_chown,
+    cap_dac_override,
+    cap_dac_read_search,
+    cap_fowner,
+    cap_fsetid,
+    cap_kill,
+    cap_setgid,
+    cap_setuid,
+    cap_setpcap,
+    cap_linux_immutable,
+    cap_net_bind_service,
+    cap_net_broadcast,
+    cap_net_admin,
+    cap_net_raw,
+    cap_ipc_lock,
+    cap_ipc_owner,
+    cap_sys_module,
+    cap_sys_rawio,
+    cap_sys_chroot,
+    cap_sys_ptrace,
+    cap_sys_pacct,
+    cap_sys_admin,
+    cap_sys_boot,
+    cap_sys_nice,
+    cap_sys_resource,
+    cap_sys_time,
+    cap_sys_tty_config,
+    cap_mknod,
+    cap_lease,
+    cap_audit_write,
+    cap_audit_control,
+    cap_setfcap,
+    cap_mac_override,
+    cap_mac_admin,
+    cap_syslog,
+    cap_wake_alarm,
+    cap_block_suspend,
+    cap_audit_read,
+    cap_perfmon,
+    cap_bpf,
+    cap_checkpoint_restore

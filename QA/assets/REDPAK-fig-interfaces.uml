@@ -1,0 +1,14 @@
+@startuml
+
+[redpak] --> [bubblewrap]
+[redpak] --> [linux]
+[redpak] -> [cyaml]
+
+[red-microdnf] <--> [redpak]
+[red-microdnf] -> [rpm]
+
+[rpm] --> [redpak]
+
+[bubblewrap] -> [linux]
+
+@enduml

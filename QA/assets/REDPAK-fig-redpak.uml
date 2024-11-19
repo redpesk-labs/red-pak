@@ -1,0 +1,35 @@
+@startuml
+
+component redpak {
+
+component redpak-python {
+ [redconf.so]
+}
+
+component redpak-core {
+ [redwrap] -->  [libredwrap.so]
+ [redwrap] -->  [libredconf.so]
+ [redconf] --> [libredconf.so]
+}
+
+component redpak-dnf {
+ [libredlib.so] --> [libredconf.so]
+ [redwrap-dnf] -->  [libredwrap.so]
+ [redpak.so]
+}
+
+}
+
+[rpm] --> [redpak.so]
+[redmicrodnf] --> [libredlib.so]
+[redwrap-dnf] --> [redmicrodnf] : "command\n**//manager//**"
+[redmicrodnf] -> [rpm]
+[libredconf.so] --> [cyaml]
+
+[redconf.so] --> [libredconf.so]
+
+[libredwrap.so]  --> [bubblewrap]
+[libredwrap.so]  --> [linux]
+[bubblewrap]  -> [linux]
+
+@enduml

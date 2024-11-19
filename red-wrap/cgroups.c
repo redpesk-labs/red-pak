@@ -53,16 +53,19 @@ https://docs.redpesk.bzh/docs/en/master/redpesk-os/redpak/6-Troubleshooting.html
 */
 
 /*
-distribution of cgroups for rednodes is fitting below rules:
+Distribution of cgroups for rednodes is fitting below rules:
 
-- each rednode leads to 2 cgroups: one for setting cgroup properties (S)
+- Each rednode leads to 2 cgroups: one for setting cgroup properties (S)
   and one for holding pids of the cgroup (P)
 
   The setting cgroup (S) is named following the rednode name
   followed by admin extension for admin nodes
 
   The pids cgroup (P) is child of the setting cgroup (S) and has no
-  child (restriction of cgroups)
+  child (restriction of cgroups). It is named `redpak-pids-leaf`.
+
+- In order to setup that hierarchy, at the root, there is also
+  a cgroup for holding pids.
 */
 
 typedef enum {

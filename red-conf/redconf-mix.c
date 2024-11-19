@@ -31,6 +31,11 @@
 /****************************************************************************
 * merge of path like values
 * -------------------------
+*
+* RULE:
+*  - items of child node appear before items of its parents
+*  - items of admin appear before item of normal
+*  - duplication is avoided
 ****************************************************************************/
 
 int mixPaths(const redNodeT *node, mix_get_path_cb getpath, mix_path_cb callback, void *closure)
