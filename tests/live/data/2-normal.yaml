@@ -10,6 +10,9 @@ environ:
   - key: NOTEXPANDED
     value: $NODE_ALIAS
     mode: Static
+  - key: NOTEXPANDED2
+    value: \$NODE_ALIAS
+    mode: Default
   - key: EXPANDED
     value: $NODE_ALIAS
     mode: Default

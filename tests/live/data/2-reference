@@ -4,6 +4,7 @@
 ---------------
 CMDOUTPUT=Current Working Directory = <<PWD>>
 EXPANDED=NODE-2
+NOTEXPANDED2=$NODE_ALIAS
 NOTEXPANDED=$NODE_ALIAS
 PWD=/
 SHLVL=1
