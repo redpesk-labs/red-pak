@@ -177,8 +177,9 @@ OnErrorExit:
 // loop down within all redpath nodes from a given familly
 static int RedNodesDigToRoot(const char* redpath, redNodeT *leafNode, int admin, int verbose) {
     redNodeT *childNode = leafNode;
-    char nodepath[RED_MAXPATHLEN];
+    char nodepath[RED_MAXPATHLEN + 1];
     strncpy(nodepath, redpath, RED_MAXPATHLEN);
+    nodepath[RED_MAXPATHLEN] = 0;
 
     while (1) {
 

@@ -444,6 +444,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     int idx, error;
     int pipe_fd[2];
     pid_t pid;
+    ssize_t ssz;
 
     if (cliarg->verbose)
         SetLogLevel(cliarg->verbose);
@@ -518,8 +519,12 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         /* in forked process */
         /* wait for parent to set uid/gid maps */
         close(pipe_fd[1]);
-        read(pipe_fd[0], &pid, sizeof(pid));
+        ssz = read(pipe_fd[0], &pid, sizeof(pid));
         close(pipe_fd[0]);
+        if (ssz < 0) {
+            RedLog(REDLOG_ERROR, "failed to receive sync pid: %s", strerror(errno));
+            return EXIT_FAILURE;
+        }
 
         /* unshare time nanespace if required */
         if (restate.unshare_time)
@@ -538,8 +543,13 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     /* set uid/gid maps and signal child */
     close(pipe_fd[0]);
     setuidgidmap(pid, restate.map_user_root);
-    write(pipe_fd[1], &pid, sizeof(pid));
+    ssz = write(pipe_fd[1], &pid, sizeof(pid));
     close(pipe_fd[1]);
+    if (ssz < 0) {
+        RedLog(REDLOG_ERROR, "failed to send sync pid: %s", strerror(errno));
+        kill(pid, SIGKILL);
+        goto OnErrorExit;
+    }
 
     /* wait child completion */
     waitpid(pid, &error, 0);

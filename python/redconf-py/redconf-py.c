@@ -65,25 +65,18 @@ static void resetstderr(FILE *fstderr, int error) {
     if (!error)
         goto Exit;
 
-    char *buf, *itbuf;
-    size_t size;
+    char *buf;
+    size_t size, rsz;
 
     fflush(fstderr);
     //get size of fstderr and alloc buffer
     size = ftell(fstderr);
-    buf = malloc(size);
-    itbuf = buf;
+    buf = malloc(size + 1);
 
     //reset cursor at the beginning of the FILE
     fseek(fstderr, 0, SEEK_SET);
-
-    //get stderr
-    char tmpbuf[120];
-    while (fgets(tmpbuf, 120, fstderr)) {
-        //copy stderr to buf
-        strncpy(itbuf, tmpbuf, strlen(tmpbuf));
-        itbuf += strlen(tmpbuf);
-    }
+    rsz = fread(buf, 1, size, fstderr);
+    buf[rsz] = 0;
 
     //set stderr to python exception
     PyErr_SetString(RedConfError, buf);
@@ -100,7 +93,7 @@ static PyObject *mergeconfig(PyObject *self, PyObject *args) {
     const char *redpath  = NULL;
     size_t len;
     PyObject *o = NULL;
-    FILE *fstderr;
+    FILE *fstderr = NULL;
     int error = 0;
 
     (void)self;

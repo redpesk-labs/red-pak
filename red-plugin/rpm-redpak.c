@@ -14,11 +14,11 @@
 static rpmRC redpak_scriptlet_pre(rpmPlugin plugin, const char *s_name,
                                      int type)
 {
+    int rc = chroot(".");
     (void)plugin;
     (void)s_name;
     (void)type;
-    (void)chroot(".");
-    return RPMRC_OK;
+    return rc < 0 ? RPMRC_FAIL : RPMRC_OK;
 }
 
 struct rpmPluginHooks_s redpak_hooks = {
