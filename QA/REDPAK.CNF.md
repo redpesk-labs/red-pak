@@ -1,10 +1,26 @@
 # REDNODE configuration
 
+.VERSION: 2.2.3
+
+.AUTHOR: José Bollo [IoT.bzh]
+
+.AUDIENCE: ENGINEERING
+
+.DIFFUSION: PUBLIC
+
+.git-id($Id$)
+
+## Overview
+
+For a short introduction to *REDPAK* and *REDNODE*s, see @REDPAK.OVE.
+
 *REDNODE* configuration files fully decribe a *REDNODE*.
 
-However because *REDNODE*s can be nested together in a hierarchical
-tree structure, the real excution environment of a *REDNODE*
-also include configuration of the *REDNODE*s that it belongs to, recursively.
+However because *REDNODE*s can be nested in a hierarchical
+tree structure, the real execution environment of a *REDNODE*
+also depends on configuration of the *REDNODE*s that it belongs to.
+The rule explaining how configuration of nested nodes is
+computed are explained in  @REDPAK.DSG.
 
 ## Notation
 
@@ -59,7 +75,6 @@ and result of command execution.
 The content of the configuration file must be valid
 for each rule given below in the section content.
 
-
 ### Unexpected content is not valid
 
 .RULE REDPAK.CNF-U-UNE-CON-NOT-VAL
@@ -89,7 +104,7 @@ otherwise, the replacement is a *tag replacement*.
 .RULE REDPAK.CNF-U-ESC-PAT-EXP-CHA
 
 The escaping character is the *backslash* (`\`, UNICODE point 92). When the 
-pattern expansion character is immediatyely following the escaping character
+pattern expansion character is immediately following the escaping character
 there is no expansion and the escaping character is removed. In other words,
 writing `\$` produces `$`.
 
@@ -161,11 +176,11 @@ The only valid tags are:
 | `NODE_INFO`           | automatic   | the node info                                                |
 | `REDPESK_VERSION`     | environment | ENVAL(REDPESK_VERSION, agl-redpesk9)                         |
 
-### Valid root map
+### Valid ROOT map
 
 .RULE REDPAK.CNF-U-VAL-ROO-MAP
 
-At the root of a *REDNODE* configuration file is a map.
+At its root, a *REDNODE* configuration file is a map.
 The content of the root map is:
 
 | name          | presence  | type     | description        |
@@ -197,7 +212,11 @@ It is an error if the value of *alias* is invalid.
 
 .RULE REDPAK.CNF-U-VAL-ALI
 
-Any string is valid
+An alias is a not empty string made only of character alphabetic, numeric,
+or the symbols plus (+), minus (-), underscore (_), at-sign (@), colon (:).
+
+**MOTIVATION** the characters slash, dollar, dot, backslash, number sign
+and percent sign are used for special purpose in filesystem, shell and programming l
 
 ### Valid environ sequence
 
@@ -209,7 +228,7 @@ The main entry *environ* must be a valid sequence of valid environ entries
 
 .RULE REDPAK.CNF-U-VAL-ENV-ENT
 
-Valid environ entries are maps with the entries described below:
+Valid *environ.\** entries are maps with the entries described below:
 
 | name          | presence  | type   | description                             |
 |---------------|-----------|--------|-----------------------------------------|
@@ -219,6 +238,7 @@ Valid environ entries are maps with the entries described below:
 | `info`        | optional  | string | auto documentation text                 |
 | `warn`        | optional  | string | warning message on overwriting in child |
 
+It is an error if the *mode* is present but invalid.
 
 It is an error if the *key* entry is absent.
 
@@ -230,7 +250,7 @@ It is an error if the *value* entry is present when the mode does not expect it.
 
 .RULE REDPAK.CNF-U-VAL-MOD-ENV-ENT
 
-Valid mode for environ entries are:
+Valid *environ.\*.mode* values are:
 
 | mode      | value    | description                             |
 |-----------|----------|-----------------------------------------|
@@ -253,7 +273,7 @@ The main entry *exports* must be a valid sequence of valid export entries.
 
 .RULE REDPAK.CNF-U-VAL-EXP-ENT
 
-Valid export entries are maps with the entries described below:
+Valid *exports.\** entries are maps with the entries described below:
 
 | name    | presence  | type   | description                             |
 |---------|-----------|--------|-----------------------------------------|
@@ -264,6 +284,8 @@ Valid export entries are maps with the entries described below:
 | `warn`  | optional  | string | warning message on overwriting in child |
 
 It is an error if the *mode* entry is absent.
+
+It is an error if the *mode* is invalid.
 
 It is an error if the *mount* entry is absent.
 
@@ -276,7 +298,7 @@ It is an error if the *path* entry is present when the mode does not expect it.
 
 .RULE REDPAK.CNF-U-VAL-MOD-EXP-ENT
 
-Valid mode for export entries are:
+Valid *exports.\*.mode* values are:
 
 | mode                | path     | description                             |
 |---------------------|----------|-----------------------------------------|
@@ -294,8 +316,8 @@ Valid mode for export entries are:
 | `Tmpfs`             | ignored  | mounts at 'mount' a new tmpfs file system |
 | `Procfs`            | ignored  | mounts at 'mount' a new procfs file system |
 | `Devfs`             | ignored  | mounts at 'mount' a new devfs file system |
-| `Mqueue`            | ignored  |       |
-| `Lock`              | ignored  |       |
+| `Mqueue`            | ignored  | mounts at 'mount' a new devfs file system |
+| `Lock`              | ignored  | locks the file 'mount' |
 
 Being optional for a *path* entry means that if the value is not given,
 the value of *mount* is used. This is a facility for reexporting items
@@ -343,8 +365,8 @@ The type EDU is an enumeration, so a string, with 3 possible values:
 
 .RULE REDPAK.CNF-U-VAL-CGR-MAP
 
-Within main *config* map, the map *cgroups* must have
-the below entries, all are optional:
+The map *config.cgroups* must have the below entries, all are optional,
+all are map:
 
 | name     | type   | description             |
 |----------|--------|-------------------------|
@@ -354,130 +376,136 @@ the below entries, all are optional:
 | `io`     | io     | I/O limitations         |
 | `pids`   | pids   | pids limitations        |
 
+Configuration content of cgroups entries is documented in
+linux kernel documentation page [Control Group v2][1].
+
 ### Valid cpuset map of cgroups
 
 .RULE REDPAK.CNF-U-VAL-CPUSET-MAP-CGR
 
-Within map *cgroups* of *config*, the entry *cpuset*  must have
-the below entries, all are optional:
+The map *config.cgroups.cpuset*  must have at least one of the below entries, all are optional:
 
 | name             | type   | description                                |
 |------------------|--------|--------------------------------------------|
-| `cpus`           | string | 
-| `mems`           | string | 
-| `cpus_partition` | string | 
+| `cpus`           | string | Lists of requested CPUs
+| `mems`           | string | Lists of requested memory nodes
+| `cpus_partition` | string | One of: member, root or isolated
 
 ### Valid mem map of cgroups
 
 .RULE REDPAK.CNF-U-VAL-MEM-MAP-CGR
 
-Within map *cgroups* of *config*, the entry *mem*  must have
-the below entries, all are optional:
+The map *config.cgroups.mem*  must have at least one of the below entries, all are optional:
 
 | name        | type   | description                                |
 |-------------|--------|--------------------------------------------|
-| `max`       | string | 
-| `high`      | string | 
-| `min`       | string | 
-| `low`       | string | 
-| `oom_group` | string | 
-| `swap_high` | string | 
-| `swap_max`  | string | 
+| `min`       | string | Minimal memory allocated to the cgroup
+| `max`       | string | Maximal memory over wich OOM kill is sent
+| `high`      | string | Memory usage throttle limit
+| `swap_high` | string | Swap usage throttle limit
+| `swap_max`  | string | Swap usage hard limit
+| `low`       | string | Ignored (valid entry but no effect)
+| `oom_group` | string | Ignored (valid entry but no effect)
 
 
 ### Valid cpu map of cgroups
 
 .RULE REDPAK.CNF-U-VAL-CPU-MAP-CGR
 
-Within map *cgroups* of *config*, the entry *cpu*  must have
-the below entries, all are optional:
+The map *config.cgroups.cpu*  must have at least one of the below entries, all are optional:
 
 | name          | type   | description                                |
 |---------------|--------|--------------------------------------------|
-| `weight`      | string | 
-| `weight_nice` | string | 
-| `max`         | string | 
+| `weight`      | string | Schedule weight of the process
+| `max`         | string | Maximum CPU bandwidth
+| `weight_nice` | string | Ignored (use weight instead)
 
 ### Valid io map of cgroups
 
 .RULE REDPAK.CNF-U-VAL-IO-MAP-CGR
 
-Within map *cgroups* of *config*, the entry *cpuset*  must have
-the below entries, all are optional:
+The map *config.cgroups.io*  must have at least one of the below entries, all are optional:
 
 | name         | type   | description                                |
 |--------------|--------|--------------------------------------------|
-| `cost_qos`   | string | 
-| `cost_model` | string | 
-| `weight`     | string | 
-| `max`        | string | 
+| `weight`     | string | Weight of the I/O
+| `max`        | string | BPS and IOPS based IO limit
+| `cost_qos`   | string | Ignored (valid entry but no effect)
+| `cost_model` | string | Ignored (valid entry but no effect)
 
 ### Valid pids map of cgroups
 
 .RULE REDPAK.CNF-U-VAL-PID-MAP-CGR
 
-Within map *cgroups* of *config*, the entry *cpuset*  must have
-the below entries, all are optional:
+The map *config.cgroups.pids*  must have one entry exactly:
 
 | name   | type   | description                                |
 |--------|--------|--------------------------------------------|
-| `max`  | string | 
+| `max`  | string | Hard limit of number of processes          |
 
 
 ### Valid capability entry
 
 .RULE REDPAK.CNF-U-VAL-CAP-ENT
 
-Within sequence *capabilitues* of *config*, a vamid capabilty entry
-is a map having the below entries, all are optional:
+Within sequence *config.capabilities[*]*, a valid capability entry
+is a map having the below entries:
 
-| name   | presence  | type   | description                                |
-|--------|-----------|--------|--------------------------------------------|
-| `cap`  | mandatory | string | name of the capability to add or drop
+| name   | presence  | type    | description                                |
+|--------|-----------|---------|--------------------------------------------|
+| `cap`  | mandatory | string  | name of the capability to add or drop
 | `add`  | mandatory | integer | 0 for droping the capability, 1 for keeping it
-| `info` | optional  | string | informative text
-| `warn` | optional  | string | warning message when 
+| `info` | optional  | string  | informative text
+| `warn` | optional  | string  | warning message when 
 
-The allowed 41 capability names are:
-    cap_chown,
-    cap_dac_override,
-    cap_dac_read_search,
-    cap_fowner,
-    cap_fsetid,
-    cap_kill,
-    cap_setgid,
-    cap_setuid,
-    cap_setpcap,
-    cap_linux_immutable,
-    cap_net_bind_service,
-    cap_net_broadcast,
-    cap_net_admin,
-    cap_net_raw,
-    cap_ipc_lock,
-    cap_ipc_owner,
-    cap_sys_module,
-    cap_sys_rawio,
-    cap_sys_chroot,
-    cap_sys_ptrace,
-    cap_sys_pacct,
-    cap_sys_admin,
-    cap_sys_boot,
-    cap_sys_nice,
-    cap_sys_resource,
-    cap_sys_time,
-    cap_sys_tty_config,
-    cap_mknod,
-    cap_lease,
-    cap_audit_write,
-    cap_audit_control,
-    cap_setfcap,
-    cap_mac_override,
-    cap_mac_admin,
-    cap_syslog,
-    cap_wake_alarm,
-    cap_block_suspend,
-    cap_audit_read,
-    cap_perfmon,
-    cap_bpf,
-    cap_checkpoint_restore
+Beside the 41 capability names listed below, the special capability **ALL**
+is also accepted for selecting all capabilities.
 
+All capability names are insensitive to the case.
+
+
+| name                     | description                                  |
+|--------------------------|----------------------------------------------|
+| *cap_audit_control*      | Enable and disable kernel auditing           |
+| *cap_audit_read*         | Allow reading the audit                      |
+| *cap_audit_write*        | Write records to kernel auditing             |
+| *cap_block_suspend*      | Can block system suspend                     |
+| *cap_bpf*                | Employ privileged BPF operations             |
+| *cap_checkpoint_restore* | Checkpoint/restore functionality             |
+| *cap_chown*              | Arbitrary changes to file UIDs and GIDs      |
+| *cap_dac_override*       | Bypass file permission                       |
+| *cap_dac_read_search*    | Bypass file read permission                  |
+| *cap_fowner*             | Bypass  permission checks                    |
+| *cap_fsetid*             | Don't clear set-user-ID and set-group-ID     |
+| *cap_ipc_lock*           | Lock memory                                  |
+| *cap_ipc_owner*          | Bypass permission checks on IPC objects      |
+| *cap_kill*               | Bypass permission checks for sending signals |
+| *cap_lease*              | Establish leases on arbitrary files          |
+| *cap_linux_immutable*    | Set FS_APPEND_FL and FS_IMMUTABLE_FL         |
+| *cap_mac_admin*          | Allow MAC configuration                      |
+| *cap_mac_override*       | Override Mandatory Access Control            |
+| *cap_mknod*              | Create special files                         |
+| *cap_net_admin*          | Various network-related                      |
+| *cap_net_bind_service*   | Bind socket to privileged ports              |
+| *cap_net_broadcast*      | (Unused)                                     |
+| *cap_net_raw*            | Use RAW and PACKET sockets                   |
+| *cap_perfmon*            | Employ various performance-monitoring        |
+| *cap_setfcap*            | Set arbitrary capabilities on a file         |
+| *cap_setgid*             | Manipulations of process GIDs                |
+| *cap_setpcap*            | Add any capability                           |
+| *cap_setuid*             | Manipulations of process UIDs                |
+| *cap_sys_admin*          | Many admin features                          |
+| *cap_sys_boot*           | Use reboot                                   |
+| *cap_sys_chroot*         | Use chroot, change mount namespaces          |
+| *cap_sys_module*         | Load and unload kernel modules               |
+| *cap_sys_nice*           | Scheduling and affinity                      |
+| *cap_sys_pacct*          | Use acct                                     |
+| *cap_sys_ptrace*         | Trace arbitrary processes                    |
+| *cap_sys_rawio*          | Perform I/O port operations                  |
+| *cap_sys_resource*       | Use reserved space                           |
+| *cap_sys_time*           | Set system clock                             |
+| *cap_sys_tty_config*     | Use vhangup and various privileged ioctl     |
+| *cap_syslog*             | Perform privileged syslog                    |
+| *cap_wake_alarm*         | Trigger system wake up                       |
+
+[1]: https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html

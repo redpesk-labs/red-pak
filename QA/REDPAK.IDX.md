@@ -8,10 +8,10 @@
 - SECURITY: Clément Bénier
 - DESIGN: Fulup Ar Foll
 - IMPLEMENTATION: Clément Bénier
-- TEST: Clément Bénier
+- TEST: Clément Bénier, José Bollo
 - MAINTAINANCE: Clément Bénier
 
-### Specifications
+### Documents
 
 - @REDPAK.IDX: **This index**
 - @REDPAK.OVE: **Overview of RED-PAK**

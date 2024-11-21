@@ -2,7 +2,7 @@
 
 component redpak {
 
-component redpak-python {
+component python3-redconf {
  [redconf.so]
 }
 

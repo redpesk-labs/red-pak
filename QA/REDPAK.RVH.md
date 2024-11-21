@@ -1,5 +1,7 @@
 # Review history of redpesk-labs/red-pak
 
+.git-id($Id$)
+
 ## Final reviews
 
 -----------------------------------------------------------

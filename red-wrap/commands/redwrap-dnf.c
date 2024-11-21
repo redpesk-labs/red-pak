@@ -166,7 +166,6 @@ static int _exec_bwrap(int argc, char *argv[], int position) {
     return redwrapExecBwrap(subargv[0], cliarg, argcount, subargv);
 }
 
-
 /**
  * @brief execute redwrap-dnf command according arguments
  * 

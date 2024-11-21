@@ -1,0 +1,29 @@
+@startuml
+
+object "<ROOT>" as ROOT
+object "redpak-pids-leaf" as root_pid 
+object "node-a.admin" as nodea
+object "redpak-pids-leaf" as nodea_pid
+object "node-b" as nodeb
+object "redpak-pids-leaf" as nodeb_pid
+object "node-c.admin" as nodec
+object "redpak-pids-leaf" as nodec_pid
+
+ROOT -- nodea
+nodea -- nodeb
+nodeb -- nodec
+ROOT -- root_pid
+nodea -- nodea_pid
+nodeb -- nodeb_pid
+nodec -- nodec_pid
+
+nodea : controllers...
+nodeb : controllers...
+nodec : controllers...
+
+root_pid : pids
+nodea_pid : pids
+nodeb_pid : pids
+nodec_pid : pids
+
+@enduml

@@ -20,7 +20,7 @@ For high level requirements of *REDPAK*, see  @REDPAK.HRQ.
 
 *REDPAK* is a set of programs and plugins providing facilities
 for setting up isolated execution environments, the *REDNODE*s,
-and for running programs in these environements.
+and for running programs in these environments.
 
 The description of the isolated environments, the *REDNODES* is
 done using configuration files in the filesystem.
@@ -73,12 +73,12 @@ The delivery is made of three subsets:
 - The core: **redpak-core**. It contains the tools
   *REDCONF* and *REDWRAP* and their core libraries.
 
-- The python adaptor: **redpak-python**. It contains a python
-  interface to *REDCONF* library.
-
 - The package manager adaptor: **redpak-dnf**. It contains
-  plugins for the package manager system and the program
+  plugins for the package manager system and for the program
   *redwrap-dnf*.
+
+- The python adaptor: **python3-redconf**. It contains a python
+  interface to *REDCONF* library.
 
 The below figure shows the delivery, its components and its links
 to interfaces:
@@ -118,16 +118,16 @@ files of the filesystem.
 
 Having rednode configuration in an extra database adds a database
 component that (1) is a failure point (2) is a contention point
-(3) complicates administrating and debugging.
+(3) complicates administration and debugging.
 
 ### Structure of a REDNODE
 
 A *REDNODE* is a directory containing the following items:
 
 - a *REDNODE* status file named `.rednode.yaml` tagging the directory as a *REDNODE*
-- a configuration directory name `etc`
+- a configuration directory named `etc`
 - a *REDNODE* configuration file for normal operations named `etc/redpak.yaml`
-- optionally, a *REDNODE* configuration file for administrative operations named `etc/redpak-admin.yaml`
+- *optionally*, a *REDNODE* configuration file for administrative operations named `etc/redpak-admin.yaml`
 
 The below figure summarizes that structure, **BASE** being the *root* directory
 of a *REDNODE*.
@@ -152,60 +152,75 @@ define specific "administrative" configuration.
 When administrative request is required, the administrive configuration
 is used if it exists.
 
+### Other content of a rednode
+
+The **BASE** directory of a *REDNODE* is indexed by *$NODE_PATH* or
+*$LEAF_PATH* in configuration files.
+
+It contains contains at least the configuration of the *REDNODE*.
+
+It should also contains content specific to the *REDNODE* in a directory
+mounted in the *REDNODE*. For example, default configuration files are using
+the directory *$NODE_PATH/private*.
+
 ## Organisation of REDNODEs
 
-Usage analysis shows the need to be able to group isolated environments.
-Here are below 2 simple cases:
+Usage analysis shows the need to be able to group *REDNODE*s.
 
 ### Layered and merged configuration
 
 Setting up the configuration of an isolated environment, a *REDNODE*,
-is an engineering process that can be achieved using different ways
-including the below one:
+is an engineering process that can be achieved using different methods
+comprising the below ones:
 
-1. Start with an empty environment and try to execute the targeted
+1. Start with an empty *REDNODE* and try to execute the targeted
    execution processes in it. When a part of the system is missing,
-   check it and if it is really needed add it in the isolated
-   environment and then iterate.
+   check it if it' i's really needed. If so, add it to the *REDNODE*
+   configuration and then iterate.
 
 2. After analyzing the real needs of the executed processes, set
    the configuration and magically it works.
 
-3. Starting from a full featured environment, drop any features that
-   design requirements express to be dropped. The processed executed
-   in it are restricted as expected.
+3. Starting from a full featured *REDNODE*, drop any features that
+   design requirements express to be dropped. Processes executed
+   in the *REDNODE* are restricted as expected.
 
-4. Knowing a catalog of existing isolation environment, choose the
-   one that best fits the requirements and use it as isolated environment
-   setting.
+4. Knowing a catalog of existing *REDNODE*, choose the
+   one that best fits the requirements and use its setting as initial
+   *REDNODE* setting.
 
 The fourth solution is one of the most convenient, but to make it really
 usable, at least two features should be added altogether:
 
-- It should be possible to tune the basis setting to improve it.
+- It should be possible to tune the template setting used initially to improve it.
 
-- It should be possible to change the basis environment (for example for refinement
-  or bug fix) in such way that it applies to all *REDNODE*s based on it.
+- It should be possible to change the template setting used initially 
+  in such way that it applies to all *REDNODE*s based on it (for example
+  for refinement or bug fix).
 
-These concerns lead to concepts of layered and merge configurations.
+These concerns lead to concepts of layered and merge configurations:
+instead of copying the initial template setttings, build on it and when
+it changes, its children benefit of the changes.
 
 ### Grouping REDNODEs
 
 Isolating processes is very convenient but processes should sometime
 share data or communicate together. It is sometime interesting to
-define groups of processes working together but separated and isolated
+define groups of processes working togetherbut separated and isolated
 each another.
 
 The sames concepts of layered and merged configuration can also serve the
 purpose.
 
 In that case, the group shares a common configuration that isolates
-the group from the rest of the system and each separate process of the
-group refine that configuration to isolate itself from the other processes
+the group from the rest of the system but shares a same common area
+for file or memory data and for services. Each separate process of the
+group refines its configuration to isolate itself from the other processes
 of the group.
 
 ### REDNODE layered hierarchy is in filesystem
 
+.REQUIREMENT REDPAK.DSG-R-RED-LAY-HIE-FIL
 Filesystems implement directories as a tree structure. That tree
 structure is used for implementing *REDNODE* layered structure.
 
@@ -253,6 +268,8 @@ A child *REDNODE* can also be a parent *REDNODE*.
 
 ### REDNODE's configuration files are YAML
 
+.REQUIREMENT REDPAK.DSG-R-RED-CON-FIL-ARE-YAM
+
 The configuration files of *REDNODE*s are YAML files.
 
 **MOTIVATION**:
@@ -275,10 +292,6 @@ In other words, the final configuration of a *REDNODE* is
 the merge of its configuration and the configuration of all
 its parent *REDNODE*s.
 
-The final configuration of a *REDNODE* can be dumped
-as a YAML. This YAML file should be a valid *REDNODE*
-configuration file.
-
 
 ### Final administrative configuration of REDNODEs
 
@@ -287,14 +300,72 @@ Administrative configuration is used by default when installing
 packages in *REDNODE*s.
 
 Administrative configuration is set in a specific configuration
-file in *REDNODE*s: `etc/redpak-admin.yaml`.
+file in *REDNODE*s: `$NODE_PATH/etc/redpak-admin.yaml`.
 Settings of this file is merged to the final configuration using
 specific rules.
 
+## Management CGROUP for red nodes
+
+When CGROUP configuration is given, *REDWRAP* tries to apply the required
+settings for the *REDNODE* in the CGROUP hirarchy. It can only be done if
+*REDWRAP* has enough right to achieve that job.
+
+This job must take care of the [no internal process constraint][1].
+
+For being able to escape from the root cgroup (the cgroup
+holding the *REDWRAP* or, alternatively, the cgrouo path set for
+configuration key **config.cgrouproot**), that "root" cgroup should
+not contain any PIDS. It implies that processes of that root group
+if existing should be moved in a special child cgroup intended to
+hold processes. *REDWRAP* firstly ensure it. The special cgroup is named
+`redpak-pids-leaf`.
+
+Then, for each *REDNODE* of the hierarchy, starting with the root ancestor
+and finishing with the target *REDNODE*, two cgroups are created: one for
+setting controlers with required configuration, designated below as *CONTROL*,
+and one cgroup, child of *CONTROL*, for holding pids, designated below as *PID*.
+
+Cgroups *PID* are all named `redpak-pids-leaf`. They are only used to
+hold PIDs of processes.
+
+Cgroups *CONTROL*, are named after *alias* name of *REDNODE*s and nature of
+the configuration: normal or administrative. Cgroups for normal configuration
+are named *ALIAS*. Cgroups for administrative configuration are named
+*ALIAS.admin*. These cgroups are used for setting the configuration of
+the controllers as required by configuration files.
+
+*REDWRAP* also try to activates the expected controllers by applying
+recursively requests on controllers (see [controlling-controllers][2])
+
+The figure below shows cgroup hierarchy for 3 nodes in administrative
+configuration:
+
+![Figure: cgroup hierarchy](assets/REDPAK-fig-cgroups.svg)
+
+In the above figure, because the *REDNODE* *node-b* has no admin configuration,
+is not represented by a CGROUP admin. But it is distinct from normal *node-b*
+*REDNODE* instances that are in CGROUP `<ROOT>/node-a/node-b`, not in
+`<ROOT>/node-a.admin/node-b`.
 
 ## Merges rules
 
+When hierarchy of *REDNODE*s is used, the merging rules defined below
+are used to compute the settings to apply to *REDNODE*s based on the content
+of the configuration files.
+
+The rules are grouped in categories:
+
+- Merge of path like values: for `config.path` and `config.ldpath` items
+- Merge of environment variables: for `environ[*]` items
+- Merge of capabilities: for `config.capabilities[*]` items
+- Merge of exports: for `exports[*]` items
+- Merge of Sharings: for `config.share_(all|user|cgroup|net|pid|ipc|time)` items
+- Merge of cgroups: for `config.cgroups.*` items
+- Merge of other configuration items
+
 ### Merge of path like values
+
+This chapter describe the merge of `config.path` and `config.ldpath` items.
 
 The special environment variables **PATH** and **LD_LIBRARY_PATH**
 are merged.
@@ -307,6 +378,8 @@ Merge rules:
 
 
 ### Merge of environment variables
+
+This chapter describe the merge of  `environ[*]` items.
 
 Environment variables can be redefined.
 
@@ -338,6 +411,8 @@ Legend:
 
 
 ### Merge of capabilities
+
+This chapter describe the merge of `config.capabilities[*]` items.
 
 Merge rules:
 
@@ -387,6 +462,8 @@ Legend:
 
 ### Merge of exports
 
+This chapter describe the merge of exports[*]` items.
+
 Merge rules:
 
 1. a normal child node can redefine an export of a normal parent
@@ -413,7 +490,9 @@ Legend:
 - AP: admin parent definition
 
 
-### Merge of Sharings
+### Merge of sharings
+
+This chapter describe the merge of `config.share_(all|user|cgroup|net|pid|ipc|time)` items.
 
 Merge rules:
 
@@ -460,15 +539,31 @@ Legend:
 - 0A: admin disabled,
 - 1A: admin enabled
 
+### Merge of cgroups
+
+This chapter describe the merge of `config.cgroups.*` items.
+
+Implementation of cgroups leverage the hierarchy offered by
+linux's cgroups. For *REDNODES*, it means that the merge
+is achieved by linux kernel composition of cgroups.
+
+For one node, the merge is meaningful only for the configuration
+administrative versus normal using the below rules:
+
+1. normal nodes only apply normal configuration
+2. normal nodes apply merge of admin and normal configuration
+3. admin configuration override normal configuration
 
 
-merge of conftag
-----------------
+
+### Merge of other configuration items
+
+This chapter describe the merge of other `config.*` items.
 
 Merge rules:
 
 1. sharings are merged as sharings
-2. cgroups .....
+2. cgroups are merged as cgroups
 3. other values are set by the last item
 
 Merge matrix:
@@ -494,20 +589,6 @@ Legend:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+[1]: https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#no-internal-process-constraint
+[2]: https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#controlling-controllers
 

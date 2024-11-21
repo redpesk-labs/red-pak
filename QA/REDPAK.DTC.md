@@ -12,6 +12,8 @@
 
 .git-id($Id$)
 
+The component redpesk-labs/red-pak is here denoted as *REDPAK*.
+
 This document list the tests ensuring conformance to design
 of *REDPAK* (@REDPAK.DSG) are fulfilled.
 
@@ -53,11 +55,15 @@ Invalid YAML file is rejected.
 
 .REQUIRED-BY @REDPAK.CNF-U-VAL-YAM-FIL
 
+.REQUIRED-BY @REDPAK.DSG-R-RED-CON-FIL-ARE-YAM
+
 #### Valid YAML is accepted
 
 .TEST-CASE  test-conf-2
 
 Valid YAML file is Accepted.
+
+.REQUIRED-BY @REDPAK.DSG-R-RED-CON-FIL-ARE-YAM
 
 .REQUIRED-BY @REDPAK.CNF-U-VAL-YAM-FIL
 
@@ -102,6 +108,21 @@ A minimal configuration is given, it must be accepted.
 
 .REQUIRED-BY @REDPAK.CNF-U-CON-MUS-BE-VAL
 
+#### Valid characters of alias
+
+.TEST-CASE  test-conf-6
+
+Valid characters of aliases must be accepted.
+
+.REQUIRED-BY @REDPAK.CNF-U-VAL-ALI
+
+#### Invalid characters of alias
+
+.TEST-CASE  test-conf-7
+
+Invalid characters of aliases are rejected.
+
+.REQUIRED-BY @REDPAK.CNF-U-VAL-ALI
 
 ### Basic tests
 
@@ -235,6 +256,13 @@ This leads to a total of 293 meaningful pairs.
 
 See Appendice A for details.
 
+#### Example of private export in hierarchy
+
+.TEST-CASE export-private-A__export-private-A
+
+.REQUIRED-BY @REDPAK.DSG-R-RED-LAY-HIE-FIL
+
+
 ### Live tests
 
 .TEST-CASE REDPAK.DTC-T-LIV-TES
@@ -294,6 +322,8 @@ For this reason, *busybox* is the only thing installed in the node.
 
 .REQUIRED-BY @REDPAK.HRQ-R-RED-SET-ISO-PRO
 
+.REQUIRED-BY @REDPAK.HRQ-R-RED-LEV-ALL-LIN-NAM
+
 #### Variables are set and expanded
 
 .TEST-CASE setting-of-variables
@@ -329,6 +359,8 @@ Displays the content and the environment.
 .REQUIRED-BY @REDPAK.CNF-U-VAL-MOD-EXP-ENT
 
 .REQUIRED-BY @REDPAK.CNF-U-VAL-ENV-ENT
+
+.REQUIRED-BY @REDPAK.HRQ-R-RED-LEV-ALL-LIN-NAM
 
 #### Can execute a script
 
@@ -377,12 +409,14 @@ Displays mounts and content of /bin
 
 .REQUIRED-BY @REDPAK.HRQ-R-RED-MOU-VOL-ARE-USI-TMP
 
+.REQUIRED-BY @REDPAK.HRQ-R-RED-LEV-ALL-LIN-NAM
+
 
 #### Memory coercion
 
 .TEST-CASE mem-max
 
-check that setting config.cgroup.mem.max works
+Check that setting config.cgroup.mem.max works
 
 .REQUIRED-BY @REDPAK.CNF-U-VAL-MEM-MAP-CGR
 
@@ -393,7 +427,7 @@ check that setting config.cgroup.mem.max works
 
 .TEST-CASE pids-max
 
-check that setting config.cgroup.pids.max works
+Check that setting config.cgroup.pids.max works
 
 .REQUIRED-BY @REDPAK.CNF-U-VAL-PID-MAP-CGR
 
@@ -403,12 +437,29 @@ check that setting config.cgroup.pids.max works
 
 .TEST-CASE cpu-max
 
-check that setting config.cgroup.cpu.max works
+Check that setting config.cgroup.cpu.max works
 
 .REQUIRED-BY @REDPAK.CNF-U-VAL-CPU-MAP-CGR
 
 .REQUIRED-BY @REDPAK.HRQ-R-RED-LEV-PAR-CGR
 
+#### Capabilities settings
+
+.TEST-CASE capabilities1
+
+Check first range of capabilities
+
+.REQUIRED-BY @REDPAK.HRQ-R-RED-MAN-LIN-CAP
+
+.REQUIRED-BY @REDPAK.CNF-U-VAL-CAP-ENT
+
+.TEST-CASE capabilities2
+
+Check second range of capabilities
+
+.REQUIRED-BY @REDPAK.HRQ-R-RED-MAN-LIN-CAP
+
+.REQUIRED-BY @REDPAK.CNF-U-VAL-CAP-ENT
 
 ## Appendice A - Basic test details
 

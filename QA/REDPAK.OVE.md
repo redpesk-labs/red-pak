@@ -2,6 +2,14 @@
 
 .VERSION: 2.2.3
 
+.AUTHOR: José Bollo [IoT.bzh]
+
+.AUDIENCE: ALL
+
+.DIFFUSION: PUBLIC
+
+.git-id($Id$)
+
 The component redpesk-labs/red-pak is here denoted as *REDPAK*.
 
 ## Overview
@@ -15,7 +23,7 @@ embedded applications.
 Within *REDPAK*, the term *REDNODE* refers to a named execution
 environment defined by a configuration file. A *REDNODE* might
 have private data or data shared with other parts of the system,
-including *REDNODE*s. In other words, a *REDNODE* is a light container.
+including other *REDNODE*s. In other words, a *REDNODE* is a light container.
 
 Within *REDPAK*, *REDNODE*s can be nested in a simple hierarchical way
 where one *REDNODE*, called the *child*, is setup on top of one other
@@ -37,12 +45,12 @@ actions for running applications in that isolated environment,
 that *REDNODE*.
 
 In its implementation, *REDWRAP* uses the software component *bubblewrap*
-whose binary is named *bwrap*.
+(whose binary is named *bwrap*) and the library *cyaml*.
 
-## Main use case
+## Main use cases
 
 *REDPAK* is primarily intended to reenforce the security offered
-by redpesk framework by strictly controlling execution environment
+by redpesk framework by more strictly controlling execution environment
 of applications.
 
 This allows to run untrusted or poorly trusted applications
@@ -52,3 +60,7 @@ Consequently, when an application is running in a *REDNODE*,
 the main component to audit for proving trust is not the
 application by itself but the configuration given to *REDPAK*
 that defines granted authorizations.
+
+*REDPAK* can also be used for deploying different versions of libraries
+and applications in separated environments. Such behaviour can be
+useful for smooth upgrades.
