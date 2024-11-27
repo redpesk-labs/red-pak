@@ -38,14 +38,6 @@ int RwrapValidateNode (redNodeT *node, int unsafe) {
     // if not in force mode do further sanity check
     if (!(unsafe || configN->conftag.unsafe)) {
 
-        unsigned long epocms =RedUtcGetTimeMs();
-
-        // check it was not updated in the future
-        if (epocms < statusN->timestamp) {
-            RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] is older that it's parent [require 'dnf red-update' or --force] nodepath=%s", configN->headers.alias, node->redpath);
-            return 1;
-        }
-
         // check node was not moved from one family to an other
         if (!RedConfIsSameFile(node->redpath, statusN->realpath)) {
             RedLog(REDLOG_ERROR, "*** ERROR: Node [%s] was moved [require 'dnf red-update' or --force] nodepath=%s", configN->headers.alias, statusN->realpath);
