@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export INHERITED="this is an inherited value"
+
 tap=true
 test "$1" = "notap" && tap=false
 

@@ -88,3 +88,5 @@ environ:
   - key: REDPESK_VERSION
     value: IGNORE($REDPESK_VERSION)
     mode: Default
+  - key: INHERITED
+    mode: Inherit

@@ -1,5 +1,6 @@
 CGROUPS_MOUNT_POINT=(/sys/fs/cgroup)
 HOSTNAME=(localhost)
+INHERITED=this is an inherited value
 LEAF_ALIAS=(NODE-5)
 LEAF_PATH=(/tmp/rpak-livetest/rnod5)
 NODE_ALIAS=(NODE-5)
