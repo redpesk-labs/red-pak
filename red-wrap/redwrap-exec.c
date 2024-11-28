@@ -135,6 +135,10 @@ static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar,
         ADD2(restate, "--unsetenv", key);
         break;
 
+    case RED_CONFVAR_INHERIT:
+        ADD3(restate, "--setenv", key, secure_getenv(key) ?: "");
+        break;
+
     default:
         break;
     }

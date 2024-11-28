@@ -238,6 +238,7 @@ Valid mode for environ entries are:
 | `Static`  | required | the variable is set with the value      |
 | `Default` | required | the variable is set with the value after expansion |
 | `Execfd`  | required | the value is a shell command, the variable is set with the output of that command |
+| `Inherit` | no       | the variable is set from its value      |
 
 It is an error if the mode is not one of the above value.
 

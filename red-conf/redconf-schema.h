@@ -166,6 +166,8 @@
         RED_CONFVAR_EXECFD,
         /** remove mode: unset the variable */
         RED_CONFVAR_REMOVE,
+        /** inherit mode: set variable from environment */
+        RED_CONFVAR_INHERIT,
     }
     redVarEnvFlagE;
 

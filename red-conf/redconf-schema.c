@@ -218,6 +218,7 @@ static const cyaml_strval_t redVarEnvStrings[] = {
     {"Execfd",   RED_CONFVAR_EXECFD},
     {"Default",  RED_CONFVAR_DEFLT},
     {"Remove",   RED_CONFVAR_REMOVE},
+    {"Inherit",  RED_CONFVAR_INHERIT},
 };
 
 // mounting point label+path

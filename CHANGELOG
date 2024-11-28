@@ -1,3 +1,8 @@
+Version 2.3.1 (2024/11/28)
+
+ - Remove check of status's date
+ - Add inherit mode for environment variables
+
 Version 2.3.0 (2024/11/18)
 
  - fix of cgroup management
