@@ -312,11 +312,23 @@ static int set_one_capability(redwrap_state_t *restate, const char *capability, 
 
 static int set_capabilities(redwrap_state_t *restate, const redConfTagT *conftag) {
 
-    for(int i = 0; i < conftag->capabilities_count; i++) {
-        redConfCapT *cap = conftag->capabilities+i;
-        set_one_capability(restate, cap->cap, cap->add);
+    int rc = 0;
+    redConfCapT *cap, *end = &conftag->capabilities[conftag->capabilities_count];
+
+    /* first pass for setting ALL */
+    for(cap = conftag->capabilities ; rc == 0 && cap != end ; cap++) {
+        if (strcasecmp(cap->cap, "ALL") == 0) {
+            rc = set_one_capability(restate, cap->cap, cap->add);
+            break;
+        }
     }
-    return 0;
+
+    /* first pass for setting other values */
+    for(cap = conftag->capabilities ; rc == 0 && cap != end ; cap++) {
+        if (strcasecmp(cap->cap, "ALL") != 0)
+            rc = set_one_capability(restate, cap->cap, cap->add);
+    }
+    return rc;
 }
 
 /* this function tests if sharing of (item) is disabled  */
