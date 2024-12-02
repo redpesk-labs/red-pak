@@ -1,0 +1,53 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+exports:
+  - mode: Private
+    mount: /busybox
+    path: /usr/sbin/busybox
+  - mount: /proc
+    mode: Procfs
+config:
+    path: /bin
+    capabilities:
+      - cap: cap_sys_boot
+        add: 1
+      - cap: cap_sys_nice
+        add: 1
+      - cap: cap_sys_resource
+        add: 1
+      - cap: cap_sys_time
+        add: 1
+      - cap: cap_sys_tty_config
+        add: 1
+      - cap: cap_mknod
+        add: 1
+      - cap: cap_lease
+        add: 1
+      - cap: cap_audit_write
+        add: 1
+      - cap: cap_audit_control
+        add: 1
+      - cap: cap_setfcap
+        add: 1
+      - cap: cap_mac_override
+        add: 1
+      - cap: cap_mac_admin
+        add: 1
+      - cap: cap_syslog
+        add: 1
+      - cap: cap_wake_alarm
+        add: 1
+      - cap: cap_block_suspend
+        add: 1
+      - cap: cap_audit_read
+        add: 1
+      - cap: cap_perfmon
+        add: 1
+      - cap: cap_bpf
+        add: 1
+      - cap: cap_checkpoint_restore
+        add: 1
+      - cap: all
+        add: 0

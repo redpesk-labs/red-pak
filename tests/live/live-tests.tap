@@ -8,5 +8,7 @@ ok 6 - basic-mounts
 ok 7 - mem-max
 ok 8 - pids-max
 ok 9 - cpu-max
-1..9
+ok 10 - capabilities1
+ok 11 - capabilities2
+1..11
 

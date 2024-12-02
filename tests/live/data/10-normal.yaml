@@ -1,0 +1,60 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+exports:
+  - mode: Private
+    mount: /busybox
+    path: /usr/sbin/busybox
+  - mount: /proc
+    mode: Procfs
+config:
+    path: /bin
+    capabilities:
+      - cap: all
+        add: 0
+      - cap: cap_chown
+        add: 1
+      - cap: cap_dac_override
+        add: 1
+      - cap: cap_dac_read_search
+        add: 1
+      - cap: cap_fowner
+        add: 1
+      - cap: cap_fsetid
+        add: 1
+      - cap: cap_kill
+        add: 1
+      - cap: cap_setgid
+        add: 1
+      - cap: cap_setuid
+        add: 1
+      - cap: cap_setpcap
+        add: 1
+      - cap: cap_linux_immutable
+        add: 1
+      - cap: cap_net_bind_service
+        add: 1
+      - cap: cap_net_broadcast
+        add: 1
+      - cap: cap_net_admin
+        add: 1
+      - cap: cap_net_raw
+        add: 1
+      - cap: cap_ipc_lock
+        add: 1
+      - cap: cap_ipc_owner
+        add: 1
+      - cap: cap_sys_module
+        add: 1
+      - cap: cap_sys_rawio
+        add: 1
+      - cap: cap_sys_chroot
+        add: 1
+      - cap: cap_sys_ptrace
+        add: 1
+      - cap: cap_sys_pacct
+        add: 1
+      - cap: cap_sys_admin
+        add: 1
+
