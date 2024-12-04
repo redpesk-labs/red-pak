@@ -49,7 +49,8 @@ enum rednode_factory_error_e
 /* 16 */    RednodeFactory_Error_Path_Too_Long,
 /* 17 */    RednodeFactory_Error_Storing_Status,
 /* 18 */    RednodeFactory_Error_At_Root,
-/* 19 */    RednodeFactory_Error_Config_Not_Exist
+/* 19 */    RednodeFactory_Error_Config_Not_Exist,
+/* 20 */    RednodeFactory_Error_Invalid_Alias,
 };
 
 /** creation modes */

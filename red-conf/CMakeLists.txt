@@ -23,6 +23,7 @@ set(
         lookup3.c
         redconf-dump.c
         redconf-expand.c
+        rednode-factory.c
         redconf-hash.c
         redconf-hashmerge.c
         redconf-log.c
@@ -31,16 +32,17 @@ set(
         redconf-node.c
         redconf-schema.c
         redconf-utils.c
-        rednode-factory.c
+        redconf-valid.c
 )
 
 set(
     HEADERS
+        redconf.h
         lookup3.h
         redconf-defaults.h
         redconf-dump.h
         redconf-expand.h
-        redconf.h
+        rednode-factory.h
         redconf-hash.h
         redconf-hashmerge.h
         redconf-log.h
@@ -49,7 +51,7 @@ set(
         redconf-node.h
         redconf-schema.h
         redconf-utils.h
-        rednode-factory.h
+        redconf-valid.h
 )
 
 add_library(

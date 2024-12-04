@@ -31,6 +31,7 @@
 #include "redconf-defaults.h"
 #include "redconf-expand.h"
 #include "redconf-utils.h"
+#include "redconf-valid.h"
 
 typedef enum {
     RED_NODE_CONFIG_OK,
@@ -115,6 +116,11 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admi
         RedLog(REDLOG_ERROR, "Fail to parse redpak config [path=%s]", path);
         goto OnErrorFreeExit;
     }
+    if (!is_valid_alias((*pnode)->config->headers.alias)) {
+        RedLog(REDLOG_ERROR, "Invalid node alias %s [path=%s]", (*pnode)->config->headers.alias, path);
+        goto OnErrorFreeExit;
+
+    }
 
     if (admin) {
         // parse redpath node config admin file: if exists
@@ -134,6 +140,11 @@ static redNodeYamlE RedNodesLoad(const char* redpath, redNodeT **pnode, int admi
                 RedLog(REDLOG_ERROR, "Fail to parse redpak admin config [path=%s]", path);
                 goto OnErrorFreeExit;
             }
+            if (!is_valid_alias((*pnode)->confadmin->headers.alias)) {
+                RedLog(REDLOG_ERROR, "Invalid admin alias %s [path=%s]", (*pnode)->confadmin->headers.alias, path);
+                goto OnErrorFreeExit;
+
+            }
         }
     }
 
@@ -146,6 +157,7 @@ OnExit:
 OnErrorFreeExit:
     freeNode(*pnode);
 OnErrorExit:
+    *pnode = NULL;
     return RED_NODE_CONFIG_FX;
 }
 

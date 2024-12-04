@@ -30,6 +30,7 @@
 #include "redconf-expand.h"
 #include "redconf-node.h"
 #include "redconf-utils.h"
+#include "redconf-valid.h"
 
 /*********************************************************************************/
 /*********************************************************************************/
@@ -77,7 +78,8 @@ static const char *text_of_errors[] =
     [RednodeFactory_Error_Path_Too_Long]        = "Path is too long",
     [RednodeFactory_Error_Storing_Status]       = "Can't store status file",
     [RednodeFactory_Error_At_Root]              = "Can't inspect below root path",
-    [RednodeFactory_Error_Config_Not_Exist]     = "Can't update not existing config"
+    [RednodeFactory_Error_Config_Not_Exist]     = "Can't update not existing config",
+    [RednodeFactory_Error_Invalid_Alias]        = "Invalid alias",
 };
 
 static const char *get_default_item(const char *defvalue, const char *varname)
@@ -316,6 +318,12 @@ static int update_config_headers(redConfigT *config, rednode_factory_t *rfab, co
     if (prvcfg == NULL)
         return -RednodeFactory_Error_Config_Not_Exist;
 
+    /* check validity of updated alias */
+    if (!is_valid_alias(prvcfg->headers.alias)) {
+        RedFreeConfig(prvcfg, 0);
+        return -RednodeFactory_Error_Invalid_Alias;
+    }
+
     /* copy header values */
     h_info = strdup(prvcfg->headers.info);
     h_name = strdup(prvcfg->headers.name);
@@ -351,6 +359,10 @@ static int create_node(rednode_factory_t *rfab, const rednode_factory_param_t *p
     redConfigT *normal_config = NULL,  *admin_config = NULL;
     size_t existing_length;
     unsigned long timestamp;
+
+    /* check alias name */
+    if (!is_valid_alias(params->alias))
+        return -RednodeFactory_Error_Invalid_Alias;
 
     /* get date */
     timestamp = RedUtcGetTimeMs();
