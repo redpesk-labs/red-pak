@@ -1,0 +1,4 @@
+[ERROR]:  Invalid node alias ./ [path=/tmp/rpak-conftest/etc/redpack.yaml]
+[ERROR]:  redpak terminal leaf config & status not found [path=/tmp/rpak-conftest]
+[ERROR]:  Fail to scandown redpath family tree path=/tmp/rpak-conftest
+
