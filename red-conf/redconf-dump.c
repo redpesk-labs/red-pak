@@ -119,7 +119,7 @@ void RedDumpFamilyNodeHandle(redNodeT *familyTree, int yaml) {
             size_t len;
             RedGetConfigYAML(&output, &len, node->config);
             printf("# REDNODE CONFIG %s\n", node->redpath);
-            printf("%s\n", output);
+            printf("%.*s\n", (int)len, output);
             free(output);
         } else {
             RedDumpConfigHandle(node->config);
