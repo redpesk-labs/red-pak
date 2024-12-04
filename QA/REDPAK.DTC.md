@@ -1,6 +1,6 @@
 # Design test cases of redpesk-labs/red-pak
 
-.VERSION: 2.2.3
+.VERSION: 2.3.x
 
 .AUTHOR: José Bollo [IoT.bzh]
 

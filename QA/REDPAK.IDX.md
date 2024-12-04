@@ -1,6 +1,6 @@
 # Index file for redpesk-labs/red-pak
 
-.VERSION: 2.2.3
+.VERSION: 2.3.x
 
 ### Roles
 
@@ -18,6 +18,7 @@
 - @REDPAK.HRQ: **High level requirements**
 - @REDPAK.DSG: **RED-PAK Software Design**
 - @REDPAK.CNF: **Rednode configuration**
+- @REDPAK.RKA: **Risk Analysis of RED-PAK**
 - @REDPAK.DTC: **Design test cases**
 - @REDPAK.RVH: **Review history**
 

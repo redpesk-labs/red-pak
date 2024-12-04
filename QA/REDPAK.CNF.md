@@ -1,6 +1,6 @@
 # REDNODE configuration
 
-.VERSION: 2.2.3
+.VERSION: 2.3.x
 
 .AUTHOR: José Bollo [IoT.bzh]
 
