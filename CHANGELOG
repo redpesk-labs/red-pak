@@ -1,3 +1,8 @@
+Version 2.3.2 (2024/12/05)
+
+  - Process capability ALL at first
+  - Fix length of YAML output
+
 Version 2.3.1 (2024/11/28)
 
  - Remove check of status's date
