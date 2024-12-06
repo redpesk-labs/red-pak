@@ -194,10 +194,44 @@ static const vardef_t vardefs[] = {
     { "REDPESK_VERSION", GetEnviron,  REDPESK_DFLT_VERSION, 0 }
 };
 
-
 static int defaultsExpand(const redNodeT *node,
                         const char* inputS, int *idxOut, char *outputS, int maxlen,
                         int withcmd);
+
+/**
+* This function expands in the buffer @ref outputS, of @ref maxlen length
+* and indexed by *@ref idxOut, the "environment value" of the @ref key of
+* length @ref keylen.
+*
+* On termination, *@ref idxOut is updated.
+*
+* CAUTION: when inputS == outputS or just overlap, the result is undefined
+*
+* NOTE: when key is not found (or not valid) nothing is put in outputS
+* and zero is returned.
+*
+* @param key      pointer to the first char of the key
+* @param keylen   length of the key
+* @param node     the node to use for contextual expansion
+* @param defaults the definition of the defaults (or NULL for defult defaults)
+* @param idxOut   pointer to the integer index in @ref outputS
+* @param outputS  output string buffer receiving expansion
+* @param maxlen   length of the output string buffer
+*
+* @return 0 on success, 1 if the bounds of the output buffer are reached, meaning
+* that expansion process isn't complete.
+*/
+static int expand_envvar(const redNodeT *node,
+                        const char *key, int keylen,
+                        int *idxOut, char *outputS, int maxlen) {
+    const char *value;
+    char lkey[keylen + 1];
+
+    memcpy(lkey, key, (unsigned)keylen);
+    lkey[keylen] = 0;
+    value = secure_getenv(lkey);
+    return value == NULL || *value == '\0' ? 0 : defaultsExpand(node, value, idxOut, outputS, maxlen, 0);
+}
 
 /**
 * This function expands in the buffer @ref outputS, of @ref maxlen length
@@ -239,10 +273,10 @@ static int getDefault(const redNodeT *node,
             int rc = iter->callback(node, iter, value, sizeof value);
             /* recursive expansion of found value in outputS */
             return rc != 0 ? rc : defaultsExpand(node, value, idxOut, outputS, maxlen, 0);
-            return defaultsExpand(node, value, idxOut, outputS, maxlen, 0);
         }
     }
-    return 0;
+    /* key not found, try environment */
+    return expand_envvar(node, key, keylen, idxOut, outputS, maxlen);
 }
 
 /**
