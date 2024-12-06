@@ -90,3 +90,9 @@ environ:
     mode: Default
   - key: INHERITED
     mode: Inherit
+  - key: FAKEINHERITED1
+    mode: Default
+    value: /root/$(echo -n \$INHERITED)/leaf
+  - key: FAKEINHERITED2
+    mode: Execfd
+    value: echo -n $INHERITED

@@ -1,4 +1,6 @@
 CGROUPS_MOUNT_POINT=(/sys/fs/cgroup)
+FAKEINHERITED1=/root/this is an inherited value/leaf
+FAKEINHERITED2=this is an inherited value
 HOSTNAME=(localhost)
 INHERITED=this is an inherited value
 LEAF_ALIAS=(NODE-5)
