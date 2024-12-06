@@ -667,8 +667,8 @@ int mixExports(const redNodeT *node, mix_exp_cb callback, void *closure)
 *  2. an admin config can enable a sharing disabled by a normal node
 *  3. when admin is required, a child normal node can't change admin parent settings
 *
-* MATRIX: (-: unset, *: any value, 0N: normal disabled, 1N: normal enabled,
-*          0A: admin disabled, 1A: admin enabled)
+* MATRIX: (-: unset, *: any value, 0N: normal disabled, 1N: normal enabled or joining,
+*          0A: admin disabled, 1A: admin enabled or joining)
 *
 *   PARENT  NORMAL ADMIN EFFECT
 *     -       -      -     -

@@ -63,8 +63,8 @@ struct redwrap_state_s
     rWrapConfigT *cliarg;
     /** the rednode */
     redNodeT     *rednode;
-    /** flag indicating if time should be unshared */
-    int           unshare_time;
+    /** copy of the shares */
+    redConfShareT shares;
     /** flag indicating if rednode user must map to root */
     int           map_user_root;
     /** arguments' count of the bwrap command */
@@ -332,6 +332,25 @@ static int set_capabilities(redwrap_state_t *restate, const redConfTagT *conftag
     return rc;
 }
 
+static void do_unshare(redwrap_state_t *restate, const char *setting, redConfSharingE all, const char *unshare, const char *share)
+{
+    redConfSharingE type = sharing_type(setting);
+
+    switch (type == RED_CONF_SHARING_UNSET ? all : type) {
+    default:
+    case RED_CONF_SHARING_UNSET:
+    case RED_CONF_SHARING_DISABLED:
+        ADD(restate, unshare);
+        break;
+    case RED_CONF_SHARING_ENABLED:
+        if (share != NULL)
+            ADD(restate, share);
+        break;
+    case RED_CONF_SHARING_JOIN:
+        break;
+    }
+}
+
 /* this function tests if sharing of (item) is disabled  */
 static bool can_unshare(redConfSharingE target, redConfSharingE all)
 {
@@ -342,24 +361,14 @@ static bool can_unshare(redConfSharingE target, redConfSharingE all)
 static int set_shares(redwrap_state_t *restate, const redConfShareT *shares)
 {
     redConfSharingE sall = sharing_type(shares->all);
-    if (can_unshare(sharing_type(shares->user), sall))
-        ADD(restate, "--unshare-user");
 
-    if (can_unshare(sharing_type(shares->cgroup), sall))
-        ADD(restate, "--unshare-cgroup");
+    do_unshare(restate, shares->user, sall, "--unshare-user", NULL);
+    do_unshare(restate, shares->cgroup, sall, "--unshare-cgroup", NULL);
+    do_unshare(restate, shares->ipc, sall, "--unshare-ipc", NULL);
+    do_unshare(restate, shares->pid, sall, "--unshare-pid", NULL);
+    do_unshare(restate, shares->net, sall, "--unshare-net", "--share-net");
 
-    if (can_unshare(sharing_type(shares->ipc), sall))
-        ADD(restate, "--unshare-ipc");
-
-    if (can_unshare(sharing_type(shares->pid), sall))
-        ADD(restate, "--unshare-pid");
-
-    if (can_unshare(sharing_type(shares->net), sall))
-        ADD(restate, "--unshare-net");
-    else
-        ADD(restate, "--share-net");
-
-    restate->unshare_time = can_unshare(sharing_type(shares->time), sall);
+    restate->shares = *shares;
 
     return 0;
 }
@@ -459,6 +468,23 @@ static int set_for_conftag(redwrap_state_t *restate)
     return mixConfTags(restate->rednode, mix_conftag, restate);
 }
 
+static void joinns(const char *filens, int nstype)
+{
+    int fd = open(filens, O_RDONLY);
+    if (fd < 0) {
+        RedLog(REDLOG_ERROR, "Failed to open %s: %s", filens, strerror(errno));
+        exit(1);
+    }
+    else {
+        int rc = setns(fd, nstype);
+        if (rc < 0) {
+            RedLog(REDLOG_ERROR, "Failed to join %s: %s", filens, strerror(errno));
+            exit(1);
+        }
+        close(fd);
+    }
+}
+
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     redwrap_state_t restate;
     int idx, error, unshareusr;
@@ -472,7 +498,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     // start argument list with red-wrap command name
     restate.cliarg = cliarg;
     restate.rednode = NULL;
-    restate.unshare_time = 0;
+    memset(&restate.shares, 0, sizeof restate.shares);
     restate.map_user_root = 0;
     restate.argcount = 1;
     restate.argval[0] = command_name;
@@ -555,9 +581,23 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
             }
         }
 
-        /* unshare time nanespace if required */
-        if (restate.unshare_time)
+        /* unshare time namespace if required */
+        if (sharing_type(restate.shares.time) == RED_CONF_SHARING_JOIN)
+            joinns(restate.shares.time, CLONE_NEWTIME);
+        else if (can_unshare(sharing_type(restate.shares.time), sharing_type(restate.shares.all)))
             unshare(CLONE_NEWTIME);
+
+        /* join other namespaces */
+        if (sharing_type(restate.shares.user) == RED_CONF_SHARING_JOIN)
+            joinns(restate.shares.user, CLONE_NEWUSER);
+        if (sharing_type(restate.shares.cgroup) == RED_CONF_SHARING_JOIN)
+            joinns(restate.shares.cgroup, CLONE_NEWCGROUP);
+        if (sharing_type(restate.shares.ipc) == RED_CONF_SHARING_JOIN)
+            joinns(restate.shares.ipc, CLONE_NEWIPC);
+        if (sharing_type(restate.shares.net) == RED_CONF_SHARING_JOIN)
+            joinns(restate.shares.net, CLONE_NEWNET);
+        if (sharing_type(restate.shares.pid) == RED_CONF_SHARING_JOIN)
+            joinns(restate.shares.pid, CLONE_NEWPID);
 
         /* exec bwrap now */
         restate.argval[restate.argcount] = NULL;

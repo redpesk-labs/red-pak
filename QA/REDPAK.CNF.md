@@ -346,20 +346,24 @@ entries, all are optional:
 | `die-with-parent` | EDU      | if enabled terminate when parent terminates |
 | `new-session`     | EDU      | if enabled create a new terminal session   |
 | `share_all`       | EDU      | if enabled unshare all namespaces          |
-| `share_user`      | EDU      | if enabled unshare user namespaces         |
-| `share_cgroup`    | EDU      | if enabled unshare cgroup namespaces       |
-| `share_net`       | EDU      | if enabled unshare network namespaces      |
-| `share_pid`       | EDU      | if enabled unshare PID namespaces          |
-| `share_ipc`       | EDU      | if enabled unshare IPC namespaces          |
-| `share_time`      | EDU      | if enabled unshare UTS namespaces          |
+| `share_user`      | SHARE    | if enabled unshare user namespaces         |
+| `share_cgroup`    | SHARE    | if enabled unshare cgroup namespaces       |
+| `share_net`       | SHARE    | if enabled unshare network namespaces      |
+| `share_pid`       | SHARE    | if enabled unshare PID namespaces          |
+| `share_ipc`       | SHARE    | if enabled unshare IPC namespaces          |
+| `share_time`      | SHARE    | if enabled unshare UTS namespaces          |
 | `cgroups`         | map      | description of cgroups                     |
 | `hostname`        | string   | set the hostname                           |
 | `chdir`           | string   | set execution directory                    |
 | `cgrouproot`      | string   | controling cgroup root                     |
 | `capabilities`    | sequence | list of capability's entries               |
 
-The type EDU is an enumeration, so a string, with 3 possible values:
-"enable", "disable", "unset".
+The type EDU is an enumeration, so a string, with 3 possible values (case insensitive):
+"enabled", "disabled", "unset".
+
+The type SHARE is either an enumeration as EDU (3 possible values
+"enabled", "disabled", "unset") but it can also be a path ot a name
+space to be joined if allowed to do a such thing.
 
 ### Valid cgroups map
 

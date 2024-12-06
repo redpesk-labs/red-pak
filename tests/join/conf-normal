@@ -1,0 +1,15 @@
+headers:
+  alias: alias
+  name: name
+  info: info
+config:
+  share_user: enabled
+  share_net: SHARING
+  capabilities:
+    - cap: CAP_SYS_ADMIN
+      add: 1
+exports:
+  - mode: Private
+    mount: /prog
+    path: /tmp/rpak-jointest/prog
+
