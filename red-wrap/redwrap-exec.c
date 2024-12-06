@@ -369,8 +369,10 @@ static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
     set_cgroups(restate->rednode, conftag->cgrouproot);
 
     // set global merged config tags
-    if (conftag->hostname)
-        ADD3(restate, "--unshare-uts", "--hostname", RedNodeStringExpand (restate->rednode, conftag->hostname));
+    if (conftag->hostname) {
+        ADD(restate, "--unshare-uts");
+        ADD2(restate, "--hostname", RedNodeStringExpand (restate->rednode, conftag->hostname));
+    }
 
     if (conftag->chdir)
         ADD2(restate, "--chdir", RedNodeStringExpand (restate->rednode, conftag->chdir));
