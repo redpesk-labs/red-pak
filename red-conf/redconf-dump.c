@@ -28,6 +28,7 @@
 #include "redconf-log.h"
 #include "redconf-node.h"
 #include "redconf-merge.h"
+#include "redconf-sharing.h"
 
 void RedDumpStatusHandle (redStatusT *status) {
    // retrieve label attach to state flag
@@ -67,13 +68,13 @@ void RedDumpConftag(redConfTagT *conftag) {
     printf("\tdiewithparent: %d\n", conftag == NULL ? 0 : conftag->diewithparent);
     printf("\tumask: %s\n", conftag == NULL ? "" : conftag->umask);
     printf("\tnewsession: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->newsession));
-    printf("\tshare_all: %s\n",  conftag == NULL ? "" : getRedConfOptString(conftag->share.all));
-    printf("\tshare_user: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.user));
-    printf("\tshare_cgroup: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.cgroup));
-    printf("\tshare_ipc: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.ipc));
-    printf("\tshare_pid: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.pid));
-    printf("\tshare_net: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.net));
-    printf("\tshare_time: %s\n", conftag == NULL ? "" : getRedConfOptString(conftag->share.time));
+    printf("\tshare_all: %s\n",  conftag == NULL ? "" : sharing_string(conftag->share.all));
+    printf("\tshare_user: %s\n", conftag == NULL ? "" : sharing_string(conftag->share.user));
+    printf("\tshare_cgroup: %s\n", conftag == NULL ? "" : sharing_string(conftag->share.cgroup));
+    printf("\tshare_ipc: %s\n", conftag == NULL ? "" : sharing_string(conftag->share.ipc));
+    printf("\tshare_pid: %s\n", conftag == NULL ? "" : sharing_string(conftag->share.pid));
+    printf("\tshare_net: %s\n", conftag == NULL ? "" : sharing_string(conftag->share.net));
+    printf("\tshare_time: %s\n", conftag == NULL ? "" : sharing_string(conftag->share.time));
     //printf("\tcgroups: %s\n", conftag == NULL ? "" : conftag.cgroups);
 }
 

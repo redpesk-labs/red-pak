@@ -93,13 +93,13 @@ config:
   unsafe: false
   die-with-parent: Enabled
   new-session: Unset
-  share_all: Disabled
-  share_user: Unset
-  share_cgroup: Unset
-  share_net: Enabled
-  share_pid: Unset
-  share_ipc: Unset
-  share_time: Unset
+  share_all: disabLed
+  share_user: unset
+  share_cgroup: unset
+  share_net: enabLed
+  share_pid: unset
+  share_ipc: unsEt
+  share_time: uNset
   hostname: $LEAF_ALIAS
   chdir: /home/$LEAF_ALIAS
   cgrouproot: /sys/fs/cgroup/user.slice/user-$UID.slice/user@$UID.service

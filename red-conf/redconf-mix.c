@@ -25,6 +25,7 @@
 
 #include "redconf-log.h"
 #include "redconf-expand.h"
+#include "redconf-sharing.h"
 
 
 /****************************************************************************
@@ -700,7 +701,9 @@ int mixExports(const redNodeT *node, mix_exp_cb callback, void *closure)
 typedef
 struct {
     /* current value */
-    redConfOptFlagE value;
+    const char *value;
+    /* current type */
+    redConfSharingE type;
     /* for admin? */
     int admin;
     /* node where defined */
@@ -739,26 +742,34 @@ static redConfShareT mix_sharings_get(const mix_sharings_t *sharings)
     };
 }
 
-static int mix_share(mix_share_t *share, redConfOptFlagE value, const redNodeT *node, int admin, const char *name)
+static int mix_share(mix_share_t *share, const char *value, const redNodeT *node, int admin, const char *name)
 {
+    /* get value type */
+    redConfSharingE type = sharing_type(value);
+
     /* no change */
-    if (value == RED_CONF_OPT_UNSET)
+    if (type == RED_CONF_SHARING_UNSET)
         return 0;
 
     /* set it if unset or overwriten by admin */
-    if (share->value  == RED_CONF_OPT_UNSET || (admin && !share->admin)) {
+    if (share->type == RED_CONF_SHARING_UNSET || (admin && !share->admin)) {
         share->value = value;
+        share->type = type;
         share->admin = admin;
         share->node = node;
         return 0;
     }
 
+    /* normal doesn't alter admin */
+    if (!admin && share->admin)
+        return 0;
+
     /* if equal */
-    if (share->value == value || (!admin && share->admin))
+    if (share->type == type && (type != RED_CONF_SHARING_JOIN || strcasecmp(value, share->value) == 0))
         return 0;
 
     /* different values, forbids sharing is previously forbidden */
-    if (value != RED_CONF_OPT_DISABLED)
+    if (type != RED_CONF_SHARING_DISABLED)
         return 0;
 
     RedLog(REDLOG_ERROR,"Can't share %s in %s%s because forbidden in %s%s",

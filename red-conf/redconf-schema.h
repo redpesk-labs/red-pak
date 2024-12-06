@@ -213,19 +213,19 @@
     /** structure holding sharing values */
     typedef struct {
         /** if enabled/disabled share/unshare every namespace by default */
-        redConfOptFlagE all;
+        const char *all;
         /** if enabled/disabled share/unshare user namespace */
-        redConfOptFlagE user;
+        const char *user;
         /** if enabled/disabled share/unshare cgroup namespace */
-        redConfOptFlagE cgroup;
+        const char *cgroup;
         /** if enabled/disabled share/unshare ipc namespace */
-        redConfOptFlagE ipc;
+        const char *ipc;
         /** if enabled/disabled share/unshare pid namespace */
-        redConfOptFlagE pid;
+        const char *pid;
         /** if enabled/disabled share/unshare net namespace */
-        redConfOptFlagE net;
+        const char *net;
         /** if enabled/disabled share/unshare time namespace */
-        redConfOptFlagE time;
+        const char *time;
     }
     redConfShareT;
 

@@ -49,6 +49,7 @@
 #include "redconf-utils.h"
 #include "redwrap-node.h"
 #include "cgroups.h"
+#include "redconf-sharing.h"
 
 #ifndef BWRAP_MAXVAR_LEN
 #define BWRAP_MAXVAR_LEN 1024
@@ -332,32 +333,33 @@ static int set_capabilities(redwrap_state_t *restate, const redConfTagT *conftag
 }
 
 /* this function tests if sharing of (item) is disabled  */
-static bool can_unshare(redConfOptFlagE target, redConfOptFlagE all)
+static bool can_unshare(redConfSharingE target, redConfSharingE all)
 {
-    return target == RED_CONF_OPT_DISABLED
-                || (target == RED_CONF_OPT_UNSET && all != RED_CONF_OPT_ENABLED);
+    return target == RED_CONF_SHARING_DISABLED
+                || (target == RED_CONF_SHARING_UNSET && all != RED_CONF_SHARING_ENABLED);
 }
 
 static int set_shares(redwrap_state_t *restate, const redConfShareT *shares)
 {
-    if (can_unshare(shares->user, shares->all))
+    redConfSharingE sall = sharing_type(shares->all);
+    if (can_unshare(sharing_type(shares->user), sall))
         ADD(restate, "--unshare-user");
 
-    if (can_unshare(shares->cgroup, shares->all))
+    if (can_unshare(sharing_type(shares->cgroup), sall))
         ADD(restate, "--unshare-cgroup");
 
-    if (can_unshare(shares->ipc, shares->all))
+    if (can_unshare(sharing_type(shares->ipc), sall))
         ADD(restate, "--unshare-ipc");
 
-    if (can_unshare(shares->pid, shares->all))
+    if (can_unshare(sharing_type(shares->pid), sall))
         ADD(restate, "--unshare-pid");
 
-    if (can_unshare(shares->net, shares->all))
+    if (can_unshare(sharing_type(shares->net), sall))
         ADD(restate, "--unshare-net");
     else
         ADD(restate, "--share-net");
 
-    restate->unshare_time = can_unshare(shares->time, shares->all);
+    restate->unshare_time = can_unshare(sharing_type(shares->time), sall);
 
     return 0;
 }

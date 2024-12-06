@@ -8,11 +8,4 @@ config:
   unsafe: false
   die-with-parent: Unset
   new-session: Unset
-  share_all: Unset
-  share_user: Unset
-  share_cgroup: Unset
-  share_net: Unset
-  share_pid: Unset
-  share_ipc: Unset
-  share_time: Unset
 

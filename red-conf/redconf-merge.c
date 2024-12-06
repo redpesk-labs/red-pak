@@ -31,6 +31,7 @@
 #include "redconf-node.h"
 #include "redconf-utils.h"
 #include "redconf-hashmerge.h"
+#include "redconf-sharing.h"
 
 /* merge the source string to the destination
  * returns 0 on success or 1 on error
@@ -50,9 +51,9 @@ static inline int merge_string(const char *source, const char **destination, int
 }
 
 /* merge the source sharing opt flag to the destination */
-static inline void merge_optflag_sharing(redConfOptFlagE source, redConfOptFlagE *destination) {
-    if (*destination != RED_CONF_OPT_DISABLED)
-        *destination = source;
+static inline void merge_optflag_sharing(const char *source, const char **destination, int duplicate) {
+    if (sharing_type(*destination) != RED_CONF_SHARING_DISABLED)
+        merge_string(source, destination, duplicate);
 }
 
 /* merge the source opt flag to the destination */
@@ -83,13 +84,13 @@ static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destinati
     if(source == NULL)
         return 0;
 
-    merge_optflag_sharing(source->share.all, &destination->share.all);
-    merge_optflag_sharing(source->share.user, &destination->share.user);
-    merge_optflag_sharing(source->share.ipc, &destination->share.ipc);
-    merge_optflag_sharing(source->share.cgroup, &destination->share.cgroup);
-    merge_optflag_sharing(source->share.pid, &destination->share.pid);
-    merge_optflag_sharing(source->share.net, &destination->share.net);
-    merge_optflag_sharing(source->share.time, &destination->share.time);
+    merge_optflag_sharing(source->share.all, &destination->share.all, duplicate);
+    merge_optflag_sharing(source->share.user, &destination->share.user, duplicate);
+    merge_optflag_sharing(source->share.ipc, &destination->share.ipc, duplicate);
+    merge_optflag_sharing(source->share.cgroup, &destination->share.cgroup, duplicate);
+    merge_optflag_sharing(source->share.pid, &destination->share.pid, duplicate);
+    merge_optflag_sharing(source->share.net, &destination->share.net, duplicate);
+    merge_optflag_sharing(source->share.time, &destination->share.time, duplicate);
 
     merge_optflag_overwrite(source->diewithparent, &destination->diewithparent);
     merge_optflag_overwrite(source->newsession, &destination->newsession);

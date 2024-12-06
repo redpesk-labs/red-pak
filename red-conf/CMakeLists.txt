@@ -31,6 +31,7 @@ set(
         redconf-mix.c
         redconf-node.c
         redconf-schema.c
+        redconf-sharing.c
         redconf-utils.c
         redconf-valid.c
 )
@@ -50,6 +51,7 @@ set(
         redconf-mix.h
         redconf-node.h
         redconf-schema.h
+        redconf-sharing.h
         redconf-utils.h
         redconf-valid.h
 )
