@@ -27,7 +27,6 @@
 #include "redconf-expand.h"
 #include "redconf-sharing.h"
 
-
 /****************************************************************************
 * merge of path like values
 * -------------------------
