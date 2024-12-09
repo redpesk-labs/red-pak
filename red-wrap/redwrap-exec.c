@@ -352,17 +352,24 @@ static void do_unshare(redwrap_state_t *restate, const char *setting, redConfSha
 }
 
 /* this function tests if sharing of (item) is disabled  */
-static bool can_unshare(redConfSharingE target, redConfSharingE all)
+static bool should_unshare(redConfSharingE target, redConfSharingE all)
 {
     return target == RED_CONF_SHARING_DISABLED
                 || (target == RED_CONF_SHARING_UNSET && all != RED_CONF_SHARING_ENABLED);
+}
+
+/* this function tests if sharing of (item) is disabled  */
+static bool should_unshare_time(redConfSharingE time)
+{
+    return time == RED_CONF_SHARING_DISABLED || time == RED_CONF_SHARING_JOIN;
 }
 
 static int set_shares(redwrap_state_t *restate, const redConfShareT *shares)
 {
     redConfSharingE sall = sharing_type(shares->all);
 
-    do_unshare(restate, shares->user, sall, "--unshare-user", NULL);
+    if (!should_unshare_time(sharing_type(shares->time)))
+        do_unshare(restate, shares->user, sall, "--unshare-user", NULL);
     do_unshare(restate, shares->cgroup, sall, "--unshare-cgroup", NULL);
     do_unshare(restate, shares->ipc, sall, "--unshare-ipc", NULL);
     do_unshare(restate, shares->pid, sall, "--unshare-pid", NULL);
@@ -491,6 +498,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     int pipe_fd[2];
     pid_t pid;
     ssize_t ssz;
+    redConfSharingE sall, stim;
 
     if (cliarg->verbose)
         SetLogLevel(cliarg->verbose);
@@ -550,7 +558,10 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     }
 
     /* clone now */
-    unshareusr = can_unshare(sharing_type(restate.shares.user),  sharing_type(restate.shares.all));
+    sall = sharing_type(restate.shares.all);
+    stim = sharing_type(restate.shares.time);
+    unshareusr = should_unshare_time(stim)
+      && should_unshare(sharing_type(restate.shares.user), sall);
     if (!unshareusr)
         pid = (pid_t) syscall (__NR_clone, SIGCHLD, NULL);
     else {
@@ -582,9 +593,9 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         }
 
         /* unshare time namespace if required */
-        if (sharing_type(restate.shares.time) == RED_CONF_SHARING_JOIN)
+        if (stim == RED_CONF_SHARING_JOIN)
             joinns(restate.shares.time, CLONE_NEWTIME);
-        else if (can_unshare(sharing_type(restate.shares.time), sharing_type(restate.shares.all)))
+        else if (stim == RED_CONF_SHARING_DISABLED)
             unshare(CLONE_NEWTIME);
 
         /* join other namespaces */

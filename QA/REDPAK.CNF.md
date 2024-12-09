@@ -345,7 +345,7 @@ entries, all are optional:
 | `unsafe`          | boolean  | remove safety checks on date and inode     |
 | `die-with-parent` | EDU      | if enabled terminate when parent terminates |
 | `new-session`     | EDU      | if enabled create a new terminal session   |
-| `share_all`       | EDU      | if enabled unshare all namespaces          |
+| `share_all`       | EDU      | if enabled unshare all namespaces (except time) |
 | `share_user`      | SHARE    | if enabled unshare user namespaces         |
 | `share_cgroup`    | SHARE    | if enabled unshare cgroup namespaces       |
 | `share_net`       | SHARE    | if enabled unshare network namespaces      |
