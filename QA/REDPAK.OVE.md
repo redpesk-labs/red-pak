@@ -47,6 +47,26 @@ that *REDNODE*.
 In its implementation, *REDWRAP* uses the software component *bubblewrap*
 (whose binary is named *bwrap*) and the library *cyaml*.
 
+## Goals of REDPAK
+
+Lightweigth containerizing with *REDPAK* matches the following goals:
+
+- Ensuring isolation of applications
+    - Restricted visibility of files
+    - Restricted ressources: CPU, Memory, I/O, Network, Services, ...
+    - Integrated with in kernem MAC (Mandatory Access Control)
+
+- Being auditable with ease
+    - Avoid classical "black box" containers 
+    - Configuration easy to audit even by humans
+
+- Maximizing sharing and minimizing system overload
+    - not duplication of root-fs
+    - Restriction des coûts de conteneurisation de la RAM, du disque et de l’UCC
+    - Réutilisation des bibliothèques partagées entre les instances
+    - Improved container startup time
+
+
 ## Main use cases
 
 *REDPAK* is primarily intended to reenforce the security offered

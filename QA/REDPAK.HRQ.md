@@ -35,10 +35,7 @@ Within REDPAK, the term *REDWRAP* refers to the program setting
 up the isolated execution environment, the *REDNODE*, and running
 inside it isolated processes.
 
-
-
 ## Requirements
-
 
 ### REDWRAP setup isolation of processes
 

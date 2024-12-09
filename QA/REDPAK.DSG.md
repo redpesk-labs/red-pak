@@ -154,8 +154,8 @@ is used if it exists.
 
 ### Other content of a rednode
 
-The **BASE** directory of a *REDNODE* is indexed by *$NODE_PATH* or
-*$LEAF_PATH* in configuration files.
+The **BASE** directory of a *REDNODE* is indexed by *\$NODE\_PATH*
+or *\$LEAF\_PATH* in configuration files.
 
 It contains contains at least the configuration of the *REDNODE*.
 
@@ -585,6 +585,27 @@ Legend:
 - P: parent definition,
 - NP: normal prent definition,
 - AP: admin parent definition
+
+
+## System integration
+
+Two supplementary packages are adding facilities to
+use *REDPAK* in redpesk OS.
+
+### Package redpak-dnf
+
+.REQUIREMENT
+The package **redpak-dnf** provides tooling
+for installation of RPM inside *REDNODE*s using the
+command *redwrap-dnf*.
+
+### Package python3-redconf
+
+.REQUIREMENT
+The optional package **python3-redconf**, if present,
+should provide a python library intended to create python
+that can inspect *REDNODE* configurations.
+
 
 
 

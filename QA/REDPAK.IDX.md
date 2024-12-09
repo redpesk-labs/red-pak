@@ -7,9 +7,10 @@
 - LEAD: Clément Bénier
 - SECURITY: Clément Bénier
 - DESIGN: Fulup Ar Foll
-- IMPLEMENTATION: Clément Bénier
+- IMPLEMENTATION: Clément Bénier, José Bollo
 - TEST: Clément Bénier, José Bollo
 - MAINTAINANCE: Clément Bénier
+- TECHNICAL OFFICER: Stéphane Desneux
 
 ### Documents
 

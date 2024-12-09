@@ -139,3 +139,8 @@ is safe on that point.
 
 5. Every time it is possible, *REDWRAP* should be invoked
    in not privileged context.
+
+Also, a team testing robustness of *REDPAK* against attacks
+recommended, to reduce risk exposure in containers, to limit
+all resources given to *REDNODE*s: PID (to avoid fork bombs),
+CPU, memory, network, count of file descriptors, ...
