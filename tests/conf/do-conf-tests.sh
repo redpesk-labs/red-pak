@@ -14,7 +14,7 @@ do_test() {
     local input="$1" output="$2" reference="$3"
     rm -rf "${redroot}"
     mkdir -p "${redroot}/etc"
-    cp "${input}" "${redroot}/etc/redpack.yaml"
+    cp "${input}" "${redroot}/etc/redpak.yaml"
     cat << EOC > "${redroot}/.rednode.yaml"
 realpath: ${redroot}
 info: created by do-conf-tests.sh the Wed Jan  1 07:00:00 UTC 2020

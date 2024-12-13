@@ -11,8 +11,8 @@ libcyaml:   ERROR: Load: Missing required mapping field: alias
 libcyaml:   ERROR: Load: Backtrace:
 libcyaml:   ERROR:   in mapping field 'info' (line: 3, column: 9)
 libcyaml:   ERROR:   in mapping field 'headers' (line: 2, column: 3)
-[ERROR]:  Fail to read yaml config path=/tmp/rpak-conftest/etc/redpack.yaml err=[Missing required mapping field]
-[ERROR]:  Fail to parse redpak config [path=/tmp/rpak-conftest/etc/redpack.yaml]
+[ERROR]:  Fail to read yaml config path=/tmp/rpak-conftest/etc/redpak.yaml err=[Missing required mapping field]
+[ERROR]:  Fail to parse redpak config [path=/tmp/rpak-conftest/etc/redpak.yaml]
 [ERROR]:  redpak terminal leaf config & status not found [path=/tmp/rpak-conftest]
 [ERROR]:  Fail to scandown redpath family tree path=/tmp/rpak-conftest
 
