@@ -21,14 +21,12 @@ headers:
 redconf create --alias NODE --config config-share_time-disabled --config-adm NULL node/config-share_time-disabled/NULL
 redwrap  --dump-only --redpath node/config-share_time-disabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath node/config-share_time-disabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
@@ -39,14 +37,12 @@ redconf create --alias ROOT --config config-share_time-disabled --config-adm NUL
 redconf create --alias SUBNODE --config NULL --config-adm NULL rootnn/config-share_time-disabled/NULL
 redwrap  --dump-only --redpath rootnn/config-share_time-disabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/config-share_time-disabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
@@ -57,14 +53,12 @@ redconf create --alias ROOT --config config-share_time-disabled --config-adm NUL
 redconf create --alias SUBNODE --config NULL --config-adm NULL rootna/config-share_time-disabled/NULL
 redwrap  --dump-only --redpath rootna/config-share_time-disabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/config-share_time-disabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
@@ -82,7 +76,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/config-share_time-disabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid
@@ -100,7 +93,6 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/config-share_time-disabled/NULL
 DUMP: /usr/bin/bwrap (as redwrap)
-  --unshare-user
   --unshare-cgroup
   --unshare-ipc
   --unshare-pid

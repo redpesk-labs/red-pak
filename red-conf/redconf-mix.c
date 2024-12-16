@@ -737,7 +737,7 @@ static redConfShareT mix_sharings_get(const mix_sharings_t *sharings)
         .ipc     = sharings->ipc.value    ?: sharings->all.value,
         .pid     = sharings->pid.value    ?: sharings->all.value,
         .net     = sharings->net.value    ?: sharings->all.value,
-        .time    = sharings->time.value   ?: sharings->all.value
+        .time    = sharings->time.value
     };
 }
 
