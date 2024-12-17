@@ -1,6 +1,6 @@
 # Risk Analysis of RED-PAK
 
-.VERSION: 2.3.x
+.VERSION: 2.4.1
 
 .AUTHOR: José Bollo [IoT.bzh]
 
