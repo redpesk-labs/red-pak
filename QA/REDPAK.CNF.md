@@ -14,7 +14,7 @@
 
 For a short introduction to *REDPAK* and *REDNODE*s, see @REDPAK.OVE.
 
-*REDNODE* configuration files fully decribe a *REDNODE*.
+*REDNODE* configuration files fully describe a *REDNODE*.
 
 However because *REDNODE*s can be nested in a hierarchical
 tree structure, the real execution environment of a *REDNODE*
@@ -24,7 +24,7 @@ computed are explained in  @REDPAK.DSG.
 
 ## Notation
 
-Configuration files are structured by the use of nested maps (or dictionnaries)
+Configuration files are structured by the use of nested maps (or dictionaries)
 and list of values. In the remaining of that document, the entries
 are referenced using common notation for path in such structured
 data. This chapter details that notation.
@@ -103,7 +103,7 @@ otherwise, the replacement is a *tag replacement*.
 
 .RULE REDPAK.CNF-U-ESC-PAT-EXP-CHA
 
-The escaping character is the *backslash* (`\`, UNICODE point 92). When the 
+The escaping character is the *backslash* (`\`, UNICODE point 92). When the
 pattern expansion character is immediately following the escaping character
 there is no expansion and the escaping character is removed. In other words,
 writing `\$` produces `$`.
@@ -355,7 +355,7 @@ entries, all are optional:
 | `cgroups`         | map      | description of cgroups                     |
 | `hostname`        | string   | set the hostname                           |
 | `chdir`           | string   | set execution directory                    |
-| `cgrouproot`      | string   | controling cgroup root                     |
+| `cgrouproot`      | string   | controlling cgroup root                     |
 | `capabilities`    | sequence | list of capability's entries               |
 
 The type EDU is an enumeration, so a string, with 3 possible values (case insensitive):
@@ -404,7 +404,7 @@ The map *config.cgroups.mem*  must have at least one of the below entries, all a
 | name        | type   | description                                |
 |-------------|--------|--------------------------------------------|
 | `min`       | string | Minimal memory allocated to the cgroup
-| `max`       | string | Maximal memory over wich OOM kill is sent
+| `max`       | string | Maximal memory over which OOM kill is sent
 | `high`      | string | Memory usage throttle limit
 | `swap_high` | string | Swap usage throttle limit
 | `swap_max`  | string | Swap usage hard limit
@@ -458,9 +458,9 @@ is a map having the below entries:
 | name   | presence  | type    | description                                |
 |--------|-----------|---------|--------------------------------------------|
 | `cap`  | mandatory | string  | name of the capability to add or drop
-| `add`  | mandatory | integer | 0 for droping the capability, 1 for keeping it
+| `add`  | mandatory | integer | 0 for dropping the capability, 1 for keeping it
 | `info` | optional  | string  | informative text
-| `warn` | optional  | string  | warning message when 
+| `warn` | optional  | string  | warning message when
 
 Beside the 41 capability names listed below, the special capability **ALL**
 is also accepted for selecting all capabilities.

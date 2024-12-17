@@ -47,8 +47,8 @@ to safely run system's package manager inside *REDNODE*s.
   configuration files of *REDNODE*s.
 
 - **bubblewrap** is a program that prepares the isolated environment
-  and runs an initial programm in it. It is used as the last stage
-  of *REDWRAP* after setting of CGROUPS and usernamespace.
+  and runs an initial program in it. It is used as the last stage
+  of *REDWRAP* after setting of CGROUPS and user namespace.
 
 - **linux** is used for setting CGROUPS, namespaces and capabilities
   environments of the launched processes.
@@ -57,7 +57,7 @@ to safely run system's package manager inside *REDNODE*s.
 
 - **rpm** is a program installing components delivered in RPM files.
   It uses the redpak plugin for running installation scripts
-  in isolated environement.
+  in isolated environment.
 
 - **red-microdnf** is a package manager. It uses *REDPAK* extension
   to accept option for installing components in *REDNODE*s.
@@ -149,7 +149,7 @@ file exist for using it when current names do not exist.
 For administrative purposes, *REDNODE* configuration might optionally
 define specific "administrative" configuration.
 
-When administrative request is required, the administrive configuration
+When administrative request is required, the administrative configuration
 is used if it exists.
 
 ### Other content of a rednode
@@ -194,19 +194,19 @@ usable, at least two features should be added altogether:
 
 - It should be possible to tune the template setting used initially to improve it.
 
-- It should be possible to change the template setting used initially 
+- It should be possible to change the template setting used initially
   in such way that it applies to all *REDNODE*s based on it (for example
   for refinement or bug fix).
 
 These concerns lead to concepts of layered and merge configurations:
-instead of copying the initial template setttings, build on it and when
+instead of copying the initial template settings, build on it and when
 it changes, its children benefit of the changes.
 
 ### Grouping REDNODEs
 
 Isolating processes is very convenient but processes should sometime
 share data or communicate together. It is sometime interesting to
-define groups of processes working togetherbut separated and isolated
+define groups of processes working together but separated and isolated
 each another.
 
 The sames concepts of layered and merged configuration can also serve the
@@ -227,8 +227,8 @@ structure is used for implementing *REDNODE* layered structure.
 **MOTIVATION**:
 
 Structure of filesystem is hierarchical. Relying on it
-for holding hierachy of nodes is natural and allows
-administative actions to be performed with standard
+for holding hierarchy of nodes is natural and allows
+administrative actions to be performed with standard
 CLI tools.
 
 
@@ -307,13 +307,13 @@ specific rules.
 ## Management CGROUP for red nodes
 
 When CGROUP configuration is given, *REDWRAP* tries to apply the required
-settings for the *REDNODE* in the CGROUP hirarchy. It can only be done if
+settings for the *REDNODE* in the CGROUP hierarchy. It can only be done if
 *REDWRAP* has enough right to achieve that job.
 
 This job must take care of the [no internal process constraint][1].
 
 For being able to escape from the root cgroup (the cgroup
-holding the *REDWRAP* or, alternatively, the cgrouo path set for
+holding the *REDWRAP* or, alternatively, the cgroup path set for
 configuration key **config.cgrouproot**), that "root" cgroup should
 not contain any PIDS. It implies that processes of that root group
 if existing should be moved in a special child cgroup intended to
@@ -322,7 +322,7 @@ hold processes. *REDWRAP* firstly ensure it. The special cgroup is named
 
 Then, for each *REDNODE* of the hierarchy, starting with the root ancestor
 and finishing with the target *REDNODE*, two cgroups are created: one for
-setting controlers with required configuration, designated below as *CONTROL*,
+setting controllers with required configuration, designated below as *CONTROL*,
 and one cgroup, child of *CONTROL*, for holding pids, designated below as *PID*.
 
 Cgroups *PID* are all named `redpak-pids-leaf`. They are only used to
@@ -406,7 +406,7 @@ Legend:
 - N: normal definition,
 - A: admin definition
 - P: parent definition,
-- NP: normal prent definition,
+- NP: normal parent definition,
 - AP: admin parent definition
 
 
@@ -583,7 +583,7 @@ Legend:
 - N: normal definition,
 - A: admin definition
 - P: parent definition,
-- NP: normal prent definition,
+- NP: normal parent definition,
 - AP: admin parent definition
 
 

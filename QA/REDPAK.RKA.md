@@ -17,7 +17,7 @@ For a short introduction to *REDPAK* and *REDNODE*s, see @REDPAK.OVE.
 *REDPAK* is an efficient tool for setting up light container
 isolation.
 
-After preseting the possible threats that could break
+After presenting the possible threats that could break
 correct *REDPAK* behaviour and that should be taken into
 account, this document establishes guidelines for *REDPAK*
 secure usage.
@@ -112,7 +112,7 @@ configurations.
 they are COTS (components off the shelf) and have good
 properties: they are safe on their inputs that it validates.
 *BUBBLEWRAP* also has the safe property to stop when it encounters
-an error. So it can not damage the system by themself with a
+an error. So it can not damage the system by themselves with a
 malicious configuration.
 
 *REDWRAP* also stops on error detection and when *BUBBLEWRAP*
@@ -128,11 +128,11 @@ is safe on that point.
 
 2. Even if not having static data, applications of separate
    *REDNODE*s should also be separated using DAC (i.e. using
-   separate user) or, preferabily but not exclusive, using
+   separate user) or, preferably but not exclusive, using
    MAC (i.e. using different Smack label).
 
 3. Configuration files must be protected using DAC (i.e. using
-   separate user) or, preferabily but not exclusive, using
+   separate user) or, preferably but not exclusive, using
    MAC (i.e. using different Smack label).
 
 4. Configuration files should not be mounted in *REDNODE*s.

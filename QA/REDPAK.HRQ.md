@@ -110,7 +110,7 @@ the below items of cgroup (v2):
 | cpuset.mems           | memory selection               |
 | cpuset.cpus.partition | scheduling partition           |
 | cpu.weight            | scheduling weight (0 .. 10000) |
-| cpu.max               | maximum bandwith               |
+| cpu.max               | maximum bandwidth               |
 | io.max                | per device max settings        |
 | io.weight             | scheduling weight (1 .. 10000) |
 | memory.min            | minimal memory size            |

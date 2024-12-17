@@ -9,7 +9,7 @@
 - DESIGN: Fulup Ar Foll
 - IMPLEMENTATION: Clément Bénier, José Bollo
 - TEST: Clément Bénier, José Bollo
-- MAINTAINANCE: Clément Bénier
+- MAINTENANCE: Clément Bénier
 - TECHNICAL OFFICER: Stéphane Desneux
 
 ### Documents

@@ -56,7 +56,7 @@ by the script `tests/conf/do-conf-tests.sh` is the same.
 What changes are the input and consequently the expected
 outputs.
 
-#### Detailled procedure
+#### Detailed procedure
 
 .PROCEDURE
 
@@ -147,7 +147,7 @@ The configuration parser detects that the key **header.alias**
 misses and report it as an error.
 
 The configuration file `tests/conf/data/4-input` contains
-a valid YAML file but with some reqired entry missing.
+a valid YAML file but with some required entry missing.
 
 The reference file `tests/conf/data/4-reference` is the
 error report stated miss of items.
@@ -343,7 +343,7 @@ See Appendice A for details about these tests.
 
 .REQUIRED-BY @REDPAK.DSG-R-RED-LAY-HIE-FIL
 
-#### Detailled procedure
+#### Detailed procedure
 
 .PROCEDURE
 
