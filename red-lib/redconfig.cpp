@@ -169,7 +169,7 @@ void RedNode::setCacheDir() {
     const char *cachedir = NULL;
     for (redNodeT *ancestor_node=node.get(); ancestor_node != NULL; ancestor_node=ancestor_node->parent) {
         if(ancestor_node->config->conftag.cachedir) {
-            cachedir = ancestor_node->config->conftag.cachedir;
+            cachedir = RedNodeStringExpand(ancestor_node, ancestor_node->config->conftag.cachedir);
             break;
         }
     }
