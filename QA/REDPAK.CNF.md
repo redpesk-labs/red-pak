@@ -350,6 +350,7 @@ entries, all are optional:
 | `map-root-user`   | int      | set user as root                           |
 | `gpgcheck`        | boolean  | check rpm signature and gpg                |
 | `unsafe`          | boolean  | remove safety checks on date and inode     |
+| `inherit-env`     | boolean  | automatic export of all environment        |
 | `die-with-parent` | EDU      | if enabled terminate when parent terminates |
 | `new-session`     | EDU      | if enabled create a new terminal session   |
 | `share_all`       | EDU      | if enabled unshare all namespaces (except time) |
@@ -362,7 +363,7 @@ entries, all are optional:
 | `cgroups`         | map      | description of cgroups                     |
 | `hostname`        | string   | set the hostname                           |
 | `chdir`           | string   | set execution directory                    |
-| `cgrouproot`      | string   | controlling cgroup root                     |
+| `cgrouproot`      | string   | controlling cgroup root                    |
 | `capabilities`    | sequence | list of capability's entries               |
 
 The type EDU is an enumeration, so a string, with 3 possible values (case insensitive):

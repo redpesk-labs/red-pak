@@ -168,6 +168,7 @@ static const cyaml_schema_field_t ConfigSchema[] = {
     CYAML_FIELD_BOOL("gpgcheck", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, gpgcheck),
     CYAML_FIELD_IGNORE("inherit", CYFLAG_OPT|CYFLAG_CASE),
     CYAML_FIELD_BOOL("unsafe", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, unsafe),
+    CYAML_FIELD_BOOL("inherit-env", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, inheritenv),
     CYAML_FIELD_ENUM("die-with-parent", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, diewithparent, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
     CYAML_FIELD_ENUM("new-session", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, newsession, redConfOptStrings, CYAML_ARRAY_LEN(redConfOptStrings)),
     CYAML_FIELD_STRING_PTR("share_all", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, share.all, 0, CYAML_UNLIMITED),

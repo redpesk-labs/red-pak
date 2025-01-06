@@ -55,6 +55,12 @@
 #define BWRAP_MAXVAR_LEN 1024
 #endif
 
+#ifndef BWRAP_HAS_CLEARENV
+#define BWRAP_HAS_CLEARENV 0
+#endif
+
+extern char **environ;
+
 /** redwrap exec state */
 typedef
 struct redwrap_state_s
@@ -65,6 +71,10 @@ struct redwrap_state_s
     redNodeT     *rednode;
     /** copy of the shares */
     redConfShareT shares;
+#if !BWRAP_HAS_CLEARENV
+    /** for environment */
+    char        **environ;
+#endif
     /** flag indicating if rednode user must map to root */
     int           map_user_root;
     /** arguments' count of the bwrap command */
@@ -401,6 +411,14 @@ static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
     if (conftag->newsession & RED_CONF_OPT_ENABLED)
         ADD(restate, "--new-session");
 
+#if BWRAP_HAS_CLEARENV
+    if (!conftag->inheritenv)
+        ADD(restate, "--clearenv");
+#else
+    if (conftag->inheritenv)
+        restate->environ = environ;
+#endif
+
     restate->map_user_root = conftag->maprootuser;
 
     return set_shares(restate, &conftag->share);
@@ -506,6 +524,9 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     // start argument list with red-wrap command name
     restate.cliarg = cliarg;
     restate.rednode = NULL;
+#if !BWRAP_HAS_CLEARENV
+    restate.environ = NULL;
+#endif
     memset(&restate.shares, 0, sizeof restate.shares);
     restate.map_user_root = 0;
     restate.argcount = 1;
@@ -612,7 +633,11 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
 
         /* exec bwrap now */
         restate.argval[restate.argcount] = NULL;
-        if(execve(cliarg->bwrap, (char**) restate.argval, NULL)) {
+#if BWRAP_HAS_CLEARENV
+        if(execv(cliarg->bwrap, (char**) restate.argval)) {
+#else
+        if(execve(cliarg->bwrap, (char**) restate.argval, restate.environ)) {
+#endif
             RedLog(REDLOG_ERROR, "bwrap command issue: %s", strerror(errno));
             return EXIT_FAILURE;
         }

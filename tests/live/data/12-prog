@@ -1,0 +1,7 @@
+/busybox echo ---------------
+/busybox find /  | /busybox sort
+/busybox echo ---------------
+/busybox env  | /busybox sort
+/busybox echo ---------------
+/busybox pwd
+/busybox echo ---------------

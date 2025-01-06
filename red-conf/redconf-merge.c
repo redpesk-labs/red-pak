@@ -74,6 +74,12 @@ static inline void merge_uint_not_null(unsigned source, unsigned *destination) {
         *destination = source;
 }
 
+/* merge the source opt flag to the destination */
+static inline void merge_bool_not_null(unsigned source, unsigned *destination) {
+    if (source)
+        *destination = source;
+}
+
 // Only merge tags that should overloaded
 static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destination, int duplicate) {
     if(destination == NULL) {
@@ -96,6 +102,7 @@ static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destinati
     merge_optflag_overwrite(source->newsession, &destination->newsession);
 
     merge_int_not_null(source->verbose, &destination->verbose);
+    merge_bool_not_null(source->inheritenv, &destination->inheritenv);
     merge_uint_not_null(source->maprootuser, &destination->maprootuser);
 
     return merge_string(source->cachedir, &destination->cachedir, duplicate)

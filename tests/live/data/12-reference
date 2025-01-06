@@ -1,0 +1,12 @@
+---------------
+/
+/busybox
+---------------
+EXTRA=extra
+INHERITED=this is an inherited value
+PATH=/bin
+PWD=/
+SHLVL=1
+---------------
+/
+---------------

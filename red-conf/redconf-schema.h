@@ -253,6 +253,8 @@
         unsigned int gpgcheck;
         /** remove safety checks on date and inode */
         unsigned int unsafe;
+        /** inherit environment */
+        unsigned int inheritenv;
         /** set user as virtual root */
         unsigned int maprootuser;
         /** should terminate when parent die? */

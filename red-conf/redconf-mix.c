@@ -861,11 +861,18 @@ static inline void mix_uint_not_null(unsigned *destination, unsigned source) {
         *destination = source;
 }
 
+/* merge the source opt flag to the destination */
+static inline void mix_bool_not_null(unsigned *destination, unsigned source) {
+    if (*destination == 0)
+        *destination = source;
+}
+
 static int mix_basic_conftag(redConfTagT *destination, const redConfTagT *source, const redNodeT *node)
 {
     mix_optflag_overwrite(&destination->diewithparent, source->diewithparent);
     mix_optflag_overwrite(&destination->newsession, source->newsession);
     mix_int_not_null(&destination->verbose, source->verbose);
+    mix_bool_not_null(&destination->inheritenv, source->inheritenv);
     mix_uint_not_null(&destination->maprootuser, source->maprootuser);
     return mix_string(&destination->cachedir, source->cachedir, node)
         || mix_string(&destination->hostname, source->hostname, node)

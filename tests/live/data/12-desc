@@ -1,0 +1,5 @@
+inherit-env
+
+Simple test entering a node with nothing except busybox at root.
+Inherit all environment variables.
+Displays the content and the environment.

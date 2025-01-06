@@ -1,3 +1,7 @@
+Version 2.4.2 (2025/?/?)
+
+  - Add configuration option 'inherit-env'
+
 Version 2.4.1 (2024/12/17)
 
   - Fix bwrap option unshare-user when time unshared

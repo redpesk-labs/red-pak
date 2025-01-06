@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export INHERITED="this is an inherited value"
-
 tap=true
 test "$1" = "notap" && tap=false
 
@@ -80,7 +78,7 @@ perform_test() {
     fi
 
     # execute the command in the node
-    action redwrap $flagadm --redpath "${rednode}" -- ${shell} sh -c "${cmd}" |
+    action env -i - PWD="$PWD" PATH="$PATH" INHERITED="this is an inherited value" EXTRA=extra redwrap $flagadm --redpath "${rednode}" -- ${shell} sh -c "${cmd}" |
         sed "s,$PWD,<<PWD>>,g" > "${resu}"
     test $? -eq 0 || return
 
