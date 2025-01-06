@@ -137,14 +137,14 @@ that returns the value of the environment variable *VAR*.
 
 When the pattern expansion character is not immediately succeeded
 by an opening bracket, this is a *tag replacement*. Any character
-following the pattern expansion character and in the range of
-UNICODE codepoints from 48 to 122 are interpreted as a tag.
-
-The characters that are in *lower case* are translated to upper case
-before being searched.
+following the pattern expansion character and being either a letter
+of any case (`[a-zA-Z]`), a digit (`[0-9]`) or the underscore (`_`)
+is interpreted as a character of the tag.
 
 The tag is used for evaluation of the replacement.
-The only valid tags are:
+
+The below tags are predefined and reserved, they are not sensitive
+to the case (mening that `$PID` could also be written `$Pid` or `$pid`):
 
 | tag                   | type        | description                                                  |
 |-----------------------|-------------|--------------------------------------------------------------|
@@ -175,6 +175,13 @@ The only valid tags are:
 | `NODE_PATH`           | automatic   | the node path                                                |
 | `NODE_INFO`           | automatic   | the node info                                                |
 | `REDPESK_VERSION`     | environment | ENVAL(REDPESK_VERSION, agl-redpesk9)                         |
+
+If a tag is not one of the above predefined tags, since version 2.4.0,
+the current environ is searched for an entry whose key matches exactly
+the tag (case counts). If found, the value of this entry is substituted.
+
+In all other cases, an empty string is substituted.
+
 
 ### Valid ROOT map
 
@@ -258,7 +265,7 @@ Valid *environ.\*.mode* values are:
 | `Static`  | required | the variable is set with the value      |
 | `Default` | required | the variable is set with the value after expansion |
 | `Execfd`  | required | the value is a shell command, the variable is set with the output of that command |
-| `Inherit` | no       | the variable is set from its value      |
+| `Inherit` | no       | the variable is set from its value inherited of the environment |
 
 It is an error if the mode is not one of the above value.
 
