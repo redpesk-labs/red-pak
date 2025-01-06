@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2022 "IoT.bzh"
+* Copyright (C) 2022-2025 IoT.bzh Company
 * Clément Bénier <clement.benier@iot.bzh>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");

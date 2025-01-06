@@ -1,7 +1,7 @@
 /*
-* Copyright (C) 2021 "IoT.bzh"
-* Author Fulup Ar Foll <fulup@iot.bzh>
-* Author Clément Bénier <clement.benier@iot.bzh>
+* Copyright (C) 2021-2025 IoT.bzh Company
+* Author: Fulup Ar Foll <fulup@iot.bzh>
+* Author: Clément Bénier <clement.benier@iot.bzh>
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.

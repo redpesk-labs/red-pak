@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 - 2022 "IoT.bzh"
+ * Copyright (C) 2020-2025 - 2022 IoT.bzh Company
  *
  * Author: fulup Ar Foll <fulup@iot.bzh>
  * Author: Valentin Lefebvre <valentin.lefebvre@iot.bzh>

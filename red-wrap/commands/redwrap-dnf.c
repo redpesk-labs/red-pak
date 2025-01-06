@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 "IoT.bzh"
+ * Copyright (C) 2022-2025 IoT.bzh Company
  *
  * Author: Clément Bénier <clement.benier@iot.bzh>
  * Author: Valentin Lefebvre <valentin.lefebvre@iot.bzh>
