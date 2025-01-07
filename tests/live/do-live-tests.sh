@@ -110,5 +110,5 @@ do
 done
 $tap && echo "1..${itap}"
 echo
-#cleanup
+cleanup
 
