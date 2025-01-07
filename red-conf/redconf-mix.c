@@ -529,6 +529,18 @@ typedef struct
 }
     mix_exp_root_t;
 
+static int mergeConfExpEnd(mix_exp_root_t *merger)
+{
+    mix_exp_link_t *link = merger->head;
+    int rc = 0;
+    unsigned index = 0;
+    while (rc == 0 && link != NULL) {
+        rc = merger->callback(merger->closure, link->exp, link->node, index++, merger->count);
+        link = link->next;
+    }
+    return rc;
+}
+
 static int mergeConfExp(mix_exp_root_t *merger, const redNodeT *node, unsigned admin, unsigned index, unsigned depth)
 {
     const redConfExportPathT *dexp;
@@ -555,16 +567,9 @@ static int mergeConfExp(mix_exp_root_t *merger, const redNodeT *node, unsigned a
             }
             else {
                 node = node->parent;
-                if (node == NULL) {
+                if (node == NULL)
                     /* no more node, send result to callback */
-                    mix_exp_cb callback = merger->callback;
-                    void *closure = merger->closure;
-                    int rc = 0;
-                    unsigned index = 0;
-                    for (link = merger->head ; rc == 0 && link != NULL ; link = link->next)
-                        rc = callback(closure, link->exp, link->node, index++, merger->count);
-                    return rc;
-                }
+                    return mergeConfExpEnd(merger);
                 depth++;
                 admin = 1;
                 config = node->confadmin;
