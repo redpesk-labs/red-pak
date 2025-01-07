@@ -529,15 +529,30 @@ typedef struct
 }
     mix_exp_root_t;
 
+static int cmp_exp_link(const void *a, const void *b)
+{
+    mix_exp_link_t *link_a = *(mix_exp_link_t**)a;
+    mix_exp_link_t *link_b = *(mix_exp_link_t**)b;
+    return strcmp(link_a->exp->mount, link_b->exp->mount);
+}
+
 static int mergeConfExpEnd(mix_exp_root_t *merger)
 {
-    mix_exp_link_t *link = merger->head;
     int rc = 0;
     unsigned index = 0;
-    while (rc == 0 && link != NULL) {
-        rc = merger->callback(merger->closure, link->exp, link->node, index++, merger->count);
-        link = link->next;
-    }
+    unsigned count = merger->count;
+    mix_exp_link_t *link = merger->head;
+    mix_exp_link_t *links[count];
+
+    /* sort paths */
+    for (; link != NULL; link = link->next)
+        links[index++] = link;
+    qsort(links, count, sizeof links[0], cmp_exp_link);
+
+    /* send to callback in order */
+    for (index = 0 ; rc == 0 && index < count ; index++)
+        rc = merger->callback(merger->closure, links[index]->exp, links[index]->node, index, count);
+
     return rc;
 }
 
