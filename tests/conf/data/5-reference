@@ -6,6 +6,7 @@ config:
   map-root-user: 0
   gpgcheck: false
   unsafe: false
+  inherit-env: false
   die-with-parent: Unset
   new-session: Unset
 

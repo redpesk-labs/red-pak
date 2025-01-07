@@ -91,6 +91,7 @@ config:
   map-root-user: 0
   gpgcheck: false
   unsafe: false
+  inherit-env: false
   die-with-parent: Enabled
   new-session: Unset
   share_all: disabLed
