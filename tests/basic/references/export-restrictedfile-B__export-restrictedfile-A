@@ -35,8 +35,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath node/export-restrictedfile-B/export-restrictedfile-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /B
   --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -48,8 +48,8 @@ redconf create --alias ROOT --config export-restrictedfile-B --config-adm NULL r
 redconf create --alias SUBNODE --config export-restrictedfile-A --config-adm NULL rootnn/export-restrictedfile-B/export-restrictedfile-A
 redwrap  --dump-only --redpath rootnn/export-restrictedfile-B/export-restrictedfile-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /B
   --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -57,8 +57,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootnn/export-restrictedfile-B/export-restrictedfile-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /B
   --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -78,8 +78,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootna/export-restrictedfile-B/export-restrictedfile-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /B
   --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -99,8 +99,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootan/export-restrictedfile-B/export-restrictedfile-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /B
   --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
@@ -119,8 +119,8 @@ DUMP: /usr/bin/bwrap (as redwrap)
   --unshare-net
 redwrap  --admin --dump-only --redpath rootaa/export-restrictedfile-B/export-restrictedfile-A
 DUMP: /usr/bin/bwrap (as redwrap)
-  --ro-bind /somewhere /B
   --ro-bind /somewhere /A
+  --ro-bind /somewhere /B
   --unshare-user
   --unshare-cgroup
   --unshare-ipc
