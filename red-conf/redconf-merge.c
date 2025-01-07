@@ -170,7 +170,7 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, 
     mergedNode->config->headers.info = strdup(leaf->config->headers.info);
 
     //conftar
-    mergeConfTag(rootNode, &mergedNode->config->conftag, 0);
+    mergeConfTag(rootNode, &mergedNode->config->conftag, duplicate);
     mergedNode->config->conftag.cachedir = expandAlloc(mergedNode, mergedNode->config->conftag.cachedir, expand);
     mergedNode->config->conftag.hostname = expandAlloc(mergedNode, mergedNode->config->conftag.hostname, expand);
     mergedNode->config->conftag.chdir = expandAlloc(mergedNode, mergedNode->config->conftag.chdir, expand);

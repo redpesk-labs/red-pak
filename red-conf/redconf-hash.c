@@ -49,7 +49,7 @@ static int hashmatch(struct cds_lfht_node *ht_node, const void *_key) {
     redHashT *hnode = caa_container_of(ht_node, redHashT, lfht_node);
     const char *key = _key;
 
-    return !strncmp(key, hnode->key, sizeof(key)*strlen(key));
+    return !strncmp(key, hnode->key, 1 + strlen(key));
 }
 
 static int add_hash(struct cds_lfht *ht, redHashT *value, redHashT **hoverload) {
@@ -74,12 +74,13 @@ static int add_hash(struct cds_lfht *ht, redHashT *value, redHashT **hoverload) 
 
 
     //allocate hash entry
-    hnode = calloc(1, sizeof(*hnode));
+    hnode = calloc(1, sizeof(*hnode) + 1 + bytes);
     if (!hnode) {
         RedLog(REDLOG_ERROR, "Issue allocate hnode");
         goto Exit;
     }
-    hnode->key = value->key;
+    hnode->key = (const char*)(hnode + 1);
+    strcpy((char*)hnode->key, value->key);
     hnode->value = value->value;
     hnode->node = value->node;
 
