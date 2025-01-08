@@ -260,59 +260,73 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
     }
 }
 
-static int setmap(const char *map_path, const char *map_buf) {
-    int err = 0;
-    int fd;
+static int setmap(const char *path, const char *content) {
+    int rc;
+    size_t len;
+    ssize_t ssz;
 
-    fd = open(map_path, O_RDWR);
-    if (fd < 0) {
-        RedLog(REDLOG_ERROR, "Issue open map_path=%s error=%s", map_path, strerror(errno));
-        err = 1;
-        goto Error;
+    rc = open(path, O_WRONLY);
+    if (rc < 0)
+        RedLog(REDLOG_ERROR, "Issue open path=%s error=%s", path, strerror(errno));
+    else {
+        len = strlen(content);
+        ssz = write(rc, content, len);
+        close(rc);
+        if (ssz == (ssize_t)len)
+            rc = 0;
+        else {
+            RedLog(REDLOG_ERROR, "Issue writing path=%s error=%s", path, strerror(errno));
+            rc = -1;
+        }
     }
-
-    if (write(fd, map_buf, strlen(map_buf)) != (ssize_t)strlen(map_buf)) {
-        fprintf(stderr, "ERROR: write %s: %s\n", map_buf, strerror(errno));
-        err = 2;
-        goto ErrorOpen;
-    }
-
-ErrorOpen:
-    close(fd);
-Error:
-    return err;
+    return rc;
 }
 
-static int setuidgidmap(int pid, int maprootuser) {
-    const int MAP_BUF_SIZE = 100;
-    char map_path[PATH_MAX];
-    char map_buf[MAP_BUF_SIZE];
-    int uid = getuid();
-    int gid = getgid();
-    int uid_to_map = maprootuser ? 0 : uid;
-    int gid_to_map = maprootuser ? 0 : gid;
+static int write_uid_gid_map(pid_t pid,
+                             uid_t inner_uid, uid_t outer_uid,
+                             gid_t inner_gid, gid_t outer_gid
+) {
+    const int BUF_SIZE = 100;
+    char path[BUF_SIZE];
+    char content[BUF_SIZE];
+    int lenpref, rc;
+
+    /* get current pid if needed */
+    if (pid <= 0)
+        pid = getpid();
+    lenpref = snprintf(path, sizeof path, "/proc/%lld/", (long long)pid);
 
     /* set uid map */
-    snprintf(map_path, PATH_MAX, "/proc/%d/uid_map", pid);
-    snprintf(map_buf, MAP_BUF_SIZE, "%d %d 1", uid_to_map, uid);
-    if(setmap(map_path, map_buf))
-        goto Error;
+    strncpy(&path[lenpref], "uid_map", sizeof path - lenpref);
+    snprintf(content, sizeof content, "%lld %lld 1", (long long)inner_uid, (long long)outer_uid);
+    rc = setmap(path, content);
+    if (rc < 0)
+        return rc;
 
     /* setgroups to deny */
-    snprintf(map_path, PATH_MAX, "/proc/%d/setgroups", pid);
-    snprintf(map_buf, MAP_BUF_SIZE, "deny");
-    if(setmap(map_path, map_buf))
-        goto Error;
+    strncpy(&path[lenpref], "setgroups", sizeof path - lenpref);
+    snprintf(content, sizeof content, "deny");
+    rc = setmap(path, content);
+    if (rc < 0)
+        return rc;
 
     /* set gid map */
-    snprintf(map_path, PATH_MAX, "/proc/%d/gid_map", pid);
-    snprintf(map_buf, MAP_BUF_SIZE, "%d %d 1", gid_to_map, gid);
-    if(setmap(map_path, map_buf))
-        goto Error;
+    strncpy(&path[lenpref], "gid_map", sizeof path - lenpref);
+    snprintf(content, sizeof content, "%lld %lld 1", (long long)inner_gid, (long long)outer_gid);
+    rc = setmap(path, content);
+    if (rc < 0)
+        return rc;
 
     return 0;
-Error:
-    return -1;
+}
+
+static int setuidgidmap(pid_t pid, int maprootuser) {
+    uid_t uid = getuid();
+    gid_t gid = getgid();
+    uid_t uid_to_map = maprootuser ? 0 : uid;
+    gid_t gid_to_map = maprootuser ? 0 : gid;
+
+    return write_uid_gid_map(pid, uid_to_map, uid, gid_to_map, gid);
 }
 
 static int set_one_capability(redwrap_state_t *restate, const char *capability, int value)
