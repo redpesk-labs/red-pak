@@ -526,11 +526,11 @@ static void joinns(const char *filens, int nstype)
 
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     redwrap_state_t restate;
-    int idx, error, unshareusr;
-    int pipe_fd[2];
+    int idx, error, unshareusr, cloflags;
     pid_t pid;
-    ssize_t ssz;
     redConfSharingE sall, stim;
+    uid_t uid_to_map, uid;
+    gid_t gid_to_map, gid;
 
     if (cliarg->verbose)
         SetLogLevel(cliarg->verbose);
@@ -593,21 +593,20 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     }
 
     /* clone now */
+    uid = getuid();
+    gid = getgid();
+    uid_to_map = restate.map_user_root ? 0 : uid;
+    gid_to_map = restate.map_user_root ? 0 : gid;
+
+    /* clone now */
+    cloflags = SIGCHLD;
     sall = sharing_type(restate.shares.all);
     stim = sharing_type(restate.shares.time);
     unshareusr = should_unshare_time(stim)
       && should_unshare(sharing_type(restate.shares.user), sall);
-    if (!unshareusr)
-        pid = (pid_t) syscall (__NR_clone, SIGCHLD, NULL);
-    else {
-        /* setup a connexion from parent to child */
-        if (pipe(pipe_fd) == -1) {
-            RedLog(REDLOG_ERROR, "Cannot pipe error=%s", strerror(errno));
-            goto OnErrorExit;
-        }
-        /* enter new user namespace now */
-        pid = (pid_t) syscall (__NR_clone, CLONE_NEWUSER|SIGCHLD, NULL);
-    }
+    if (unshareusr)
+        cloflags |= CLONE_NEWUSER;
+    pid = (pid_t) syscall (__NR_clone, cloflags, NULL);
 
     /* enter new user namespace now */
     if (pid < 0) {
@@ -618,13 +617,9 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         /* in forked process */
         /* wait for parent to set uid/gid maps */
         if (unshareusr) {
-            close(pipe_fd[1]);
-            ssz = read(pipe_fd[0], &pid, sizeof(pid));
-            close(pipe_fd[0]);
-            if (ssz < 0) {
-                RedLog(REDLOG_ERROR, "failed to receive sync pid: %s", strerror(errno));
+            error = write_uid_gid_map(0, uid_to_map, uid, gid_to_map, gid);
+            if (error < 0)
                 return EXIT_FAILURE;
-            }
         }
 
         /* unshare time namespace if required */
@@ -659,19 +654,6 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     }
 
     /* in parent process */
-    if (unshareusr) {
-        /* set uid/gid maps and signal child */
-        close(pipe_fd[0]);
-        setuidgidmap(pid, restate.map_user_root);
-        ssz = write(pipe_fd[1], &pid, sizeof(pid));
-        close(pipe_fd[1]);
-        if (ssz < 0) {
-            RedLog(REDLOG_ERROR, "failed to send sync pid: %s", strerror(errno));
-            kill(pid, SIGKILL);
-            goto OnErrorExit;
-        }
-    }
-
     /* wait child completion */
     waitpid(pid, &error, 0);
     return error;
