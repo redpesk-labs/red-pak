@@ -249,6 +249,10 @@
         const char *chdir;
         /** root cgroup for the node */
         const char *cgrouproot;
+        /** user to set */
+        const char *setuser;
+        /** group to set */
+        const char *setgroup;
         /** require check of repository GPG key */
         unsigned int gpgcheck;
         /** remove safety checks on date and inode */

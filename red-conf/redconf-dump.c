@@ -64,6 +64,8 @@ void RedDumpConftag(redConfTagT *conftag) {
     printf("\thostname: %s\n", conftag == NULL ? "" : conftag->hostname);
     printf("\tchdir: %s\n", conftag == NULL ? "" : conftag->chdir);
     printf("\tumask: %s\n", conftag == NULL ? "" : conftag->umask);
+    printf("\tset-user: %s\n", conftag == NULL || conftag->setuser == NULL ? "" :  conftag->setuser);
+    printf("\tset-group: %s\n", conftag == NULL || conftag->setgroup == NULL ? "" :  conftag->setgroup);
     printf("\tverbose: %d\n", conftag == NULL ? 0 : conftag->verbose);
     printf("\tdiewithparent: %s\n", conftag == NULL ? 0 : getRedConfOptString(conftag->diewithparent));
     printf("\tumask: %s\n", conftag == NULL ? "" : conftag->umask);

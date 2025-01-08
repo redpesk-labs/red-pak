@@ -39,17 +39,19 @@ static struct option options[] = {
     {"dump"   , no_argument      , 0,  'd' },
     {"dump-only", no_argument    , 0,  'D' },
     {"force"  , optional_argument, 0,  'f' },
+    {"gid"    , required_argument, 0,  'G' },
     {"help"   , no_argument      , 0,  '?' },
     {"redpath", required_argument, 0,  'r' },
     {"rpath"  , required_argument, 0,  'r' },
     {"rp"     , required_argument, 0,  'r' },
     {"strict" , optional_argument, 0,  's' },
     {"unsafe" , optional_argument, 0,  'u' },
+    {"uid"    , required_argument, 0,  'U' },
     {"verbose", optional_argument, 0,  'v' },
     {0,         0,                 0,  0 }
 };
 
-static const char short_options[] = "a::b:Df::?r:s::u::v::";
+static const char short_options[] = "a::b:Df::G:?r:s::u::U:v::";
 
 static int optbool(const char *arg, int def, const char *option)
 {
@@ -87,7 +89,7 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
                 break;
 
             case 'b':
-                config->bwrap=optarg;
+                config->bwrap = optarg;
                 break;
 
             case 'd':
@@ -102,8 +104,12 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
                 config->strict = !optbool(optarg, 1, "force");
                 break;
 
+            case 'G':
+                config->gid = optarg;
+                break;
+
             case 'r':
-                config->redpath=optarg;
+                config->redpath = optarg;
                 break;
 
             case 's':
@@ -112,6 +118,10 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 
             case 'u':
                 config->unsafe = optbool(optarg, 1, "unsafe");
+                break;
+
+            case 'U':
+                config->uid = optarg;
                 break;
 
             case 'v':

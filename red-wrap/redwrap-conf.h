@@ -21,9 +21,11 @@
 #define _REDWRAP_CONF_INCLUDE_
 
 typedef struct {
-    const char*redpath;
-    const char*bwrap;
-    const char*adminpath;
+    const char *redpath;
+    const char *bwrap;
+    const char *adminpath;
+    const char *uid;
+    const char *gid;
     int index;
     int verbose;
     int strict;

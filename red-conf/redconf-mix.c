@@ -898,6 +898,8 @@ static int mix_basic_conftag(redConfTagT *destination, const redConfTagT *source
         || mix_string(&destination->hostname, source->hostname, node)
         || mix_string(&destination->chdir, source->chdir, node)
         || mix_string(&destination->umask, source->umask, node)
+        || mix_string(&destination->setuser, source->setuser, node)
+        || mix_string(&destination->setgroup, source->setgroup, node)
         || mix_string(&destination->cgrouproot, source->cgrouproot, node);
 }
 
