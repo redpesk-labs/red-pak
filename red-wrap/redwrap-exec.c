@@ -320,15 +320,6 @@ static int write_uid_gid_map(pid_t pid,
     return 0;
 }
 
-static int setuidgidmap(pid_t pid, int maprootuser) {
-    uid_t uid = getuid();
-    gid_t gid = getgid();
-    uid_t uid_to_map = maprootuser ? 0 : uid;
-    gid_t gid_to_map = maprootuser ? 0 : gid;
-
-    return write_uid_gid_map(pid, uid_to_map, uid, gid_to_map, gid);
-}
-
 static int set_one_capability(redwrap_state_t *restate, const char *capability, int value)
 {
     ADD2(restate, value ? "--cap-add" : "--cap-drop", capability);
