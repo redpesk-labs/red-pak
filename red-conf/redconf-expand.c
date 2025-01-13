@@ -64,15 +64,27 @@ static int GetDecimal(long long unsigned value, char *output, size_t size) {
     int rc = snprintf(output, size, "%llu", value);
     return rc < 0 || (size_t)rc >= size;
 }
+
+static int PutString(const char *value, char *output, size_t size) {
+    size_t idx = 0;
+    while (idx < size && (output[idx] = value[idx]) != '\0')
+        idx++;
+    return idx >= size;
+}
+
 static int GetUid(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
     (void)node;
     (void)vardef;
+    if (node != NULL && node->leaf != NULL && node->leaf->earlyconf.setuser != NULL)
+        return PutString(node->leaf->earlyconf.setuser, output, size);
     return GetDecimal((long long unsigned)getuid(), output, size);
 }
 
 static int GetGid(const redNodeT *node, const vardef_t *vardef, char *output, size_t size) {
     (void)node;
     (void)vardef;
+    if (node != NULL && node->leaf != NULL && node->leaf->earlyconf.setgroup != NULL)
+        return PutString(node->leaf->earlyconf.setgroup, output, size);
     return GetDecimal((long long unsigned)getgid(), output, size);
 }
 
@@ -80,13 +92,6 @@ static int GetPid(const redNodeT *node, const vardef_t *vardef, char *output, si
     (void)node;
     (void)vardef;
     return GetDecimal((long long unsigned)getpid(), output, size);
-}
-
-static int PutString(const char *value, char *output, size_t size) {
-    size_t idx = 0;
-    while (idx < size && (output[idx] = value[idx]) != '\0')
-        idx++;
-    return idx >= size;
 }
 
 static int GetUndefined(const char *key, char *output, size_t size) {
