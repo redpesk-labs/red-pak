@@ -40,6 +40,9 @@
 #include <linux/sched.h>
 #endif
 #include <sys/syscall.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include "redconf-log.h"
 #include "redconf-schema.h"
@@ -473,6 +476,7 @@ static int mixvar(void *closure, const redConfVarT *var, const redNodeT *node, u
     set_one_envvar((redwrap_state_t*)closure, var, node);
     return 0;
 }
+
 static int mixexp(void *closure, const redConfExportPathT *exp, const redNodeT *node, unsigned index, unsigned count)
 {
     (void)index;
@@ -480,6 +484,7 @@ static int mixexp(void *closure, const redConfExportPathT *exp, const redNodeT *
     set_one_export((redwrap_state_t*)closure, exp, node);
     return 0;
 }
+
 static int set_exports_and_vars(redwrap_state_t *restate)
 {
     int rc = mixExports(restate->rednode, mixexp, restate);
@@ -515,6 +520,93 @@ static void joinns(const char *filens, int nstype)
     }
 }
 
+/* test if str encodes a positive integral number */
+static int isnum(const char *str)
+{
+    do {
+        if (*str < '0' || *str > '9')
+            return 0;
+    }
+    while(*++str);
+    return 1;
+}
+
+/* returns a fresh allocated string encoding the given value */
+static char *num2str(long value)
+{
+    char buffer[100], *res;
+    unsigned len, beg = (unsigned)sizeof buffer;
+    if (value < 0)
+        return NULL;
+    do {
+        ldiv_t x = ldiv(value, 10);
+        buffer[--beg] = (char)('0' + (char)x.rem);
+        value = x.quot;
+    }
+    while (value != 0);
+    len = (unsigned)sizeof buffer - beg;
+    res = malloc(len + 1);
+    if (res != NULL) {
+        memcpy(res, &buffer[beg], len);
+        res[len] = 0;
+    }
+    return res;
+}
+
+static int get_final_uid(const char **dest, const char *value)
+{
+    if (value == NULL) {
+        *dest = NULL;
+        return 0;
+    }
+    if (isnum(value))
+        *dest = strdup(value);
+    else {
+        struct passwd *p = getpwnam(value);
+        *dest = p != NULL ? num2str(p->pw_uid) : NULL;
+    }
+    return *dest == NULL;
+}
+
+static int get_final_gid(const char **dest, const char *value)
+{
+    if (value == NULL) {
+        *dest = NULL;
+        return 0;
+    }
+    if (isnum(value))
+        *dest = strdup(value);
+    else {
+        struct group *g = getgrnam(value);
+        *dest = g != NULL ? num2str(g->gr_gid) : NULL;
+    }
+    return *dest == NULL;
+}
+
+static int earlymix(void *closure, const early_conf_t *conf, const redNodeT *node)
+{
+    redwrap_state_t *restate = closure;
+    const rWrapConfigT *cliarg = restate->cliarg;
+    early_conf_t *final = &restate->rednode->leaf->earlyconf;
+
+    (void)node;
+
+    return get_final_uid(&final->setuser, cliarg->uid != NULL ? cliarg->uid : conf->setuser)
+        || get_final_gid(&final->setgroup, cliarg->gid != NULL ? cliarg->gid : conf->setgroup);
+
+    return final->setuser == NULL || final->setgroup == NULL;
+}
+
+static int set_early_conf(redwrap_state_t *restate)
+{
+    return mixEarlyConf(restate->rednode, earlymix, restate);
+}
+
+
+
+
+
+
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     redwrap_state_t restate;
     int idx, error, unshareusr, cloflags;
@@ -546,6 +638,11 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
 
     /* validate the node */
     error = validateNode(restate.rednode, restate.cliarg->unsafe);
+    if (error)
+        goto OnErrorExit;
+
+    /* setup from early config */
+    error = set_early_conf(&restate);
     if (error)
         goto OnErrorExit;
 
