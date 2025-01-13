@@ -612,8 +612,8 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     int idx, error, unshareusr, cloflags;
     pid_t pid;
     redConfSharingE sall, stim;
-    uid_t uid_to_map, uid;
-    gid_t gid_to_map, gid;
+    uid_t uid_to_map, uid, cur_uid;
+    gid_t gid_to_map, gid, cur_gid;
 
     if (cliarg->verbose)
         SetLogLevel(cliarg->verbose);
@@ -681,8 +681,10 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     }
 
     /* clone now */
-    uid = getuid();
-    gid = getgid();
+    cur_uid = getuid();
+    cur_gid = getgid();
+    uid = restate.rednode->leaf->earlyconf.setuser == NULL ? cur_uid : (uid_t)atoi(restate.rednode->leaf->earlyconf.setuser);
+    gid = restate.rednode->leaf->earlyconf.setgroup == NULL ? cur_gid : (gid_t)atoi(restate.rednode->leaf->earlyconf.setgroup);
     uid_to_map = restate.map_user_root ? 0 : uid;
     gid_to_map = restate.map_user_root ? 0 : gid;
 
@@ -717,8 +719,6 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
             unshare(CLONE_NEWTIME);
 
         /* join other namespaces */
-        if (sharing_type(restate.shares.user) == RED_CONF_SHARING_JOIN)
-            joinns(restate.shares.user, CLONE_NEWUSER);
         if (sharing_type(restate.shares.cgroup) == RED_CONF_SHARING_JOIN)
             joinns(restate.shares.cgroup, CLONE_NEWCGROUP);
         if (sharing_type(restate.shares.ipc) == RED_CONF_SHARING_JOIN)
@@ -727,6 +727,17 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
             joinns(restate.shares.net, CLONE_NEWNET);
         if (sharing_type(restate.shares.pid) == RED_CONF_SHARING_JOIN)
             joinns(restate.shares.pid, CLONE_NEWPID);
+        if (sharing_type(restate.shares.user) == RED_CONF_SHARING_JOIN)
+            joinns(restate.shares.user, CLONE_NEWUSER);
+
+        if (gid != cur_gid && setgid(gid) != 0) {
+            RedLog(REDLOG_ERROR, "not able to switch to group %d: %s", (int)gid, strerror(errno));
+            return EXIT_FAILURE;
+        }
+        if (uid != cur_uid && setuid(uid) != 0) {
+            RedLog(REDLOG_ERROR, "not able to switch to user %d: %s", (int)uid, strerror(errno));
+            return EXIT_FAILURE;
+        }
 
         /* exec bwrap now */
         restate.argval[restate.argcount] = NULL;
