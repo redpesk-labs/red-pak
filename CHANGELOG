@@ -1,6 +1,11 @@
-Version 2.4.2 (2025/?/?)
+Version 2.4.2 (2025/01/15)
 
   - Add configuration option 'inherit-env'
+  - Export sorted by mount path
+  - Improved setting of user/group mapping
+  - Fix memory bug in merge tool
+  - Added options for setting user and/or group of rednode
+  - Added options for setting smack label of rednode
 
 Version 2.4.1 (2024/12/17)
 
