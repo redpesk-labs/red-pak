@@ -40,6 +40,7 @@ static struct option options[] = {
     {"dump-only", no_argument    , 0,  'D' },
     {"force"  , optional_argument, 0,  'f' },
     {"gid"    , required_argument, 0,  'G' },
+    {"group"  , required_argument, 0,  'G' },
     {"help"   , no_argument      , 0,  '?' },
     {"redpath", required_argument, 0,  'r' },
     {"rpath"  , required_argument, 0,  'r' },
@@ -47,6 +48,7 @@ static struct option options[] = {
     {"strict" , optional_argument, 0,  's' },
     {"unsafe" , optional_argument, 0,  'u' },
     {"uid"    , required_argument, 0,  'U' },
+    {"user"   , required_argument, 0,  'U' },
     {"verbose", optional_argument, 0,  'v' },
     {0,         0,                 0,  0 }
 };
@@ -105,7 +107,7 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
                 break;
 
             case 'G':
-                config->gid = optarg;
+                config->setgroup = optarg;
                 break;
 
             case 'r':
@@ -121,7 +123,7 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
                 break;
 
             case 'U':
-                config->uid = optarg;
+                config->setuser = optarg;
                 break;
 
             case 'v':

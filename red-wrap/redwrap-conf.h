@@ -24,8 +24,8 @@ typedef struct {
     const char *redpath;
     const char *bwrap;
     const char *adminpath;
-    const char *uid;
-    const char *gid;
+    const char *setuser;
+    const char *setgroup;
     int index;
     int verbose;
     int strict;
