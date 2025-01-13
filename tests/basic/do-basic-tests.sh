@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(dirname $0)
+
 # 
 tap=true
 case "$1" in
@@ -11,7 +13,7 @@ tmp=/tmp/redpak-check-data-output
 
 rm -rf rednodes configs
 mkdir -p rednodes configs results
-$(dirname $0)/gen-confs.sh "configs/"
+./gen-confs.sh "configs/"
 
 #---------------------------------------
 # creation of a rednode

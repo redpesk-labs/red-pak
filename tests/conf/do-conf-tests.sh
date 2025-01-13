@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(dirname $0)
+
 tap=true
 test "$1" = "notap" && tap=false
 

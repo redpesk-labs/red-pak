@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(dirname $0)
+
 #set -x
 
 redroot=/tmp/rpak-jointest

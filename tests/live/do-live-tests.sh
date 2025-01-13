@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(dirname $0)
+
 tap=true
 test "$1" = "notap" && tap=false
 
@@ -9,7 +11,9 @@ tmp=${redroot}.out
 # cleaning
 cleanup() {
     rm -rf "${redroot}" "${tmp}"
-    find /sys/fs/cgroup -type d | grep rpak-livetest | sort -r | xargs -n 1 rmdir
+    for x in $(find /sys/fs/cgroup -type d | grep rpak-livetest | sort -r); do
+        [[ -d "$x" ]] && rmdir "$x"
+    done
 }
 
 print() {
