@@ -185,4 +185,12 @@ extern int mixShares(const redNodeT *node, mix_share_cb callback, void *closure)
 typedef int (*mix_conftag_cb)(void *closure, const redConfTagT *conftag);
 extern int mixConfTags(const redNodeT *node, mix_conftag_cb callback, void *closure);
 
+/****************************************************************************
+* merge of early conf
+****************************************************************************/
+
+typedef int (*mix_early_conf_cb)(void *closure, const early_conf_t *conf, const redNodeT *node);
+
+extern int mixEarlyConf(const redNodeT *node, mix_early_conf_cb callback, void *closure);
+
 #endif

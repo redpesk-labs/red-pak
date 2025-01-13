@@ -959,3 +959,50 @@ int mixConfTags(const redNodeT *node, mix_conftag_cb callback, void *closure)
     return rc;
 }
 
+/****************************************************************************
+* merge of early conf
+* -------------------
+*
+* RULE:
+*  1. values are set by the last item
+*
+* MATRIX: (-: unset, *: any value, N: normal definition, A: admin definition
+*          P: parent definition, NP: normal prent definition, AP: admin parent definition)
+*
+*   PARENT  NORMAL ADMIN EFFECT
+*     P       -      -     P
+*     -       N      -     N
+*     NP      N      -     N
+*     AP      N      -     AP
+*     *       *      A     A
+****************************************************************************/
+
+static inline void mix_const_string(const char **destination, const char *source) {
+    if (source != NULL && *destination == NULL)
+        *destination = source;
+}
+
+static void mix_early_conf(early_conf_t *conf, const redConfigT *nodeconf)
+{
+    mix_const_string(&conf->setuser, nodeconf->conftag.setuser);
+    mix_const_string(&conf->setgroup, nodeconf->conftag.setgroup);
+}
+
+int mixEarlyConf(const redNodeT *node, mix_early_conf_cb callback, void *closure)
+{
+    const redNodeT *iter;
+    early_conf_t conf;
+
+    memset(&conf, 0, sizeof conf);
+
+    for (iter = node ; iter != NULL ; iter = iter->parent)
+        if (iter->confadmin)
+            mix_early_conf(&conf, iter->confadmin);
+
+    for (iter = node ; iter != NULL ; iter = iter->parent)
+        if (iter->config)
+            mix_early_conf(&conf, iter->config);
+
+    return callback(closure, &conf, node);
+}
+

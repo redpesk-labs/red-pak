@@ -39,6 +39,15 @@
 
 // --- Redpath Node Directory Hierarchy (from leaf to root)
 
+/** structure recording early config for leaves */
+typedef struct {
+    /** set the user */
+    const char *setuser;
+    /** set the group */
+    const char *setgroup;
+}
+    early_conf_t;
+
 /** structure recording a node */
 typedef struct redNodeS {
     /** the status of the node */
@@ -57,6 +66,8 @@ typedef struct redNodeS {
     struct redNodeS *next_sibling;
     /** path of the node */
     const char *redpath;
+    /** some early config */
+    early_conf_t earlyconf;
 }
     redNodeT;
 
