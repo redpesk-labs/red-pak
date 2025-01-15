@@ -1,0 +1,4 @@
+/busybox echo ---------------
+/busybox cat /proc/self/attr/current
+/busybox echo
+/busybox echo ---------------

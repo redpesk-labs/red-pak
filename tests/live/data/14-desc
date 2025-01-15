@@ -1,0 +1,4 @@
+set-smack
+
+Simple test entering a node with a smack label.
+Displays current attribute
