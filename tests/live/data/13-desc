@@ -1,0 +1,4 @@
+set-user-group
+
+Simple test entering a node for a user and a group.
+Displays current id.
