@@ -26,6 +26,7 @@ typedef struct {
     const char *adminpath;
     const char *setuser;
     const char *setgroup;
+    const char *smack;
     int index;
     int verbose;
     int strict;

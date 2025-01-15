@@ -164,6 +164,7 @@ static const cyaml_schema_field_t ConfigSchema[] = {
     CYAML_FIELD_STRING_PTR("umask", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, umask, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("set-user", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, setuser, 0, CYAML_UNLIMITED),
     CYAML_FIELD_STRING_PTR("set-group", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, setgroup, 0, CYAML_UNLIMITED),
+    CYAML_FIELD_STRING_PTR("smack", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, smack, 0, CYAML_UNLIMITED),
     CYAML_FIELD_INT("verbose", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, verbose),
     CYAML_FIELD_IGNORE("maxage", CYFLAG_OPT|CYFLAG_CASE),
     CYAML_FIELD_INT("map-root-user", CYFLAG_PTR|CYFLAG_CASE|CYFLAG_OPT, redConfTagT, maprootuser),

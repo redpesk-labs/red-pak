@@ -46,6 +46,7 @@ static struct option options[] = {
     {"rpath"  , required_argument, 0,  'r' },
     {"rp"     , required_argument, 0,  'r' },
     {"strict" , optional_argument, 0,  's' },
+    {"smack"  , required_argument, 0,  'S' },
     {"unsafe" , optional_argument, 0,  'u' },
     {"uid"    , required_argument, 0,  'U' },
     {"user"   , required_argument, 0,  'U' },
@@ -53,7 +54,7 @@ static struct option options[] = {
     {0,         0,                 0,  0 }
 };
 
-static const char short_options[] = "a::b:Df::G:?r:s::u::U:v::";
+static const char short_options[] = "a::b:Df::G:?r:s::S:u::U:v::";
 
 static int optbool(const char *arg, int def, const char *option)
 {
@@ -116,6 +117,10 @@ rWrapConfigT *RwrapParseArgs(int argc, char *argv[], const char *usage) {
 
             case 's':
                 config->strict = optbool(optarg, 1, "strict");
+                break;
+
+            case 'S':
+                config->smack = optarg;
                 break;
 
             case 'u':

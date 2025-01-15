@@ -346,8 +346,9 @@ entries, all are optional:
 | `path`            | string   | (path list) program search path list       |
 | `ldpath`          | string   | (path list) library search path list       |
 | `umask`           | string   | octal umask value                          |
-| `set-user`        | string   | set of process user before entering node   |
-| `set-group`       | string   | set of process group before entering node  |
+| `set-user`        | string   | set of process user before entering node (need CAP_SETUID) |
+| `set-group`       | string   | set of process group before entering node (need CAP_SETGID) |
+| `smack`           | string   | set of process group before entering node (need CAP_MAC_ADMIN) |
 | `verbose`         | int      | verbosity level                            |
 | `map-root-user`   | int      | set user as root                           |
 | `gpgcheck`        | boolean  | check rpm signature and gpg                |

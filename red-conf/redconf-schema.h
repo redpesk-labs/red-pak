@@ -253,6 +253,8 @@
         const char *setuser;
         /** group to set */
         const char *setgroup;
+        /** smack label to set */
+        const char *smack;
         /** require check of repository GPG key */
         unsigned int gpgcheck;
         /** remove safety checks on date and inode */

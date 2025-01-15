@@ -74,6 +74,8 @@ struct redwrap_state_s
     redNodeT     *rednode;
     /** copy of the shares */
     redConfShareT shares;
+    /** copy of smack */
+    char *smack;
 #if !BWRAP_HAS_CLEARENV
     /** for environment */
     char        **environ;
@@ -429,6 +431,9 @@ static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
 
     restate->map_user_root = conftag->maprootuser;
 
+    if (conftag->smack)
+        restate->smack = strdup(conftag->smack);
+
     return set_shares(restate, &conftag->share);
 }
 
@@ -602,10 +607,19 @@ static int set_early_conf(redwrap_state_t *restate)
     return mixEarlyConf(restate->rednode, earlymix, restate);
 }
 
-
-
-
-
+static void setsmack(const char *label)
+{
+    size_t len = strlen(label);
+    int fd = open("/proc/self/attr/current", O_WRONLY);
+    if (fd >= 0) {
+            ssize_t wrl = write(fd, label, len);
+            close(fd);
+            if (wrl == (ssize_t)len)
+                return;
+    }
+    RedLog(REDLOG_ERROR, "not able to switch to SMACK %s: %s", label, strerror(errno));
+    exit(EXIT_FAILURE);
+}
 
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     redwrap_state_t restate;
@@ -619,13 +633,8 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         SetLogLevel(cliarg->verbose);
 
     // start argument list with red-wrap command name
+    memset(&restate, 0, sizeof restate);
     restate.cliarg = cliarg;
-    restate.rednode = NULL;
-#if !BWRAP_HAS_CLEARENV
-    restate.environ = NULL;
-#endif
-    memset(&restate.shares, 0, sizeof restate.shares);
-    restate.map_user_root = 0;
     restate.argcount = 1;
     restate.argval[0] = command_name;
 
@@ -730,6 +739,11 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         if (sharing_type(restate.shares.user) == RED_CONF_SHARING_JOIN)
             joinns(restate.shares.user, CLONE_NEWUSER);
 
+        if (cliarg->smack != NULL)
+            setsmack(cliarg->smack);
+        else if (restate.smack != NULL)
+            setsmack(restate.smack);
+      
         if (gid != cur_gid && setgid(gid) != 0) {
             RedLog(REDLOG_ERROR, "not able to switch to group %d: %s", (int)gid, strerror(errno));
             return EXIT_FAILURE;

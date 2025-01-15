@@ -900,6 +900,7 @@ static int mix_basic_conftag(redConfTagT *destination, const redConfTagT *source
         || mix_string(&destination->umask, source->umask, node)
         || mix_string(&destination->setuser, source->setuser, node)
         || mix_string(&destination->setgroup, source->setgroup, node)
+        || mix_string(&destination->smack, source->smack, node)
         || mix_string(&destination->cgrouproot, source->cgrouproot, node);
 }
 
@@ -955,6 +956,7 @@ int mixConfTags(const redNodeT *node, mix_conftag_cb callback, void *closure)
     free((void*)conftag.umask);
     free((void*)conftag.cgrouproot);
     free((void*)conftag.capabilities);
+    free((void*)conftag.smack);
 
     return rc;
 }
