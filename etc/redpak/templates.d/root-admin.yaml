@@ -77,7 +77,7 @@ environ:
 # Export section from all rednode family cummulate
 #---------------------------------------------------------------------
 exports:
-- mode: Restricted
+- mode: Public
   mount: $NODE_PATH/var/lib/rpm
   path: /var/lib/rpm
 - mode: Restricted

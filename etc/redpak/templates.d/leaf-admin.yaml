@@ -4,7 +4,7 @@ headers:
   info: default leaf node administrative configuration
 
 exports:
-  - mode: Restricted
+  - mode: Public
     mount: $NODE_PATH/var/lib/rpm/
     path: $NODE_PATH/var/lib/rpm/
   - mode: Restricted
