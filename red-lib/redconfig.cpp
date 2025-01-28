@@ -72,13 +72,14 @@ void RedNode::addOptions(libdnf::cli::ArgumentParser::Group *global_options) {
     forcenode_opt->set_short_description("install root path for node");
     forcenode_opt->link_value(&installRootNodeOpt);
     global_options->register_argument(installrootnode_opt);
-
+/*
     auto rpmverbosity_opt = arg_parser->add_new_named_arg("rpmverbosity");
     rpmverbosity_opt->set_long_name("rpmverbosity");
     rpmverbosity_opt->set_has_value(true);
     rpmverbosity_opt->set_short_description(fmt::format("rpmverbosity level: 0 to {}", (int)RPMLOG_DEBUG));
     rpmverbosity_opt->link_value(&rpmverbosity);
     global_options->register_argument(rpmverbosity_opt);
+*/
 }
 
 void RedNode::configure() {
@@ -112,8 +113,10 @@ void RedNode::configure() {
     base.get_config().reposdir().set(libdnf::Option::Priority::RUNTIME, reposdir);
 
     // set rpm verbosity
+/*
     rpmSetVerbosity(rpmverbosity.get_value());
     logger.info(fmt::format("rpmverbosity is {}", rpmverbosity.get_value()));
+*/
 }
 
 void RedNode::scanNode() {
