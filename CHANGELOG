@@ -1,3 +1,8 @@
+Version 2.4.3 (2025/01/28)
+
+  - Sort of expanded path to mount (instead of unexpanded)
+  - Ensure /var/lib/rpm is writable in administrative mode
+
 Version 2.4.2 (2025/01/15)
 
   - Add configuration option 'inherit-env'
