@@ -167,7 +167,7 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
     // scan export directory
     redExportFlagE mode = export->mode;
     const char* mount = export->mount;
-    const char* path =export->path;
+    const char* path = export->path;
     struct stat status;
     const char * expandpath = NULL;
     char *exp_mount;

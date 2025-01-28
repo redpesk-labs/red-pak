@@ -510,6 +510,8 @@ struct mix_exp_link_s
     unsigned depth;
     /** is an admin setting? */
     unsigned admin;
+    /** expanded mount */
+    char *mount;
 };
 
 /**
@@ -533,7 +535,7 @@ static int cmp_exp_link(const void *a, const void *b)
 {
     mix_exp_link_t *link_a = *(mix_exp_link_t**)a;
     mix_exp_link_t *link_b = *(mix_exp_link_t**)b;
-    return strcmp(link_a->exp->mount, link_b->exp->mount);
+    return strcmp(link_a->mount, link_b->mount);
 }
 
 static int mergeConfExpEnd(mix_exp_root_t *merger)
@@ -560,6 +562,7 @@ static int mergeConfExp(mix_exp_root_t *merger, const redNodeT *node, unsigned a
 {
     const redConfExportPathT *dexp;
     mix_exp_link_t *link;
+    char *mount;
     const redConfigT *config = admin != 0 ? node->confadmin : node->config;
     for (;;) {
         /* search a export */
@@ -594,21 +597,27 @@ static int mergeConfExp(mix_exp_root_t *merger, const redNodeT *node, unsigned a
         /* index is now for next export */
         index++;
         /* search if export already seen */
+        mount = RedNodeStringExpand (node, dexp->mount);
         link = merger->head;
-        while (link != NULL && strcasecmp(link->exp->mount, dexp->mount) != 0)
+        while (link != NULL && strcasecmp(link->mount, mount) != 0)
             link = link->next;
         if (link == NULL) {
             /* export not already seen */
+            int rc;
             mix_exp_link_t item;
             item.next = merger->head;
             item.exp = dexp;
             item.node = node;
             item.depth = depth;
             item.admin = admin;
+            item.mount = mount;
             merger->head = &item;
             merger->count++;
-            return mergeConfExp(merger, node, admin, index, depth);
+            rc = mergeConfExp(merger, node, admin, index, depth);
+            free(mount);
+            return rc;
         }
+        free(mount);
         /* export already seen, perform back-merging here */
         if (link->depth == depth) {
             /* same depth means same node */
