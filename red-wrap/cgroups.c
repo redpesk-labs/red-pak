@@ -598,11 +598,11 @@ static int prepare_middle_cgroup(cgroup_t *state, const redNodeT *node, ctrlmask
     * translated name.
     */
     off = state->pathlen + 1;
-    rc = replaceSlashDash(node->status->realpath, &state->path[off],
+    rc = replaceSlashDash(node->redpath, &state->path[off],
                           (int)(sizeof(state->path) - off));
     if (rc < 0) {
         RedLog(REDLOG_ERROR, "Cgroup name too long for %s after %.*s",
-               node->status->realpath, state->pathlen, state->path);
+               node->redpath, state->pathlen, state->path);
         return -1;
     }
     len = rc;
