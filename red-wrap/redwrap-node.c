@@ -36,7 +36,8 @@ int RwrapValidateNode (redNodeT *node, int unsafe) {
     }
 
     // if not in force mode do further sanity check
-    if (!(unsafe || configN->conftag.unsafe)) {
+    // disable realpath check, ignore if realpath different from redpath
+    if (0 && !(unsafe || configN->conftag.unsafe)) {
 
         // check node was not moved from one family to an other
         if (!RedConfIsSameFile(node->redpath, statusN->realpath)) {
