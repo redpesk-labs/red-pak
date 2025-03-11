@@ -72,10 +72,10 @@ struct redwrap_state_s
     rWrapConfigT *cliarg;
     /** the rednode */
     redNodeT     *rednode;
+    /** shortcut to earlyconf */
+    early_conf_t *earlyconf;
     /** copy of the shares */
     redConfShareT shares;
-    /** copy of smack */
-    char *smack;
 #if !BWRAP_HAS_CLEARENV
     /** for environment */
     char        **environ;
@@ -467,10 +467,6 @@ static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
     /* copy in state if mapping user to root */
     restate->map_user_root = conftag->maprootuser;
 
-    /* copy to state the smack label */
-    if (conftag->smack)
-        restate->smack = strdup(conftag->smack);
-
     /* process the sharing or unsharing */
     return set_shares(restate, &conftag->share);
 }
@@ -725,6 +721,7 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     error = set_early_conf(&restate);
     if (error)
         goto OnErrorExit;
+    restate.earlyconf = &restate.rednode->leaf->earlyconf;
 
     /* set exports and vars */
     error = set_exports_and_vars(&restate);
@@ -763,10 +760,10 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     /* clone now */
     cur_uid = getuid();
     cur_gid = getgid();
-    uid = restate.rednode->leaf->earlyconf.setuser == NULL
-                ? cur_uid : (uid_t)atoi(restate.rednode->leaf->earlyconf.setuser);
-    gid = restate.rednode->leaf->earlyconf.setgroup == NULL
-                ? cur_gid : (gid_t)atoi(restate.rednode->leaf->earlyconf.setgroup);
+    uid = restate.earlyconf->setuser == NULL
+                ? cur_uid : (uid_t)atoi(restate.earlyconf->setuser);
+    gid = restate.earlyconf->setgroup == NULL
+                ? cur_gid : (gid_t)atoi(restate.earlyconf->setgroup);
     uid_to_map = restate.map_user_root ? 0 : uid;
     gid_to_map = restate.map_user_root ? 0 : gid;
 
@@ -812,15 +809,16 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         if (sharing_type(restate.shares.user) == RED_CONF_SHARING_JOIN)
             joinns(restate.shares.user, CLONE_NEWUSER);
 
-        if (cliarg->smack != NULL)
-            setsmack(cliarg->smack);
-        else if (restate.smack != NULL)
-            setsmack(restate.smack);
-      
+        /* set smack label */
+        if (restate.earlyconf->smack != NULL)
+            setsmack(restate.earlyconf->smack);
+
+        /* set new gid */
         if (gid != cur_gid && setgid(gid) != 0) {
             RedLog(REDLOG_ERROR, "not able to switch to group %d: %s", (int)gid, strerror(errno));
             return EXIT_FAILURE;
         }
+        /* set new uid */
         if (uid != cur_uid && setuid(uid) != 0) {
             RedLog(REDLOG_ERROR, "not able to switch to user %d: %s", (int)uid, strerror(errno));
             return EXIT_FAILURE;
