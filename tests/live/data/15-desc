@@ -1,0 +1,6 @@
+set-user-group-smack
+
+Simple test entering a node for a user, a group and a smack label.
+Displays current id.
+Displays current attribute
+Write something at home

@@ -40,6 +40,8 @@
 #include <linux/sched.h>
 #endif
 #include <sys/syscall.h>
+#include <sys/xattr.h>
+#include <linux/xattr.h>
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
@@ -77,9 +79,9 @@ struct redwrap_state_s
     /** copy of the shares */
     redConfShareT shares;
     /** final uid or zero */
-    uid_t         final_uid;
+    uid_t         uid;
     /** final gid or zero */
-    gid_t         final_gid;
+    gid_t         gid;
 #if !BWRAP_HAS_CLEARENV
     /** for environment */
     char        **environ;
@@ -172,11 +174,107 @@ static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar,
     }
 }
 
-/* wrapper for creation of directory with setting of uid/gid/smack */
-static int create_directory(redwrap_state_t *restate, char *path, size_t length)
+/* create the directory of given path (that should not already exist)
+ * and create first its parents if needed */
+static int create_directory(char *path, int length)
 {
-    int rc = make_directories(path, 0, length, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL);
-    return rc != 0;
+    int rc, lpar, lroot;
+    struct stat st;
+
+    /* looks for the parent of the directory to create */
+    for (lpar = length ; lpar > 0 && path[lpar - 1] != '/' ; lpar--);
+    for ( ; lpar > 0 && path[lpar - 1] == '/' ; lpar--);
+
+    /* create the parent if it is needed */
+    if (lpar == 0)
+        lroot = 0;
+    else {
+        /* test if the parent exists */
+        path[lpar] = 0;
+        rc = stat(path, &st);
+        path[lpar] = '/';
+        if (rc == 0)
+            lroot = lpar;
+        else {
+            if (errno != ENOENT)
+                return rc; /* error not related to existence */
+            /* recursive creation of the parent */
+            path[lpar] = 0;
+            rc = create_directory(path, lpar);
+            path[lpar] = '/';
+            if (rc < 0)
+                return rc; /* creation of parent failed */
+            lroot = rc;
+        }
+    }
+
+    /* creation of the directory */
+    rc = mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (rc < 0)
+        return rc;
+
+    return lroot;
+}
+
+/* set credentials of directory of path and its parent until
+ * the length matches the given root */
+static int setup_directory(redwrap_state_t *restate, char *path, int length, int lroot)
+{
+    int rc, lpar;
+    const char *smk;
+
+    /* setting of uid/gid */
+    rc = chown(path, restate->uid, restate->gid);
+    if (rc < 0)
+        RedLog(REDLOG_WARNING, "*** Not able to set uid/gid on %s (error=%s)",
+                    path, strerror(errno));
+
+    /* setting of smack */
+    smk = restate->earlyconf->smack;
+    if (smk != NULL) {
+        rc = setxattr(path, XATTR_NAME_SMACK, smk, strlen(smk), 0);
+        if (rc < 0)
+            RedLog(REDLOG_WARNING, "*** Not able to set SMACK on %s (error=%s)",
+                        path, strerror(errno));
+    }
+
+    /* looks for the parent of the directory to setup */
+    for (lpar = length ; lpar > 0 && path[lpar - 1] != '/' ; lpar--);
+    for ( ; lpar > 0 && path[lpar - 1] == '/' ; lpar--);
+
+    /* setup the parent if it is needed */
+    if (lpar > lroot) {
+        path[lpar] = 0;
+        rc = setup_directory(restate, path, lpar, lroot);
+        path[lpar] = '/';
+    }
+
+    /* don't fail */
+    return 0;
+}
+
+/* wrapper for creation of directory with setting of uid/gid/smack */
+/* the function is called because the directory does not exist */
+static int ensure_directory(redwrap_state_t *restate, char *path, size_t length)
+{
+    int rc, lenpath, lenroot;
+
+    /* remove any / at the end */
+    for (lenpath = (int)length ; lenpath > 0 && path[lenpath - 1] == '/' ; lenpath--);
+    if (lenpath == 0) {
+        errno = EINVAL;
+        rc = -1; /* should normally not happen */
+    }
+    else {
+        /* first step: directories are created, parents first */
+        rc = create_directory(path, lenpath);
+        if (rc >= 0) {
+            lenroot = rc;
+            /* second step: directories are setup, children first */
+            rc = setup_directory(restate, path, lenpath, lenroot);
+        }
+    }
+    return rc;
 }
 
 /*
@@ -198,7 +296,7 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
 
     // if mouting path is not privide let's duplicate mount
     if (!path)
-        path=mount;
+        path = mount;
 
     // if private and not last leaf: ignore
     if ((mode & RED_EXPORT_PRIVATES) != 0 && node != restate->rednode)
@@ -214,10 +312,10 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
             if (restate->cliarg->dump > 1)
                 err = 0;
             else
-                err = create_directory(restate, expandpath, strlen(expandpath));
+                err = ensure_directory(restate, expandpath, strlen(expandpath));
         }
         if (err) {
-            RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", node->config->headers.alias, path, strerror(errno));
+            RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [--strict mode]", node->config->headers.alias, path, strerror(errno));
             return;
         }
     }
@@ -703,8 +801,6 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     int idx, error, unshareusr, cloflags;
     pid_t pid;
     redConfSharingE sall, stim;
-    uid_t uid_to_map, uid, cur_uid;
-    gid_t gid_to_map, gid, cur_gid;
 
     /* set verbosity */
     if (cliarg->verbose)
@@ -735,14 +831,12 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     restate.earlyconf = &restate.rednode->leaf->earlyconf;
 
     /* compute uid and gid */
-    cur_uid = getuid();
-    cur_gid = getgid();
-    uid = restate.earlyconf->setuser == NULL
-                ? cur_uid : (uid_t)atoi(restate.earlyconf->setuser);
-    gid = restate.earlyconf->setgroup == NULL
-                ? cur_gid : (gid_t)atoi(restate.earlyconf->setgroup);
-    restate.final_uid = uid == cur_uid ? 0 : uid;
-    restate.final_gid = gid == cur_gid ? 0 : gid;
+    restate.uid = restate.earlyconf->setuser == NULL
+                        ? getuid()
+                        : (uid_t)atoi(restate.earlyconf->setuser);
+    restate.gid = restate.earlyconf->setgroup == NULL
+                        ? getgid()
+                        : (gid_t)atoi(restate.earlyconf->setgroup);
 
     /* set exports and vars */
     error = set_exports_and_vars(&restate);
@@ -797,9 +891,9 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         /* in forked process */
         /* wait for parent to set uid/gid maps */
         if (unshareusr) {
-            uid_to_map = restate.map_user_root ? 0 : uid;
-            gid_to_map = restate.map_user_root ? 0 : gid;
-            error = write_uid_gid_map(0, uid_to_map, uid, gid_to_map, gid);
+            uid_t uid_to_map = restate.map_user_root ? 0 : restate.uid;
+            gid_t gid_to_map = restate.map_user_root ? 0 : restate.gid;
+            error = write_uid_gid_map(0, uid_to_map, restate.uid, gid_to_map, restate.gid);
             if (error < 0)
                 return EXIT_FAILURE;
         }
@@ -827,15 +921,15 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
             setsmack(restate.earlyconf->smack);
 
         /* set new gid */
-        if (restate.final_gid && setgid(restate.final_gid) != 0) {
+        if (setgid(restate.gid) != 0) {
             RedLog(REDLOG_ERROR, "not able to switch to group %d: %s",
-                            (int)restate.final_gid, strerror(errno));
+                            (int)restate.gid, strerror(errno));
             return EXIT_FAILURE;
         }
         /* set new uid */
-        if (restate.final_uid && setuid(restate.final_uid) != 0) {
+        if (setuid(restate.uid) != 0) {
             RedLog(REDLOG_ERROR, "not able to switch to user %d: %s",
-                            (int)restate.final_uid, strerror(errno));
+                            (int)restate.uid, strerror(errno));
             return EXIT_FAILURE;
         }
 

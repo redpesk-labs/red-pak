@@ -1,0 +1,17 @@
+headers:
+    alias: NORMAL
+    name: NORMAL
+    info: NORMAL
+exports:
+  - mode: Private
+    mount: /busybox
+    path: /usr/sbin/busybox
+  - mode: Private
+    mount: /zzz
+    path: /tmp/NORMAL/zzz
+  - mode: Procfs
+    mount: /proc
+config:
+  set-user: cynagora
+  set-group: cynagora
+  smack: NewSmackLabel

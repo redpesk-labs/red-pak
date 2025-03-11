@@ -1,0 +1,9 @@
+/busybox echo ---------------
+/busybox id
+/busybox echo ---------------
+/busybox echo HELLO > /zzz/hello
+/busybox cat /zzz/hello
+/busybox echo ---------------
+/busybox cat /proc/self/attr/current
+/busybox echo
+/busybox echo ---------------
