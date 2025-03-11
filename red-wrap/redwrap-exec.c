@@ -172,6 +172,13 @@ static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar,
     }
 }
 
+/* wrapper for creation of directory with setting of uid/gid/smack */
+static int create_directory(redwrap_state_t *restate, char *path, size_t length)
+{
+    int rc = make_directories(path, 0, length, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL);
+    return rc != 0;
+}
+
 /*
  * Process one exportation specification
  * When a file is exported, check that it exists
@@ -186,7 +193,7 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
     const char* mount = export->mount;
     const char* path = export->path;
     struct stat status;
-    const char * expandpath = NULL;
+    char * expandpath = NULL;
     char *exp_mount;
 
     // if mouting path is not privide let's duplicate mount
@@ -207,7 +214,7 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
             if (restate->cliarg->dump > 1)
                 err = 0;
             else
-                err = make_directories(expandpath, 0, strlen(expandpath), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH, NULL) != 0;
+                err = create_directory(restate, expandpath, strlen(expandpath));
         }
         if (err) {
             RedLog(REDLOG_WARNING, "*** Node [%s] export expanded path=%s does not exist (error=%s) [use --force]", node->config->headers.alias, path, strerror(errno));
