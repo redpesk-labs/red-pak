@@ -76,6 +76,10 @@ struct redwrap_state_s
     early_conf_t *earlyconf;
     /** copy of the shares */
     redConfShareT shares;
+    /** final uid or zero */
+    uid_t         final_uid;
+    /** final gid or zero */
+    gid_t         final_gid;
 #if !BWRAP_HAS_CLEARENV
     /** for environment */
     char        **environ;
@@ -730,6 +734,8 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
                 ? cur_uid : (uid_t)atoi(restate.earlyconf->setuser);
     gid = restate.earlyconf->setgroup == NULL
                 ? cur_gid : (gid_t)atoi(restate.earlyconf->setgroup);
+    restate.final_uid = uid == cur_uid ? 0 : uid;
+    restate.final_gid = gid == cur_gid ? 0 : gid;
 
     /* set exports and vars */
     error = set_exports_and_vars(&restate);
@@ -814,13 +820,15 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
             setsmack(restate.earlyconf->smack);
 
         /* set new gid */
-        if (gid != cur_gid && setgid(gid) != 0) {
-            RedLog(REDLOG_ERROR, "not able to switch to group %d: %s", (int)gid, strerror(errno));
+        if (restate.final_gid && setgid(restate.final_gid) != 0) {
+            RedLog(REDLOG_ERROR, "not able to switch to group %d: %s",
+                            (int)restate.final_gid, strerror(errno));
             return EXIT_FAILURE;
         }
         /* set new uid */
-        if (uid != cur_uid && setuid(uid) != 0) {
-            RedLog(REDLOG_ERROR, "not able to switch to user %d: %s", (int)uid, strerror(errno));
+        if (restate.final_uid && setuid(restate.final_uid) != 0) {
+            RedLog(REDLOG_ERROR, "not able to switch to user %d: %s",
+                            (int)restate.final_uid, strerror(errno));
             return EXIT_FAILURE;
         }
 
