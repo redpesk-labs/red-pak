@@ -723,6 +723,14 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         goto OnErrorExit;
     restate.earlyconf = &restate.rednode->leaf->earlyconf;
 
+    /* compute uid and gid */
+    cur_uid = getuid();
+    cur_gid = getgid();
+    uid = restate.earlyconf->setuser == NULL
+                ? cur_uid : (uid_t)atoi(restate.earlyconf->setuser);
+    gid = restate.earlyconf->setgroup == NULL
+                ? cur_gid : (gid_t)atoi(restate.earlyconf->setgroup);
+
     /* set exports and vars */
     error = set_exports_and_vars(&restate);
     if (error)
@@ -758,16 +766,6 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     }
 
     /* clone now */
-    cur_uid = getuid();
-    cur_gid = getgid();
-    uid = restate.earlyconf->setuser == NULL
-                ? cur_uid : (uid_t)atoi(restate.earlyconf->setuser);
-    gid = restate.earlyconf->setgroup == NULL
-                ? cur_gid : (gid_t)atoi(restate.earlyconf->setgroup);
-    uid_to_map = restate.map_user_root ? 0 : uid;
-    gid_to_map = restate.map_user_root ? 0 : gid;
-
-    /* clone now */
     cloflags = SIGCHLD;
     sall = sharing_type(restate.shares.all);
     stim = sharing_type(restate.shares.time);
@@ -786,6 +784,8 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
         /* in forked process */
         /* wait for parent to set uid/gid maps */
         if (unshareusr) {
+            uid_to_map = restate.map_user_root ? 0 : uid;
+            gid_to_map = restate.map_user_root ? 0 : gid;
             error = write_uid_gid_map(0, uid_to_map, uid, gid_to_map, gid);
             if (error < 0)
                 return EXIT_FAILURE;
