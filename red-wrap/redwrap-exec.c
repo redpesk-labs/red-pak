@@ -113,7 +113,10 @@ static void too_many_parameters()
 }
 
 /**
- * check if the node and its parents are valid
+ * check if the @ref node and its parents are valid
+ * according to function @ref RwrapValidateNode
+ * Returns zero when the rednode is valid or return a
+ * negative value when the node is not valid
  */
 static int validateNode(redNodeT *node, int unsafe)
 {
@@ -125,9 +128,13 @@ static int validateNode(redNodeT *node, int unsafe)
     return result;
 }
 
+/*
+ * Process one environment variable specification
+ * Add the bubble wrap setting that matches the requirement
+ */
 static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar, const redNodeT *node)
 {
-// scan export environment variables
+    // scan export environment variables
     char buffer[2049];
     redVarEnvFlagE mode = confvar->mode;
     const char *key = confvar->key;
@@ -152,7 +159,8 @@ static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar,
         break;
 
     case RED_CONFVAR_INHERIT:
-        ADD3(restate, "--setenv", key, secure_getenv(key) ?: "");
+        value = secure_getenv(key);
+        ADD3(restate, "--setenv", key, value != NULL ? value : "");
         break;
 
     default:
@@ -160,6 +168,11 @@ static void set_one_envvar(redwrap_state_t *restate, const redConfVarT *confvar,
     }
 }
 
+/*
+ * Process one exportation specification
+ * When a file is exported, check that it exists
+ * When a directory is exported check if it shoukd be created
+ */
 static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *export, const redNodeT *node)
 {
     char buffer[2049];
@@ -173,12 +186,14 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
     char *exp_mount;
 
     // if mouting path is not privide let's duplicate mount
-    if (!path) path=mount;
+    if (!path)
+        path=mount;
 
     // if private and not last leaf: ignore
     if ((mode & RED_EXPORT_PRIVATES) != 0 && node != restate->rednode)
         return;
 
+    /* get exported path */
     expandpath = RedNodeStringExpand (node, path);
 
     // if directory: check/create it
@@ -265,15 +280,18 @@ static void set_one_export(redwrap_state_t *restate, const redConfExportPathT *e
     }
 }
 
-static int setmap(const char *path, const char *content) {
+/* create the file of given path with the given content */
+static int create_file(const char *path, const char *content) {
     int rc;
     size_t len;
     ssize_t ssz;
 
+    /* create the file entry */
     rc = open(path, O_WRONLY);
     if (rc < 0)
         RedLog(REDLOG_ERROR, "Issue open path=%s error=%s", path, strerror(errno));
     else {
+        /* write the content to the file */
         len = strlen(content);
         ssz = write(rc, content, len);
         close(rc);
@@ -287,6 +305,7 @@ static int setmap(const char *path, const char *content) {
     return rc;
 }
 
+/* create the mapping of uids and gids */
 static int write_uid_gid_map(pid_t pid,
                              uid_t inner_uid, uid_t outer_uid,
                              gid_t inner_gid, gid_t outer_gid
@@ -304,33 +323,35 @@ static int write_uid_gid_map(pid_t pid,
     /* set uid map */
     strncpy(&path[lenpref], "uid_map", sizeof path - lenpref);
     snprintf(content, sizeof content, "%lld %lld 1", (long long)inner_uid, (long long)outer_uid);
-    rc = setmap(path, content);
+    rc = create_file(path, content);
     if (rc < 0)
         return rc;
 
     /* setgroups to deny */
     strncpy(&path[lenpref], "setgroups", sizeof path - lenpref);
     snprintf(content, sizeof content, "deny");
-    rc = setmap(path, content);
+    rc = create_file(path, content);
     if (rc < 0)
         return rc;
 
     /* set gid map */
     strncpy(&path[lenpref], "gid_map", sizeof path - lenpref);
     snprintf(content, sizeof content, "%lld %lld 1", (long long)inner_gid, (long long)outer_gid);
-    rc = setmap(path, content);
+    rc = create_file(path, content);
     if (rc < 0)
         return rc;
 
     return 0;
 }
 
+/* add bwrap arguments for setting or dropping a capability */
 static int set_one_capability(redwrap_state_t *restate, const char *capability, int value)
 {
     ADD2(restate, value ? "--cap-add" : "--cap-drop", capability);
     return 0;
 }
 
+/* process setting/dropping of capabilities */
 static int set_capabilities(redwrap_state_t *restate, const redConfTagT *conftag) {
 
     int rc = 0;
@@ -339,12 +360,12 @@ static int set_capabilities(redwrap_state_t *restate, const redConfTagT *conftag
     /* first pass for setting ALL */
     for(cap = conftag->capabilities ; rc == 0 && cap != end ; cap++) {
         if (strcasecmp(cap->cap, "ALL") == 0) {
-            rc = set_one_capability(restate, cap->cap, cap->add);
+            rc = set_one_capability(restate, "ALL", cap->add);
             break;
         }
     }
 
-    /* first pass for setting other values */
+    /* second pass for setting other values */
     for(cap = conftag->capabilities ; rc == 0 && cap != end ; cap++) {
         if (strcasecmp(cap->cap, "ALL") != 0)
             rc = set_one_capability(restate, cap->cap, cap->add);
@@ -352,8 +373,14 @@ static int set_capabilities(redwrap_state_t *restate, const redConfTagT *conftag
     return rc;
 }
 
-static void do_unshare(redwrap_state_t *restate, const char *setting, redConfSharingE all, const char *unshare, const char *share)
-{
+/* add bwrap arguments for sharing or unsharing a namespace */
+static void do_unshare(
+                    redwrap_state_t *restate,
+                    const char *setting,
+                    redConfSharingE all,
+                    const char *unshare,
+                    const char *share
+) {
     redConfSharingE type = sharing_type(setting);
 
     switch (type == RED_CONF_SHARING_UNSET ? all : type) {
@@ -384,6 +411,7 @@ static bool should_unshare_time(redConfSharingE time)
     return time == RED_CONF_SHARING_DISABLED || time == RED_CONF_SHARING_JOIN;
 }
 
+/* process the sharing or unsharing */
 static int set_shares(redwrap_state_t *restate, const redConfShareT *shares)
 {
     redConfSharingE sall = sharing_type(shares->all);
@@ -400,27 +428,34 @@ static int set_shares(redwrap_state_t *restate, const redConfShareT *shares)
     return 0;
 }
 
+/* set bwrap arguments for given conftag */
 static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
 {
+    /* set capabilities */
     set_capabilities(restate, conftag);
 
+    /* set cgroups */
     set_cgroups(restate->rednode, conftag->cgrouproot);
 
-    // set global merged config tags
+    /* set global merged config tags */
     if (conftag->hostname) {
         ADD(restate, "--unshare-uts");
         ADD2(restate, "--hostname", RedNodeStringExpand (restate->rednode, conftag->hostname));
     }
 
+    /* set the working directory */
     if (conftag->chdir)
         ADD2(restate, "--chdir", RedNodeStringExpand (restate->rednode, conftag->chdir));
 
+    /* set if dying with parent */
     if (conftag->diewithparent & RED_CONF_OPT_ENABLED)
         ADD(restate, "--die-with-parent");
 
+    /* set if make a new session */
     if (conftag->newsession & RED_CONF_OPT_ENABLED)
         ADD(restate, "--new-session");
 
+    /* clear the environment unless kept */
 #if BWRAP_HAS_CLEARENV
     if (!conftag->inheritenv)
         ADD(restate, "--clearenv");
@@ -429,14 +464,18 @@ static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
         restate->environ = environ;
 #endif
 
+    /* copy in state if mapping user to root */
     restate->map_user_root = conftag->maprootuser;
 
+    /* copy to state the smack label */
     if (conftag->smack)
         restate->smack = strdup(conftag->smack);
 
+    /* process the sharing or unsharing */
     return set_shares(restate, &conftag->share);
 }
 
+/* Add bwrap argument for setting the environment variable of name with value */
 static int set_env_value(void *closure, const char *value, const char *name)
 {
     if (value)
@@ -444,37 +483,43 @@ static int set_env_value(void *closure, const char *value, const char *name)
     return 0;
 }
 
+/* get the PATH */
 static const char *get_config_path(void *closure, const redConfigT *config)
 {
     (void)closure;
     return config->conftag.path;
 }
 
+/* set the PATH */
 static int set_env_path(void *closure, const char *value, size_t length)
 {
     (void)length;
     return set_env_value(closure, value, "PATH");
 }
 
+/* get the LD_LIBRARY_PATH */
 static const char *get_config_ldpath(void *closure, const redConfigT *config)
 {
     (void)closure;
     return config->conftag.ldpath;
 }
 
+/* set the LD_LIBRARY_PATH */
 static int set_env_ldpath(void *closure, const char *value, size_t length)
 {
     (void)length;
     return set_env_value(closure, value, "LD_LIBRARY_PATH");
 }
 
+/* set the special environment variable PATH and LD_LIBRARY_PATH */
 static int set_special_confvar(redwrap_state_t *restate)
 {
     int rc = mixPaths(restate->rednode, get_config_path, set_env_path, restate);
     return rc != 0 ? rc : mixPaths(restate->rednode, get_config_ldpath, set_env_ldpath, restate);
 }
 
-static int mixvar(void *closure, const redConfVarT *var, const redNodeT *node, unsigned index, unsigned count)
+/* callback for setting environment variables */
+static int mixvar_cb(void *closure, const redConfVarT *var, const redNodeT *node, unsigned index, unsigned count)
 {
     (void)index;
     (void)count;
@@ -482,7 +527,8 @@ static int mixvar(void *closure, const redConfVarT *var, const redNodeT *node, u
     return 0;
 }
 
-static int mixexp(void *closure, const redConfExportPathT *exp, const redNodeT *node, unsigned index, unsigned count)
+/* callback for setting exports */
+static int mixexp_cb(void *closure, const redConfExportPathT *exp, const redNodeT *node, unsigned index, unsigned count)
 {
     (void)index;
     (void)count;
@@ -490,32 +536,38 @@ static int mixexp(void *closure, const redConfExportPathT *exp, const redNodeT *
     return 0;
 }
 
+/* process zxports and environment variables */
 static int set_exports_and_vars(redwrap_state_t *restate)
 {
-    int rc = mixExports(restate->rednode, mixexp, restate);
+    int rc = mixExports(restate->rednode, mixexp_cb, restate);
     if (rc == 0)
-        rc = mixVariables(restate->rednode, mixvar, restate);
+        rc = mixVariables(restate->rednode, mixvar_cb, restate);
     return rc;
 }
 
-static int mix_conftag(void *closure, const redConfTagT *conftag)
+/* callback for setting conftags */
+static int mixconftag_cb(void *closure, const redConfTagT *conftag)
 {
     return set_conftag((redwrap_state_t*)closure, conftag);
 }
 
+/* process conftags */
 static int set_for_conftag(redwrap_state_t *restate)
 {
-    return mixConfTags(restate->rednode, mix_conftag, restate);
+    return mixConfTags(restate->rednode, mixconftag_cb, restate);
 }
 
+/* join the namespace of nstype  referenced by file ns */
 static void joinns(const char *filens, int nstype)
 {
+    /* open the file */
     int fd = open(filens, O_RDONLY);
     if (fd < 0) {
         RedLog(REDLOG_ERROR, "Failed to open %s: %s", filens, strerror(errno));
         exit(1);
     }
     else {
+        /* use the file for setting the namespace */
         int rc = setns(fd, nstype);
         if (rc < 0) {
             RedLog(REDLOG_ERROR, "Failed to join %s: %s", filens, strerror(errno));
@@ -558,36 +610,39 @@ static char *num2str(long value)
     return res;
 }
 
-static int get_final_uid(const char **dest, const char *value)
+/* get the numerical value of the user */
+static int get_final_uid(const char **dest, const char *user)
 {
-    if (value == NULL) {
+    if (user == NULL) {
         *dest = NULL;
         return 0;
     }
-    if (isnum(value))
-        *dest = strdup(value);
+    if (isnum(user))
+        *dest = strdup(user);
     else {
-        struct passwd *p = getpwnam(value);
+        struct passwd *p = getpwnam(user);
         *dest = p != NULL ? num2str(p->pw_uid) : NULL;
     }
     return *dest == NULL;
 }
 
-static int get_final_gid(const char **dest, const char *value)
+/* get the numerical value of the group */
+static int get_final_gid(const char **dest, const char *group)
 {
-    if (value == NULL) {
+    if (group == NULL) {
         *dest = NULL;
         return 0;
     }
-    if (isnum(value))
-        *dest = strdup(value);
+    if (isnum(group))
+        *dest = strdup(group);
     else {
-        struct group *g = getgrnam(value);
+        struct group *g = getgrnam(group);
         *dest = g != NULL ? num2str(g->gr_gid) : NULL;
     }
     return *dest == NULL;
 }
 
+/* callback of early config */
 static int earlymix(void *closure, const early_conf_t *conf, const redNodeT *node)
 {
     redwrap_state_t *restate = closure;
@@ -602,11 +657,13 @@ static int earlymix(void *closure, const early_conf_t *conf, const redNodeT *nod
     return final->setuser == NULL || final->setgroup == NULL;
 }
 
+/* compute the early config */
 static int set_early_conf(redwrap_state_t *restate)
 {
     return mixEarlyConf(restate->rednode, earlymix, restate);
 }
 
+/* set smack label of current process */
 static void setsmack(const char *label)
 {
     size_t len = strlen(label);
@@ -621,6 +678,9 @@ static void setsmack(const char *label)
     exit(EXIT_FAILURE);
 }
 
+/*
+ * main processing of redwrap
+ */
 int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subargc, char *subargv[]) {
     redwrap_state_t restate;
     int idx, error, unshareusr, cloflags;
@@ -629,10 +689,11 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     uid_t uid_to_map, uid, cur_uid;
     gid_t gid_to_map, gid, cur_gid;
 
+    /* set verbosity */
     if (cliarg->verbose)
         SetLogLevel(cliarg->verbose);
 
-    // start argument list with red-wrap command name
+    /* start argument list with red-wrap command name */
     memset(&restate, 0, sizeof restate);
     restate.cliarg = cliarg;
     restate.argcount = 1;
@@ -665,12 +726,12 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     if (error)
         goto OnErrorExit;
 
-    // add LD_PATH_LIBRARY & PATH
+    /* add LD_PATH_LIBRARY & PATH */
     error = set_special_confvar(&restate);
     if (error)
         goto OnErrorExit;
 
-    // add program to execute at tail of arguments
+    /* add program to execute at tail of arguments */
     for (idx = 0; idx < subargc; idx++ )
         ADD(&restate, subargv[idx]);
 
@@ -692,8 +753,10 @@ int redwrapExecBwrap (const char *command_name, rWrapConfigT *cliarg, int subarg
     /* clone now */
     cur_uid = getuid();
     cur_gid = getgid();
-    uid = restate.rednode->leaf->earlyconf.setuser == NULL ? cur_uid : (uid_t)atoi(restate.rednode->leaf->earlyconf.setuser);
-    gid = restate.rednode->leaf->earlyconf.setgroup == NULL ? cur_gid : (gid_t)atoi(restate.rednode->leaf->earlyconf.setgroup);
+    uid = restate.rednode->leaf->earlyconf.setuser == NULL
+                ? cur_uid : (uid_t)atoi(restate.rednode->leaf->earlyconf.setuser);
+    gid = restate.rednode->leaf->earlyconf.setgroup == NULL
+                ? cur_gid : (gid_t)atoi(restate.rednode->leaf->earlyconf.setgroup);
     uid_to_map = restate.map_user_root ? 0 : uid;
     gid_to_map = restate.map_user_root ? 0 : gid;
 
