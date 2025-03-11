@@ -963,10 +963,12 @@ int mixConfTags(const redNodeT *node, mix_conftag_cb callback, void *closure)
     free((void*)conftag.hostname);
     free((void*)conftag.chdir);
     free((void*)conftag.umask);
-    free((void*)conftag.cgrouproot);
-    free((void*)conftag.capabilities);
+    free((void*)conftag.setuser);
+    free((void*)conftag.setgroup);
     free((void*)conftag.smack);
+    free((void*)conftag.cgrouproot);
 
+    free((void*)conftag.capabilities);
     return rc;
 }
 
