@@ -999,6 +999,7 @@ static void mix_early_conf(early_conf_t *conf, const redConfigT *nodeconf)
 {
     mix_const_string(&conf->setuser, nodeconf->conftag.setuser);
     mix_const_string(&conf->setgroup, nodeconf->conftag.setgroup);
+    mix_const_string(&conf->smack, nodeconf->conftag.smack);
 }
 
 int mixEarlyConf(const redNodeT *node, mix_early_conf_cb callback, void *closure)

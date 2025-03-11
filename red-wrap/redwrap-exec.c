@@ -642,6 +642,17 @@ static int get_final_gid(const char **dest, const char *group)
     return *dest == NULL;
 }
 
+/* get copy of smack label */
+static int get_final_smk(const char **dest, const char *smk)
+{
+    if (smk == NULL) {
+        *dest = NULL;
+        return 0;
+    }
+    *dest = strdup(smk);
+    return *dest == NULL;
+}
+
 /* callback of early config */
 static int earlymix(void *closure, const early_conf_t *conf, const redNodeT *node)
 {
@@ -652,9 +663,8 @@ static int earlymix(void *closure, const early_conf_t *conf, const redNodeT *nod
     (void)node;
 
     return get_final_uid(&final->setuser, cliarg->setuser != NULL ? cliarg->setuser : conf->setuser)
-        || get_final_gid(&final->setgroup, cliarg->setgroup != NULL ? cliarg->setgroup : conf->setgroup);
-
-    return final->setuser == NULL || final->setgroup == NULL;
+        || get_final_gid(&final->setgroup, cliarg->setgroup != NULL ? cliarg->setgroup : conf->setgroup)
+        || get_final_smk(&final->smack, cliarg->smack != NULL ? cliarg->smack : conf->smack);
 }
 
 /* compute the early config */

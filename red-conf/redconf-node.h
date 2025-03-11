@@ -45,6 +45,8 @@ typedef struct {
     const char *setuser;
     /** set the group */
     const char *setgroup;
+    /** set the smack label */
+    const char *smack;
 }
     early_conf_t;
 
