@@ -544,7 +544,7 @@ static int set_conftag(redwrap_state_t *restate, const redConfTagT *conftag)
     set_capabilities(restate, conftag);
 
     /* set cgroups */
-    set_cgroups(restate->rednode, conftag->cgrouproot);
+    set_cgroups(restate->rednode, conftag->cgrouproot, restate->uid, restate->gid);
 
     /* set global merged config tags */
     if (conftag->hostname) {

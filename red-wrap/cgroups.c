@@ -96,6 +96,8 @@ typedef unsigned ctrlmask_t;
 typedef struct {
     const char *rootpath;
     ctrlmask_t final;
+    uid_t uid;
+    gid_t gid;
     int dirfd;
     int pathlen;
     char path[PATH_MAX];
@@ -350,24 +352,24 @@ static int write_entry(int dfd, const char *entry, const char *value)
 }
 
 /**
-* Create the cgroup of name 'cgroupName' in the cgroup pointed by 'dirFd'
+* Create the cgroup of name 'cgroupName' in the cgroup pointed by 'state->dirfd'
 * Return a negative value on error
 * Return 0 on success but cgroup already existed
 * Return 1 on success and cgroup was freshly created
 */
-static int createCgroupAtDir(int dirFd, const char *cgroupName, int mode) {
+static int createCgroup(cgroup_t *state, const char *cgroupName, int mode) {
     /* try first to open */
-    int rc = mkdirat(dirFd, cgroupName, mode);
+    int rc = mkdirat(state->dirfd, cgroupName, mode);
     if (rc < 0 && errno != EEXIST) {
-        RedLog(REDLOG_ERROR, "can not create cgroup %s in %s: %s", cgroupName,
-               fdname(dirFd), strerror(errno));
+        RedLog(REDLOG_ERROR, "can not create cgroup %s in %s: %s",
+                cgroupName, fdname(state->dirfd), strerror(errno));
         return -1;
     }
     return rc >= 0;
 }
 
 /**
-* Open the cgroup of name 'cgroupName' in the cgroup pointed by 'dirFd'
+* Open the cgroup of name 'cgroupName' in the cgroup pointed by 'state->dirfd'
 * If it does not exist, create it if 'created' is not NULL
 * Return a negative value on error
 * Return the positive or zero fileno of the open directory for the cgroup
@@ -375,21 +377,26 @@ static int createCgroupAtDir(int dirFd, const char *cgroupName, int mode) {
 * int pointed by 'created' will receive 1 when the Cgroup was created
 * or 0 else, when the cgroup already existed
 */
-static int openCgroupAtDir(int dirFd, const char *cgroupName, int *created) {
+static int openCgroup(cgroup_t *state, const char *cgroupName, int *created)
+{
     /* try first to open */
-    int rc = openat(dirFd, cgroupName, O_DIRECTORY);
+    int rc = openat(state->dirfd, cgroupName, O_DIRECTORY);
     if (created == NULL) {
         if (rc < 0)
-            RedLog(REDLOG_ERROR, "can not open cgroup %s/%s: %s", fdname(dirFd),
-                   cgroupName, strerror(errno));
+            RedLog(REDLOG_ERROR, "can not open cgroup %s/%s: %s",
+                    fdname(state->dirfd), cgroupName, strerror(errno));
     }
     else {
         *created = rc < 0;
         if (rc < 0) {
             /* try then to create */
-            rc = createCgroupAtDir(dirFd, cgroupName, 0755);
-            if (rc >= 0)
-                rc = openCgroupAtDir(dirFd, cgroupName, NULL);
+            rc = createCgroup(state, cgroupName, 0755);
+            if (rc >= 0) {
+                rc = openat(state->dirfd, cgroupName, O_DIRECTORY);
+                if (rc < 0)
+                    RedLog(REDLOG_ERROR, "can not open created cgroup %s/%s: %s",
+                            fdname(state->dirfd), cgroupName, strerror(errno));
+            }
         }
     }
     return rc;
@@ -452,13 +459,15 @@ static int moveProcs(int fromFd, int toFd) {
 * rootpath is the computed root path as set in configuration files
 * rootpath can be NULL in wich case it is computed
 */
-int set_cgroups(const redNodeT *node, const char *rootpath)
+int set_cgroups(const redNodeT *node, const char *rootpath, uid_t uid, gid_t gid)
 {
     int rc;
     cgroup_t state;
 
     /* setup processing state */
     state.final = 0;
+    state.uid = uid;
+    state.gid = gid;
     state.dirfd = -1;
     state.rootpath = rootpath;
     state.pathlen = 0;
@@ -478,7 +487,7 @@ int set_cgroups(const redNodeT *node, const char *rootpath)
             "[CGROUP ERROR]: cgroup error can be caused from several causes:\n"
             "First you need to have rights to create cgroup in %s\n"
             "or to move the process into created cgroup.\n"
-            "If you don't, maybe it is because your not in an user session,\n"
+            "If you don't, maybe it is because your not in a user session,\n"
             "or because some controllers are not delegate to children.\n"
             "For that you can try: \n"
             "\n"
@@ -541,7 +550,8 @@ static int prepare_root_cgroup(cgroup_t *state, ctrlmask_t childmask)
     /* opens the root */
     rc = open(state->path, O_DIRECTORY);
     if (rc < 0) {
-        RedLog(REDLOG_ERROR, "can't open Cgroup %.*s: %s", state->pathlen, state->path, strerror(rc));
+        RedLog(REDLOG_ERROR, "can't open Cgroup %.*s: %s",
+			state->pathlen, state->path, strerror(rc));
         return rc;
     }
     state->dirfd = rc;
@@ -549,7 +559,7 @@ static int prepare_root_cgroup(cgroup_t *state, ctrlmask_t childmask)
     /*
     * Creates or open the leaf cgroup for pids
     */
-    rc = openCgroupAtDir(state->dirfd, pids_leaf_name, &created);
+    rc = openCgroup(state, pids_leaf_name, &created);
     if (rc < 0)
         return rc;
     pidfd = rc;
@@ -626,7 +636,7 @@ static int prepare_middle_cgroup(cgroup_t *state, const redNodeT *node, ctrlmask
     /*
     * Create the directory for the new cgroup (if not already existing)
     */
-    rc = openCgroupAtDir(state->dirfd, &state->path[off], &created);
+    rc = openCgroup(state, &state->path[off], &created);
     if (rc < 0)
         return rc;
 
@@ -643,7 +653,7 @@ static int prepare_middle_cgroup(cgroup_t *state, const redNodeT *node, ctrlmask
     * Except that paranoiac mode does it always.
     */
     if (created || paranoiac) {
-        rc = createCgroupAtDir(state->dirfd, pids_leaf_name, LEAF_MODE);
+        rc = createCgroup(state, pids_leaf_name, LEAF_MODE);
         if (rc < 0)
             return rc;
     }
@@ -678,7 +688,7 @@ static int enter_leaf_cgroup(cgroup_t *state, const redNodeT *node)
         return 0;
 
     /* get current pids leaf pointer */
-    rc = openCgroupAtDir(state->dirfd, pids_leaf_name, NULL);
+    rc = openCgroup(state, pids_leaf_name, NULL);
     if (rc < 0)
         return rc;
 

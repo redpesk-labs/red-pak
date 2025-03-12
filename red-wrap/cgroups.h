@@ -21,7 +21,8 @@
 #define _CGROUPS_H_
 
 #include "redconf-node.h"
+#include <unistd.h>
 
-extern int set_cgroups(const redNodeT *node, const char *root);
+extern int set_cgroups(const redNodeT *node, const char *root, uid_t uid, gid_t gid);
 
 #endif //_CGROUPS_H_
