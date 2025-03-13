@@ -20,3 +20,5 @@ books:
       name: Config yaml files good practices
     - url: 6-Troubleshooting.md
       name: Troubleshooting
+    - url: 7-Cgroups.md
+      name: Using cgroups

@@ -27,6 +27,8 @@ Use `chsmack` command to relabel the file.
 
 ## Cgroups
 
+You can visit [a specific chapter for correctly configuring and using cgroup]({% chapter_link redpak.cgroups %})
+
 ### V2 Issue
 
 Redpak handles cgroups only in pure v2 version. If you are in cgroup v1 or hybrid, you need to reboot by appending to the command line:
@@ -50,8 +52,9 @@ You can try to start one with:
 
 ```bash
 # rp-owner
-export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus
-systemd-run --user --pty -p "Delegate=yes"  bash
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
+export DBUS_SESSION_BUS_ADDRESS=unix:path=${XDG_RUNTIME_DIR}/bus
+systemd-run --user -p "Delegate=yes" --slice redpak --shell
 ```
 
 ### Controller Issue
