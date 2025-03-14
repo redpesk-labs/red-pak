@@ -15,11 +15,11 @@ There parameters are merged in rednode hierarchy.
 
 Below, there is the template of yaml configuration file
 
-<iframe src="yaml/main-system.txt" width="100%" height="800"/>
+<iframe src="yaml/root-normal.txt" width="100%" height="800"/>
 
 ## Yaml default configuration
 
-<iframe src="yaml/default.txt" width="100%" height="500"/>
+<iframe src="yaml/leaf-normal.txt" width="100%" height="500"/>
 
 ## Good Practices
 
