@@ -19,7 +19,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 
 PROJECT(redpak
-    VERSION 2.4.3
+    VERSION 2.4.5
     DESCRIPTION "redpak is a lightweight container solution for embedded critical systems"
     HOMEPAGE_URL "https://github.com/redpesk-labs/red-pak"
     LANGUAGES C CXX)
