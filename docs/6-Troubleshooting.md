@@ -27,7 +27,7 @@ Use `chsmack` command to relabel the file.
 
 ## Cgroups
 
-You can visit [a specific chapter for correctly configuring and using cgroup]({% chapter_link redpak.cgroups %})
+You can visit [a specific chapter for correctly configuring and using cgroup]({% chapter_link redpak.using-cgroups %})
 
 ### V2 Issue
 
