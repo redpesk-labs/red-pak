@@ -154,6 +154,24 @@ When using this option, items of CGROUP hierarchy are
 owned by root, not by the end user. This is good because
 it avoid the REDNODE to change its settings.
 
+
+## Security consideration on using CGroup and delegation
+
+When delegation of CGROUP is granted by systemd to a
+service, the service is allowed to change its CGROUP
+settings. The hierachical imbrication of the CGROUPs
+means that it can not be better than what systemd
+allocated initially to the main service.
+
+But it means that if the service forks, it has to
+take cautious of what its children running with the
+same right can change the cgroup settings.
+
+This can be avoided by unsharing the cgroup namespace
+in the redpak configuration file (`config.share_cgroup: disabled`),
+this ensures that the settings of rednode configuration
+will not be changed.
+
 ## REDNODEs, CGROUPS, and russian dolls
 
 For CGROUP management of REDNODE, the concept
@@ -167,7 +185,8 @@ correctly because REDWRAP takes care of setting CGROUP
 features with the hierarchy of nodes.
 
 So we recommand to use the slice named `redpak` for
-running the CGROUP aware REDNODE.
+running the CGROUP aware REDNODE. But note well that
+using the default slice `user-%i` also works.
 
 ```
 systemd-run --user -p Delegate=yes --slice redpak ...

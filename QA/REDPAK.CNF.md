@@ -356,13 +356,13 @@ entries, all are optional:
 | `inherit-env`     | boolean  | automatic export of all environment        |
 | `die-with-parent` | EDU      | if enabled terminate when parent terminates |
 | `new-session`     | EDU      | if enabled create a new terminal session   |
-| `share_all`       | EDU      | if enabled unshare all namespaces (except time) |
-| `share_user`      | SHARE    | if enabled unshare user namespaces         |
-| `share_cgroup`    | SHARE    | if enabled unshare cgroup namespaces       |
-| `share_net`       | SHARE    | if enabled unshare network namespaces      |
-| `share_pid`       | SHARE    | if enabled unshare PID namespaces          |
-| `share_ipc`       | SHARE    | if enabled unshare IPC namespaces          |
-| `share_time`      | SHARE    | if enabled unshare UTS namespaces          |
+| `share_all`       | EDU      | if enabled share all namespaces (except time), default: disabled |
+| `share_user`      | SHARE    | if enabled share user namespaces, default: disabled           |
+| `share_cgroup`    | SHARE    | if enabled share cgroup namespaces, default: disabled         |
+| `share_net`       | SHARE    | if enabled share network namespaces, default: disabled        |
+| `share_pid`       | SHARE    | if enabled share PID namespaces, default: disabled            |
+| `share_ipc`       | SHARE    | if enabled share IPC namespaces, default: disabled            |
+| `share_time`      | SHARE    | if enabled share UTS namespaces, default: disabled            |
 | `cgroups`         | map      | description of cgroups                     |
 | `hostname`        | string   | set the hostname                           |
 | `chdir`           | string   | set execution directory                    |
@@ -373,8 +373,8 @@ The type EDU is an enumeration, so a string, with 3 possible values (case insens
 "enabled", "disabled", "unset".
 
 The type SHARE is either an enumeration as EDU (3 possible values
-"enabled", "disabled", "unset") but it can also be a path ot a name
-space to be joined if allowed to do a such thing.
+"enabled", "disabled", "unset") or the path of a name
+space to be joined (possible with the capability CAP\_SYS\_ADMIN).
 
 ### Valid cgroups map
 
