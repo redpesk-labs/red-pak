@@ -1,3 +1,11 @@
+Version 2.4.6 (2025/03/19)
+
+  - Documentation improvement
+  - Cleaning of git repository
+    (retag of versions 2.4.4 and 2.4.5
+    that were out of main trunk but without
+    differances)
+
 Version 2.4.5 (2025/03/14)
 
   - Set uid, gid and smack on created files
