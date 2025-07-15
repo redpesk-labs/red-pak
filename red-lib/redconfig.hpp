@@ -91,7 +91,7 @@ private:
 
     void registerNode(redNodeT * node, libdnf::rpm::PackageSack & package_sack);
 
-#if !LEGACY_REDCONFIG
+#if LEGACY_REDCONFIG
     /* default template names */
     inline static const std::string tmplDefaultNoSystemNode = "full-normal";
     inline static const std::string tmplAdminNoSystemNode = "full-admin";
