@@ -196,39 +196,3 @@ redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, 
     return mergedNode;
 }
 
-const char *getMergeConfig(const char *redpath, size_t *len, int expand) {
-    char *output = NULL;
-    redNodeT *redleaf = RedNodesScan(redpath, 0, 0);
-    if (!redleaf)
-        goto OnExit;
-
-    redNodeT *mergedNode = mergeNode(redleaf, NULL, expand, 1);
-    if (!mergedNode)
-        goto OnExitFreeLeaf;
-
-    if(RedGetConfigYAML(&output, len, mergedNode->config)) {
-        RedLog(REDLOG_ERROR, "Issue getting yaml string merged config");
-    }
-
-    freeRedLeaf(mergedNode);
-OnExitFreeLeaf:
-    freeRedLeaf(redleaf);
-OnExit:
-    return output;
-}
-
-const char *getConfig(const char *redpath, size_t *len) {
-    char *output = NULL;
-    redNodeT *redleaf = RedNodesScan(redpath, 0, 0);
-    if (!redleaf)
-        goto OnExit;
-
-    if(RedGetConfigYAML(&output, len, redleaf->config)) {
-        RedLog(REDLOG_ERROR, "Issue getting yaml string config");
-    }
-
-    freeRedLeaf(redleaf);
-
-OnExit:
-    return output;
-}

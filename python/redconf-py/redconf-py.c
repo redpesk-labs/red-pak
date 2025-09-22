@@ -88,6 +88,43 @@ Exit:
     fclose(fstderr);
 }
 
+static const char *getMergeConfig(const char *redpath, size_t *len, int expand) {
+    char *output = NULL;
+    redNodeT *redleaf = RedNodesScan(redpath, 0, 0);
+    if (!redleaf)
+        goto OnExit;
+
+    redNodeT *mergedNode = mergeNode(redleaf, NULL, expand, 1);
+    if (!mergedNode)
+        goto OnExitFreeLeaf;
+
+    if(RedGetConfigYAML(&output, len, mergedNode->config)) {
+        fprintf(stderr, "Issue getting yaml string merged config");
+    }
+
+    freeRedLeaf(mergedNode);
+OnExitFreeLeaf:
+    freeRedLeaf(redleaf);
+OnExit:
+    return output;
+}
+
+static const char *getConfig(const char *redpath, size_t *len) {
+    char *output = NULL;
+    redNodeT *redleaf = RedNodesScan(redpath, 0, 0);
+    if (!redleaf)
+        goto OnExit;
+
+    if(RedGetConfigYAML(&output, len, redleaf->config)) {
+        fprintf(stderr, "Issue getting yaml string config");
+    }
+
+    freeRedLeaf(redleaf);
+
+OnExit:
+    return output;
+}
+
 static PyObject *mergeconfig(PyObject *self, PyObject *args) {
     const char *mergedconfig;
     const char *redpath  = NULL;

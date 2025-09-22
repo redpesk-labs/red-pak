@@ -38,8 +38,5 @@ int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicate);
 // merge node from hierarchy: if rootNode=NULL rootNode is found
 redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, int duplicate);
 
-// yaml string get config
-const char *getMergeConfig(const char *redpath, size_t *len, int expand);
-const char *getConfig(const char *redpath, size_t *len);
 
 #endif
