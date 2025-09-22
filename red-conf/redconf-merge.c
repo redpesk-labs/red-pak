@@ -24,184 +24,214 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "lookup3.h"
 #include "redconf-log.h"
-#include "redconf-defaults.h"
+#include "redconf-schema.h"
+#include "redconf-mix.h"
 #include "redconf-expand.h"
-#include "redconf-node.h"
+#include "redconf-defaults.h"
 #include "redconf-utils.h"
-#include "redconf-hashmerge.h"
 #include "redconf-sharing.h"
 
-// ---- Special confvar
-typedef struct {
-    char *ldpathString;
-    int ldpathIdx;
-    char *pathString;
-    int pathIdx;
+static int cpstrinn(const char **dst, const char *src)
+{
+    return -(src != NULL && (*dst = strdup(src)) == NULL);
+}
 
-} dataNodeT;
+/* set bwrap arguments for given conftag */
+static int mixconftag_cb(void *closure, const redConfTagT *conftag)
+{
+    redNodeT   *merge = (redNodeT*)closure;
+    redConfTagT *ctag = &merge->config->conftag;
 
-/* merge the source string to the destination
- * returns 0 on success or 1 on error
- */
-static inline int merge_string(const char *source, const char **destination, int duplicate) {
-    if (source != NULL) {
-        if (!duplicate)
-            *destination = source;
-        else {
-            free((void*)*destination);
-            *destination = strdup(source);
-            if (*destination == NULL)
-                return 1;
-        }
+    /* scalars */
+    ctag->gpgcheck = conftag->gpgcheck;
+    ctag->unsafe = conftag->unsafe;
+    ctag->inheritenv = conftag->inheritenv;
+    ctag->maprootuser = conftag->maprootuser;
+    ctag->verbose = conftag->verbose;
+    ctag->diewithparent = conftag->diewithparent;
+    ctag->newsession = conftag->newsession;
+
+    /* capabilities */
+    ctag->capabilities_count = conftag->capabilities_count;
+    if (ctag->capabilities_count == 0)
+        ctag->capabilities = NULL;
+    else {
+        size_t size = ctag->capabilities_count * sizeof *conftag->capabilities;
+        ctag->capabilities = malloc(size);
+        if (ctag->capabilities == NULL)
+            return -1;
+        memcpy(ctag->capabilities, conftag->capabilities, size);
     }
+    return cpstrinn(&ctag->rpmdir, conftag->rpmdir)
+    || cpstrinn(&ctag->persistdir, conftag->persistdir)
+    || cpstrinn(&ctag->cachedir, conftag->cachedir)
+    || cpstrinn(&ctag->path, conftag->path)
+    || cpstrinn(&ctag->ldpath, conftag->ldpath)
+    || cpstrinn(&ctag->hostname, conftag->hostname)
+    || cpstrinn(&ctag->umask, conftag->umask)
+    || cpstrinn(&ctag->chdir, conftag->chdir)
+    || cpstrinn(&ctag->cgrouproot, conftag->cgrouproot)
+    || cpstrinn(&ctag->setuser, conftag->setuser)
+    || cpstrinn(&ctag->setgroup, conftag->setgroup)
+    || cpstrinn(&ctag->smack, conftag->smack)
+    || cpstrinn(&ctag->share.all, conftag->share.all)
+    || cpstrinn(&ctag->share.user, conftag->share.user)
+    || cpstrinn(&ctag->share.cgroup, conftag->share.cgroup)
+    || cpstrinn(&ctag->share.ipc, conftag->share.ipc)
+    || cpstrinn(&ctag->share.pid, conftag->share.pid)
+    || cpstrinn(&ctag->share.net, conftag->share.net)
+    || cpstrinn(&ctag->share.time, conftag->share.time);
+}
+
+
+
+/* get the PATH */
+static const char *get_config_path(void *closure, const redConfigT *config)
+{
+    (void)closure;
+    return config->conftag.path;
+}
+
+/* set the PATH */
+static int set_env_path(void *closure, const char *value, size_t length)
+{
+    redNodeT   *merge = (redNodeT*)closure;
+    redConfigT *config = merge->config;
+    (void)length;
+    return cpstrinn(&config->conftag.path, value);
+}
+
+/* get the LD_LIBRARY_PATH */
+static const char *get_config_ldpath(void *closure, const redConfigT *config)
+{
+    (void)closure;
+    return config->conftag.ldpath;
+}
+
+/* set the LD_LIBRARY_PATH */
+static int set_env_ldpath(void *closure, const char *value, size_t length)
+{
+    redNodeT   *merge = (redNodeT*)closure;
+    redConfigT *config = merge->config;
+    (void)length;
+    return cpstrinn(&config->conftag.ldpath, value);
+}
+
+/* callback for setting environment variables */
+static int mixvar_cb(void *closure, const redConfVarT *var, const redNodeT *node, unsigned index, unsigned count)
+{
+    redNodeT   *merge = (redNodeT*)closure;
+    redConfigT *config = merge->config;
+    redConfVarT *vars = config->confvar;
+    (void)node;
+
+    if (index == 0) {
+        vars = calloc(count, sizeof *vars);
+        if (vars == NULL)
+            return -1;
+        config->confvar = vars;
+        config->confvar_count = count;
+    }
+    vars = &vars[index];
+    vars->mode = var->mode;
+    return cpstrinn(&vars->key, var->key)
+    || cpstrinn(&vars->value, var->value)
+    || cpstrinn(&vars->info, var->info)
+    || cpstrinn(&vars->warn, var->warn);
+}
+
+/* callback for setting exports */
+static int mixexp_cb(void *closure, const redConfExportPathT *exp, const redNodeT *node, unsigned index, unsigned count)
+{
+    redNodeT   *merge = (redNodeT*)closure;
+    redConfigT *config = merge->config;
+    redConfExportPathT *exports = config->exports;
+    (void)node;
+
+    if (index == 0) {
+        exports = calloc(count, sizeof *exports);
+        if (exports == NULL)
+            return -1;
+        config->exports = exports;
+        config->exports_count = count;
+    }
+    exports = &exports[index];
+    exports->mode = exp->mode;
+    return cpstrinn(&exports->mount, exp->mount)
+    || cpstrinn(&exports->path, exp->path)
+    || cpstrinn(&exports->info, exp->info)
+    || cpstrinn(&exports->warn, exp->warn);
+}
+
+int get_merged_node(redNodeT **result, const redNodeT *leaf)
+{
+    int rc;
+    redNodeT *merge;
+
+    /* allocate structures */
+    merge = calloc(1, sizeof *merge);
+    if (merge == NULL)
+        goto out_of_memory;
+
+    merge->config =  calloc(1, sizeof *merge->config);
+    if (merge->config == NULL)
+        goto out_of_memory;
+
+    /* init basic data */
+    merge->redpath = strdup(leaf->redpath);
+    merge->config->headers.alias = strdup(leaf->config->headers.alias);
+    merge->config->headers.name = strdup(leaf->config->headers.name);
+    merge->config->headers.info = strdup(leaf->config->headers.info);
+    if (merge->redpath == NULL
+     || merge->config->headers.alias == NULL
+     || merge->config->headers.name == NULL
+     || merge->config->headers.info == NULL)
+        goto out_of_memory;
+
+    /* set config */
+    rc = mixConfTags(leaf, mixconftag_cb, merge);
+    if (rc)
+        goto error;
+
+    /* set exports */
+    rc = mixExports(leaf, mixexp_cb, merge);
+    if (rc)
+        goto error;
+
+    /* set vars */
+    rc = mixVariables(leaf, mixvar_cb, merge);
+    if (rc)
+        goto error;
+
+    /* set PATH */
+    rc = mixPaths(leaf, get_config_path, set_env_path, merge);
+    if (rc)
+        goto error;
+
+    /* set LD_PATH_LIBRARY */
+    rc = mixPaths(leaf, get_config_ldpath, set_env_ldpath, merge);
+    if (rc)
+        goto error;
+
+    *result = merge;
     return 0;
+
+out_of_memory:
+    RedLog(REDLOG_ERROR, "Memory allocation failed");
+    rc = -1;
+error:
+    freeRedLeaf(merge);
+    *result = NULL;
+    return rc;
 }
 
-/* merge the source sharing opt flag to the destination */
-static inline void merge_optflag_sharing(const char *source, const char **destination, int duplicate) {
-    if (sharing_type(*destination) != RED_CONF_SHARING_DISABLED)
-        merge_string(source, destination, duplicate);
+redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* root, int expand, int duplicate)
+{
+    redNodeT *result;
+    int rc = get_merged_node(&result, leaf);
+    (void)root;
+    (void)expand;
+    (void)duplicate;
+    return rc ? NULL : result;
 }
-
-/* merge the source opt flag to the destination */
-static inline void merge_optflag_overwrite(redConfOptFlagE source, redConfOptFlagE *destination) {
-    if (source != RED_CONF_OPT_UNSET)
-        *destination = source;
-}
-
-/* merge the source opt flag to the destination */
-static inline void merge_int_not_null(int source, int *destination) {
-    if (source)
-        *destination = source;
-}
-
-/* merge the source opt flag to the destination */
-static inline void merge_uint_not_null(unsigned source, unsigned *destination) {
-    if (source)
-        *destination = source;
-}
-
-/* merge the source opt flag to the destination */
-static inline void merge_bool_not_null(unsigned source, unsigned *destination) {
-    if (source)
-        *destination = source;
-}
-
-// Only merge tags that should overloaded
-static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destination, int duplicate) {
-    if(destination == NULL) {
-        RedLog(REDLOG_ERROR, "destination is NULL", source, destination);
-        return 1;
-    }
-
-    if(source == NULL)
-        return 0;
-
-    merge_optflag_sharing(source->share.all, &destination->share.all, duplicate);
-    merge_optflag_sharing(source->share.user, &destination->share.user, duplicate);
-    merge_optflag_sharing(source->share.ipc, &destination->share.ipc, duplicate);
-    merge_optflag_sharing(source->share.cgroup, &destination->share.cgroup, duplicate);
-    merge_optflag_sharing(source->share.pid, &destination->share.pid, duplicate);
-    merge_optflag_sharing(source->share.net, &destination->share.net, duplicate);
-    merge_optflag_sharing(source->share.time, &destination->share.time, duplicate);
-
-    merge_optflag_overwrite(source->diewithparent, &destination->diewithparent);
-    merge_optflag_overwrite(source->newsession, &destination->newsession);
-
-    merge_int_not_null(source->verbose, &destination->verbose);
-    merge_bool_not_null(source->inheritenv, &destination->inheritenv);
-    merge_uint_not_null(source->maprootuser, &destination->maprootuser);
-
-    return merge_string(source->cachedir, &destination->cachedir, duplicate)
-        || merge_string(source->hostname, &destination->hostname, duplicate)
-        || merge_string(source->chdir, &destination->chdir, duplicate)
-        || merge_string(source->umask, &destination->umask, duplicate)
-        || merge_string(source->cgrouproot, &destination->cgrouproot, duplicate);
-}
-
-static int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
-    int error = 0;
-
-    if (node->config->conftag.ldpath)
-        // node looks good extract path/ldpath before adding red-wrap cli program+arguments
-        error= RedConfAppendExpandedPath(node, dataNode->ldpathString, &dataNode->ldpathIdx, RED_MAXPATHLEN, node->config->conftag.ldpath);
-
-    if (!error && node->config->conftag.path)
-        error= RedConfAppendExpandedPath(node, dataNode->pathString, &dataNode->pathIdx, RED_MAXPATHLEN, node->config->conftag.path);
-
-    return error;
-}
-
-// put in conftag the merge of node hierarchy
-static int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicate) {
-    const redNodeT *iter;
-
-    for (iter=node; iter != NULL; iter=iter->first_child) {
-        (void) RedConfCopyConfTags(&iter->config->conftag, conftag, duplicate);
-        if(!iter->parent) { //system_node
-            // update process default umask
-            RedSetUmask (conftag ? conftag->umask : NULL);
-        }
-    }
-
-    // assume admin overload everything exepted node specific
-    for (iter=node; iter != NULL; iter=iter->parent) {
-        if (!iter->confadmin) {
-            RedLog(REDLOG_DEBUG, "no admin config for %s", iter->redpath);
-            continue;
-        }
-
-        (void) RedConfCopyConfTags(&iter->confadmin->conftag, conftag, duplicate);
-    }
-    return 0;
-}
-
-/*************************************
- * MAIN MERGE *
- * **********************************/
-redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, int duplicate) {
-
-    if (!rootNode) {
-        for(rootNode = leaf; rootNode->parent; rootNode = rootNode->parent);
-    }
-
-    redNodeT *mergedNode = calloc(1, sizeof(redNodeT));
-    mergedNode->redpath = strdup(leaf->redpath);
-
-    //config
-    mergedNode->config =  calloc(1, sizeof(redConfigT));
-
-    //headers
-    mergedNode->config->headers.alias = strdup(leaf->config->headers.alias);
-    mergedNode->config->headers.name = strdup(leaf->config->headers.name);
-    mergedNode->config->headers.info = strdup(leaf->config->headers.info);
-
-    //conftar
-    mergeConfTag(rootNode, &mergedNode->config->conftag, duplicate);
-    mergedNode->config->conftag.cachedir = expandAlloc(mergedNode, mergedNode->config->conftag.cachedir, expand);
-    mergedNode->config->conftag.hostname = expandAlloc(mergedNode, mergedNode->config->conftag.hostname, expand);
-    mergedNode->config->conftag.chdir = expandAlloc(mergedNode, mergedNode->config->conftag.chdir, expand);
-    mergedNode->config->conftag.umask = expandAlloc(mergedNode, mergedNode->config->conftag.umask, expand);
-    mergedNode->config->conftag.cgrouproot = expandAlloc(mergedNode, mergedNode->config->conftag.cgrouproot, expand);
-
-    //capabilities
-    if(mergeCapabilities(rootNode, &mergedNode->config->conftag, duplicate)) {
-        RedLog(REDLOG_ERROR, "Issue mergeCapabilities for %s", mergedNode->redpath);
-    }
-    mergedNode->config->conftag.umask = expandAlloc(mergedNode, mergedNode->config->conftag.umask, expand);
-
-    //confvars
-    if(mergeConfVars(rootNode, mergedNode, expand, duplicate)) {
-        RedLog(REDLOG_ERROR, "Issue mergeConfVars for %s", mergedNode->redpath);
-    }
-
-    //exports
-    if(mergeExports(rootNode, mergedNode, expand, duplicate)) {
-        RedLog(REDLOG_ERROR, "Issue mergeExports for %s", mergedNode->redpath);
-    }
-
-    return mergedNode;
-}
-

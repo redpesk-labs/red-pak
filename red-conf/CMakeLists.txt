@@ -16,16 +16,13 @@
 # limitations under the License.
 ##########################################################################
 
-pkg_check_modules(libredconfreqs REQUIRED liburcu liburcu-cds yaml-0.1 libcyaml uuid)
+pkg_check_modules(libredconfreqs REQUIRED yaml-0.1 libcyaml uuid)
 
 set(
     SOURCES
-        lookup3.c
         redconf-dump.c
         redconf-expand.c
         rednode-factory.c
-        redconf-hash.c
-        redconf-hashmerge.c
         redconf-log.c
         redconf-merge.c
         redconf-mix.c
@@ -39,13 +36,10 @@ set(
 set(
     HEADERS
         redconf.h
-        lookup3.h
         redconf-defaults.h
         redconf-dump.h
         redconf-expand.h
         rednode-factory.h
-        redconf-hash.h
-        redconf-hashmerge.h
         redconf-log.h
         redconf-merge.h
         redconf-mix.h

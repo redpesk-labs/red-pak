@@ -24,5 +24,6 @@
 
 // merge node from hierarchy: if rootNode=NULL rootNode is found
 redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, int duplicate);
+int get_merged_node(redNodeT **result, const redNodeT *leaf);
 
 #endif
