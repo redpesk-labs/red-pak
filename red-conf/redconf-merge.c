@@ -33,6 +33,15 @@
 #include "redconf-hashmerge.h"
 #include "redconf-sharing.h"
 
+// ---- Special confvar
+typedef struct {
+    char *ldpathString;
+    int ldpathIdx;
+    char *pathString;
+    int pathIdx;
+
+} dataNodeT;
+
 /* merge the source string to the destination
  * returns 0 on success or 1 on error
  */
@@ -112,7 +121,7 @@ static int RedConfCopyConfTags(const redConfTagT *source, redConfTagT *destinati
         || merge_string(source->cgrouproot, &destination->cgrouproot, duplicate);
 }
 
-int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
+static int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
     int error = 0;
 
     if (node->config->conftag.ldpath)
@@ -126,7 +135,7 @@ int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode) {
 }
 
 // put in conftag the merge of node hierarchy
-int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicate) {
+static int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicate) {
     const redNodeT *iter;
 
     for (iter=node; iter != NULL; iter=iter->first_child) {

@@ -22,21 +22,7 @@
 
 #include "redconf-node.h"
 
-// ---- Special confvar
-typedef struct {
-    char *ldpathString;
-    int ldpathIdx;
-    char *pathString;
-    int pathIdx;
-
-} dataNodeT;
-
-// mergeSpecfialConfVar
-int mergeSpecialConfVar(const redNodeT *node, dataNodeT *dataNode);
-// merge conftags from hierarchy
-int mergeConfTag(const redNodeT *node, redConfTagT *conftag, int duplicate);
 // merge node from hierarchy: if rootNode=NULL rootNode is found
 redNodeT *mergeNode(const redNodeT *leaf, const redNodeT* rootNode, int expand, int duplicate);
-
 
 #endif
