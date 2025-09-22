@@ -902,8 +902,12 @@ static int mix_basic_conftag(redConfTagT *destination, const redConfTagT *source
     mix_optflag_overwrite(&destination->newsession, source->newsession);
     mix_int_not_null(&destination->verbose, source->verbose);
     mix_bool_not_null(&destination->inheritenv, source->inheritenv);
+    mix_uint_not_null(&destination->gpgcheck, source->gpgcheck);
+    mix_uint_not_null(&destination->unsafe, source->unsafe);
     mix_uint_not_null(&destination->maprootuser, source->maprootuser);
-    return mix_string(&destination->cachedir, source->cachedir, node)
+    return mix_string(&destination->rpmdir, source->rpmdir, node)
+        || mix_string(&destination->persistdir, source->persistdir, node)
+        || mix_string(&destination->cachedir, source->cachedir, node)
         || mix_string(&destination->hostname, source->hostname, node)
         || mix_string(&destination->chdir, source->chdir, node)
         || mix_string(&destination->umask, source->umask, node)
