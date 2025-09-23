@@ -131,16 +131,29 @@ static void test_simple_cmds(const char *redpath) {
 }
 
 static void test_config(const char *redpath) {
-    printf("[TEST CONFIG] ...");
+    int rc;
+    redNodeT *node;
+    char *str;
     size_t len;
-    const char *resyaml = getConfig(redpath, &len);
-    ck_assert_ptr_nonnull(resyaml);
+
+    printf("[TEST CONFIG] ...");
+    node = RedNodesScan(redpath, 0, 0);
+    ck_assert_ptr_nonnull(node);
+    rc = RedGetConfigYAML(&str, &len, node->config);
+    ck_assert_int_eq(rc, 0);
+    ck_assert_ptr_nonnull(str);
 }
 
 static void test_mergeconfig(const char *redpath) {
-    size_t len;
-    const char *resyaml = getMergeConfig(redpath, &len, 0);
-    ck_assert_ptr_nonnull(resyaml);
+    int rc;
+    redNodeT *node, *merge;
+
+    printf("[TEST MERGE CONFIG] ...");
+    node = RedNodesScan(redpath, 0, 0);
+    ck_assert_ptr_nonnull(node);
+    rc = get_merged_node(&merge, node);
+    ck_assert_int_eq(rc, 0);
+    ck_assert_ptr_nonnull(merge);
 }
 
 static void test_node(const char *redpath) {
