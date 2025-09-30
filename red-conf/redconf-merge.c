@@ -164,6 +164,147 @@ static int mixexp_cb(void *closure, const redConfExportPathT *exp, const redNode
     || cpstrinn(&exports->warn, exp->warn);
 }
 
+static int copy_cgroups(redConfigT *dest, const redConfigT *source)
+{
+    redConfCgroupT *d;
+    const redConfCgroupT *s = source->conftag.cgroups;
+
+    if (s == NULL) {
+        dest->conftag.cgroups = NULL;
+        return 0;
+    }
+
+    dest->conftag.cgroups = d = calloc(1, sizeof *d);
+    if (d == NULL)
+        goto out_of_memory;
+
+    if (s->cpuset != NULL) {
+        d->cpuset = calloc(1, sizeof *d->cpuset);
+        if (d->cpuset == NULL)
+            goto out_of_memory;
+        if (s->cpuset->cpus != NULL) {
+            d->cpuset->cpus = strdup(s->cpuset->cpus);
+            if (d->cpuset->cpus == NULL)
+                goto out_of_memory;
+        }
+        if (s->cpuset->mems != NULL) {
+            d->cpuset->mems = strdup(s->cpuset->mems);
+            if (d->cpuset->mems == NULL)
+                goto out_of_memory;
+        }
+        if (s->cpuset->cpus_partition != NULL) {
+            d->cpuset->cpus_partition = strdup(s->cpuset->cpus_partition);
+            if (d->cpuset->cpus_partition == NULL)
+                goto out_of_memory;
+        }
+    }
+
+    if (s->mem != NULL) {
+        d->mem = calloc(1, sizeof *d->mem);
+        if (d->mem == NULL)
+            goto out_of_memory;
+        if (s->mem->max != NULL) {
+            d->mem->max = strdup(s->mem->max);
+            if (d->mem->max == NULL)
+                goto out_of_memory;
+        }
+        if (s->mem->high != NULL) {
+            d->mem->high = strdup(s->mem->high);
+            if (d->mem->high == NULL)
+                goto out_of_memory;
+        }
+        if (s->mem->min != NULL) {
+            d->mem->min = strdup(s->mem->min);
+            if (d->mem->min == NULL)
+                goto out_of_memory;
+        }
+        if (s->mem->low != NULL) {
+            d->mem->low = strdup(s->mem->low);
+            if (d->mem->low == NULL)
+                goto out_of_memory;
+        }
+        if (s->mem->oom_group != NULL) {
+            d->mem->oom_group = strdup(s->mem->oom_group);
+            if (d->mem->oom_group == NULL)
+                goto out_of_memory;
+        }
+        if (s->mem->swap_high != NULL) {
+            d->mem->swap_high = strdup(s->mem->swap_high);
+            if (d->mem->swap_high == NULL)
+                goto out_of_memory;
+        }
+        if (s->mem->swap_max != NULL) {
+            d->mem->swap_max = strdup(s->mem->swap_max);
+            if (d->mem->swap_max == NULL)
+                goto out_of_memory;
+        }
+    }
+
+    if (s->cpu != NULL) {
+        d->cpu = calloc(1, sizeof *d->cpu);
+        if (d->cpu == NULL)
+            goto out_of_memory;
+        if (s->cpu->weight != NULL) {
+            d->cpu->weight = strdup(s->cpu->weight);
+            if (d->cpu->weight == NULL)
+                goto out_of_memory;
+        }
+        if (s->cpu->max != NULL) {
+            d->cpu->max = strdup(s->cpu->max);
+            if (d->cpu->max == NULL)
+                goto out_of_memory;
+        }
+        if (s->cpu->weight_nice != NULL) {
+            d->cpu->weight_nice = strdup(s->cpu->weight_nice);
+            if (d->cpu->weight_nice == NULL)
+                goto out_of_memory;
+        }
+    }
+
+    if (s->io != NULL) {
+        d->io = calloc(1, sizeof *d->io);
+        if (d->io == NULL)
+            goto out_of_memory;
+        if (s->io->cost_qos != NULL) {
+            d->io->cost_qos = strdup(s->io->cost_qos);
+            if (d->io->cost_qos == NULL)
+                goto out_of_memory;
+        }
+        if (s->io->cost_model != NULL) {
+            d->io->cost_model = strdup(s->io->cost_model);
+            if (d->io->cost_model == NULL)
+                goto out_of_memory;
+        }
+        if (s->io->weight != NULL) {
+            d->io->weight = strdup(s->io->weight);
+            if (d->io->weight == NULL)
+                goto out_of_memory;
+        }
+        if (s->io->max != NULL) {
+            d->io->max = strdup(s->io->max);
+            if (d->io->max == NULL)
+                goto out_of_memory;
+        }
+    }
+
+    if (s->pids != NULL) {
+        d->pids = calloc(1, sizeof *d->pids);
+        if (d->pids == NULL)
+            goto out_of_memory;
+        if (s->pids->max != NULL) {
+            d->pids->max = strdup(s->pids->max);
+            if (d->pids->max == NULL)
+                goto out_of_memory;
+        }
+    }
+
+    return 0;
+
+out_of_memory:
+    RedLog(REDLOG_ERROR, "Memory allocation failed");
+    return -1;
+}
+
 int get_merged_node(redNodeT **result, const redNodeT *leaf)
 {
     int rc;
@@ -211,6 +352,11 @@ int get_merged_node(redNodeT **result, const redNodeT *leaf)
 
     /* set LD_PATH_LIBRARY */
     rc = mixPaths(leaf, get_config_ldpath, set_env_ldpath, merge);
+    if (rc)
+        goto error;
+
+    /* copy cgroups */
+    rc = copy_cgroups(merge->config, leaf->config);
     if (rc)
         goto error;
 
