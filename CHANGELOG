@@ -1,3 +1,7 @@
+Version 2.5.1
+
+  - Fir compiling redlib and redplugin
+
 Version 2.5.0
 
   - Update mergeconfig to reflect redwrap algorithm
