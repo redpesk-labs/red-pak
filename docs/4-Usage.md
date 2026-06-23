@@ -2,7 +2,7 @@
 
 ## Prerequisites on redpesk OS
 
-Please have a look to [link_name]({% chapter_link quickstart.boot-a-redpesk-image %}) to boot a redpesk image.
+Please have a look to this [chapter]({% chapter_link quickstart.boot-a-redpesk-image %}) to boot a redpesk image.
 
 ```bash
 # su root
