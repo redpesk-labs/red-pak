@@ -1,22 +1,21 @@
-# Config yaml file good practices
+# yaml configuration file good practices
 
-The purpose of this part is to give advices to write a config yaml file to
-configure your nodes within the hierarchical view.
+The purpose of this part is to give advices to write a yaml configuration file for your nodes within the hierarchical view.
 
-There are 4 parts in node config, and default yaml templates
-can be seen here: [Configuration]({% chapter_link redpak.configuration %}) chapter.
+There are 4 parts in a node configuration, default yaml templates
+can be found here: [Configuration]({% chapter_link redpak.configuration %}) chapter.
 
-Note that a node is totally manageable through the yaml config files and
-so directly represents the dynamic node behavior.
+Note that a node is totally manageable through its yaml configuration file, which 
+rules over the node dynamic behaviour.
 
-- [Config yaml file good practices](#config-yaml-file-good-practices)
+- [yaml configuration file good practices](#config-yaml-file-good-practices)
   - [Redconf tool](#redconf-tool)
-  - [Config special variables](#config-special-variables)
+  - [Special configuration variables](#config-special-variables)
     - [Example](#example)
       - [First case from the parent point of view](#first-case-from-the-parent-point-of-view)
       - [Second case from the child point of view](#second-case-from-the-child-point-of-view)
   - [Headers part](#headers-part)
-  - [Config part](#config-part)
+  - [Configuration part](#config-part)
     - [Namespaces](#namespaces)
     - [Capabilities](#capabilities)
     - [Cgroups](#cgroups)
@@ -28,28 +27,28 @@ so directly represents the dynamic node behavior.
 
 ## Redconf tool
 
-`redconf` tool is a tool that will parse and provide information about a node yaml config file.
+`redconf` tool is a tool that will parse and provide information about a yaml node configuration file.
 
-The 2 modes can be useful to fix grammar issues with `redconf config` or to see what overloaded or getting the cumulated/merged config of a node with `redconf mergeconfig`.
+`redconf config` can be useful to fix grammar issues, or to see what is overloaded, and `redconf mergeconfig` to get the cumulated/merged configuration of a node.
 
-See [link_name]({% chapter_link redpak.usage-guide %}) section for more information about redconf.
+See [usage guide section]({% chapter_link redpak.usage-guide %}) for more information about redconf.
 
-## Config special variables
+## Special configuration variables
 
-There are some particular variables used by redpak that defined proper redpak features.
+There are some particular variables used by redpak that define proper redpak features.
 
 - `LEAF_ALIAS` : the leaf/current node alias (e.g. child1)
 - `LEAF_PATH`: the leaf/current node path (/var/redpak/parent/child1)
-- `NODE_ALIAS`: this is the alias of the node: matching node alias from config file (e.g. /var/redpak)
-- `NODE_PATH`: this is the path of the node: matching node path from config file (e.g. /var/redpak)
+- `NODE_ALIAS`: this is the alias of the node, matching node alias from configuration file (e.g. /var/redpak)
+- `NODE_PATH`: this is the path of the node, matching node path from configuration file (e.g. /var/redpak)
 
-There are defined in config file as environment variables.
+They are defined in the configuration file as environment variables.
 
 ### Example
 
-Here an example of nodes with a parent(/var/redpak/parent) and a child(var/redpak/parent/child).
+Here is an example of nodes with a parent(/var/redpak/parent) and a child(var/redpak/parent/child).
 
-A part of the yaml config parent node:
+A part of the parent node yaml configuration:
 
 ```yaml
 # parent config yaml file
@@ -75,7 +74,7 @@ exports:
 
 #### First case from the parent point of view
 
-Have a look at the expanded variable:
+Have a look at the expanded variables:
 
 | key | value | config file |
 | - | - | - |
@@ -84,7 +83,7 @@ Have a look at the expanded variable:
 | `NODE_ALIAS` | parent | parent node |
 | `NODE_PATH` | /var/redpak/parent | parent node |
 
-Have a look at expanded result of the parent config file:
+Have a look at expanded result of the parent configuration file:
 
 ```bash
 redconf mergeconfig -r /var/redpak/parent
@@ -107,7 +106,7 @@ redconf mergeconfig -r /var/redpak/parent
 
 #### Second case from the child point of view
 
-Have a look at the expanded variable:
+Have a look at the expanded variables:
 
 | key | value | config file |
 | - | - | - |
@@ -118,7 +117,7 @@ Have a look at the expanded variable:
 | `NODE_ALIAS` | child | child node |
 | `NODE_PATH` | /var/redpak/parent/child | child node |
 
-Have a look at expanded result of the parent config file:
+Have a look at expanded result of the parent configuration file:
 
 ```bash
 redconf mergeconfig -r /var/redpak/parent/child
@@ -151,21 +150,21 @@ redconf mergeconfig -r /var/redpak/parent/child
 
 ## Headers part
 
-The headers are automatically provided at the node creation, it mainly gives
+The headers are automatically provided at the node creation, they mainly give
 information about the node.
 
-You can see example in default yaml file.
+You can see examples in default yaml file.
 
-## Config part
+## Configuration part
 
-The config part defined constraints and mandatory values of the nodes.
+The configuration part defines constraints and mandatory values for the nodes.
 
-Some values are cumulated as the `path` of `ldpath` other are overloaded by children,
-typically some proper value of a node as `hostname`.
+Some values are cumulated, like the `path` of `ldpath`, others are overloaded by children, like
+typically the `hostname` value of a node.
 
-Eventually, some values cannot be overloaded, they defined security constraints as namespace values.
+Eventually, some values cannot be overloaded, they define security constraints as namespace values.
 
-Here, the different constraint behavior is explained within the node hierarchy.
+Here, the different constraint behaviours is explained within the node hierarchy.
 
 - [namespaces](#namespaces)
 - [capabilities](#capabilities)
@@ -186,11 +185,12 @@ There are 3 states for these values:
 
 - `disabled` : means that a new namespace is created and none of the children can share it
 - `enabled` : means that the namespace is shared and children are allowed to disable it
-- `unset` : means that the disabled/enabled is authorize in children (default is disabled: meaning that if all nodes in the family is `unset` the namespace is disabled)
+- `unset` : means that disabling and enabling is authorized for the children (default is disabled: meaning that,
+ if all nodes in the family are `unset`, the namespace is disabled)
 
 ### Capabilities
 
-Capabilities can be dropped or add in redpak.
+Capabilities can be dropped or added in redpak.
 
 ```yaml
 capabilities:
@@ -204,28 +204,26 @@ If a capability is dropped by a parent, a child cannot add it.
 
 If a capability is added by a parent, a child can drop it.
 
-### Cgroups
+### cgroups
 
-link to troubleshooting
+cgroups for redpak only works in v2.
+All of the elements of redpak configuration file respects kernel definitions, please have a look at [https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html).
 
-Cgroup for redpak only works in v2 version.
-All of the elements of redpak config file respects kernel definitions, please have a look at [https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html).
-
-Cgroups already have a hierarchical behavior and so, for now there are no static ways to detect errors with cgroups.
+cgroups already have a hierarchical behaviour and, for now, there is no static way to detect errors within cgroups.
 
 But of course, children cannot bypass parent constraints in cgroups.
 
-For example, if a parent set a max pid to 20 and a child to 50: the max pid in will be 20.
+For example, if a parent sets a pid maximum to 20 and a child to 50, then the pid maximum for the child will be 20.
 
 ## Export part
 
-The export part defines the mount points inside your node, it also inherits from parent export part configuration.
+The export part defines the mount points inside your node, it also inherits from parent configuration export part.
 
-In main cases, a export is defined by a yaml map of 3 elements like below:
+In the main case, an export is defined by a yaml map of 3 elements like below:
 
 ```yaml
 - mount: /destination/mount/path/inside/node # the path inside the node
-  path: /path/source/to/mount/inside/node # the path source in the system
+  path: /path/source/to/mount/inside/node # the path to the source in the system
   mode: Public # the mode
 ```
 
@@ -234,7 +232,7 @@ In main cases, a export is defined by a yaml map of 3 elements like below:
 
 ### Export modes
 
-Below the list of the different export modes in config file and with the hierarchical view:
+Below is the list of the different export modes in configuration file, with a hierarchical view:
 
 | Mode | description | where | path
 |-|-|-|-|
@@ -245,21 +243,21 @@ Below the list of the different export modes in config file and with the hierarc
 | `RestrictedFile` | **ro (file)** | current node / children | yes |
 | `PublicFile` | **rw (file)** | current node / children | yes |
 | `PrivateFile` | **rw (file)** | current node (not in children) | yes |
-| `Anonymous` | **create dir at `mount`** | current node/children | no |
-| `Symlink` | **create symlink from `path`(in node) to `mount`** | current node/children | yes |
-| `Execfd` | **create file from shell cmd to `mount`** | current node/children | yes (shell command) |
-| `Internal` | **copy file descriptor from `path` to `mount`** | current node/children | yes (file descriptor) |
+| `Anonymous` | **creates dir at `mount`** | current node/children | no |
+| `Symlink` | **creates symlink from `path`(in node) to `mount`** | current node/children | yes |
+| `Execfd` | **creates file from shell cmd to `mount`** | current node/children | yes (shell command) |
+| `Internal` | **copies file descriptor from `path` to `mount`** | current node/children | yes (file descriptor) |
 | `Tmpfs` | **new tmpfs on `mount`** | current node/children | no |
 | `Procfs` | **new procfs on `mount`** | current node/children | no |
 | `Mqueue` | **new mqueue on `mount`** | current node/children | no |
 | `Devfs` | **new dev on `mount`** | current node/children | no |
-| `Lock` | **take a lock on `mount`** | current node/children | no |
+| `Lock` | **takes a lock on `mount`** | current node/children | no |
 
 ### Export hierarchical constraints
 
 The hierarchical constraints for exports are quite simple. All redundant mounts are ignored by redpak. That is to say, a child cannot mount anything at the same destination.
 
-Thus, a child should never have a same destination mount path in its configuration. `redconf mergeconfig` can help to check such information. See [link_name]({% chapter_link redpak.usage-guide %}) for more detail.
+Thus, a child should never have the same destination mount path than its parent in its configuration file. `redconf mergeconfig` can help to check such information. See [usage guide]({% chapter_link redpak.usage-guide %}) for more detail.
 
 Example:
 
@@ -295,7 +293,7 @@ redconf mergeconfig --redpath /var/parent/child
 
 ## Environ part
 
-The environ part defines environment variables inside node.
+The environ part defines environment variables inside the node.
 
 ```yaml
 environ:
@@ -304,16 +302,16 @@ environ:
     mode: Default
 ```
 
-Here below the different modes:
+Here below are the different modes:
 
-- Default: expand $VAR at runtime
-- Static:  use value without expanding variables
-- Execfd: User bash command STDOUT as var value
-- Remove: Skim existing environment
+- Default: expands $VAR at runtime
+- Static:  uses value without expanding variables
+- Execfd: user bash command STDOUT as var value
+- Remove: skim existing environment
 
 ### Environ hierarchical constraints
 
-The constraints are similar to export constraints, a environment variable cannot be overload by a child.
+These constraints are similar to export constraints, an environment variable cannot be overloaded by a child.
 
 ```yaml
 #  parent

@@ -2,7 +2,7 @@
 
 ## Prerequisites on redpesk OS
 
-Please have a look to this [chapter]({% chapter_link quickstart.boot-a-redpesk-image %}) to boot a redpesk image.
+Please have a look at this [chapter]({% chapter_link quickstart.boot-a-redpesk-image %}) to boot a redpesk image.
 
 ```bash
 # su root
@@ -11,15 +11,15 @@ dnf install red-pak
 
 ## Command line tools
 
-* [`redwrap`](#execute-application-with-redwrap-strace): **the container engine**: launch application inside nodes
-* [`redwrap-dnf`](#install-a-package-with-redwrap-dnf): **package manager**: handle install/update/remove
+* [`redwrap`](#execute-application-with-redwrap-strace): **the container engine**: launches application inside nodes
+* [`redwrap-dnf`](#install-a-package-with-redwrap-dnf): **package manager**: handles install/update/remove
 * [`redconf`](#redconf): **visualize node config**: config/merge/tree
 
 ## Create rednodes
 
-### Install a node (With a system node)
+Here are some examples of commands manipulating rednodes:
 
-The command below create the parent node inside a system node
+### Install a node (with a system node)
 
 ```bash
 # su rp-owner
@@ -31,7 +31,7 @@ redwrap-dnf --redpath /var/redpak/parentnode manager --alias parentnode
 redwrap-dnf --redpath /var/redpak/parentnode/childnode manager --alias childnode
 ```
 
-### Install a node (Without system node)
+### Install a node (without system node)
 
 ```bash
 # su rp-owner
@@ -47,16 +47,16 @@ redwrap-dnf --redpath /var/redpak/parentnode/childnode manager --alias childnode
 
 ```bash
 Options:
-  --alias=VALUE                 rednode alias name default is node dirname
-  --update                      force creation even when node exist
-  --no-system-node              Do not create system node: system configuration will be in first parent
-  --template=VALUE              Create node config from template [default= /etc/redpak/template.d/default.yaml]
-  --template-admin=VALUE        Create node admin config from template [default= /etc/redpak/template.d/admin.yaml]
+  --alias=VALUE                 # rednode alias name default is node dirname
+  --update                      # forces creation even when node exists
+  --no-system-node              # does not create system node: system configuration will be in first parent
+  --template=VALUE              # creates node config from template [default= /etc/redpak/template.d/default.yaml]
+  --template-admin=VALUE        # creates node admin config from template [default= /etc/redpak/template.d/admin.yaml]
 ```
 
 ## Launch a node
 
-You can test it executing a simple command as:
+You can test a node by executing a simple command like:
 
 ```bash
 # su rp-owner
@@ -72,9 +72,9 @@ redwrap --redpath /var/redpak/parentnode bash
 
 ## Set up repo into the node
 
-First, it is needed to install the repo file in `/var/redpak/parentnode/etc/yum.repos.d`:
+Firstly, install the repo file in `/var/redpak/parentnode/etc/yum.repos.d`.
 
-A simple way to test, is to add your system repo file
+A simple way to test is to add your system repo file.
 
 ```bash
 # su rp-owner
@@ -87,10 +87,10 @@ cp /etc/yum.repos.d/redpesk*.repo /var/redpak/parentnode/etc/yum.repos.d
 Remember that the parent node is depending on "system" node and so depends on system packages,
 thus it is forbidden to install a system package inside the node.
 
-So, either you uninstall a package from system and install it inside the node or you
+So, either you uninstall a package from system and install it inside the node, or you
 install a package not present in the system.
 
-Below the example with `strace`:
+Here below, an example with `strace`:
 
 ```bash
 # su rp-owner
@@ -129,7 +129,7 @@ Running transaction:
 
 ## Execute application with redwrap: strace
 
-You can now launch your application with `redwrap`.
+You can now launch your application with `redwrap`:
 
 ```bash
 # su rp-owner
@@ -151,7 +151,7 @@ strace-5.1-1.el8.x86_64
 
 ## Remove application with redwrap-dnf
 
-To remove application use redwrap-dnf remove
+To remove a package use `redwrap-dnf remove`:
 
 ```bash
 # su rp-owner
@@ -179,17 +179,17 @@ Running transaction:
 
 ## Redconf
 
-`redconf` is command line tool to visualize config and nodes.
+`redconf` is a command line tool to visualize config and nodes.
 
 ### Commands
 
-* [tree](#tree): visualize node tree
-* [config](#config): display/check config of a node
-* [mergeconfig](#mergeconfig): display/check the merge config of a node
+* [tree](#tree): visualizes node tree
+* [config](#config): displays/checks config of a node
+* [mergeconfig](#mergeconfig): displays/checks the merge config of a node
 
 ### Tree
 
-The *tree* command allow to visualize the node tree from a redroot. The redroot is the root of a node family.
+The *tree* command allows visualizing the node tree from a redroot. The redroot is the root of a node family.
 
 ```bash
 # su rp-owner
@@ -208,7 +208,7 @@ redconf tree --redroot /var/parentnode/
 
 ### Config
 
-The `config` command allow to display/check config yaml file of a node by specifying the redpath of the node.
+The `config` command allows displaying/checking yaml config file of a node by specifying the redpath of the node.
 
 ```bash
 redconf config --redpath /var/redpak/parentnode/child1
@@ -239,7 +239,7 @@ exports:
 ---
 ```
 
-The option `--yaml` allows to return the yaml file.
+The option `--yaml` allows returning the yaml file.
 
 ```bash
 redconf --yaml config --redpath /var/redpak/parentnode/child1
@@ -247,10 +247,10 @@ redconf --yaml config --redpath /var/redpak/parentnode/child1
 
 ### Merge config
 
-The `mergeconfig` config command allows to display/check the merged config of a node. That is to say, the configuration of the current node and the concatenation of its parents. Remember that a node inherits from its parents constraints and so some warnings can appeared into it.
+The `mergeconfig` configuration command allows displaying/checking the merged configuration of a node, that is to say, the configuration of the current node and the concatenation of its parents. Remember that a node inherits from its parents constraints, so some warnings may be displayed when running this command.
 
 * `--expand` option expands the environment variable of the configuration file.
-* `--yaml` option return the yaml merged config file.
+* `--yaml` option returns the yaml merged config file.
 
 ```bash
 # su rp-owner
@@ -308,7 +308,7 @@ config:
 ----
 ```
 
-See the warn example that explicitly said that this value is overload by a parent node:
+Here's a warning example that explicitly tells that the value is overloaded by a parent node:
 
 ```bash
 - mode: Default

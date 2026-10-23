@@ -2,18 +2,18 @@
 
 ## Sections
 
-In yaml configuration file, there are 4 sections:
+A yaml configuration file includes 4 sections:
 
 - Headers: rednode information
 - Config: node configuration (namespaces, cgroups, ...)
 - Exports: node mounts
 - Environ: node environment variables
 
-There parameters are merged in rednode hierarchy.
+These parameters are merged in rednode hierarchy.
 
 ## Yaml System configuration
 
-Below, there is the template of yaml configuration file
+Here below is the template of yaml system configuration file:
 
 <iframe src="yaml/root-normal.yaml" width="100%" height="800"/>
 
@@ -23,4 +23,4 @@ Below, there is the template of yaml configuration file
 
 ## Good Practices
 
-To see good practices to write yaml config node file see [Good practices]({% chapter_link redpak.config-yaml-files-good-practices %})
+Good practices to write a yaml config node can be checked [here]({% chapter_link redpak.config-yaml-files-good-practices %}).

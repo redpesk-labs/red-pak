@@ -1,38 +1,37 @@
-# Using CGROUPS with redpak and systemd
+# Using cgroups with redpak and systemd
 
-REDPAK has options to setup CGROUP restriction on started
-REDNODES. This behaviour duplicates the behaviour of
-systemd that already manages CGROUP features.
+redpak has options to setup cgroup restrictions on started
+rednodes. This behaviour duplicates the behaviour of
+systemd that already manages cgroup features.
 
-One of the design principle of how systemd manages CGROUP
-is that only one writer can control a CGROUP
-(see [Two Key Design Rules][1]).
+One of the design principle of how systemd manages cgroup
+is that only one writer can control a cgroup (see [Two Key Design Rules][1]).
 
 That **single-writer** behaviour can not be enforced by the
 kernel. So designers of systemd took the decision that
-the full CGROUP hierarchy is under the control of systemd
-except if the opposite is explicitely required.
+the full cgroup hierarchy is under the control of systemd
+except if the opposite is explicitly required.
 
-Using CGROUP features of REDPAK without taking care of what
-systemd expect is possible but:
+Using cgroup features of redpak without taking care of what
+systemd expects is possible but:
 
 - it violates the **single-writer** principle because
-  REDWRAP will write and rearrange features in CGROUP
-  where systemd expects to be the only writer
+  redwrap will write and rearrange features in cgroup
+  when systemd expects to be the only writer.
 
-- it implies that you run REDWRAP as root or with some
-  capabilies for writing where systemd writes
+- it implies that you run redwrap as root or with some
+  capabilities for writing where systemd writes.
 
 In order to solve this kind of issues, systemd has
 provision for allowing other writers to manage parts
-of CGROUP that system will not write after setting it up.
+of cgroup that system will not overwrite after setting it up.
 This behaviour, called **delegation**, is described in
 that [document][1].
 
 
 ## Delegation in systemd's user land
 
-The 2 below lines are from systemd's service `user@.service`
+The two lines below are from systemd's service `user@.service`
 
 ```
 Slice=user-%i.slice
@@ -41,38 +40,37 @@ Delegate=pids memory
 
 It shows that every user service or application started by
 systemd and the children of these services or applications
-are in the CGROUP slice `user.slice/user-UID.slice/`.
+are in the cgroup slice `user.slice/user-UID.slice/`.
 
 And that slice is restricted to have only access to the
-CGROUP's controllers `pids` and `memory`.
+cgroup's controllers `pids` and `memory`.
 
-So if the REDNODE only need to setup `pids` and `memory`
-it could be possible in principle because the controllers
+So if the rednode only needs to setup `pids` and `memory`,
+it could be possible in theory, because the controllers
 are available. But in fact it will not work because the
-files controlling behaviour of these CGROUP are owned by
+files controlling the behaviour of these cgroups are owned by
 root and are write protected.
 
 Before discussing on how systemd allows delegation of the
-control of these features, let talk about other CGROUP
-controllers that REDPAK manages: cpu, cpuset, io.
+control of these features, let's talk about other cgroup
+controllers that redpak manages: cpu, cpuset and io.
 
 Because these controllers are not listed in `user@.service`,
-it cannot be delegated to user services. This can be
+they cannot be delegated to user services. This can be
 changed by adding drop-in configurations. For example
 for adding the missing controllers to user 1001, it is
 needed to create the file
 `/etc/systemd/system/user@1001.service.d/delegate.conf`
-([see][2]) that contains:
+([more details here][2]) that contains:
 
 ```
 [Service]
 Delegate=cpu cpuset io
 ```
 
-But it can be seen that this action requires system privileges
-to be achieved.
+But this action requires system privileges to be achieved.
 
-Without delegation, the CGROUP properties can be controlled
+Without delegation, the cgroup properties can be controlled
 by systemd settings and properties.
 
 In order to run redpak in user mode, you need to turn on the
@@ -84,9 +82,9 @@ service:
 Delegate=yes
 ```
 
-that delegates all available CGROUP controllers.
+that delegates all available cgroup controllers.
 
-Or by listing the expected CGROUP controllers as below:
+Or by listing the expected cgroup controllers like below:
 
 ```
 [Service]
@@ -94,14 +92,13 @@ Delegate=memory pids
 ```
 
 In this cases, systemd creates a slice for controlling
-the service. That slice can be named explicitely using
+the service. That slice can be named explicitly using
 `Slice` directive of systemd.
 
-When running REDPAK from command line in the user environment,
-if the REDNODE has CGROUP setting, they may be applied or not
-depending on rigths that systemd let to CGROUPS files. But
-in all cases it enters in conflict with systemd and the
-**single-writer** rule.
+When running redpak from command line in the user environment,
+if the rednode has cgroup settings, they may be applied or not
+depending on rights that systemd lets to cgroups files. But
+in all cases it conflicts with systemd and the **single-writer** rule.
 
 So the systemd command `systemd-run` should be used. Here
 is an example of use:
@@ -117,12 +114,12 @@ controllers, so the command below works as well:
 systemd-run --user --slice redpak ...
 ```
 
-In this cases, the user still get the ability to
-modify its CGROUP restictions itself. This is intended
+In this case, the user still gets the ability to
+modify its cgroup restrictions itself. This is intended
 for implementing a manager but not for running
-a restricted program. However redpak allows to run
-REDNODEs not able to change their CGROUP restrictions
-if the CGROUP namespace is unshared:
+a restricted program. However redpak allows running
+rednodes unable to change their cgroup restrictions
+if the cgroup namespace is unshared:
 
 ```
 config:
@@ -133,59 +130,59 @@ config:
 ## Delegation in systemd's system land
 
 Restriction applied by `user@.service` are not existing
-in system land. So all CGROUP controllers are available.
+in system land. So all cgroup controllers are available.
 
-But the use of the directive `User` even in system's services
-make them user services and then only allow controlllers
-*pids* and *memory* as seen above. To circumvent this
-restriction either follow what is explain above or use
-the redpak feature of changing the user.
+But the use of the directive `User`, even in system's services,
+makes them user services and then only allows *pids* and *memory*
+controllers as seen above. To circumvent this
+restriction, either follow what is explained above or use
+the redpak feature for changing the user.
 
-Since REDPAK version 2.4.2, it is possible to start
-a REDNODE from root that will run as an other user.
-It opens the possiblity to use all CGROUPS from
-system land but in user land. In such case, services
-could be change to not set `User=...` while still
+Since redpak version 2.4.2, it is possible to start
+a rednode from root that will run as another user.
+It opens the possibility to use all cgroups from
+system land, but in user land. In such a case, services
+could be changed to not set `User=...` while still
 setting dependency to `user@%i.service`. That way,
-user services are started and all CGROUP controllers are
+user services are started and all cgroup controllers are
 available.
 
-When using this option, items of CGROUP hierarchy are
+When using this option, items of cgroup hierarchy are
 owned by root, not by the end user. This is good because
-it avoid the REDNODE to change its settings.
+it avoids the rednode to change its settings.
 
 
-## Security consideration on using CGroup and delegation
+## Security considerations on using cgroup and delegation
 
-When delegation of CGROUP is granted by systemd to a
-service, the service is allowed to change its CGROUP
-settings. The hierachical imbrication of the CGROUPs
+When delegation of cgroup is granted by systemd to a
+service, the service is allowed to change its cgroup
+settings. The hierarchical imbrication of the cgroups
 means that it can not be better than what systemd
 allocated initially to the main service.
 
 But it means that if the service forks, it has to
-take cautious of what its children running with the
-same right can change the cgroup settings.
+be cautious of what its children, running with the
+same rights, can change in the cgroup settings.
 
-This can be avoided by unsharing the cgroup namespace
+This can be avoided by un-sharing the cgroup namespace
 in the redpak configuration file (`config.share_cgroup: disabled`),
 this ensures that the settings of rednode configuration
 will not be changed.
 
-## REDNODEs, CGROUPS, and russian dolls
+## rednodes, cgroups, and russian dolls
 
-For CGROUP management of REDNODE, the concept
-of russian dolls applies, the hierarchy of rednodes
+For cgroup management of rednode, the concept
+of russian dolls applies. The hierarchy of rednodes
 is applied by fitting children in their parent.
-This behaviour automatically applies cumulated CGROUP
+This behaviour automatically applies with cumulated cgroup
 restrictions.
 
-So using a dedicated slice for running REDNODEs works
-correctly because REDWRAP takes care of setting CGROUP
+So using a dedicated slice for running rednodes works
+correctly because redwrap takes care of setting cgroup
 features with the hierarchy of nodes.
 
-So we recommand to use the slice named `redpak` for
-running the CGROUP aware REDNODE. But note well that
+So we recommend to use the slice named `redpak` for
+running the cgroup aware rednode. But note well that
 using the default slice `user-%i` also works.
 
 ```
@@ -197,8 +194,6 @@ or
 ```
 systemd-run -p Delegate=yes --slice redpak ...
 ```
-
-
 
 [1]: https://systemd.io/CGROUP_DELEGATION/
 [2]: https://wiki.archlinux.org/title/Cgroups
