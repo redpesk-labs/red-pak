@@ -20,18 +20,18 @@ redpak targets embedded and critical infrastructures:
 
 ## redpak motivations
 
-- Provides application isolation
+- Provide application isolation
   - Restricted filesystem visibility
   - Resources access/usage (API, CPU, RAM, Network, …)
   - Built-in security model with MAC (Mandatory Access Control)
-- Maximizes resource sharing & minimizes system overload
+- Maximize resource sharing & minimizes system overload
   - No duplication of root-fs
-  - Reuses shared libraries between instances
-  - Restricts RAM, Disk, CPU containerization cost
-  - Boosts container startup time
-- Prevents “diplomatic suitcase” container model
+  - Reuse shared libraries between instances
+  - Restrict RAM, Disk, CPU containerization cost
+  - Boost container startup time
+- Prevent “diplomatic suitcase” container model
   - Strict enforcement on installed packages & dependencies
-  - Keeps the system auditable
+  - Keep the system auditable
   - White box container model
 
 Everyone understands that installing a software component on millions of cars,
