@@ -2,7 +2,6 @@
 
 ![redpak logo](images/logo_redpak.png "redpak logo")
 
-> redpak is available in redpesk OS and integration within redpesk factory is coming soon.
 
 ## Links
 
